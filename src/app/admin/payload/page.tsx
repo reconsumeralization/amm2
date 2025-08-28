@@ -12,7 +12,7 @@ import { DocumentationProvider } from '@/contexts/DocumentationContext' // Impor
 
 export default function PayloadDashboardPage() {
   return (
-    <DocumentationProvider> // Wrap with DocumentationProvider
+    <DocumentationProvider> {/* Wrap with DocumentationProvider */}
       <PayloadDashboard />
     </DocumentationProvider>
   )

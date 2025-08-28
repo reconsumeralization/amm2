@@ -2,19 +2,19 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  BarChart3, 
-  Users, 
-  Calendar, 
-  Scissors, 
-  Settings, 
-  FileText, 
-  Camera, 
-  Clock, 
+import {
+  BarChart3,
+  Users,
+  Calendar,
+  Scissors,
+  Settings,
+  FileText,
+  Camera,
+  Clock,
   Star,
   Gift,
   BookOpen,
@@ -136,7 +136,15 @@ const quickActions = [
 
 export function AdminNavigation() {
   const pathname = usePathname()
+  const router = useRouter()
   const { data: session } = useSession()
+
+  const handleSignOut = async () => {
+    await signOut({
+      callbackUrl: '/',
+      redirect: true
+    })
+  }
 
   const isActivePath = (href: string) => {
     if (!pathname) return false
@@ -172,11 +180,9 @@ export function AdminNavigation() {
                   View Site
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/auth/signout">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Link>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
               </Button>
             </div>
           </div>

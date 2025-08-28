@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Button } from './ui/button';
-import { Star, Users, Calendar } from 'lucide-react';
+import { Star, Users, Calendar, Trophy, Crown, Zap, Award, TrendingUp, Target, Gift, Package } from 'lucide-react';
 
 interface LoyaltyData {
   points: number;

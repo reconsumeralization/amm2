@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Activity, Database, Users, Cog, CheckCircle, XCircle, AlertTriangle, RefreshCw, Zap, Calendar, User, Edit, BarChart } from '@/lib/icon-mapping'
+import { Activity, Database, Users, Cog, CheckCircle, RefreshCw, Zap, Calendar, User, Edit, BarChart, Settings } from '@/lib/icon-mapping'
+import { getIcon } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
 
 interface HealthStatus {
@@ -98,9 +99,9 @@ export function PayloadHealthCheck() {
       case 'healthy':
         return <CheckCircle className="h-5 w-5 text-green-500" />
       case 'unhealthy':
-        return <XCircle className="h-5 w-5 text-red-500" />
+        return React.createElement(getIcon('x'), { className: 'h-5 w-5 text-red-500' })
       default:
-        return <AlertCircle className="h-5 w-5 text-yellow-500" />
+        return React.createElement(getIcon('alertTriangle'), { className: 'h-5 w-5 text-yellow-500' })
     }
   }
 
@@ -208,7 +209,7 @@ export function PayloadHealthCheck() {
             </div>
           ) : (
             <div className="text-center py-4">
-              <AlertCircle className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
+              {React.createElement(getIcon('alertTriangle'), { className: 'h-8 w-8 text-yellow-500 mx-auto mb-2' })}
               <p className="text-muted-foreground">Unable to check health status</p>
             </div>
           )}

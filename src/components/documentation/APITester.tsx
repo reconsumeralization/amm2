@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Play, Copy, Download, Clock, AlertTriangle, CheckCircle } from '@/lib/icon-mapping'
+import { getIcon } from '@/lib/icon-mapping'
 import { APIEndpoint, APITestRequest, APITestResponse, APITestHistory } from '@/types/api-documentation'
 import { cn } from '@/lib/utils'
 
@@ -126,7 +126,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
     })
 
     // Add query parameters
-    const queryParams = new URLrchParams()
+    const queryParams = new URLSearchParams()
     endpoint.parameters.query.forEach(param => {
       const value = parameters[param.name]
       if (value !== undefined && value !== '') {
@@ -450,7 +450,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
                       <>Loading...</>
                     ) : (
                       <>
-                        <PlayIcon className="w-4 h-4 mr-2" />
+                        {React.createElement(getIcon('play'), { className: 'w-4 h-4 mr-2' })}
                         Send Request
                       </>
                     )}
@@ -464,7 +464,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <HistoryIcon className="w-4 h-4" />
+                    {React.createElement(getIcon('clock'), { className: 'w-4 h-4' })}
                     Test History
                   </CardTitle>
                 </CardHeader>
@@ -478,9 +478,9 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
                       >
                         <div className="flex items-center gap-2">
                           {item.success ? (
-                            <CheckCircleIcon className="w-4 h-4 text-green-600" />
+                            React.createElement(getIcon('checkCircle'), { className: 'w-4 h-4 text-green-600' })
                           ) : (
-                            <AlertCircleIcon className="w-4 h-4 text-red-600" />
+                            React.createElement(getIcon('alertTriangle'), { className: 'w-4 h-4 text-red-600' })
                           )}
                           <span className="text-sm">
                             {item.response.status} - {item.timestamp.toLocaleTimeString()}
@@ -512,7 +512,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
                         {response.duration}ms
                       </Badge>
                       <Button variant="outline" size="sm" onClick={copyResponse}>
-                        <CopyIcon className="w-3 h-3" />
+                        {React.createElement(getIcon('copy'), { className: 'w-3 h-3' })}
                       </Button>
                     </div>
                   )}
@@ -557,7 +557,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
                   </Tabs>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    <PlayIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    {React.createElement(getIcon('play'), { className: 'w-8 h-8 mx-auto mb-2 opacity-50' })}
                     <p>Click "Send Request" to test this endpoint</p>
                   </div>
                 )}

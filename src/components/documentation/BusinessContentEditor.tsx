@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, Eye, Send, FileText, Tag, Clock, User, AlertTriangle, CheckCircle, XCircle, Upload, Link, MessageSquare } from '@/lib/icon-mapping'
 import { Button } from '@/components/ui/button'
@@ -84,9 +84,9 @@ export function BusinessContentEditor({
       applyTemplate(template)
     }
     loadTemplates()
-  }, [documentId, template])
+  }, [documentId, template, loadDocument, loadTemplates])
 
-  const loadDocument = async () => {
+  const loadDocument = useCallback(async () => {
     if (!documentId) return
     
     setIsLoading(true)
@@ -113,16 +113,16 @@ export function BusinessContentEditor({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [documentId, docService])
 
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       const templates = await docService.getTemplates()
       setAvailableTemplates(templates)
     } catch (error) {
       console.error('Error loading templates:', error)
     }
-  }
+  }, [docService])
 
   const applyTemplate = (template: DocumentationTemplate) => {
     setSelectedTemplate(template)

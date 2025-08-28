@@ -34,10 +34,10 @@ export function usePageGuard(
 }
 
 /**
- * unalytics – placeholder analytics hook.
+ * useAnalyticsPlaceholder – placeholder analytics hook.
  * Returns no‑op functions for tracking events.
  */
-export function unalytics() {
+export function useAnalyticsPlaceholder() {
   const trackEvent = (..._args: any[]) => {
     // No‑op placeholder
   }

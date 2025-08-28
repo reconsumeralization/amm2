@@ -1,71 +1,19 @@
-import { getPayload } from 'payload';
+
 import { NextResponse } from 'next/server';
-import { sendEmail } from '../../../utils/email';
+import { getPayload } from 'payload';
+import { unstable_noStore as noStore } from 'next/cache';
 
-export async function POST(req: Request) {
-  const tenantId = req.headers.get('X-Tenant-ID');
-  const { content, barber, client } = await req.json();
-
-  if (!tenantId || !content || !barber) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-  }
-
+export async function GET() {
+  noStore();
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
-    const testimonial = await payload.create({
+    const payload = await getPayload();
+    const testimonials = await payload.find({
       collection: 'testimonials',
-      data: { content, barber, client, tenant: tenantId, status: 'pending' },
+      limit: 100, // Adjust limit as needed
     });
-
-    // Notify admin for moderation
-    const settings = await payload.find({
-      collection: 'settings',
-      where: { tenant: { equals: tenantId } },
-      limit: 1,
-    });
-    if (settings.docs[0]?.email?.enabled) {
-      await sendEmail({
-        from: settings.docs[0].email.fromAddress,
-        to: 'admin@modernmen.com',
-        subject: 'New Testimonial Awaiting Moderation',
-        html: `<p>New testimonial from ${client?.name || 'Anonymous'}: ${content}</p>${settings.docs[0].email.signature}`,
-      });
-    }
-
-    return NextResponse.json(testimonial);
+    return NextResponse.json(testimonials.docs);
   } catch (error) {
-    console.error('Error creating testimonial:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  const tenantId = req.headers.get('X-Tenant-ID');
-  const { action } = await req.json();
-
-  if (!tenantId || !params.id || !['like', 'approve', 'reject'].includes(action)) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-  }
-
-  try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
-    if (action === 'like') {
-      const testimonial = await payload.update({
-        collection: 'testimonials',
-        id: params.id,
-        data: { likes: { increment: 1 } },
-      });
-      return NextResponse.json(testimonial);
-    } else {
-      const testimonial = await payload.update({
-        collection: 'testimonials',
-        id: params.id,
-        data: { status: action === 'approve' ? 'approved' : 'rejected' },
-      });
-      return NextResponse.json(testimonial);
-    }
-  } catch (error) {
-    console.error('Error updating testimonial:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error fetching testimonials:', error);
+    return NextResponse.json({ error: 'Failed to fetch testimonials' }, { status: 500 });
   }
 }

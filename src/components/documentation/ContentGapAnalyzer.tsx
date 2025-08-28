@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, rch, MessageSquare, TrendingUp, Users, ChevronRight, Filter, RefreshCw } from '@/lib/icon-mapping';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,9 +34,9 @@ export function ContentGapAnalyzer({
 
   useEffect(() => {
     loadContentGaps();
-  }, []);
+  }, [loadContentGaps]);
 
-  const loadContentGaps = async () => {
+  const loadContentGaps = useCallback(async () => {
     setLoading(true);
     try {
       const recommendationsData = await analyticsService.getOptimizationRecommendations();
@@ -47,7 +47,7 @@ export function ContentGapAnalyzer({
     } finally {
       setLoading(false);
     }
-  };
+  }, [analyticsService]);
 
   const getFilteredGaps = () => {
     return gaps.filter(gap => {

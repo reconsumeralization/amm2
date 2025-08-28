@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { CheckCircle, Circle, Clock, AlertTriangle, ChevronRight, ChevronDown, Play, Book, Target, Users } from '@/lib/icon-mapping'
+import { CheckCircle, Circle, Clock, AlertTriangle, ChevronRight, ChevronDown, Play, Book, BookOpen, Target, Users } from '@/lib/icon-mapping'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

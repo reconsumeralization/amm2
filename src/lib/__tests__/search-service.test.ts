@@ -1,12 +1,12 @@
-import { DocumentationrchService } from '@/lib/rch-service';
-import { rchConfig } from '@/types/rch';
+import { DocumentationSearchService } from '@/lib/search-service';
+import { SearchConfig } from '@/lib/search-service';
 import { commonTypos } from '@/lib/common-typos';
 import { expect } from '@jest/globals';
 
 describe('DocumentationSearchService integration tests', () => {
   // Minimal config to satisfy the constructor – the actual values are not used in the
   // integration poinwe are testing (ranking, synonyms, etc.).
-  const dummyConfig: SearchConfig = {
+  const dummyConfig: any = {
     rankingConfig: {
       titleBoost: 1,
       descriptionBoost: 1,

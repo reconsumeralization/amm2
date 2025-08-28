@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Input } from './input'
 import { Button } from './button'
-import { rch, X, Filter, Loader2 } from '@/lib/icon-mapping'
+import { Search, X, Filter, Loader2 } from '@/lib/icon-mapping'
 import { cn } from '@/lib/utils'
 import { useMonitoring } from '@/hooks/useMonitoring'
 
-interface rchInputProps {
-  onrch: (query: string, filters?: any) => void
+interface SearchInputProps {
+  onSearch: (query: string, filters?: any) => void
   placeholder?: string
   className?: string
   showFilters?: boolean
@@ -16,14 +16,14 @@ interface rchInputProps {
   initialQuery?: string
 }
 
-export function rchInput({
-  onrch,
-  placeholder = 'rch documentation...',
+export function SearchInput({
+  onSearch,
+  placeholder = 'search documentation...',
   className,
   showFilters = true,
   isLoading = false,
   initialQuery = ''
-}: rchInputProps) {
+}: SearchInputProps) {
   const [query, setQuery] = useState(initialQuery)
   const [showFilterPanel, setShowFilterPanel] = useState(false)
   const [filters, setFilters] = useState({
@@ -36,27 +36,27 @@ export function rchInput({
   const inputRef = useRef<HTMLInputElement>(null)
   const { trackrch } = useMonitoring()
 
-  // Debounce rch
+  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (query.trim()) {
-        onrch(query, filters)
+        onSearch(query, filters)
         trackrch(query, 0) // Will be updated with actual results count
       }
     }, 300)
 
     return () => clearTimeout(timer)
-  }, [query, filters, onrch, trackrch])
+  }, [query, filters, onSearch, trackrch])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (query.trim()) {
-      onrch(query, filters)
+      onSearch(query, filters)
       trackrch(query, 0)
     }
   }
 
-  const clearrch = () => {
+  const clearSearch = () => {
     setQuery('')
     setFilters({
       category: [],
@@ -89,7 +89,7 @@ export function rchInput({
     <div className={cn('relative w-full', className)}>
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative flex items-center">
-          <rch className="absolute left-3 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
           <Input
             ref={inputRef}
             type="text"
@@ -108,7 +108,7 @@ export function rchInput({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={clearrch}
+                onClick={clearSearch}
                 className="h-8 w-8 p-0"
               >
                 <X className="h-4 w-4" />
@@ -219,7 +219,7 @@ export function rchInput({
               type="button"
               variant="outline"
               size="sm"
-              onClick={clearrch}
+              onClick={clearSearch}
             >
               Clear All Filters
             </Button>

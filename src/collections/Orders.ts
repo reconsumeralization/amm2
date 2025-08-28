@@ -397,12 +397,22 @@ export const Orders: CollectionConfig = {
   },
   access: {
     read: ({ req }) => {
-      if (req.user?.role === 'admin') return true;
-      return { customer: { equals: req.user?.id } };
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if (req.user.role === 'barber') return true // Barbers may need to view orders
+      return { customer: { equals: req.user.id } }
     },
     create: ({ req }) => !!req.user,
-    update: ({ req }) => req.user?.role === 'admin',
-    delete: ({ req }) => req.user?.role === 'admin',
+    update: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      return { customer: { equals: req.user.id } }
+    },
+    delete: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      return false // Customers cannot delete orders
+    },
   },
   indexes: [
     {

@@ -1,10 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock } from 'lucide-react';
+import { getIcon } from '@/lib/icon-mapping';
 
 interface SettingsData {
   chatbot?: {
@@ -74,7 +74,7 @@ export default function SettingsWidget() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+            {React.createElement(getIcon('settings'), { className: 'h-5 w-5' })}
             Settings Overview
           </CardTitle>
         </CardHeader>
@@ -93,7 +93,7 @@ export default function SettingsWidget() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+          {React.createElement(getIcon('settings'), { className: 'h-5 w-5' })}
           Settings Overview
         </CardTitle>
       </CardHeader>
@@ -102,7 +102,7 @@ export default function SettingsWidget() {
           {/* Chatbot Settings */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-blue-500" />
+              {React.createElement(getIcon('messageSquare'), { className: 'h-4 w-4 text-blue-500' })}
               <span className="text-sm font-medium">Chatbot</span>
             </div>
             {getFeatureStatus(settings.chatbot?.enabled)}
@@ -111,7 +111,7 @@ export default function SettingsWidget() {
           {/* Clock-in/out Settings */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-green-500" />
+              {React.createElement(getIcon('clock'), { className: 'h-4 w-4 text-green-500' })}
               <span className="text-sm font-medium">Clock System</span>
             </div>
             {getFeatureStatus(settings.clock?.enabled)}
@@ -120,7 +120,7 @@ export default function SettingsWidget() {
           {/* Hair Simulator */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <Palette className="h-4 w-4 text-purple-500" />
+              {React.createElement(getIcon('palette'), { className: 'h-4 w-4 text-purple-500' })}
               <span className="text-sm font-medium">Hair Simulator</span>
             </div>
             {getFeatureStatus(settings.barbershop?.simulator?.enabled)}
@@ -129,7 +129,7 @@ export default function SettingsWidget() {
           {/* Events */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-orange-500" />
+              {React.createElement(getIcon('bell'), { className: 'h-4 w-4 text-orange-500' })}
               <span className="text-sm font-medium">Community Events</span>
             </div>
             {getFeatureStatus(settings.barbershop?.events?.enabled)}
@@ -138,7 +138,7 @@ export default function SettingsWidget() {
           {/* Retail */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <Cog className="h-4 w-4 text-indigo-500" />
+              {React.createElement(getIcon('settings'), { className: 'h-4 w-4 text-indigo-500' })}
               <span className="text-sm font-medium">Retail Corner</span>
             </div>
             {getFeatureStatus(settings.barbershop?.retail?.enabled)}
@@ -147,7 +147,7 @@ export default function SettingsWidget() {
           {/* Email Notifications */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-red-500" />
+              {React.createElement(getIcon('bell'), { className: 'h-4 w-4 text-red-500' })}
               <span className="text-sm font-medium">Email Notifications</span>
             </div>
             {getFeatureStatus(settings.notifications?.email?.enabled)}
@@ -160,14 +160,14 @@ export default function SettingsWidget() {
             className="flex-1"
             variant="outline"
           >
-            <Settings className="h-4 w-4 mr-2" />
+            {React.createElement(getIcon('settings'), { className: 'h-4 w-4 mr-2' })}
             Manage Settings
           </Button>
           <Button
             onClick={() => router.push('/admin/payload/collections/settings/create')}
             className="flex-1"
           >
-            <Cog className="h-4 w-4 mr-2" />
+            {React.createElement(getIcon('settings'), { className: 'h-4 w-4 mr-2' })}
             Create New
           </Button>
         </div>
