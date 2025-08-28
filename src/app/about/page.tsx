@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { MapPin, Clock, Star, Users } from 'lucide-react';
+import { MapPin, Clock, Star, Users, Scissors, Award, Phone, Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About Us - Modern Men Salon',

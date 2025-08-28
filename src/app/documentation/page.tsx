@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useSession } from "next-auth/react"
-import { Code, Users, Cog, HelpCircle, Book, Zap } from '@/lib/icon-mapping'
+import { Code, Users, Cog, HelpCircle, Book, Zap, Settings, BookOpen } from '@/lib/icon-mapping'
 import { getUserRoleFromSession, hasDocumentationPermission } from "@/lib/documentation-permissions"
 import { UserRole } from "@/types/documentation"
 

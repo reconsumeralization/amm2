@@ -4,7 +4,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { AnalyticsService } from '@/lib/analytics-service';
 import { UserFeedback, UserRole } from '@/types/analytics';
 
-interface UnalyticsOptions {
+interface AnalyticsOptions {
   contentId?: string;
   contentType?: 'guide' | 'api' | 'component';
   userRole?: UserRole;
@@ -13,7 +13,7 @@ interface UnalyticsOptions {
   trackTimeSpent?: boolean;
 }
 
-export function unalytics(options: UnalyticsOptions = {}) {
+export function useAnalytics(options: AnalyticsOptions = {}) {
   const {
     contentId,
     contentType = 'guide',
@@ -122,7 +122,7 @@ export function unalytics(options: UnalyticsOptions = {}) {
 }
 
 // Hook for analytics dashboard data
-export function unalyticsDashboard(timeRange: { start: Date; end: Date }) {
+export function useAnalyticsDashboard(timeRange: { start: Date; end: Date }) {
   const analyticsService = AnalyticsService.getInstance();
 
   const getMetrics = useCallback(async () => {

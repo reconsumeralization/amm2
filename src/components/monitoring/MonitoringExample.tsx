@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   useMonitoring,
   useComponentPerformance,
-  upiPerformance,
+  useApiPerformance,
   useInteractionTracking,
   useErrorBoundary
 } from '@/hooks/useMonitoring'
@@ -30,7 +30,7 @@ export function MonitoringExample() {
   } = useMonitoring()
 
   // Get specialized hooks
-  const { trackApiRequest } = upiPerformance()
+  const { trackApiRequest } = useApiPerformance()
   const { trackClick, trackFormInteraction } = useInteractionTracking()
   const { reportError } = useErrorBoundary()
 

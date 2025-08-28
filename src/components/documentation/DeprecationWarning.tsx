@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DeprecationWarning as DeprecationWarningType } from '@/types/version-control';
-import { AlertTriangle, Clock, ExternalLink, X, ArrowRight, HelpCircle } from '@/lib/icon-mapping';
+import { AlertTriangle, AlertCircle, Clock, ExternalLink, X, ArrowRight, HelpCircle } from '@/lib/icon-mapping';
 import { formatDistanceToNow, format } from 'date-fns';
 
 interface DeprecationWarningProps {

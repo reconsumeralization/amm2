@@ -1,0 +1,4 @@
+diff --git a/src/tools/security-auditor.ts b/src/tools/security-auditor.ts
+--- a/src/tools/security-auditor.ts
++++ b/src/tools/security-auditor.ts
++ Applied automated security fix by security-auditor CLI

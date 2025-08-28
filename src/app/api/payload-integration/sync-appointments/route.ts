@@ -20,11 +20,14 @@ export async function POST(request: NextRequest) {
     const payloadService = getPayloadIntegrationService()
     await payloadService.initialize()
     
-    await payloadService.syncAppointments()
+    const syncResult = await payloadService.syncAppointments()
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Appointments synced successfully' 
+      message: `Appointments sync completed: ${syncResult.synced} synced, ${syncResult.failed} failed`,
+      syncedCount: syncResult.synced,
+      failedCount: syncResult.failed,
+      errors: syncResult.errors.length > 0 ? syncResult.errors : undefined
     })
   } catch (error) {
     console.error('Error syncing appointments:', error)

@@ -37,7 +37,7 @@ describe('DocumentationSearchService additional internal methods', () => {
       }
     ];
     expected.forEach(exp => {
-      const found = suggestions.some(s => s.text === exp.text && s.type === exp.type && s.score === exp.score);
+      const found = suggestions.some((s: any) => s.text === exp.text && s.type === exp.type && s.score === exp.score);
       expect(found).toBe(true);
     });
   });
@@ -48,7 +48,7 @@ describe('DocumentationSearchService additional internal methods', () => {
     // The mapping for "booking" includes three related terms.
     const expectedTerms = ['appointment', 'schedule', 'calendar'];
     expectedTerms.forEach(term => {
-      const found = related.some(r => r.text === term && r.type === 'related' && r.score === 0.6);
+      const found = related.some((r: any) => r.text === term && r.type === 'related' && r.score === 0.6);
       expect(found).toBe(true);
     });
   });
@@ -62,7 +62,7 @@ describe('DocumentationSearchService additional internal methods', () => {
       type: 'completion',
       score: 0.7
     };
-    const found = completions.some(c => c.text === expected.text && c.type === expected.type && c.score === expected.score);
+    const found = completions.some((c: any) => c.text === expected.text && c.type === expected.type && c.score === expected.score);
     expect(found).toBe(true);
   });
 

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Bell, Phone, MessageSquare, Clock, AlertTriangle, CheckCircle, Users, Headphones, FileText, ExternalLink } from '@/lib/icon-mapping'
+import { Bell, Phone, MessageSquare, Clock, AlertTriangle, CheckCircle, Users, Headphones, FileText, ExternalLink, Mail, MessageCircle, AlertCircle } from '@/lib/icon-mapping'
 
 export const metadata: Metadata = {
   title: 'Contact Support - Documentation',

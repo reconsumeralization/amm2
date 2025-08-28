@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface Settings {
   chatbot?: {
@@ -148,7 +148,7 @@ export function useSettings(options: UseSettingsOptions = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -171,18 +171,18 @@ export function useSettings(options: UseSettingsOptions = {}) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tenantId]);
 
   useEffect(() => {
     fetchSettings();
-  }, [tenantId]);
+  }, [fetchSettings]);
 
   useEffect(() => {
     if (!autoRefresh) return;
 
     const interval = setInterval(fetchSettings, refreshInterval);
     return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval, tenantId]);
+  }, [autoRefresh, refreshInterval, fetchSettings]);
 
   const updateSettings = async (newSettings: Partial<Settings>) => {
     try {

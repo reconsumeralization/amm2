@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { 
   Database, 
   Search, 
@@ -46,31 +46,31 @@ export function PayloadDashboard() {
   const [documentation, setDocumentation] = useState<any>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle')
 
-  // Load initial data
-  useEffect(() => {
-    if (user && (isAdmin || isOwner)) {
-      loadAnalytics()
-      loadDocumentation()
-    }
-  }, [user, isAdmin, isOwner])
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       const result = await getSalonAnalytics()
       setAnalytics(result)
     } catch (error) {
       console.error('Error loading analytics:', error)
     }
-  }
+  }, [getSalonAnalytics])
 
-  const loadDocumentation = async () => {
+  const loadDocumentation = useCallback(async () => {
     try {
       const result = await getBusinessDocumentation({ limit: 10 })
       setDocumentation(result)
     } catch (error) {
       console.error('Error loading documentation:', error)
     }
-  }
+  }, [getBusinessDocumentation])
+
+  // Load initial data
+  useEffect(() => {
+    if (user && (isAdmin || isOwner)) {
+      loadAnalytics()
+      loadDocumentation()
+    }
+  }, [user, isAdmin, isOwner, loadAnalytics, loadDocumentation])
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return

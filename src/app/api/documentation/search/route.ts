@@ -88,9 +88,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(searchResponse)
   } catch (error) {
-    console.error('rch API error:', error)
+    console.error('search API error:', error)
     return NextResponse.json(
-      { error: 'rch service unavailable' },
+      { error: 'search service unavailable' },
       { status: 500 }
     )
   }
@@ -118,9 +118,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(searchResponse)
   } catch (error) {
-    console.error('rch API error:', error)
+    console.error('search API error:', error)
     return NextResponse.json(
-      { error: 'rch service unavailable' },
+      { error: 'search service unavailable' },
       { status: 500 }
     )
   }

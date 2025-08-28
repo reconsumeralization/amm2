@@ -171,7 +171,7 @@ export function AsyncErrorHandler({
 }
 
 // Hook for handling async operations with error boundaries
-export function usyncErrorHandler() {
+export function useAsyncErrorHandler() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 

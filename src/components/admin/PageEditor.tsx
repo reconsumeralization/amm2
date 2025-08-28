@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Editor from '@/components/editor/Editor';
 
 interface PageEditorProps {
@@ -15,13 +15,7 @@ export default function PageEditor({ contentId, slug, tenantId, title }: PageEdi
   const [pageTitle, setPageTitle] = useState(title || slug);
   const [isPublished, setIsPublished] = useState(false);
 
-  useEffect(() => {
-    if (contentId) {
-      loadExistingContent();
-    }
-  }, [contentId]);
-
-  const loadExistingContent = async () => {
+  const loadExistingContent = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/content?slug=${slug}`, {
@@ -41,7 +35,13 @@ export default function PageEditor({ contentId, slug, tenantId, title }: PageEdi
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [slug, tenantId]);
+
+  useEffect(() => {
+    if (contentId) {
+      loadExistingContent();
+    }
+  }, [contentId, loadExistingContent]);
 
   const handleSave = async (content: string) => {
     try {

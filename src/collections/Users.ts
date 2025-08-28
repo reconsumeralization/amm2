@@ -15,7 +15,18 @@ export const Users: CollectionConfig = {
   fields: [
     { name: 'email', type: 'email', required: true },
     { name: 'name', type: 'text' },
-    { name: 'role', type: 'select', options: ['admin', 'customer', 'staff'], defaultValue: 'customer', required: true },
+    {
+      name: 'role',
+      type: 'select',
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Manager', value: 'manager' },
+        { label: 'Barber', value: 'barber' },
+        { label: 'Customer', value: 'customer' }
+      ],
+      defaultValue: 'customer',
+      required: true
+    },
     { name: 'googleAccessToken', type: 'text', admin: { hidden: true } },
     { name: 'tenant', type: 'relationship', relationTo: 'tenants' },
     {
@@ -270,8 +281,11 @@ export const Users: CollectionConfig = {
   ],
   indexes: [
     {
-      fields: ['email', 'tenant', 'role'],
+      fields: ['email'],
       unique: true,
+    },
+    {
+      fields: ['tenant', 'role'],
     },
   ],
 };

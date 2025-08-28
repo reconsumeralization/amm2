@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Book, Code, FileText, ExternalLink, Star, TrendingUp, Users, Clock, ChevronRight, Sparkles } from '@/lib/icon-mapping'
+import { Book, BookOpen, Code, FileText, ExternalLink, Star, TrendingUp, Users, Clock, ChevronRight, Sparkles } from '@/lib/icon-mapping'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,14 +28,7 @@ export function RelatedContentRecommendations({
   const [personalizedContent, setPersonalizedContent] = useState<RelatedContent[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  // Fetch personalized recommendations based on user behavior
-  useEffect(() => {
-    if (showPersonalized) {
-      fetchPersonalizedRecommendations()
-    }
-  }, [userRole, currentGuideId, showPersonalized])
-
-  const fetchPersonalizedRecommendations = async () => {
+  const fetchPersonalizedRecommendations = useCallback(async () => {
     setIsLoading(true)
     try {
       // This would typically call an API that analyzes user behavior
@@ -66,7 +59,14 @@ export function RelatedContentRecommendations({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [userRole])
+
+  // Fetch personalized recommendations based on user behavior
+  useEffect(() => {
+    if (showPersonalized) {
+      fetchPersonalizedRecommendations()
+    }
+  }, [userRole, currentGuideId, showPersonalized, fetchPersonalizedRecommendations])
 
   // Combine and sort all recommendations
   const allRecommendations = [
@@ -286,11 +286,7 @@ export function SmartRecommendations({
   const [recommendations, setRecommendations] = useState<RelatedContent[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    generateSmartRecommendations()
-  }, [userRole, currentGuideId, userBehavior])
-
-  const generateSmartRecommendations = async () => {
+  const generateSmartRecommendations = useCallback(async () => {
     setIsLoading(true)
     try {
       // This would use ML/AI to generate personalized recommendations
@@ -327,7 +323,11 @@ export function SmartRecommendations({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [userRole, userBehavior])
+
+  useEffect(() => {
+    generateSmartRecommendations()
+  }, [userRole, currentGuideId, userBehavior, generateSmartRecommendations])
 
   return (
     <Card className={`bg-gradient-to-br from-slate-800/50 to-slate-700/30 border-slate-600 ${className}`}>

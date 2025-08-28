@@ -14,9 +14,22 @@ export const Customers: CollectionConfig = {
   // Add access control
   access: {
     create: ({ req }) => !!req.user, // Only authenticated users
-    read: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
-    update: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
-    delete: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
+    read: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if (req.user.role === 'barber') return true // Barbers need to view customer info
+      return { createdBy: { equals: req.user.id } }
+    },
+    update: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      return { createdBy: { equals: req.user.id } }
+    },
+    delete: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      return { createdBy: { equals: req.user.id } }
+    },
   },
 
   // Add hooks for validation and monitoring

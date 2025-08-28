@@ -3,13 +3,13 @@ import { getPayloadClient } from '../../../payload'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { sendUserNotification, sendAdminNotification } from '@/lib/notificationService'
-import { validateRequestBody, validaterchParams, createValidationErrorResponse, createServerErrorResponse } from '@/lib/validation-utils'
+import { validateRequestBody, validateSearchParams, createValidationErrorResponse, createServerErrorResponse } from '@/lib/validation-utils'
 import { createUserSchema } from '@/lib/validations'
 
 interface UserFilters {
   role?: string
   isActive?: boolean
-  rch?: string
+  search?: string
   limit?: number
   page?: number
 }
@@ -25,13 +25,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { rchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url)
     const filters: UserFilters = {
-      role: rchParams.get('role') || undefined,
-      isActive: rchParams.get('isActive') === 'true' ? true : rchParams.get('isActive') === 'false' ? false : undefined,
-      rch: rchParams.get('rch') || undefined,
-      limit: parseInt(rchParams.get('limit') || '20'),
-      page: parseInt(rchParams.get('page') || '1')
+      role: searchParams.get('role') || undefined,
+      isActive: searchParams.get('isActive') === 'true' ? true : searchParams.get('isActive') === 'false' ? false : undefined,
+      search: searchParams.get('search') || undefined,
+      limit: parseInt(searchParams.get('limit') || '20'),
+      page: parseInt(searchParams.get('page') || '1')
     }
 
     const payload = await getPayloadClient()
@@ -49,11 +49,11 @@ export async function GET(request: NextRequest) {
       where.and.push({ isActive: { equals: filters.isActive } })
     }
 
-    if (filters.rch) {
+    if (filters.search) {
       where.and.push({
         or: [
-          { name: { like: `%${filters.rch}%` } },
-          { email: { like: `%${filters.rch}%` } }
+          { name: { like: `%${filters.search}%` } },
+          { email: { like: `%${filters.search}%` } }
         ]
       })
     }

@@ -16,11 +16,11 @@ export default function PortalLoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [providers, setProviders] = useState<any>(null)
-  const rchParams = useSearchParams()
+  const searchParams = useSearchParams()
   const router = useRouter()
 
-  const callbackUrl = rchParams?.get('callbackUrl') || '/portal'
-  const error = rchParams?.get('error')
+  const callbackUrl = searchParams?.get('callbackUrl') || '/portal'
+  const error = searchParams?.get('error')
 
   useEffect(() => {
     const getProvidersData = async () => {

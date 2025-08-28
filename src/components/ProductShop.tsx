@@ -6,7 +6,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Input } from './ui/input';
-import { Star } from 'lucide-react';
+import {
+  Star,
+  ShoppingCart,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  TrendingUp,
+  Heart,
+  Eye,
+  Award,
+  Package,
+  Filter,
+  Grid3X3,
+  List,
+  X,
+  Minus,
+  Plus
+} from 'lucide-react';
 
 interface Product {
   id: string;
@@ -53,7 +70,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     if (showRecommendations && userId) {
       fetchRecommendations();
     }
-  }, [category, searchTerm, sortBy, userId]);
+  }, [category, searchTerm, sortBy, userId, showRecommendations]);
 
   const fetchProducts = async () => {
     try {
@@ -152,9 +169,19 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
       const { sessionId } = await response.json();
       
       // Redirect to Stripe Checkout
-      const stripe = await import('@stripe/stripe-js');
-      const stripeInstance = await stripe.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-      await stripeInstance?.redirectToCheckout({ sessionId });
+      try {
+        const stripe = await import('@stripe/stripe-js');
+        const stripeInstance = await stripe.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+        if (stripeInstance) {
+          await stripeInstance.redirectToCheckout({ sessionId });
+        } else {
+          throw new Error('Failed to load Stripe');
+        }
+      } catch (stripeError) {
+        console.error('Stripe loading error:', stripeError);
+        // Fallback: redirect to a custom checkout page or show error
+        window.location.href = `/checkout/${sessionId}`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initiate checkout');
     }
@@ -314,7 +341,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                   size="sm"
                   onClick={() => setShowCart(false)}
                 >
-                  ×
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
 
@@ -341,7 +368,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                             variant="outline"
                             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           >
-                            -
+                            <Minus className="h-3 w-3" />
                           </Button>
                           <span className="w-8 text-center">{item.quantity}</span>
                           <Button
@@ -349,7 +376,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                             variant="outline"
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           >
-                            +
+                            <Plus className="h-3 w-3" />
                           </Button>
                         </div>
                       </div>
@@ -358,7 +385,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                         size="sm"
                         onClick={() => removeFromCart(item.product.id)}
                       >
-                        ×
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}

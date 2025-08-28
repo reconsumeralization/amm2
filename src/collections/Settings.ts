@@ -8,10 +8,22 @@ export const Settings: CollectionConfig = {
     description: 'Global and tenant-specific settings for ModernMen features.',
   },
   access: {
-    read: ({ req }) => req.user?.role === 'admin',
-    create: ({ req }) => req.user?.role === 'admin',
-    update: ({ req }) => req.user?.role === 'admin',
-    delete: ({ req }) => req.user?.role === 'admin',
+    read: ({ req }) => {
+      if (!req.user) return false
+      return req.user.role === 'admin' || req.user.role === 'manager'
+    },
+    create: ({ req }) => {
+      if (!req.user) return false
+      return req.user.role === 'admin' || req.user.role === 'manager'
+    },
+    update: ({ req }) => {
+      if (!req.user) return false
+      return req.user.role === 'admin' || req.user.role === 'manager'
+    },
+    delete: ({ req }) => {
+      if (!req.user) return false
+      return req.user.role === 'admin' // Only admins can delete settings
+    },
   },
   fields: [
     {
@@ -59,8 +71,18 @@ export const Settings: CollectionConfig = {
           fields: [
             { name: 'position', type: 'select', options: ['bottom-right', 'bottom-left', 'top-right', 'top-left'], defaultValue: 'bottom-right' },
             { name: 'backgroundColor', type: 'text', defaultValue: '#ffffff' },
-            { name: 'borderRadius', type: 'text', defaultValue: '8px' },
+            { name: 'borderRadius', type: 'text', defaultValue: '12px' },
+            { name: 'maxWidth', type: 'text', defaultValue: '400px' },
             { name: 'animation', type: 'select', options: ['none', 'fade', 'slide'], defaultValue: 'fade' },
+          ],
+        },
+        {
+          name: 'behavior',
+          type: 'group',
+          fields: [
+            { name: 'autoOpen', type: 'checkbox', defaultValue: false },
+            { name: 'welcomeMessage', type: 'textarea', defaultValue: 'Hello! I\'m your ModernMen assistant. I can help you book appointments, check schedules, or answer questions about our services. How can I help you today?' },
+            { name: 'typingIndicator', type: 'checkbox', defaultValue: true },
           ],
         },
       ],

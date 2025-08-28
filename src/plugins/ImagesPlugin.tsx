@@ -1,29 +1,36 @@
-'use client';
-import { useEffect } from 'react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
-import { $createImageNode, ImageNode } from '@/nodes/ImageNode';
+import React from 'react'
+import { $createImageNode } from '@/nodes/ImageNode'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR } from 'lexical'
+import { INSERT_IMAGE_COMMAND } from '@/components/editor/LexicalEditor'
 
-export const INSERT_IMAGE_COMMAND = createCommand('insertImage');
+export function ImagesPlugin(): JSX.Element | null {
+  const [editor] = useLexicalComposerContext()
 
-export default function ImagesPlugin(): null {
-  const [editor] = useLexicalComposerContext();
-
-  useEffect(() => {
-    if (!editor.hasNodes([ImageNode])) {
-      throw new Error('ImagesPlugin: ImageNode not registered');
+  React.useEffect(() => {
+    if (!editor.hasNodes([$createImageNode])) {
+      throw new Error('ImagesPlugin: ImageNode not registered on editor')
     }
 
     return editor.registerCommand(
       INSERT_IMAGE_COMMAND,
-      (payload: { src: string; alt: string }) => {
-        const imageNode = $createImageNode(payload.src, payload.alt);
-        $insertNodes([imageNode]);
-        return true;
+      (payload) => {
+        const selection = $getSelection()
+        if (!$isRangeSelection(selection)) {
+          return false
+        }
+
+        const focusNode = selection.focus.getNode()
+        if (focusNode !== null) {
+          const imageNode = $createImageNode(payload)
+          selection.insertNodes([imageNode])
+        }
+
+        return true
       },
       COMMAND_PRIORITY_EDITOR
-    );
-  }, [editor]);
+    )
+  }, [editor])
 
-  return null;
+  return null
 }

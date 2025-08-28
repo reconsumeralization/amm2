@@ -1,5 +1,5 @@
-// Core rch interfaces and types
-export interface rchQuery {
+// Core search interfaces and types
+export interface searchQuery {
   query: string
   filters?: {
     category?: string[]
@@ -12,7 +12,7 @@ export interface rchQuery {
   sortBy?: 'relevance' | 'date' | 'title'
 }
 
-export interface rchResult {
+export interface searchResult {
   id: string
   title: string
   description: string
@@ -30,10 +30,10 @@ export interface rchResult {
   }
 }
 
-export interface rchAnalytics {
+export interface searchAnalytics {
   query: string
   resultsCount: number
-  filters: rchQuery['filters']
+  filters: searchQuery['filters']
   responseTime: number
   timestamp: Date
   userAgent?: string

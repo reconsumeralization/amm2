@@ -1,7 +1,15 @@
-import { monitoring as mainMonitoring } from '../../lib/monitoring'
-
-// Re-export the main monitoring service for consistency
-export const monitoring = mainMonitoring
+// Base monitoring utilities
+export const monitoring = {
+  error: (error: Error, context?: Record<string, any>) => {
+    console.error('Monitoring error:', error, context)
+  },
+  log: (message: string, context?: Record<string, any>) => {
+    console.log('Monitoring log:', message, context)
+  },
+  track: (event: string, properties?: Record<string, any>) => {
+    console.log('Tracking event:', event, properties)
+  }
+}
 
 // YOLO-specific monitoring enhancements
 export class YoloMonitoring {
@@ -34,6 +42,7 @@ export class YoloMonitoring {
     })
   }
 
+
   // Track business metrics
   trackBusinessMetric(metric: string, value: number, category: string) {
     monitoring.track('business_metric', {
@@ -56,7 +65,7 @@ export class YoloMonitoring {
 
   // Track errors with context
   captureException(error: Error, context?: Record<string, any>) {
-    monitoring.captureException(error, {
+    monitoring.error(error, {
       ...context,
       project: 'modernmen-yolo',
       environment: process.env.NODE_ENV

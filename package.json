@@ -16,14 +16,17 @@
     "test:coverage": "jest --coverage",
     "deploy:check": "tsx scripts/deploy-check.ts",
     "deploy:validate": "npm run deploy:check && npm run build",
-    
     "db:migrate": "payload migrate",
     "db:seed": "tsx src/scripts/seed-database.ts",
     "db:seed-admin": "tsx src/scripts/seed-admin.ts",
     "db:reset": "payload migrate:reset",
-    "generate:types": "tsx src/scripts/generate-payload-types.ts",
+    "generate:types": "tsx src/tools/generate-payload-types.ts",
     "export:docs": "tsx src/scripts/export-docs.ts",
-    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts"
+    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts",
+    "audit:help": "tsx src/tools/security-auditor.ts help",
+    "audit:run": "REPO_LIST=. tsx src/tools/security-auditor.ts run --once",
+    "audit:scan": "tsx src/tools/security-auditor.ts scan .",
+    "audit:status": "tsx src/tools/security-auditor.ts status --repo ."
   },
   "dependencies": {
     "@ai-stack/payloadcms": "3.2.16-beta",
@@ -32,7 +35,7 @@
     "@lexical/markdown": "^0.28.0",
     "@lexical/react": "^0.28.0",
     "@lexical/table": "^0.28.0",
-    "@payloadcms/db-postgres": "^0.5.0",
+    "@payloadcms/db-postgres": "^3.54.0",
     "@payloadcms/db-sqlite": "^3.53.0",
     "@payloadcms/plugin-cloud-storage": "^3.53.0",
     "@payloadcms/plugin-form-builder": "^3.53.0",
@@ -42,6 +45,7 @@
     "@payloadcms/richtext-lexical": "^3.53.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@stripe/stripe-js": "^7.9.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@vercel/analytics": "^1.0.0",
     "@vercel/speed-insights": "^1.0.0",
     "aws4": "^1.13.2",
@@ -87,7 +91,8 @@
     "mongodb": "^6.7.0",
     "postcss": "^8.4.31",
     "tsx": "^4.0.0",
-    "typescript": "^5.2.0"
+    "typescript": "^5.2.0",
+    "whatwg-fetch": "^3.6.20"
   },
   "packageManager": "pnpm@10.12.4"
 }

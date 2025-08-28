@@ -448,19 +448,25 @@ export const Stylists: CollectionConfig = {
     ],
   },
   access: {
-    read: () => true, // Public read for frontend team page
-    create: ({ req }: { req: any }) => {
+    read: ({ req }) => {
+      // Allow public read for basic stylist info
+      if (!req.user) return { isActive: { equals: true } }
+      // Staff can read all stylist info
+      if (req.user.role === 'admin' || req.user.role === 'manager' || req.user.role === 'barber') return true
+      return false
+    },
+    create: ({ req }) => {
       return req.user?.role === 'admin' || req.user?.role === 'manager'
     },
-    update: ({ req }: { req: any }) => {
+    update: ({ req }) => {
       const user = req.user
       if (!user) return false
       if (user.role === 'admin' || user.role === 'manager') return true
-      // Allow stylists to update their own profiles
+      // Allow barbers to update their own profiles
       return { user: { equals: user.id } }
     },
-    delete: ({ req }: { req: any }  ) => {
-      return req.user?.role === 'admin'
+    delete: ({ req }) => {
+      return req.user?.role === 'admin' || req.user?.role === 'manager'
     },
   },
   timestamps: true,

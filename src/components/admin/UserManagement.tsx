@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,20 +34,16 @@ export function UserManagement() {
   const [users, setUsers] = useState<User[]>([])
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
-  const [rchTerm, setrchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [showCreateForm, setShowCreateForm] = useState(false)
 
-  useEffect(() => {
-    fetchUsers()
-  }, [rchTerm, roleFilter, statusFilter])
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true)
-      const params = new URLrchParams()
-      if (rchTerm) params.set('rch', rchTerm)
+      const params = new URLSearchParams()
+      if (searchTerm) params.set('search', searchTerm)
       if (roleFilter !== 'all') params.set('role', roleFilter)
       if (statusFilter !== 'all') {
         params.set('isActive', statusFilter === 'active' ? 'true' : 'false')
@@ -81,7 +77,11 @@ export function UserManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchTerm, roleFilter, statusFilter])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {
@@ -222,9 +222,9 @@ export function UserManagement() {
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <div className="flex gap-2">
                 <Input
-                  placeholder="rch users..."
-                  value={rchTerm}
-                  onChange={(e) => setrchTerm(e.target.value)}
+                  placeholder="search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full sm:w-64"
                 />
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -267,7 +267,7 @@ export function UserManagement() {
               <Icons.users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-800 mb-2">No users found</h3>
               <p className="text-gray-600 mb-4">
-                {rchTerm || roleFilter !== 'all' || statusFilter !== 'all'
+                {searchTerm || roleFilter !== 'all' || statusFilter !== 'all'
                   ? 'Try adjusting your filters'
                   : 'No users have been created yet'
                 }
