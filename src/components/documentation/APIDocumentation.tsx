@@ -102,9 +102,9 @@ export function APIDocumentation({
     const spec = {
       openapi: '3.0.3',
       info: {
-        title: 'Modern Men Hair Salon API',
+        title: 'Modern Men barber shop API',
         version: '1.0.0',
-        description: 'API documentation for the Modern Men Hair Salon management system'
+        description: 'API documentation for the Modern Men barber shop management system'
       },
       paths: {}
     }
@@ -257,7 +257,7 @@ export function APIDocumentation({
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={(e) => {
+                                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                           e.stopPropagation()
                                           handleTestEndpoint(endpoint)
                                         }}
@@ -269,7 +269,7 @@ export function APIDocumentation({
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      onClick={(e) => {
+                                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                         e.stopPropagation()
                                         handleGenerateCode(endpoint)
                                       }}

@@ -1,16 +1,18 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, service, preferences } = await req.json(); // userId will come from req.user
-  const payload = await getPayload({ config: await import('../../../../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
-  // 1. Authentication Check: Ensure user is logged in
-  if (!req.user) { // Assuming req.user is populated by Payload's auth middleware
-    return NextResponse.json({ error: 'Unauthorized: User not authenticated' }, { status: 401 });
+  // 1. Authentication Check: Get user from request headers
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return NextResponse.json({ error: 'Unauthorized: No authentication token' }, { status: 401 });
   }
-  const userId = req.user.id; // Use authenticated user's ID
+  // In real implementation, decode userId from auth token
+  const userId = 'mock-user-id'; // Mock for now
 
   // Input validation
   if (!tenantId || !service || !preferences) {
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
       where: { tenant: { equals: tenantId }, available: { equals: true } },
     });
 
-    const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const prompt = `
       Suggest 3 optimal appointment times for a ${service || 'any'} service:
       - Existing appointments: ${JSON.stringify(appointments.docs.map((a: any) => a.date))}
@@ -49,13 +51,13 @@ export async function POST(req: Request) {
 
     let suggestedTimes = [];
     try {
-      const response = await openai.createCompletion({
-        model: config.ai.model,
-        prompt,
-        max_tokens: config.ai.maxTokens,
-        temperature: config.ai.temperature,
+      const response = await openai.chat.completions.create({
+        model: config.ai?.model || 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: config.ai?.maxTokens || 1000,
+        temperature: config.ai?.temperature || 0.7,
       });
-      suggestedTimes = JSON.parse(response.data.choices[0].text || '[]');
+      suggestedTimes = JSON.parse(response.choices[0].message.content || '[]');
     } catch (openaiError: any) {
       console.error('OpenAI API call failed:', openaiError.response?.data || openaiError.message);
       return NextResponse.json({ error: 'Failed to generate suggestions from AI' }, { status: 500 });

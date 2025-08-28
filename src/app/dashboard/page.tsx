@@ -2,7 +2,7 @@ import { getPayload } from 'payload';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
-  const payload = await getPayload({ config: await import('../../payload.config') });
+  const payload = await getPayload({ config: (await import('../payload.config')).default });
   const docs = await payload.find({ collection: 'business-documentation', limit: 10 });
 
   return (

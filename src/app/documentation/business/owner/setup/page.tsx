@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
 import { GuideRenderer } from '@/components/documentation/GuideRenderer'
 import { InteractiveExample } from '@/components/documentation/InteractiveExample'
-import { UserRole } from '@/types/documentation'
+import type { UserRole, GuideContent } from '@/types/documentation'
 
 export const metadata: Metadata = {
-  title: 'Business Setup Guide - Modern Men Hair Salon',
+  title: 'Business Setup Guide - Modern Men barber shop',
   description: 'Complete guide to setting up your salon business profile and initial configuration',
 }
 
@@ -24,7 +24,7 @@ const businessSetupGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Setting up your salon business profile is the foundation for using the Modern Men Hair Salon management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
+    introduction: `Setting up your salon business profile is the foundation for using the Modern Men barber shop management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
     prerequisites: [
       {
         id: 'admin-account',
@@ -72,10 +72,13 @@ const businessSetupGuide = {
 4. **Social Media Links**: Add links to your Facebook, Instagram, and other profiles`,
         codeSnippets: [
           {
+            id: 'business-profile-config',
             language: 'typescript',
+            description: 'Complete business profile configuration example',
+            runnable: false,
             code: `// Example business profile configuration
 const businessProfile = {
-  name: "Modern Men Hair Salon",
+  name: "Modern Men barber shop",
   address: {
     street: "123 Main Street",
     city: "Downtown",
@@ -97,10 +100,7 @@ const businessProfile = {
     taxId: "12-3456789",
     salesTaxRate: 8.25
   }
-}`,
-            description: 'Business profile data structure',
-            runnable: false
-          }
+}`}
         ],
         interactiveExamples: [
           {
@@ -154,7 +154,10 @@ const businessProfile = {
 - Enable or disable online booking for specific services`,
         codeSnippets: [
           {
+            id: 'service-menu-config',
             language: 'typescript',
+            description: 'Service menu configuration example',
+            runnable: false,
             code: `// Example service menu configuration
 const serviceMenu = {
   categories: [
@@ -186,10 +189,7 @@ const serviceMenu = {
       savings: 15.00
     }
   ]
-}`,
-            description: 'Service menu data structure',
-            runnable: false
-          }
+}`}
         ],
         interactiveExamples: []
       },
@@ -318,19 +318,22 @@ const serviceMenu = {
         id: 'setup-incomplete',
         problem: 'Cannot complete business setup - missing required fields',
         solution: 'Review each section of the setup process and ensure all required fields marked with * are completed. Check that your business license and tax ID are entered correctly.',
-        category: 'setup'
+        category: 'setup',
+        tags: ['setup', 'business-profile', 'required-fields']
       },
       {
         id: 'payment-integration-failed',
         problem: 'Payment processor integration not working',
         solution: 'Verify your payment processor credentials are correct. Ensure your business account is active and in good standing. Contact your payment processor support if issues persist.',
-        category: 'payments'
+        category: 'payments',
+        tags: ['payments', 'integration', 'credentials']
       },
       {
         id: 'staff-access-issues',
         problem: 'Staff members cannot access their accounts',
         solution: 'Check that staff accounts are properly activated and roles are assigned correctly. Verify email addresses are correct for password reset functionality.',
-        category: 'staff'
+        category: 'staff',
+        tags: ['staff', 'accounts', 'access', 'roles']
       }
     ],
     relatedContent: [
@@ -383,11 +386,10 @@ const serviceMenu = {
 export default function BusinessSetupPage() {
   return (
     <div className="max-w-4xl">
-      <GuideRenderer 
-        content={businessSetupGuide}
+      <GuideRenderer
+        guide={businessSetupGuide as unknown as GuideContent}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
       />
     </div>
   )

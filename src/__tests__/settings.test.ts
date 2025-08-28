@@ -1,8 +1,30 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSettings } from '../hooks/useSettings';
 
-// Mock fetch
-global.fetch = jest.fn();
+// Mock fetch with proper typing
+const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
+global.fetch = mockFetch;
+
+// Helper function to create proper Response mocks
+const createMockResponse = (data: any, options: { ok?: boolean; status?: number } = {}) => {
+  return {
+    ok: options.ok ?? true,
+    status: options.status ?? 200,
+    statusText: 'OK',
+    headers: new Headers(),
+    redirected: false,
+    type: 'basic' as ResponseType,
+    url: '',
+    clone: jest.fn(),
+    json: () => Promise.resolve(data),
+    text: () => Promise.resolve(JSON.stringify(data)),
+    blob: () => Promise.resolve(new Blob()),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+    formData: () => Promise.resolve(new FormData()),
+    body: null,
+    bodyUsed: false,
+  } as unknown as Response;
+};
 
 describe('Settings System', () => {
   beforeEach(() => {
@@ -25,10 +47,9 @@ describe('Settings System', () => {
         }
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockSettings
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(mockSettings)
+      );
 
       // Note: In a real test, you'd use React Testing Library
       // This is a simplified test for the logic
@@ -44,10 +65,9 @@ describe('Settings System', () => {
         tenant: 'tenant-123'
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockSettings
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(mockSettings)
+      );
 
       const settings = await fetch('/api/settings?tenantId=tenant-123').then(res => res.json());
       
@@ -56,13 +76,13 @@ describe('Settings System', () => {
     });
 
     it('should handle fetch errors gracefully', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
       try {
         await fetch('/api/settings');
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('Network error');
+        expect((error as Error).message).toBe('Network error');
       }
     });
   });
@@ -205,10 +225,9 @@ describe('Settings System', () => {
         clock: { enabled: true }
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockGlobalSettings
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(mockGlobalSettings)
+      );
 
       const response = await fetch('/api/settings');
       const settings = await response.json();
@@ -222,10 +241,9 @@ describe('Settings System', () => {
         tenant: 'tenant-123'
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockTenantSettings
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(mockTenantSettings)
+      );
 
       const response = await fetch('/api/settings?tenantId=tenant-123');
       const settings = await response.json();
@@ -244,10 +262,9 @@ describe('Settings System', () => {
         ...updateData
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(mockResponse)
+      );
 
       const response = await fetch('/api/settings', {
         method: 'POST',
@@ -265,10 +282,9 @@ describe('Settings System', () => {
     });
 
     it('should handle API errors', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-        statusText: 'Internal Server Error'
-      });
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({}, { ok: false, status: 500 })
+      );
 
       const response = await fetch('/api/settings');
       expect(response.ok).toBe(false);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, rch, MessageSquare, TrendingUp, Users, ChevronRight, Filter, RefreshCw } from '@/lib/icon-mapping';
+import { AlertTriangle, Search, MessageSquare, TrendingUp, Users, ChevronRight, Filter, RefreshCw } from '@/lib/icon-mapping';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -70,7 +70,7 @@ export function ContentGapAnalyzer({
 
   const getSourceIcon = (source: string) => {
     switch (source) {
-      case 'rch_queries': return rch;
+      case 'search_queries': return Search;
       case 'user_feedback': return MessageSquare;
       case 'behavioral_analytics': return TrendingUp;
       default: return AlertTriangle;
@@ -187,7 +187,7 @@ export function ContentGapAnalyzer({
               className="text-sm border rounded px-2 py-1"
             >
               <option value="all">All Sources</option>
-              <option value="rch_queries">rch Queries</option>
+              <option value="search_queries">Search Queries</option>
               <option value="user_feedback">User Feedback</option>
               <option value="behavioral_analytics">Behavioral Analytics</option>
             </select>
@@ -306,8 +306,8 @@ export function ContentGapAnalyzer({
               variant="outline" 
               size="sm"
               onClick={() => {
-                const rchGaps = filteredGaps.filter(g => g.source === 'rch_queries');
-                console.log('Export rch gaps for content planning:', rchGaps);
+                const searchGaps = filteredGaps.filter(g => g.source === 'search_queries');
+                console.log('Export search gaps for content planning:', searchGaps);
               }}
             >
               Export for Content Planning

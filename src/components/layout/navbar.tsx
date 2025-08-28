@@ -52,6 +52,10 @@ const quickActions = [
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin', icon: BarChart3 },
+  { name: 'Editor', href: '/editor', icon: BookOpen },
+  { name: 'Text Editor', href: '/text-editor', icon: BookOpen },
+  { name: 'Image Editor', href: '/image-editor', icon: Camera },
+  { name: 'Page Builder', href: '/admin/page-builder', icon: BookOpen },
   { name: 'Documentation', href: '/documentation', icon: BookOpen },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
 ]
@@ -111,14 +115,14 @@ export function Navbar() {
             whileTap={{ scale: 0.95 }}
           >
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg shadow-md group-hover:shadow-lg transition-shadow">
+              <div className="flex items-center justify-center w-10 h-10 bg-red-600 rounded-lg shadow-md group-hover:shadow-lg transition-shadow">
                 <Scissors className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                <span className="text-xl font-bold text-black group-hover:text-gray-800 transition-colors">
                   Modern Men
                 </span>
-                <span className="text-xs text-slate-500 -mt-1">Premium Salon</span>
+                <span className="text-xs text-gray-600 -mt-1">Baarber Shop</span>
               </div>
             </Link>
           </motion.div>
@@ -135,15 +139,15 @@ export function Navbar() {
                   href={item.href}
                   className={`relative group px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActivePath(item.href)
-                      ? 'text-amber-600 bg-amber-50'
-                      : 'text-slate-700 hover:text-amber-600 hover:bg-amber-50/50'
+                      ? 'text-black bg-gray-100'
+                      : 'text-gray-700 hover:text-black hover:bg-gray-50'
                   }`}
                   title={item.description}
                 >
                   <span className="relative z-10">{item.name}</span>
                   {isActivePath(item.href) && (
                     <motion.div
-                      className="absolute bottom-0 left-1/2 w-1 h-1 bg-amber-500 rounded-full"
+                      className="absolute bottom-0 left-1/2 w-1 h-1 bg-black rounded-full"
                       layoutId="navbar-indicator"
                       style={{ x: '-50%' }}
                     />
@@ -160,7 +164,7 @@ export function Navbar() {
               variant="ghost" 
               size="sm" 
               asChild
-              className="relative hover:bg-amber-50"
+              className="relative hover:bg-gray-50"
             >
               <Link href="/search" title="Search services and info">
                 <Search className="h-4 w-4" />
@@ -172,7 +176,7 @@ export function Navbar() {
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="relative hover:bg-amber-50"
+                className="relative hover:bg-gray-50"
                 title="Notifications"
               >
                 <Bell className="h-4 w-4" />
@@ -187,11 +191,19 @@ export function Navbar() {
               </Button>
             )}
 
+            {/* Admin Login Link */}
+            <Link
+              href="/admin/login"
+              className="text-gray-700 hover:text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+            >
+              Admin
+            </Link>
+
             {/* User Menu or Auth */}
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="hover:bg-amber-50">
+                  <Button variant="ghost" size="sm" className="hover:bg-gray-50">
                     <User className="h-4 w-4 mr-2" />
                     {session.user?.name?.split(' ')[0] || 'Account'}
                   </Button>
@@ -202,8 +214,8 @@ export function Navbar() {
                       <p className="text-sm font-medium">{session.user?.name}</p>
                       <p className="text-xs text-muted-foreground">{session.user?.email}</p>
                       <div className="flex items-center space-x-1 mt-1">
-                        <Star className="h-3 w-3 text-amber-500" />
-                        <span className="text-xs text-amber-600 font-medium">{loyaltyPoints} points</span>
+                        <Star className="h-3 w-3 text-black" />
+                        <span className="text-xs text-black font-medium">{loyaltyPoints} points</span>
                       </div>
                     </div>
                   </DropdownMenuLabel>
@@ -234,7 +246,7 @@ export function Navbar() {
                 <Button 
                   variant="default" 
                   size="sm"
-                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                  className="bg-red-600 hover:bg-red-700"
                   asChild
                 >
                   <Link href="/auth/signin?callbackUrl=/portal">
@@ -249,7 +261,7 @@ export function Navbar() {
               variant="outline" 
               size="sm"
               asChild
-              className="border-amber-200 hover:border-amber-300 hover:bg-amber-50 text-amber-700"
+              className="border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700"
             >
               <Link href="tel:(306)522-4111">
                 <Phone className="h-4 w-4 mr-2" />
@@ -259,8 +271,8 @@ export function Navbar() {
 
             {/* Book Now - Primary CTA */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button 
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md hover:shadow-lg transition-all duration-200"
+              <Button
+                className="bg-red-600 hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200"
                 asChild
               >
                 <Link href="/booking">
@@ -286,7 +298,7 @@ export function Navbar() {
                 e.stopPropagation()
                 setIsMobileMenuOpen(!isMobileMenuOpen)
               }}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-slate-700 hover:text-amber-600 hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors"
+              className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-black hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black transition-colors"
               whileTap={{ scale: 0.95 }}
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
@@ -343,13 +355,13 @@ export function Navbar() {
                       href={item.href}
                       className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${
                         isActivePath(item.href)
-                          ? 'text-amber-600 bg-amber-50 border-l-4 border-amber-500'
-                          : 'text-slate-700 hover:text-amber-600 hover:bg-amber-50/50'
+                                                ? 'text-black bg-gray-100 border-l-4 border-black'
+                      : 'text-gray-700 hover:text-black hover:bg-gray-50'
                       }`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-gradient-to-br from-amber-100 to-amber-200">
-                        {React.createElement(item.icon, { className: "h-4 w-4 text-amber-600" })}
+                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-gray-100">
+                        {React.createElement(item.icon, { className: "h-4 w-4 text-black" })}
                       </div>
                       <div className="flex flex-col">
                         <span>{item.name}</span>
@@ -368,8 +380,8 @@ export function Navbar() {
                   transition={{ delay: 0.4, duration: 0.3 }}
                   className="border-t border-gray-100 pt-4"
                 >
-                  <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg">
-                    <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full">
+                  <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-red-50 to-gray-50 rounded-lg">
+                    <div className="flex items-center justify-center w-10 h-10 bg-red-600 rounded-full">
                       <User className="h-5 w-5 text-white" />
                     </div>
                     <div className="flex-1">
@@ -455,7 +467,7 @@ export function Navbar() {
                     </Button>
                     <Button 
                       size="lg" 
-                      className="w-full justify-start bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                      className="w-full justify-start bg-red-600 hover:bg-red-700"
                       asChild
                     >
                       <Link href="/auth/signin?callbackUrl=/portal" onClick={() => setIsMobileMenuOpen(false)}>
@@ -469,7 +481,7 @@ export function Navbar() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="w-full justify-start border-amber-200 hover:border-amber-300 hover:bg-amber-50 text-amber-700"
+                                        className="w-full justify-start border-red-200 hover:border-red-300 hover:bg-red-50 text-red-700"
                   asChild
                 >
                   <Link href="tel:(306)522-4111" onClick={() => setIsMobileMenuOpen(false)}>
@@ -480,7 +492,7 @@ export function Navbar() {
 
                 <Button 
                   size="lg" 
-                  className="w-full justify-start bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-md"
+                  className="w-full justify-start bg-red-600 hover:bg-red-700 shadow-md"
                   asChild
                 >
                   <Link href="/booking" onClick={() => setIsMobileMenuOpen(false)}>
@@ -499,12 +511,12 @@ export function Navbar() {
               >
                 {session && (
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <Star className="h-3 w-3 text-amber-500" />
-                    <span className="text-xs text-amber-600 font-medium">{loyaltyPoints} loyalty points</span>
+                    <Star className="h-3 w-3 text-black" />
+                    <span className="text-xs text-black font-medium">{loyaltyPoints} loyalty points</span>
                   </div>
                 )}
                 <p className="text-xs text-slate-500">
-                  © 2024 Modern Men • Premium Hair Salon
+                  © 2024 Modern Men • Premium barber shop
                 </p>
               </motion.div>
             </div>

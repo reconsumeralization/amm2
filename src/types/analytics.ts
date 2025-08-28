@@ -15,14 +15,14 @@ export interface UserFeedback {
 export interface DocumentationMetrics {
   totalViews: number;
   uniqueUsers: number;
-  rchQueries: rchMetric[];
+  searchQueries: SearchMetric[];
   popularContent: ContentMetric[];
   userSatisfaction: SatisfactionMetric[];
   contentGaps: ContentGap[];
   timeRange: DateRange;
 }
 
-export interface rchMetric {
+export interface SearchMetric {
   query: string;
   count: number;
   resultsFound: number;
@@ -57,7 +57,7 @@ export interface ContentGap {
   id: string;
   description: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
-  source: 'rch_queries' | 'user_feedback' | 'behavioral_analytics';
+  source: 'search_queries' | 'user_feedback' | 'behavioral_analytics';
   relatedQueries: string[];
   suggestedContent: string[];
   userRoles: UserRole[];
@@ -72,7 +72,7 @@ export interface DateRange {
 export interface ContentAnalytics {
   pageViews: PageViewMetric[];
   userJourneys: UserJourneyMetric[];
-  rchBehavior: rchBehaviorMetric[];
+  searchBehavior: SearchBehaviorMetric[];
   contentEffectiveness: EffectivenessMetric[];
   userSatisfaction: SatisfactionMetric[];
 }
@@ -106,7 +106,7 @@ export interface UserAction {
   metadata?: Record<string, any>;
 }
 
-export interface rchBehaviorMetric {
+export interface SearchBehaviorMetric {
   query: string;
   timestamp: Date;
   userRole?: UserRole;

@@ -6,7 +6,7 @@ import {
   ContentGap,
   PageViewMetric,
   UserJourneyMetric,
-  rchBehaviorMetric,
+  SearchBehaviorMetric,
   UserAction,
   DateRange,
   UserRole
@@ -17,7 +17,7 @@ export class AnalyticsService {
   private feedbackStorage: UserFeedback[] = [];
   private pageViews: PageViewMetric[] = [];
   private userJourneys: Map<string, UserJourneyMetric> = new Map();
-  private rchBehavior: rchBehaviorMetric[] = [];
+  private searchBehavior: SearchBehaviorMetric[] = [];
 
   static getInstance(): AnalyticsService {
     if (!AnalyticsService.instance) {
@@ -93,15 +93,15 @@ export class AnalyticsService {
     }
   }
 
-  // rch Behavior Tracking
-  trackrch(
+  // Search Behavior Tracking
+  trackSearch(
     query: string,
     resultsCount: number,
     userRole?: UserRole
   ): string {
-    const rchId = `rch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const searchId = `search_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    const rchMetric: rchBehaviorMetric = {
+    const searchMetric: SearchBehaviorMetric = {
       query,
       timestamp: new Date(),
       userRole,
@@ -111,29 +111,29 @@ export class AnalyticsService {
       abandoned: false
     };
 
-    this.rchBehavior.push(rchMetric);
-    return rchId;
+    this.searchBehavior.push(searchMetric);
+    return searchId;
   }
 
-  trackrchClick(query: string, resultId: string): void {
-    const rchMetric = this.rchBehavior.find(
+  trackSearchClick(query: string, resultId: string): void {
+    const searchMetric = this.searchBehavior.find(
       s => s.query === query &&
         Math.abs(s.timestamp.getTime() - Date.now()) < 300000 // 5 minutes
     );
 
-    if (rchMetric) {
-      rchMetric.clickedResults.push(resultId);
+    if (searchMetric) {
+      searchMetric.clickedResults.push(resultId);
     }
   }
 
-  trackrchRefinement(originalQuery: string, refinedQuery: string): void {
-    const rchMetric = this.rchBehavior.find(
+  trackSearchRefinement(originalQuery: string, refinedQuery: string): void {
+    const searchMetric = this.searchBehavior.find(
       s => s.query === originalQuery &&
         Math.abs(s.timestamp.getTime() - Date.now()) < 300000
     );
 
-    if (rchMetric) {
-      rchMetric.refinements.push(refinedQuery);
+    if (searchMetric) {
+      searchMetric.refinements.push(refinedQuery);
     }
   }
 
@@ -177,17 +177,17 @@ export class AnalyticsService {
       pv => pv.timestamp >= dateRange.start && pv.timestamp <= dateRange.end
     );
 
-    const filteredrches = this.rchBehavior.filter(
+    const filteredSearches = this.searchBehavior.filter(
       s => s.timestamp >= dateRange.start && s.timestamp <= dateRange.end
     );
 
     return {
       totalViews: filteredPageViews.length,
       uniqueUsers: new Set(filteredPageViews.map(pv => pv.sessionId)).size,
-      rchQueries: this.generaterchMetrics(filteredrches),
+      searchQueries: this.generateSearchMetrics(filteredSearches),
       popularContent: this.generateContentMetrics(filteredPageViews, filteredFeedback),
       userSatisfaction: this.generateSatisfactionMetrics(filteredFeedback),
-      contentGaps: await this.identifyContentGaps(filteredrches, filteredFeedback),
+      contentGaps: await this.identifyContentGaps(filteredSearches, filteredFeedback),
       timeRange: dateRange
     };
   }
@@ -201,14 +201,14 @@ export class AnalyticsService {
       j => j.startTime >= dateRange.start && j.endTime <= dateRange.end
     );
 
-    const filteredrches = this.rchBehavior.filter(
+    const filteredSearches = this.searchBehavior.filter(
       s => s.timestamp >= dateRange.start && s.timestamp <= dateRange.end
     );
 
     return {
       pageViews: filteredPageViews,
       userJourneys: journeys,
-      rchBehavior: filteredrches,
+      searchBehavior: filteredSearches,
       contentEffectiveness: this.generateEffectivenessMetrics(filteredPageViews),
       userSatisfaction: this.generateSatisfactionMetrics(await this.getFeedback())
     };
@@ -216,7 +216,7 @@ export class AnalyticsService {
 
   async getOptimizationRecommendations(): Promise<OptimizationRecommendations> {
     const feedback = await this.getFeedback();
-    const contentGaps = await this.identifyContentGaps(this.rchBehavior, feedback);
+    const contentGaps = await this.identifyContentGaps(this.searchBehavior, feedback);
 
     return {
       contentGaps,
@@ -255,15 +255,15 @@ export class AnalyticsService {
     return this.generateSessionId();
   }
 
-  private generaterchMetrics(rches: rchBehaviorMetric[]) {
+  private generateSearchMetrics(searches: SearchBehaviorMetric[]) {
     const queryMap = new Map<string, { count: number; results: number; clicks: number }>();
 
-    rches.forEach(rch => {
-      const existing = queryMap.get(rch.query) || { count: 0, results: 0, clicks: 0 };
+    searches.forEach(search => {
+      const existing = queryMap.get(search.query) || { count: 0, results: 0, clicks: 0 };
       existing.count++;
-      existing.results += rch.resultsCount;
-      existing.clicks += rch.clickedResults.length;
-      queryMap.set(rch.query, existing);
+      existing.results += search.resultsCount;
+      existing.clicks += search.clickedResults.length;
+      queryMap.set(search.query, existing);
     });
 
     return Array.from(queryMap.entries()).map(([query, data]) => ({
@@ -348,13 +348,13 @@ export class AnalyticsService {
   }
 
   private async identifyContentGaps(
-    rches: rchBehaviorMetric[],
+    searches: SearchBehaviorMetric[],
     feedback: UserFeedback[]
   ): Promise<ContentGap[]> {
     const gaps: ContentGap[] = [];
 
-    // Identify gaps from rches with no results
-    const noResultQueries = rches.filter(s => s.resultsCount === 0);
+    // Identify gaps from searches with no results
+    const noResultQueries = searches.filter(s => s.resultsCount === 0);
     const queryFrequency = new Map<string, number>();
 
     noResultQueries.forEach(s => {
@@ -365,12 +365,12 @@ export class AnalyticsService {
       if (frequency >= 3) { // Threshold for considering a gap
         gaps.push({
           id: `gap_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          description: `Users are rching for "${query}" but no relevant content exists`,
+          description: `Users are searching for "${query}" but no relevant content exists`,
           priority: frequency >= 10 ? 'high' : frequency >= 5 ? 'medium' : 'low',
-          source: 'rch_queries',
+          source: 'search_queries',
           relatedQueries: [query],
           suggestedContent: this.generateContentSuggestions(query),
-          userRoles: this.extractUserRolesFromrches(rches, query),
+          userRoles: this.extractUserRolesFromSearches(searches, query),
           frequency
         });
       }
@@ -553,8 +553,8 @@ export class AnalyticsService {
     return suggestions.length > 0 ? suggestions : [`Documentation for: ${query}`];
   }
 
-  private extractUserRolesFromrches(rches: rchBehaviorMetric[], query: string): UserRole[] {
-    const roles = rches
+  private extractUserRolesFromSearches(searches: SearchBehaviorMetric[], query: string): UserRole[] {
+    const roles = searches
       .filter(s => s.query === query && s.userRole)
       .map(s => s.userRole!)
       .filter((role, index, arr) => arr.indexOf(role) === index);

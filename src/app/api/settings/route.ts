@@ -1,13 +1,13 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import config from '../../../payload.config';
+// Config will be imported dynamically to avoid issues
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const tenantId = searchParams.get('tenantId');
 
   try {
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
 
     let settings;
     if (tenantId) {
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { tenantId, ...settingsData } = body;
     
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
 
     // Check if settings already exist for this tenant
     const existingSettings = await payload.find({

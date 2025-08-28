@@ -285,7 +285,7 @@ export const validatePartial = async <T>(
   data: unknown
 ): Promise<Partial<T>> => {
   try {
-    return await schema.partial().parseAsync(data)
+    return await schema.partial().parseAsync(data) as Partial<T>
   } catch (error) {
     if (error instanceof z.ZodError) {
       const formattedErrors = error.errors.map(err => ({

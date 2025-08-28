@@ -2,8 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import type React from "react"
-
-import { Upload } from 'lucide-react'
+// Icons temporarily replaced with text placeholders due to import issues
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
@@ -1189,7 +1188,7 @@ export default function ModernMenImageEditor() {
                 onClick={() => fileInputRef.current?.click()}
                 className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
               >
-                <Upload className="w-4 h-4 mr-2" />
+                <span className="text-sm mr-2">📤</span>
                 Upload Image
               </Button>
               <Button
@@ -1208,7 +1207,7 @@ export default function ModernMenImageEditor() {
                     onClick={() => saveImage("png")}
                     className="border-white text-white hover:bg-white hover:text-black"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <span className="text-sm mr-2">📥</span>
                     PNG
                   </Button>
                   <Button
@@ -1217,7 +1216,7 @@ export default function ModernMenImageEditor() {
                     onClick={() => saveImage("jpeg")}
                     className="border-white text-white hover:bg-white hover:text-black"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <span className="text-sm mr-2">📥</span>
                     JPEG
                   </Button>
                   <Button
@@ -1226,7 +1225,7 @@ export default function ModernMenImageEditor() {
                     onClick={() => saveImage("webp")}
                     className="border-white text-white hover:bg-white hover:text-black"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <span className="text-sm mr-2">📥</span>
                     WebP
                   </Button>
                 </>
@@ -1302,7 +1301,7 @@ export default function ModernMenImageEditor() {
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg text-white">
-                  <MousePointer className="w-5 h-5 text-red-600" />
+                  <span className="text-red-600">👆</span>
                   Editing Tools
                 </CardTitle>
               </CardHeader>
@@ -1319,7 +1318,7 @@ export default function ModernMenImageEditor() {
                     }
                     disabled={!uploadedImage}
                   >
-                    <MousePointer className="w-4 h-4 mr-1" />
+                    <span className="text-sm mr-1">👆</span>
                     Select
                   </Button>
                   <Button
@@ -1345,7 +1344,7 @@ export default function ModernMenImageEditor() {
                     }
                     disabled={!uploadedImage}
                   >
-                    <Type className="w-4 h-4 mr-1" />
+                    <span className="text-sm mr-1">📝</span>
                     Text
                   </Button>
                   <Button
@@ -1412,7 +1411,7 @@ export default function ModernMenImageEditor() {
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg text-white">
-                  <Sliders className="w-5 h-5 text-red-600" />
+                  <span className="text-red-600">⚙️</span>
                   Quick Adjustments
                 </CardTitle>
               </CardHeader>
@@ -1557,7 +1556,7 @@ export default function ModernMenImageEditor() {
                   className="w-full border-gray-600 text-white hover:bg-red-600 hover:border-red-600"
                   disabled={!uploadedImage}
                 >
-                  <RotateCcw className="w-4 h-4 mr-2" />
+                  <span className="text-sm mr-2">↻</span>
                   Reset All
                 </Button>
               </CardContent>
@@ -1568,7 +1567,7 @@ export default function ModernMenImageEditor() {
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg text-white">
-                  <Type className="w-5 h-5 text-red-600" />
+                  <span className="text-red-600">📝</span>
                   Text & Stickers
                 </CardTitle>
               </CardHeader>
@@ -1597,7 +1596,7 @@ export default function ModernMenImageEditor() {
                       onClick={() => addTextOverlay()}
                       disabled={!uploadedImage}
                     >
-                      <Type className="w-4 h-4 mr-2" />
+                      <span className="text-sm mr-2">📝</span>
                       Add Custom Text
                     </Button>
                   </div>
@@ -1637,7 +1636,7 @@ export default function ModernMenImageEditor() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-white">
-                    <Eye className="w-5 h-5 text-red-600" />
+                    <span className="text-red-600">👁️</span>
                     Image Editor
                     {selectedTool !== "select" && (
                       <Badge variant="secondary" className="text-xs bg-red-600 text-white ml-2">
@@ -1665,7 +1664,7 @@ export default function ModernMenImageEditor() {
                     className="border-2 border-dashed border-red-600 rounded-lg p-12 text-center cursor-pointer hover:border-red-500 transition-colors bg-gray-800"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className="w-12 h-12 text-red-600 mx-auto mb-4" />
+                    <span className="text-4xl text-red-600 mx-auto mb-4">📤</span>
                     <h3 className="text-lg font-semibold text-white mb-2">Upload Your Image</h3>
                     <p className="text-gray-300 mb-4">Drag and drop an image here, or click to select a file</p>
                     <p className="text-sm text-gray-400">Supports PNG, JPEG, and WebP formats</p>
@@ -1744,7 +1743,7 @@ export default function ModernMenImageEditor() {
                         onClick={() => setSelectedTool("select")}
                         className={`${selectedTool === "select" ? "bg-red-600 text-white" : "bg-black/50 border-gray-600 text-white hover:bg-red-600"}`}
                       >
-                        <MousePointer className="w-4 h-4" />
+                        <span className="text-sm">👆</span>
                       </Button>
                       <Button
                         variant="outline"
@@ -1763,7 +1762,7 @@ export default function ModernMenImageEditor() {
                         onClick={() => setSelectedTool("text")}
                         className={`${selectedTool === "text" ? "bg-red-600 text-white" : "bg-black/50 border-gray-600 text-white hover:bg-red-600"}`}
                       >
-                        <Type className="w-4 h-4" />
+                        <span className="text-sm">📝</span>
                       </Button>
                     </div>
                   </div>

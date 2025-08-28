@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
-import { Clock, Star } from 'lucide-react';
+import { Clock, Star, Scissors } from '@/lib/icon-mapping';
+
+// DollarSign doesn't exist in our icon mapping, let's use a text replacement
+const DollarSign = ({ className }: { className?: string }) => <span className={className}>$</span>;
 
 export const metadata: Metadata = {
   title: 'Services - Modern Men Salon',
@@ -147,7 +150,7 @@ export default function ServicesPage() {
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <DollarSign className="text-blue-600 mt-1" size={20} />
+                <div className="text-blue-600 mt-1 text-xl">$</div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Competitive Pricing</h3>
                   <p className="text-gray-600">Quality service at fair prices. We also offer package deals and loyalty rewards.</p>

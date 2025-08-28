@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { getPayload } from 'payload';
-import config from '../../../payload.config';
+// Config will be imported dynamically to avoid issues
 import { handleAPIError, createErrorResponse, validateEnvironmentVariables } from '@/lib/api-error-handler';
 import { getSettingsWithFallback } from '@/lib/settings-initializer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2022-08-01',
+  apiVersion: '2024-06-20' as any,
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       return createErrorResponse('Invalid Stripe signature', 'VALIDATION_ERROR', 400);
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
 
     switch (event.type) {
       case 'payment_intent.succeeded':
@@ -313,7 +313,7 @@ async function updateLoyaltyPoints(appointment: any, tenantId?: string) {
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
     
     let settings;
     if (tenantId) {

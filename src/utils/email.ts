@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+export async function sendEmail({ to, subject, html, from }: { to: string; subject: string; html: string; from?: string }) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
@@ -12,7 +12,7 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
 
   try {
     await transporter.sendMail({
-      from: '"ModernMen Salon" <no-reply@modernmen.com>',
+      from: from || '"ModernMen Salon" <no-reply@modernmen.com>',
       to,
       subject,
       html,

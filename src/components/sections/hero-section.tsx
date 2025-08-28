@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 
 interface HeroSectionProps {
   onBookNow: () => void
@@ -24,47 +24,16 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   }, [texts.length])
 
   return (
-    <section className="relative min-h-screen bg-white overflow-hidden">
+    <section className="relative min-h-screen bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-800 to-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-black/10"></div>
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}></div>
       </div>
 
-      {/* Navigation */}
-      <nav className="nav-premium relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-display font-bold text-black">
-                MODERN MEN
-              </h1>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#services" className="font-body text-gray-700 hover:text-black transition-colors duration-200">
-                Services
-              </a>
-              <a href="#about" className="font-body text-gray-700 hover:text-black transition-colors duration-200">
-                About
-              </a>
-              <a href="#team" className="font-body text-gray-700 hover:text-black transition-colors duration-200">
-                Team
-              </a>
-              <a href="#contact" className="font-body text-gray-700 hover:text-black transition-colors duration-200">
-                Contact
-              </a>
-            </div>
-            <Button 
-              className="btn-premium bg-black text-white hover:bg-gray-800 border-0"
-              onClick={onBookNow}
-            >
-              Book Now
-            </Button>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Content */}
       <div className="relative z-10 flex items-center justify-center min-h-screen">
@@ -98,17 +67,17 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
 
             {/* CTA Buttons */}
             <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                className="btn-premium bg-black text-white hover:bg-gray-800 border-0 px-8 py-4 text-lg font-medium"
+              <Button
+                size="lg"
+                className="bg-red-600 hover:bg-red-700 text-white border-0 px-8 py-4 text-lg font-medium transition-all duration-200"
                 onClick={onBookNow}
               >
                 Book Appointment
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="btn-premium border-2 border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg font-medium"
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-4 text-lg font-medium transition-all duration-200"
               >
                 View Services
               </Button>

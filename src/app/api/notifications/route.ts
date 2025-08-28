@@ -14,10 +14,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { rchParams } = new URL(request.url)
-    const limit = parseInt(rchParams.get('limit') || '20')
-    const page = parseInt(rchParams.get('page') || '1')
-    const unreadOnly = rchParams.get('unreadOnly') === 'true'
+    const { searchParams } = new URL(request.url)
+    const limit = parseInt(searchParams.get('limit') || '20')
+    const page = parseInt(searchParams.get('page') || '1')
+    const unreadOnly = searchParams.get('unreadOnly') === 'true'
 
     const payload = await getPayloadClient()
 

@@ -6,6 +6,7 @@ import HeroSection from '@/components/sections/hero-section'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { TestimonialsCarousel } from '@/components/ui/testimonials-carousel'
 import { motion } from 'framer-motion'
 
 const services = [
@@ -66,12 +67,12 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-gray-50">
         <HeroSection onBookNow={handleBookNow} />
       
       {/* Services Section */}
-      <section id="services" className="section-premium bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+      <section id="services" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -96,8 +97,8 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="card-premium hover-lift h-full">
-                  <CardHeader className="text-center">
+                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 h-full">
+                  <CardHeader className="text-center bg-gradient-to-r from-red-50 to-gray-50 border-b border-gray-100">
                     <CardTitle className="text-2xl font-display font-medium text-black">
                       {service.title}
                     </CardTitle>
@@ -105,25 +106,25 @@ export default function Home() {
                       {service.description}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-premium-sm">
+                  <CardContent className="p-6">
                     <div className="text-center mb-6">
-                      <div className="text-3xl font-display font-bold text-black mb-2">
+                      <div className="text-3xl font-display font-bold text-red-600 mb-2">
                         {service.price}
                       </div>
-                      <Badge variant="outline" className="border-gray-300 text-gray-600">
+                      <Badge variant="outline" className="border-red-200 text-red-600 bg-red-50">
                         {service.duration}
                       </Badge>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 mb-6">
                       {service.features.map((feature) => (
                         <li key={feature} className="flex items-center text-gray-600 font-body">
-                          <span className="w-2 h-2 bg-black rounded-full mr-3"></span>
+                          <span className="w-2 h-2 bg-red-500 rounded-full mr-3"></span>
                           {feature}
                         </li>
                       ))}
                     </ul>
-                    <Button 
-                      className="btn-premium w-full bg-black text-white hover:bg-gray-800 border-0 mt-6"
+                    <Button
+                      className="w-full bg-red-600 hover:bg-red-700 text-white border-0 transition-all duration-200"
                       onClick={handleBookNow}
                     >
                       Book Now
@@ -137,7 +138,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="section-premium">
+      <section id="about" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -188,7 +189,7 @@ export default function Home() {
       </section>
 
       {/* Team Section */}
-      <section id="team" className="section-premium bg-gray-50">
+      <section id="team" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -214,12 +215,10 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="card-premium hover-lift text-center">
-                  <CardHeader>
-                    <div className="w-32 h-32 mx-auto mb-4 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                        <span className="text-gray-500 font-body text-sm">Photo</span>
-                      </div>
+                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 text-center h-full">
+                  <CardHeader className="bg-gradient-to-r from-red-50 to-gray-50 border-b border-gray-100">
+                    <div className="w-32 h-32 mx-auto mb-4 bg-red-100 rounded-full overflow-hidden flex items-center justify-center">
+                      <span className="text-red-600 font-bold text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</span>
                     </div>
                     <CardTitle className="text-xl font-display font-medium text-black">
                       {member.name}
@@ -228,10 +227,10 @@ export default function Home() {
                       {member.role} • {member.experience}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
                       {member.specialties.map((specialty) => (
-                        <Badge key={specialty} variant="outline" className="mr-2 mb-2 border-gray-300 text-gray-600">
+                        <Badge key={specialty} variant="outline" className="mr-2 mb-2 border-red-200 text-red-600 bg-red-50">
                           {specialty}
                         </Badge>
                       ))}
@@ -245,7 +244,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="section-premium">
+      <section id="contact" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -292,8 +291,8 @@ export default function Home() {
                   Email: info@modernmen.ca
                 </p>
               </div>
-              <Button 
-                className="btn-premium bg-black text-white hover:bg-gray-800 border-0 px-8 py-4 text-lg"
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white border-0 px-8 py-4 text-lg transition-all duration-200"
                 onClick={handleBookNow}
               >
                 Book Appointment
@@ -316,50 +315,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-black text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-display font-bold mb-4">MODERN MEN</h3>
-              <p className="font-body text-gray-300">
-                Regina's premier destination for men's grooming.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-display font-medium mb-4">Services</h4>
-              <ul className="space-y-2 font-body text-gray-300">
-                <li>Haircuts</li>
-                <li>Beard Trims</li>
-                <li>Straight Razor Shaves</li>
-                <li>Styling</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-display font-medium mb-4">Contact</h4>
-              <ul className="space-y-2 font-body text-gray-300">
-                <li>(306) 522-4111</li>
-                <li>info@modernmen.ca</li>
-                <li>#4 - 425 Victoria Ave East</li>
-                <li>Regina, SK</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-display font-medium mb-4">Hours</h4>
-              <ul className="space-y-2 font-body text-gray-300">
-                <li>Mon-Fri: 9am-8pm</li>
-                <li>Saturday: 9am-8pm</li>
-                <li>Sunday: Closed</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="font-body text-gray-400">
-              © 2024 Modern Men Hair Salon. All rights reserved.
-            </p>
-          </div>
-      </div>
-      </footer>
+      {/* Testimonials Section */}
+      <TestimonialsCarousel />
+
+
     </main>
   )
 }

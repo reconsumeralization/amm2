@@ -1,5 +1,5 @@
 import postgresAdapter from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import lexicalEditor from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import type { Config } from 'payload'
 import path from 'path'
@@ -30,7 +30,7 @@ export default buildConfig({
   admin: {
     meta: {
       title: 'Modern Men Salon - Management System',
-      description: 'Professional salon management system for Modern Men Hair Salon',
+      description: 'Professional salon management system for Modern Men barber shop',
     },
     // components: {
     //   beforeDashboard: ['@/payload/components/ModernMenBranding'],
@@ -73,7 +73,7 @@ export default buildConfig({
     {
       path: '/api/auth/check',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         // Check if user is authenticated via our existing system
         const session = req.headers?.get?.('x-user-id') || req.headers?.['x-user-id']
         if (!session) {
@@ -92,21 +92,21 @@ export default buildConfig({
     {
       path: '/api/rch',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         try {
           const payload = await getPayloadClient()
-          const { rchParams } = new URL(req.url)
+          const { searchParams } = new URL(req.url)
 
-          const query = rchParams.get('q') || ''
-          const collection = rchParams.get('collection') || 'all'
-          const limit = parseInt(rchParams.get('limit') || '20')
+          const query = searchParams.get('q') || ''
+          const collection = searchParams.get('collection') || 'all'
+          const limit = parseInt(searchParams.get('limit') || '20')
 
-          interface rchResult {
+          interface SearchResult {
             [key: string]: any
             type: 'service' | 'stylist' | 'customer'
           }
 
-          let results: rchResult[] = []
+          let results: SearchResult[] = []
 
           if (collection === 'all' || collection === 'services') {
             const services = await payload.find({
@@ -174,7 +174,7 @@ export default buildConfig({
     {
       path: '/api/analytics',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         try {
           const payload = await getPayloadClient()
 

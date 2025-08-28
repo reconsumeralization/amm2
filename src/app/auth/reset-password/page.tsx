@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { userchParams, useRouter } from 'next/navigation'
+// Using window.location.search instead of useSearchParams to avoid Next.js version issues
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,9 +21,14 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isValidToken, setIsValidToken] = useState<boolean | null>(null)
 
-  const rchParams = userchParams()
   const router = useRouter()
-  const token = rchParams.get('token')
+  const [token, setToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const tokenParam = urlParams.get('token')
+    setToken(tokenParam)
+  }, [])
 
   useEffect(() => {
     if (!token) {
@@ -180,7 +186,7 @@ export default function ResetPasswordPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    )   
   }
 
   return (

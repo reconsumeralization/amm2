@@ -110,7 +110,7 @@ export default function BarberProfile({ barberId, tenantId }: BarberProfileProps
                 width={300}
                 height={200}
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                srcSet={image.formats?.map((f: any) => `${f.url} ${f.width}w`).join(', ')}
+
                 className="rounded-lg"
                 loading="lazy"
               />
@@ -174,7 +174,7 @@ export default function BarberProfile({ barberId, tenantId }: BarberProfileProps
         <div>
           <h2 className="text-xl font-semibold">Book Now</h2>
           {cookies.chatbot_display && settings.chatbot.enabled && (
-            <BookingChatbot tenantId={tenantId} initialMessage={`Book an appointment with ${profile.name}`} />
+            <BookingChatbot tenantId={tenantId} />
           )}
         </div>
       </div>

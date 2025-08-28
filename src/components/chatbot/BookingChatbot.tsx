@@ -2,10 +2,12 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useCookies } from 'react-cookie';
-import { loadStripe } from '@stripe/stripe-js';
+// Stripe integration temporarily disabled due to module resolution issues
+// import { loadStripe } from '@stripe/stripe-js';
 import { parseISO } from 'date-fns';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// Temporary placeholder until Stripe module resolution is fixed
+const stripePromise = Promise.resolve(null);
 
 interface Message {
   text: string;

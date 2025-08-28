@@ -1,6 +1,7 @@
 'use client'
 
-import { userchParams } from 'next/navigation'
+// Using window.location.search instead of useSearchParams to avoid Next.js version issues
+import { Suspense, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
@@ -13,8 +14,15 @@ const errorMessages: Record<string, string> = {
 }
 
 const AuthErrorPage = () => {
-  const rchParams = userchParams()
-  const error = rchParams?.get('error') || 'Default'
+  const [error, setError] = useState('Default')
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    if (errorParam) {
+      setError(errorParam)
+    }
+  }, [])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

@@ -1,22 +1,22 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { userchParams } from 'next/navigation';
+// Using window.location.search instead of useSearchParams to avoid Next.js version issues
 import { DocumentationSearch } from '@/components/documentation/DocumentationSearch';
 import { Card, CardContent } from '@/components/ui/card';
-import { rch, Loader2 } from '@/lib/icon-mapping';
+// Using text alternatives for icons due to package compatibility issues
 
-function rchPageContent() {
-  const rchParams = userchParams();
-  const initialQuery = rchParams.get('q') || '';
+function searchPageContent() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const initialQuery = searchParams.get('q') || '';
 
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <rch className="h-8 w-8 text-blue-500" />
+          <span className="text-blue-500 text-2xl">🔍</span>
           <h1 className="text-3xl font-bold text-slate-100">
-            rch Documentation
+            Search Documentation
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
@@ -33,14 +33,14 @@ function rchPageContent() {
   );
 }
 
-function rchPageLoading() {
+function searchPageLoading() {
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <rch className="h-8 w-8 text-blue-500" />
+          <span className="text-blue-500 text-2xl">🔍</span>
           <h1 className="text-3xl font-bold text-slate-100">
-            rch Documentation
+            Search Documentation
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
@@ -50,18 +50,18 @@ function rchPageLoading() {
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardContent className="p-8 text-center">
-          <Loader2 className="h-8 w-8 text-slate-400 mx-auto mb-4 animate-spin" />
-          <p className="text-slate-400">Loading rch...</p>
+          <span className="text-slate-400 text-2xl mx-auto mb-4 animate-spin">⟳</span>
+          <p className="text-slate-400">Loading search...</p>
         </CardContent>
       </Card>
     </div>
   );
 }
 
-export default function rchPage() {
+export default function searchPage() {
   return (
-    <Suspense fallback={<rchPageLoading />}>
-      <rchPageContent />
+    <Suspense fallback={<searchPageLoading />}>
+      <searchPageContent />
     </Suspense>
   );
 }

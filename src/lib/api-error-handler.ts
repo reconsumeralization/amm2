@@ -293,3 +293,39 @@ export class RateLimiter {
 
 // Global rate limiter instance
 export const globalRateLimiter = new RateLimiter(100, 60000); // 100 requests per minute
+
+/**
+ * Higher-order function to wrap API handlers with error handling
+ */
+export function withErrorHandler(handler: (req: any) => Promise<any>) {
+  return async (req: any) => {
+    try {
+      return await handler(req);
+    } catch (error) {
+      return handleAPIError(error);
+    }
+  };
+}
+
+/**
+ * Create a standardized success response
+ */
+export function createSuccessResponse(data?: any, message?: string, status: number = 200) {
+  return NextResponse.json({
+    success: true,
+    message: message || 'Operation completed successfully',
+    data: data || null,
+    timestamp: new Date().toISOString()
+  }, { status });
+}
+
+/**
+ * Common API errors for easy reference
+ */
+export const APIErrors = {
+  UNAUTHORIZED: () => createErrorResponse('Unauthorized access', ERROR_CODES.UNAUTHORIZED, 401),
+  FORBIDDEN: () => createErrorResponse('Access forbidden', ERROR_CODES.FORBIDDEN, 403),
+  NOT_FOUND: (resource = 'Resource') => createErrorResponse(`${resource} not found`, ERROR_CODES.RESOURCE_NOT_FOUND, 404),
+  VALIDATION_ERROR: (details?: any) => createErrorResponse('Validation failed', ERROR_CODES.VALIDATION_ERROR, 400, details),
+  INTERNAL_ERROR: () => createErrorResponse('Internal server error', 'INTERNAL_SERVER_ERROR', 500)
+};

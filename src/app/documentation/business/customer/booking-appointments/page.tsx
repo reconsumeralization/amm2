@@ -24,7 +24,7 @@ const bookingGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Booking your appointment at Modern Men Hair Salon is quick and easy with our online booking system. This guide will walk you through the entire process, from selecting services to confirming your appointment, plus how to manage your bookings after they're made.`,
+    introduction: `Booking your appointment at Modern Men barber shop is quick and easy with our online booking system. This guide will walk you through the entire process, from selecting services to confirming your appointment, plus how to manage your bookings after they're made.`,
     prerequisites: [
       {
         id: 'customer-account',

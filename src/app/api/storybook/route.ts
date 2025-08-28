@@ -5,10 +5,10 @@ import { logger } from '@/lib/logger'
 
 async function getStorybookDocumentation(request: NextRequest) {
   try {
-    const { rchParams } = new URL(request.url)
-    const component = rchParams.get('component')
-    const category = rchParams.get('category')
-    const query = rchParams.get('query')
+    const { searchParams } = new URL(request.url)
+    const component = searchParams.get('component')
+    const category = searchParams.get('category')
+    const query = searchParams.get('query')
 
     logger.info('Fetching storybook documentation', {
       component,

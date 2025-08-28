@@ -1,7 +1,7 @@
 # Modern Men Salon Project - AI Assistant Rules
 
 ## Project Overview
-This is a Next.js 15.5.2 application for a men's hair salon management system with Payload CMS integration, located in Regina, SK.
+This is a Next.js 15.5.2 application for a men's barber shop management system with Payload CMS integration, located in Regina, SK.
 
 ## Package Management
 - **ALWAYS** use `pnpm` for package management operations

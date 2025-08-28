@@ -179,7 +179,7 @@ async function uploadToBunny(buffer: Buffer, fileName: string, tenantId: string)
         'AccessKey': process.env.BUNNY_API_KEY!,
         'Content-Type': 'application/octet-stream',
       },
-      body: buffer,
+      body: buffer as any,
     });
 
     if (!response.ok) {

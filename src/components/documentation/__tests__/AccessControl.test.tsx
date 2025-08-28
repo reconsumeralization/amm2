@@ -53,9 +53,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'developer',
-          permissions: ['documentation.read']
-        }
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'developer'
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -73,9 +76,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          permissions: []
-        }
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'guest'
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -94,9 +100,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'developer',
-          permissions: ['documentation.edit']
-        }
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'developer'
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -114,9 +123,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          permissions: ['documentation.read']
-        }
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'guest'
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -135,9 +147,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          permissions: []
-        }
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'guest'
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -159,10 +174,12 @@ describe('AccessControl', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          id: ''
+          id: 'test-guest-id',
+          email: 'guest@example.com',
+          name: 'Guest User',
+          role: 'guest'
         },
-        expires: ''
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -183,10 +200,12 @@ describe('PermissionGate', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'developer',
-          id: ''
+          id: 'test-user-id',
+          email: 'test@example.com',
+          name: 'Test User',
+          role: 'developer'
         },
-        expires: ''
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -204,10 +223,12 @@ describe('PermissionGate', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          id: ''
+          id: 'test-guest-id',
+          email: 'guest@example.com',
+          name: 'Guest User',
+          role: 'guest'
         },
-        expires: ''
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -227,8 +248,12 @@ describe('RoleGuard', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-developer-id',
+          email: 'developer@example.com',
+          name: 'Developer User',
           role: 'developer'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -246,8 +271,12 @@ describe('RoleGuard', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-salon-owner-id',
+          email: 'owner@example.com',
+          name: 'Salon Owner',
           role: 'salon_owner'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -265,10 +294,12 @@ describe('RoleGuard', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'guest',
-          id: ''
+          id: 'test-guest-id',
+          email: 'guest@example.com',
+          name: 'Guest User',
+          role: 'guest'
         },
-        expires: ''
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -288,8 +319,12 @@ describe('AdminOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-system-admin-id',
+          email: 'admin@example.com',
+          name: 'System Admin',
           role: 'system_admin'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -307,8 +342,12 @@ describe('AdminOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-developer-id',
+          email: 'developer@example.com',
+          name: 'Developer User',
           role: 'developer'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -328,10 +367,12 @@ describe('DeveloperOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          role: 'developer',
-          id: ''
+          id: 'test-user-id',
+          email: 'developer@example.com',
+          name: 'Developer User',
+          role: 'developer'
         },
-        expires: ''
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -349,8 +390,12 @@ describe('DeveloperOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-system-admin-id',
+          email: 'admin@example.com',
+          name: 'System Admin',
           role: 'system_admin'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })
@@ -368,8 +413,12 @@ describe('DeveloperOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
+          id: 'test-salon-owner-id',
+          email: 'owner@example.com',
+          name: 'Salon Owner',
           role: 'salon_owner'
-        }
+        },
+        expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
     })

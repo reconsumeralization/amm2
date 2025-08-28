@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { rchParams } = new URL(request.url)
-    const type = rchParams.get('type') || undefined
-    const category = rchParams.get('category') || undefined
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type') || undefined
+    const category = searchParams.get('category') || undefined
 
     const templates = await docService.getTemplates(type, category)
 

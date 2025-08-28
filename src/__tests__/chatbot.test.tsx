@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import BookingChatbot from '../components/chatbot/BookingChatbot';
 
@@ -20,75 +21,80 @@ global.fetch = jest.fn();
 
 const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 
+// Helper function to create proper Response mocks
+const createMockResponse = (data: any, options: { ok?: boolean; status?: number } = {}) => {
+  const response = {
+    ok: options.ok ?? true,
+    status: options.status ?? 200,
+    statusText: 'OK',
+    headers: new Headers(),
+    redirected: false,
+    type: 'basic' as ResponseType,
+    url: '',
+    clone: jest.fn(),
+    json: () => Promise.resolve(data),
+    text: () => Promise.resolve(JSON.stringify(data)),
+    blob: () => Promise.resolve(new Blob()),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+    formData: () => Promise.resolve(new FormData()),
+    body: null,
+    bodyUsed: false,
+  } as unknown as Response;
+  return Promise.resolve(response);
+};
+
 describe('BookingChatbot', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
     // Mock successful API responses
-    mockFetch.mockImplementation((url: string) => {
+    mockFetch.mockImplementation((input: string | Request | URL, init?: RequestInit) => {
+      const url = typeof input === 'string' ? input : input.toString();
       if (url.includes('/api/settings')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({
-            chatbot: {
-              enabled: true,
-              displayPaths: [{ path: '/portal' }],
-              roles: ['customer', 'staff'],
-              behavior: {
-                welcomeMessage: 'Hello! How can I help you today?',
-              },
+        return createMockResponse({
+          chatbot: {
+            enabled: true,
+            displayPaths: [{ path: '/portal' }],
+            roles: ['customer', 'staff'],
+            behavior: {
+              welcomeMessage: 'Hello! How can I help you today?',
             },
-            barbershop: {
-              services: [
-                { name: 'Haircut', price: 25, duration: 30 },
-                { name: 'Shave', price: 15, duration: 20 },
-              ],
-              loyalty: {
-                pointsPerBooking: 10,
-              },
+          },
+          barbershop: {
+            services: [
+              { name: 'Haircut', price: 25, duration: 30 },
+              { name: 'Shave', price: 15, duration: 20 },
+            ],
+            loyalty: {
+              pointsPerBooking: 10,
             },
-          }),
+          },
         });
       }
       
       if (url.includes('/api/users/')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ role: 'customer' }),
-        });
+        return createMockResponse({ role: 'customer' });
       }
       
       if (url.includes('/api/appointments')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ docs: [] }),
-        });
+        return createMockResponse({ docs: [] });
       }
       
       if (url.includes('/api/users?where[role][equals]=staff')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ docs: [] }),
-        });
+        return createMockResponse({ docs: [] });
       }
       
       if (url.includes('/api/ai/chatbot')) {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({
-            response: 'I can help you with that!',
-            action: null,
-            actionData: null,
-            step: 'menu',
-            bookingData: {},
-          }),
+        return createMockResponse({
+          response: 'I can help you with that!',
+          action: null,
+          actionData: null,
+          step: 'menu',
+          bookingData: {},
         });
       }
       
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({}),
-      });
+      return createMockResponse({});
     });
   });
 
@@ -176,16 +182,16 @@ describe('BookingChatbot', () => {
     // Mock a delayed response
     mockFetch.mockImplementationOnce(() => 
       new Promise(resolve => 
-        setTimeout(() => resolve({
-          ok: true,
-          json: () => Promise.resolve({
+        setTimeout(async () => {
+          const response = await createMockResponse({
             response: 'Delayed response',
             action: null,
             actionData: null,
             step: 'menu',
             bookingData: {},
-          }),
-        }), 100)
+          });
+          resolve(response);
+        }, 100)
       )
     );
 
@@ -214,10 +220,7 @@ describe('BookingChatbot', () => {
 
   it('handles API errors gracefully', async () => {
     mockFetch.mockImplementationOnce(() => 
-      Promise.resolve({
-        ok: false,
-        status: 500,
-      })
+      createMockResponse({}, { ok: false, status: 500 })
     );
 
     render(
@@ -244,13 +247,10 @@ describe('BookingChatbot', () => {
 
   it('does not render when chatbot is disabled', async () => {
     mockFetch.mockImplementationOnce(() => 
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({
-          chatbot: {
-            enabled: false,
-          },
-        }),
+      createMockResponse({
+        chatbot: {
+          enabled: false,
+        },
       })
     );
 
@@ -268,10 +268,7 @@ describe('BookingChatbot', () => {
 
   it('handles settings loading error', async () => {
     mockFetch.mockImplementationOnce(() => 
-      Promise.resolve({
-        ok: false,
-        status: 404,
-      })
+      createMockResponse({}, { ok: false, status: 404 })
     );
 
     render(

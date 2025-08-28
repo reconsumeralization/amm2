@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Next.js project for the "Modern Men Hair Salon". It's a full-stack application that uses Payload CMS for content management and Supabase for authentication. The frontend is built with React, TypeScript, and Tailwind CSS.
+This is a Next.js project for the "Modern Men barber shop". It's a full-stack application that uses Payload CMS for content management and Supabase for authentication. The frontend is built with React, TypeScript, and Tailwind CSS.
 
 The application has a strong focus on documentation and search functionality. It includes a comprehensive documentation system with role-based access control and a powerful search feature that is integrated with Payload CMS.
 

@@ -35,7 +35,7 @@ export function AuditLogs() {
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [stats, setStats] = useState<AuditStats | null>(null)
   const [loading, setLoading] = useState(true)
-  const [rchTerm, setrchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const [actionFilter, setActionFilter] = useState('all')
   const [resourceFilter, setResourceFilter] = useState('all')
   const [userFilter, setUserFilter] = useState('all')
@@ -44,13 +44,13 @@ export function AuditLogs() {
 
   useEffect(() => {
     fetchAuditLogs()
-  }, [rchTerm, actionFilter, resourceFilter, userFilter, currentPage])
+  }, [searchTerm, actionFilter, resourceFilter, userFilter, currentPage])
 
   const fetchAuditLogs = async () => {
     try {
       setLoading(true)
-      const params = new URLrchParams()
-      if (rchTerm) params.set('rch', rchTerm)
+      const params = new URLSearchParams()
+      if (searchTerm) params.set('search', searchTerm)
       if (actionFilter !== 'all') params.set('action', actionFilter)
       if (resourceFilter !== 'all') params.set('resource', resourceFilter)
       if (userFilter !== 'all') params.set('userId', userFilter)
@@ -230,9 +230,9 @@ export function AuditLogs() {
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <div className="flex gap-2">
                 <Input
-                  placeholder="rch logs..."
-                  value={rchTerm}
-                  onChange={(e) => setrchTerm(e.target.value)}
+                  placeholder="search logs..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full sm:w-64"
                 />
                 <Select value={actionFilter} onValueChange={setActionFilter}>
@@ -282,7 +282,7 @@ export function AuditLogs() {
               <Icons.info className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-800 mb-2">No audit logs found</h3>
               <p className="text-gray-600 mb-4">
-                {rchTerm || actionFilter !== 'all' || resourceFilter !== 'all'
+                {searchTerm || actionFilter !== 'all' || resourceFilter !== 'all'
                   ? 'Try adjusting your filters'
                   : 'No activities have been logged yet'
                 }

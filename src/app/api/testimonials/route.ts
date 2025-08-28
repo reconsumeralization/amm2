@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
     const testimonial = await payload.create({
       collection: 'testimonials',
       data: { content, barber, client, tenant: tenantId, status: 'pending' },
@@ -35,37 +35,6 @@ export async function POST(req: Request) {
     return NextResponse.json(testimonial);
   } catch (error) {
     console.error('Error creating testimonial:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  const tenantId = req.headers.get('X-Tenant-ID');
-  const { action } = await req.json();
-
-  if (!tenantId || !params.id || !['like', 'approve', 'reject'].includes(action)) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-  }
-
-  try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
-    if (action === 'like') {
-      const testimonial = await payload.update({
-        collection: 'testimonials',
-        id: params.id,
-        data: { likes: { increment: 1 } },
-      });
-      return NextResponse.json(testimonial);
-    } else {
-      const testimonial = await payload.update({
-        collection: 'testimonials',
-        id: params.id,
-        data: { status: action === 'approve' ? 'approved' : 'rejected' },
-      });
-      return NextResponse.json(testimonial);
-    }
-  } catch (error) {
-    console.error('Error updating testimonial:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

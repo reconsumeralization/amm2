@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import {
   Database,
-  rch,
+  Search,
   Book,
   ArrowLeft,
   ChevronRight,
@@ -41,7 +41,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [rchQuery, setrchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
 
   // Use documentation context
   const { user, isLoading } = useDocumentation()
@@ -74,7 +74,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
       // Capitalize and format segment names
       const label = pathSegments[i]
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
 
       breadcrumbs.push({
@@ -106,16 +106,16 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
   // Sidebar content component
   const SidebarContent = () => (
     <div className="h-full flex flex-col">
-      {/* rch */}
+      {/* Search */}
       <div className="relative mb-6">
-        <rch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
         <Input
-          placeholder="rch documentation..."
-          value={rchQuery}
-          onChange={(e) => setrchQuery(e.target.value)}
+          placeholder="search documentation..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && rchQuery.trim()) {
-              router.push(`/documentation/rch?q=${encodeURIComponent(rchQuery)}`)
+            if (e.key === 'Enter' && searchQuery.trim()) {
+              router.push(`/documentation/search?q=${encodeURIComponent(searchQuery)}`)
               setSidebarOpen(false)
             }
           }}
@@ -216,7 +216,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
                 <div className="flex items-center space-x-2">
                   <Database className="h-6 w-6 text-cyan-500" />
                   <span className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    Modern Men Hair Salon
+                    Modern Men barber shop
                   </span>
                 </div>
 

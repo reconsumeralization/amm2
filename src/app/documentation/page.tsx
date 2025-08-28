@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useSession } from "next-auth/react"
-import { Code, Users, Cog, HelpCircle, Book, Zap } from '@/lib/icon-mapping'
+import { Code, Users, Cog, HelpCircle, Book, Zap, Settings, BookOpen } from '@/lib/icon-mapping'
 import { getUserRoleFromSession, hasDocumentationPermission } from "@/lib/documentation-permissions"
 import { UserRole } from "@/types/documentation"
 
@@ -85,7 +85,7 @@ export default function DocumentationPage() {
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
-          Welcome to the Modern Men Hair Salon management system documentation. 
+          Welcome to the Modern Men barber shop management system documentation. 
           Find comprehensive guides, API references, and operational procedures tailored to your role.
         </p>
         

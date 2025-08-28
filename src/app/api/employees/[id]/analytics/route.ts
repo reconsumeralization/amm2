@@ -18,8 +18,8 @@ export async function GET(
     }
 
     const { id } = await params
-    const { rchParams } = new URL(request.url)
-    const period = rchParams.get('period') || '30' // days
+    const { searchParams } = new URL(request.url)
+    const period = searchParams.get('period') || '30' // days
     const stylistId = id
 
     const payload = await getPayloadClient()

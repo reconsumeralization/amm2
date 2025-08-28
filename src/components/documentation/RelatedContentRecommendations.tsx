@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Book, Code, FileText, ExternalLink, Star, TrendingUp, Users, Clock, ChevronRight, Sparkles } from '@/lib/icon-mapping'
+import { Book, Code, FileText, ExternalLink, Star, TrendingUp, Users, Clock, ChevronRight, Sparkles, BookOpen } from '@/lib/icon-mapping'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

@@ -1,20 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { 
-  Database, 
-  Search, 
-  Users, 
-  Calendar, 
-  FileText, 
-  BarChart3, 
-  Settings,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  RefreshCw
-} from '@/lib/icons'
+// Icons replaced with placeholder divs to avoid import issues
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,7 +19,7 @@ export function PayloadDashboard() {
   const {
     isLoading,
     error,
-    globalSearch,
+    globalrch,
     getSalonAnalytics,
     syncAppointments,
     getBusinessDocumentation,
@@ -76,7 +63,7 @@ export function PayloadDashboard() {
     if (!searchQuery.trim()) return
 
     try {
-      const results = await globalSearch(searchQuery)
+      const results = await globalrch(searchQuery)
       setSearchResults(results)
     } catch (error) {
       console.error('Error performing search:', error)
@@ -101,7 +88,7 @@ export function PayloadDashboard() {
     return (
       <div className="p-6">
         <Alert>
-          <AlertCircle className="h-4 w-4" />
+          <div className="h-4 w-4">⚠️</div>
           <AlertDescription>
             You need administrator or owner permissions to access the Payload dashboard.
           </AlertDescription>
@@ -116,7 +103,7 @@ export function PayloadDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-100 flex items-center gap-2">
-            <Database className="h-8 w-8 text-cyan-500" />
+            <div className="h-8 w-8 text-cyan-500">🗄️</div>
             Payload CMS Dashboard
           </h1>
           <p className="text-slate-400 mt-1">
@@ -130,20 +117,20 @@ export function PayloadDashboard() {
             disabled={syncStatus === 'syncing'}
             className="flex items-center gap-2"
           >
-          <RefreshCw className={`h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+          <div className={`h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>🔄</div>
             {syncStatus === 'syncing' ? 'Syncing...' : 'Sync Appointments'}
           </Button>
           
           {syncStatus === 'success' && (
             <Badge variant="default" className="bg-green-600">
-              <CheckCircle className="h-3 w-3 mr-1" />
+              <div className="h-3 w-3 mr-1">✓</div>
               Synced
             </Badge>
           )}
           
           {syncStatus === 'error' && (
             <Badge variant="destructive">
-              <AlertCircle className="h-3 w-3 mr-1" />
+              <div className="h-3 w-3 mr-1">⚠️</div>
               Error
             </Badge>
           )}
@@ -153,7 +140,7 @@ export function PayloadDashboard() {
       {/* Error Alert */}
       {error && (
         <Alert className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
-          <AlertCircle className="h-4 w-4 text-red-600" />
+          <div className="h-4 w-4 text-red-600">⚠️</div>
           <AlertDescription className="text-red-800 dark:text-red-200">
             {error}
             <Button 
@@ -184,12 +171,12 @@ export function PayloadDashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-4 w-4 text-muted-foreground">📅</div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{analytics.appointments}</div>
                   <p className="text-xs text-muted-foreground">
-                    <TrendingUp className="h-3 w-3 inline mr-1" />
+                    <div className="h-3 w-3 inline mr-1">📈</div>
                     +12% from last month
                   </p>
                 </CardContent>
@@ -198,12 +185,12 @@ export function PayloadDashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-4 w-4 text-muted-foreground">👥</div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{analytics.customers}</div>
                   <p className="text-xs text-muted-foreground">
-                    <TrendingUp className="h-3 w-3 inline mr-1" />
+                    <div className="h-3 w-3 inline mr-1">📈</div>
                     +8% from last month
                   </p>
                 </CardContent>
@@ -212,7 +199,7 @@ export function PayloadDashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Active Services</CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-4 w-4 text-muted-foreground">⚙️</div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{analytics.services}</div>
@@ -225,12 +212,12 @@ export function PayloadDashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-4 w-4 text-muted-foreground">📊</div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${analytics.revenue.toLocaleString()}</div>
                   <p className="text-xs text-muted-foreground">
-                    <TrendingUp className="h-3 w-3 inline mr-1" />
+                    <div className="h-3 w-3 inline mr-1">📈</div>
                     +15% from last month
                   </p>
                 </CardContent>
@@ -313,7 +300,7 @@ export function PayloadDashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
+                <div className="h-5 w-5">🔍</div>
                 Global Search
               </CardTitle>
               <CardDescription>
@@ -330,7 +317,7 @@ export function PayloadDashboard() {
                   className="flex-1"
                 />
                 <Button onClick={handleSearch} disabled={isLoading || !searchQuery.trim()}>
-                  <Search className="h-4 w-4" />
+                  <div className="h-4 w-4">🔍</div>
                 </Button>
               </div>
 
@@ -379,7 +366,7 @@ export function PayloadDashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+                <div className="h-5 w-5">📄</div>
                 Recent Documentation
               </CardTitle>
               <CardDescription>
@@ -405,7 +392,7 @@ export function PayloadDashboard() {
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-muted-foreground">
-                            <Clock className="h-3 w-3 inline mr-1" />
+                            <div className="h-3 w-3 inline mr-1">🕒</div>
                             {new Date(doc.lastUpdated).toLocaleDateString()}
                           </p>
                         </div>
@@ -424,7 +411,7 @@ export function PayloadDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
+                  <div className="h-5 w-5">⚙️</div>
                   Payload CMS Settings
                 </CardTitle>
                 <CardDescription>

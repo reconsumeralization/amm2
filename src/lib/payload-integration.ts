@@ -1,6 +1,6 @@
 /**
  * Payload CMS Integration Service
- * Provides mless integration between Payload CMS and the Modern Men Hair Salon application
+ * Provides mless integration between Payload CMS and the Modern Men barber shop application
  */
 
 import { getPayload } from 'payload'

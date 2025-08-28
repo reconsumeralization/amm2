@@ -9,10 +9,7 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   transpilePackages: [],
   serverExternalPackages: [
-    'payload',
-    '@payloadcms/db-sqlite',
-    '@libsql/client',
-    'sqlite3'
+    'payload'
   ],
 
   images: {
@@ -28,9 +25,6 @@ const nextConfig = {
       config.externals = config.externals || [];
       config.externals.push({
         'payload': 'commonjs payload',
-        '@payloadcms/db-sqlite': 'commonjs @payloadcms/db-sqlite',
-        '@libsql/client': 'commonjs @libsql/client',
-        'sqlite3': 'commonjs sqlite3',
       });
 
       // Ignore problematic file types
@@ -52,7 +46,6 @@ const nextConfig = {
       fs: isServer ? false : false,
       path: isServer ? false : false,
       os: isServer ? false : false,
-      sqlite3: isServer ? false : false,
     };
 
     // Add plugins to handle problematic imports

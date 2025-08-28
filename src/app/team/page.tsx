@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar, Star, Award, Instagram, Facebook } from '@/lib/icon-mapping';
 
 export const metadata: Metadata = {
   title: 'Our Team - Modern Men Salon',

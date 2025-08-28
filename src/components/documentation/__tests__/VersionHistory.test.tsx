@@ -5,6 +5,13 @@ import { VersionHistory } from '../VersionHistory';
 
 describe('VersionHistory', () => {
   it('renders without crashing', () => {
-    render(<VersionHistory contentId="test-content" versions={[]} />);
+    const mockOnVersionSelect = jest.fn();
+    render(
+      <VersionHistory 
+        contentId="test-content" 
+        versions={[]} 
+        onVersionSelect={mockOnVersionSelect}
+      />
+    );
   });
 });

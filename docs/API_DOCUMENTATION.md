@@ -1,8 +1,8 @@
-# Modern Men Hair Salon - API Documentation
+# Modern Men barber shop - API Documentation
 
 ## Overview
 
-The Modern Men Hair Salon API provides comprehensive endpoints for managing salon operations including appointments, customers, services, and analytics.
+The Modern Men barber shop API provides comprehensive endpoints for managing salon operations including appointments, customers, services, and analytics.
 
 ## Base URL
 

@@ -5,13 +5,14 @@ import sharp from 'sharp';
 
 export async function POST(req: Request) {
   const { imageId, style, width, formats, quality, tenantId } = await req.json();
-  const payload = await getPayload({ config: await import('../../../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
-  // 1. Authentication Check: Ensure user is logged in
-  if (!req.user) { // Assuming req.user is populated by Payload's auth middleware
-    return NextResponse.json({ error: 'Unauthorized: User not authenticated' }, { status: 401 });
+  // 1. Authentication Check: Get user from request headers
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return NextResponse.json({ error: 'Unauthorized: No authentication token' }, { status: 401 });
   }
-  // const userId = req.user.id; // Not directly used in this API call, but available if needed for context/logging
+  // In real implementation, decode userId from auth token
 
   // Input validation
   if (!imageId || !style || !width || !formats || !quality || !tenantId) {

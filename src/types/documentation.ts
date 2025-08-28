@@ -1,4 +1,4 @@
-// Core documentation types for the Modern Men Hair Salon documentation system
+// Core documentation types for the Modern Men barber shop documentation system
 
 export type UserRole =
   | "developer"
@@ -51,6 +51,7 @@ export interface TroubleshootingItem {
   problem: string;
   solution: string;
   tags: string[];
+  category?: string;
 }
 
 export interface RelatedContent {
@@ -59,6 +60,7 @@ export interface RelatedContent {
   type: "guide" | "api" | "component" | "reference";
   url: string;
   relevanceScore: number;
+  description?: string;
 }
 
 export interface InteractiveExample {
@@ -303,13 +305,13 @@ export interface UserFeedback {
 export interface DocumentationMetrics {
   totalViews: number;
   uniqueUsers: number;
-  rchQueries: rchMetric[];
+  searchQueries: SearchMetric[];
   popularContent: ContentMetric[];
   userSatisfaction: SatisfactionMetric[];
   contentGaps: ContentGap[];
 }
 
-export interface rchMetric {
+export interface SearchMetric {
   query: string;
   count: number;
   resultsFound: number;

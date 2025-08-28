@@ -311,7 +311,7 @@ describe('Payload CMS Expansion Tests', () => {
     });
 
     test('should auto-assign tenant if not provided', async () => {
-      const mockData = {};
+      const mockData: { tenant?: string } = {};
       const mockReq = { user: { tenant: 'tenant-123' } };
 
       if (!mockData.tenant && mockReq.user.tenant) {
@@ -355,7 +355,7 @@ describe('Payload CMS Expansion Tests', () => {
     });
 
     test('should validate shipping address', async () => {
-      const mockAddress = {
+      const mockAddress: Record<string, string> = {
         firstName: 'John',
         lastName: 'Doe',
         address1: '123 Main St',

@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
-    const { rchParams } = new URL(request.url)
-    const startDate = rchParams.get('startDate')
-    const endDate = rchParams.get('endDate')
+    const { searchParams } = new URL(request.url)
+    const startDate = searchParams.get('startDate')
+    const endDate = searchParams.get('endDate')
 
     let dateRange: { start: Date; end: Date } | undefined
     if (startDate && endDate) {

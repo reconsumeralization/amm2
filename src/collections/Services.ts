@@ -4,7 +4,7 @@ export const Services: CollectionConfig = {
   slug: 'services',
   admin: {
     useAsTitle: 'name',
-    description: 'Hair salon services and pricing',
+    description: 'barber shop services and pricing',
     group: 'Business',
     defaultColumns: ['name', 'category', 'price', 'duration', 'isActive'],
   },

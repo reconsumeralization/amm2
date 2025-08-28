@@ -1,11 +1,7 @@
-import { Metadata } from 'next';
-import { Star, Users } from 'lucide-react';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Gallery - Modern Men Salon',
-  description: 'Browse our gallery of hairstyles, transformations, and grooming work. See the quality and creativity of our expert stylists.',
-  keywords: ['hairstyles', 'gallery', 'before after', 'transformations', 'haircuts', 'grooming']
-};
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 const galleryItems = [
   {
@@ -111,69 +107,127 @@ const categories = [
 ];
 
 export default function GalleryPage() {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [likedItems, setLikedItems] = useState<Set<number>>(new Set());
+
+  const filteredItems = selectedCategory === 'all' 
+    ? galleryItems 
+    : galleryItems.filter(item => item.category.toLowerCase() === selectedCategory);
+
+  const toggleLike = (itemId: number) => {
+    setLikedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
+
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 },
+    viewport: { once: true }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <motion.div 
+          className="text-center mb-12"
+          {...fadeIn}
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
             Our Gallery
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Browse our collection of hairstyles, transformations, and grooming work. 
             Each image showcases the skill and creativity of our expert stylists.
           </p>
-        </div>
+        </motion.div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        <motion.div 
+          className="flex flex-wrap justify-center gap-4 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           {categories.map((category) => (
             <button
               key={category.id}
-              className="px-6 py-3 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow font-semibold text-gray-700 hover:text-blue-600 border-2 border-transparent hover:border-blue-200"
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 font-semibold border-2 ${
+                selectedCategory === category.id
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                  : 'bg-white text-gray-700 hover:text-blue-600 border-transparent hover:border-blue-200'
+              }`}
             >
               {category.name} ({category.count})
             </button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {galleryItems.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          {filteredItems.map((item, index) => (
+            <motion.div 
+              key={item.id} 
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
               {/* Image Placeholder */}
-              <div className="h-64 bg-gradient-to-br from-blue-400 to-indigo-500 relative">
+              <div className="h-64 bg-gradient-to-br from-blue-400 to-indigo-500 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
                   <div className="text-center text-gray-500">
-                    <Camera size={48} className="mx-auto mb-2" />
-                    <p className="text-sm">{item.title}</p>
+                    <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center text-2xl">📷</div>
+                    <p className="text-sm font-medium">{item.title}</p>
                     <p className="text-xs opacity-75">Photo Coming Soon</p>
                   </div>
                 </div>
                 
                 {/* Before/After Badge */}
                 {item.beforeAfter && (
-                  <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs px-2 py-1 rounded-full flex items-center">
+                  <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs px-3 py-1 rounded-full flex items-center font-semibold">
                     <span>Before/After</span>
                   </div>
                 )}
                 
                 {/* Category Badge */}
-                <div className="absolute top-4 right-4 bg-white text-gray-700 text-xs px-2 py-1 rounded-full">
+                <div className="absolute top-4 right-4 bg-white text-gray-700 text-xs px-3 py-1 rounded-full font-medium shadow-sm">
                   {item.category}
                 </div>
                 
                 {/* Like Button */}
-                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow">
-                    <Heart size={16} className="text-red-500" />
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button 
+                    onClick={() => toggleLike(item.id)}
+                    className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110"
+                  >
+                    <div className={`w-4 h-4 flex items-center justify-center ${
+                      likedItems.has(item.id) ? 'text-red-500' : 'text-gray-400'
+                    }`}>
+                      ❤️
+                    </div>
                   </button>
                 </div>
                 
                 {/* Share Button */}
-                <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow">
-                    <Share2 size={16} className="text-blue-600" />
+                <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110">
+                    <div className="w-4 h-4 text-blue-600 flex items-center justify-center">🔗</div>
                   </button>
                 </div>
               </div>
@@ -183,16 +237,16 @@ export default function GalleryPage() {
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
                   <div className="flex items-center text-sm text-gray-500">
-                    <Heart size={14} className="mr-1" />
-                    {item.likes}
+                    <div className="w-3.5 h-3.5 mr-1 text-red-500">❤️</div>
+                    {item.likes + (likedItems.has(item.id) ? 1 : 0)}
                   </div>
                 </div>
                 
-                <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+                <p className="text-gray-600 text-sm mb-3 leading-relaxed">{item.description}</p>
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500">
-                    <Users size={14} className="mr-1" />
+                    <div className="w-3.5 h-3.5 mr-1">👥</div>
                     {item.stylist}
                   </div>
                   
@@ -201,12 +255,15 @@ export default function GalleryPage() {
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Featured Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
+        <motion.div 
+          className="bg-white rounded-lg shadow-lg p-8 mb-12"
+          {...fadeIn}
+        >
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Transformations</h2>
             <p className="text-xl text-gray-600">
@@ -215,11 +272,18 @@ export default function GalleryPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {galleryItems.filter(item => item.beforeAfter).slice(0, 3).map((item) => (
-              <div key={`featured-${item.id}`} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            {galleryItems.filter(item => item.beforeAfter).slice(0, 3).map((item, index) => (
+              <motion.div 
+                key={`featured-${item.id}`} 
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
                 <div className="h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
                   <div className="text-center text-gray-500">
-                    <Camera size={32} className="mx-auto mb-2" />
+                    <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center text-xl">📷</div>
                     <p className="text-sm">Before/After</p>
                   </div>
                 </div>
@@ -231,13 +295,16 @@ export default function GalleryPage() {
                     View Details
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
+          {...fadeIn}
+        >
           <div className="bg-white rounded-lg shadow-lg p-6 text-center">
             <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
             <div className="text-gray-600">Happy Clients</div>
@@ -254,10 +321,13 @@ export default function GalleryPage() {
             <div className="text-3xl font-bold text-blue-600 mb-2">3</div>
             <div className="text-gray-600">Years Experience</div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Call to Action */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-8 text-center text-white">
+        <motion.div 
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-8 text-center text-white"
+          {...fadeIn}
+        >
           <h2 className="text-3xl font-bold mb-4">Ready for Your Transformation?</h2>
           <p className="text-xl mb-6 opacity-90">
             Book an appointment with our expert stylists and get the look you've always wanted.
@@ -270,10 +340,13 @@ export default function GalleryPage() {
               Style Consultation
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Social Media Section */}
-        <div className="mt-12 text-center">
+        <motion.div 
+          className="mt-12 text-center"
+          {...fadeIn}
+        >
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Follow Us for More Inspiration</h3>
           <p className="text-gray-600 mb-6">
             Check out our social media for daily style inspiration and behind-the-scenes content.
@@ -289,7 +362,7 @@ export default function GalleryPage() {
               YouTube
             </a>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

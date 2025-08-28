@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const payload = await getPayload({ config: (await import('@/payload.config')).default });
     const content = await payload.find({
       collection: 'content',
       where: { 
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const payload = await getPayload({ config: (await import('@/payload.config')).default });
     const result = await payload.create({
       collection: 'content',
       data: {
@@ -84,7 +84,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Content ID required' }, { status: 400 });
     }
 
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const payload = await getPayload({ config: (await import('@/payload.config')).default });
     
     const content = await payload.update({
       collection: 'content',
@@ -112,7 +112,7 @@ export async function DELETE(req: Request) {
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const payload = await getPayload({ config: (await import('@/payload.config')).default });
     
     await payload.delete({
       collection: 'content',

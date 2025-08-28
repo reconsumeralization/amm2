@@ -5,7 +5,7 @@ import { getPayload } from 'payload';
 export async function GET(req: Request) {
   try {
     const payload = await getPayload({
-      config: await import('../../../../payload.config').then(m => m.default),
+      config: (await import('@/payload.config')).default,
     });
 
     const { searchParams } = new URL(req.url);
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const payload = await getPayload({ config: await import('../../../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
   const data = await req.json();
 
   try {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const payload = await getPayload({
-      config: await import('../../../../payload.config').then(m => m.default),
+      config: (await import('@/payload.config')).default,
     });
 
     const data = await req.json();
@@ -104,7 +104,7 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const payload = await getPayload({
-      config: await import('../../../../payload.config').then(m => m.default),
+      config: (await import('@/payload.config')).default,
     });
 
     const { searchParams } = new URL(req.url);

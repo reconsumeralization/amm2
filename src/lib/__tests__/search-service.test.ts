@@ -1,12 +1,21 @@
-import { DocumentationrchService } from '@/lib/rch-service';
-import { rchConfig } from '@/types/rch';
+import { DocumentationSearchService } from '@/lib/search-service';
+import { SearchConfig } from '@/lib/search-service';
 import { commonTypos } from '@/lib/common-typos';
 import { expect } from '@jest/globals';
 
 describe('DocumentationSearchService integration tests', () => {
   // Minimal config to satisfy the constructor – the actual values are not used in the
   // integration poinwe are testing (ranking, synonyms, etc.).
-  const dummyConfig: SearchConfig = {
+  const dummyConfig = {
+    provider: 'test',
+    indexName: 'test-index',
+    maxResults: 20,
+    enableFacets: false,
+    enableSuggestions: true,
+    enableAnalytics: false,
+    enableHighlighting: true,
+    enableTypoTolerance: true,
+    enableSynonyms: false,
     rankingConfig: {
       titleBoost: 1,
       descriptionBoost: 1,
@@ -16,9 +25,11 @@ describe('DocumentationSearchService integration tests', () => {
       recencyBoost: 0,
       popularityBoost: 0,
       ratingBoost: 0,
-      completionRateBoost: 0
+      completionRateBoost: 0,
+      accuracyBoost: 1,
+      viewsBoost: 0
     }
-  } as any;
+  } as SearchConfig;
 
   const service = new DocumentationSearchService(dummyConfig);
 
@@ -34,7 +45,7 @@ describe('DocumentationSearchService integration tests', () => {
     ];
     expectedTexts.forEach(expectedText => {
     // Use a simple loop to verify each expected correction exists.
-    const found = corrections.some(c => c.text === expectedText && c.type === 'correction' && c.score === 0.8);
+    const found = corrections.some((c: any) => c.text === expectedText && c.type === 'correction' && c.score === 0.8);
     expect(found).toBe(true);
     });
   });

@@ -183,10 +183,7 @@ async function performHealthCheck(request: NextRequest) {
 
   const statusCode = overallStatus === 'ok' ? 200 : overallStatus === 'degraded' ? 207 : 503
 
-  return createSuccessResponse(healthCheck, 'Health check completed', {
-    status: overallStatus,
-    responseTime: totalLatency
-  })
+  return createSuccessResponse(healthCheck, 'Health check completed', statusCode)
 }
 
 // Export with error handling wrapper

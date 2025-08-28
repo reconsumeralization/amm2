@@ -26,14 +26,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { rchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url)
     const filters: EmployeeFilters = {
-      isActive: rchParams.get('isActive') === 'true' ? true : rchParams.get('isActive') === 'false' ? false : undefined,
-      specialization: rchParams.get('specialization') || undefined,
-      rating: rchParams.get('rating') ? parseFloat(rchParams.get('rating')!) : undefined,
-      rch: rchParams.get('rch') || undefined,
-      limit: parseInt(rchParams.get('limit') || '20'),
-      page: parseInt(rchParams.get('page') || '1')
+      isActive: searchParams.get('isActive') === 'true' ? true : searchParams.get('isActive') === 'false' ? false : undefined,
+      specialization: searchParams.get('specialization') || undefined,
+      rating: searchParams.get('rating') ? parseFloat(searchParams.get('rating')!) : undefined,
+      rch: searchParams.get('rch') || undefined,
+      limit: parseInt(searchParams.get('limit') || '20'),
+      page: parseInt(searchParams.get('page') || '1')
     }
 
     const payload = await getPayloadClient()

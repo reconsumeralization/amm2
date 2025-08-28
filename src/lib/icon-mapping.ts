@@ -25,7 +25,7 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     alertTriangle: Icons.AlertTriangle,
     checkCircle: Icons.CheckCircle,
     code: Icons.Code,
-    rch: Icons.rch,
+    search: Icons.Search,
     book: Icons.BookOpen,
     arrowLeft: Icons.ArrowLeft,
     chevronRight: Icons.ChevronRight,
@@ -95,7 +95,6 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     lineChart: Icons.LineChart,
     trendingDown: Icons.TrendingDown,
     activity: Icons.Activity,
-    search: Icons.Search,
     logOut: Icons.LogOut,
     camera: Icons.Camera,
     barChart: Icons.BarChart3, // Alias for BarChart
@@ -125,7 +124,6 @@ export const iconMapping: Record<string, ComponentType<any>> = {
   alertTriangle: Icons.AlertTriangle,
   checkCircle: Icons.CheckCircle,
   code: Icons.Code,
-  rch: Icons.rch,
   book: Icons.BookOpen,
   arrowLeft: Icons.ArrowLeft,
   chevronRight: Icons.ChevronRight,
@@ -195,7 +193,6 @@ export const iconMapping: Record<string, ComponentType<any>> = {
   lineChart: Icons.LineChart,
   trendingDown: Icons.TrendingDown,
   activity: Icons.Activity,
-  search: Icons.Search,
   logOut: Icons.LogOut,
   camera: Icons.Camera,
   chart: Icons.Chart,
@@ -272,3 +269,14 @@ export const MessageCircle = Icons.MessageCircle
 export const Send = Icons.ArrowRight
 export const Loader2 = Icons.Loader2
 export const Filter = Icons.Filter
+
+// Additional exports for documentation components
+export const PlayIcon = Icons.Play
+export const HistoryIcon = Icons.Clock
+export const CopyIcon = Icons.Copy
+export const CodeIcon = Icons.Code
+export const DownloadIcon = Icons.Download
+export const BookOpen = Icons.BookOpen
+export const Globe = Icons.Database
+export const AlertCircle = Icons.AlertTriangle
+export const RotateCcw = Icons.RefreshCw

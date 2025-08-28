@@ -67,12 +67,12 @@ export default function AnalyticsDemoPage() {
       await analytics.submitFeedback(feedback);
     }
 
-    // Generate some sample rches
-    analytics.trackrch('setup guide', 5);
-    analytics.trackrch('api authentication', 3);
-    analytics.trackrch('missing feature documentation', 0); // No results
-    analytics.trackrch('troubleshooting errors', 2);
-    analytics.trackrch('deployment guide', 0); // No results
+    // Generate some sample searches
+    analytics.trackSearch('setup guide', 5);
+    analytics.trackSearch('api authentication', 3);
+    analytics.trackSearch('missing feature documentation', 0); // No results
+    analytics.trackSearch('troubleshooting errors', 2);
+    analytics.trackSearch('deployment guide', 0); // No results
 
     alert('Sample data generated! Check the analytics dashboard.');
   };

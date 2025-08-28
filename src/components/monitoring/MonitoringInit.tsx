@@ -5,11 +5,8 @@ import { useMonitoring } from '@/hooks/useMonitoring'
 import { logger } from '@/lib/logger'
 
 export function MonitoringInit() {
-  const { addBreadcrumb } = useMonitoring()
-
   useEffect(() => {
-    // Add initial breadcrumb for app start
-    addBreadcrumb('Application initialized', 'app', 'info')
+    // Application initialized
 
     // Track page load performance
     const trackPageLoad = () => {
@@ -17,11 +14,7 @@ export function MonitoringInit() {
         const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
 
         if (navigation) {
-          addBreadcrumb(
-            `Page loaded in ${Math.round(navigation.loadEventEnd - navigation.fetchStart)}ms`,
-            'performance',
-            'info'
-          )
+          console.log(`Page loaded in ${Math.round(navigation.loadEventEnd - navigation.fetchStart)}ms`);
         }
       }
     }
@@ -29,13 +22,13 @@ export function MonitoringInit() {
     // Track when page becomes visible (user actually sees the page)
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        addBreadcrumb('Page became visible to user', 'user', 'info')
+        console.log('Page became visible to user')
       }
     }
 
     // Track page unload
     const handleBeforeUnload = () => {
-      addBreadcrumb('Page unloading', 'navigation', 'info')
+      console.log('Page unloading')
     }
 
     // Add event listeners
@@ -52,7 +45,7 @@ export function MonitoringInit() {
       window.removeEventListener('beforeunload', handleBeforeUnload)
       clearTimeout(timeoutId)
     }
-  }, [addBreadcrumb])
+  }, [])
 
   // This component doesn't render anything visible
   return null

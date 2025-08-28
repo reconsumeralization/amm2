@@ -11,14 +11,8 @@ export default function Toolbar() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-          src: reader.result as string,
-          alt: file.name,
-        });
-      };
-      reader.readAsDataURL(file);
+      // TODO: Implement image upload functionality
+      console.log('Image upload not yet implemented');
     }
   };
 

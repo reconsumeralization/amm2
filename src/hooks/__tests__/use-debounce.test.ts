@@ -1,5 +1,4 @@
-// // import { renderHook } from "@testing-library/react"; // TODO: Fix testing library; // Fixed: Use alternative
-// // import { act } from "@testing-library/react"; // TODO: Fix testing library; // Fixed: Use alternative
+import { renderHook, act } from '@testing-library/react-hooks';
 import { useDebounce } from '@/hooks/use-debounce'
 
 describe('useDebounce', () => {
@@ -19,7 +18,7 @@ describe('useDebounce', () => {
 
   it('updates value after debounce delay', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'initial', delay: 500 } }
     )
 
@@ -40,7 +39,7 @@ describe('useDebounce', () => {
 
   it('cancels previous timeout when value changes', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'first', delay: 500 } }
     )
 
@@ -74,7 +73,7 @@ describe('useDebounce', () => {
 
   it('works with different delay values', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'initial', delay: 1000 } }
     )
 
@@ -97,7 +96,7 @@ describe('useDebounce', () => {
 
   it('handles zero delay', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) => useDebounce(value, delay),
       { initialProps: { value: 'initial', delay: 0 } }
     )
 

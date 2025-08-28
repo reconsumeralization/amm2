@@ -1,7 +1,7 @@
 {
   "name": "modernmen-hair-salon",
   "version": "1.0.0",
-  "description": "Modern Men Hair Salon - Regina's Premier Men's Grooming",
+  "description": "Modern Men barber shop - Regina's Premier Men's Grooming",
   "private": true,
   "type": "module",
   "scripts": {

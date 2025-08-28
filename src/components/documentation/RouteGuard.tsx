@@ -31,7 +31,7 @@ export function RouteGuard({
   useEffect(() => {
     if (status === 'loading') return
 
-    const accessCheck = checkRouteAccess(session, pathname)
+    const accessCheck = checkRouteAccess(session, pathname || '')
     
     if (!accessCheck.allowed && redirectOnDenied && accessCheck.redirectTo) {
       router.push(accessCheck.redirectTo)
@@ -43,7 +43,7 @@ export function RouteGuard({
     return <RouteGuardLoading />
   }
 
-  const accessCheck = checkRouteAccess(session, pathname)
+  const accessCheck = checkRouteAccess(session, pathname || '')
   
   if (!accessCheck.allowed) {
     if (redirectOnDenied) {
@@ -155,7 +155,7 @@ export function usePageGuard(requiredRole?: string | string[], requiredPermissio
     }
     
     // Check general path access
-    const accessCheck = checkRouteAccess(session, pathname)
+    const accessCheck = checkRouteAccess(session, pathname || '')
     if (!accessCheck.allowed && accessCheck.redirectTo) {
       router.push(accessCheck.redirectTo)
     }
@@ -190,7 +190,7 @@ export function ConditionalRoute({
     return <>{loadingFallback || <RouteGuardLoading />}</>
   }
 
-  const accessCheck = checkRouteAccess(session, pathname)
+  const accessCheck = checkRouteAccess(session, pathname || '' )
   
   if (!accessCheck.allowed) {
     return <>{fallback || <RouteAccessDenied message={accessCheck.message} redirectTo={accessCheck.redirectTo} />}</>

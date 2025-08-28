@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Heading, Text, Button, Select, Table } from '@payloadcms/ui'
+import { Select, Table } from '@payloadcms/ui'
+
+// Use standard HTML elements for components
+const Heading = ({ children, ...props }: any) => <h2 {...props}>{children}</h2>
+const Text = ({ children, ...props }: any) => <p {...props}>{children}</p>
+const Card = ({ children, className, ...props }: any) => (
+  <div className={`border rounded-lg shadow-sm ${className || ''}`} {...props}>
+    {children}
+  </div>
+)
+const Button = ({ children, variant, className, ...props }: any) => (
+  <button className={`px-4 py-2 rounded ${variant === 'primary' ? 'bg-blue-600 text-white' : 'bg-gray-200'} ${className || ''}`} {...props}>
+    {children}
+  </button>
+)
 
 interface ReportData {
   totalRevenue: number
@@ -38,6 +52,15 @@ interface BusinessReportsProps {
 export const BusinessReports: React.FC<BusinessReportsProps> = ({ dateRange }) => {
   const [reportData, setReportData] = useState<ReportData | null>(null)
   const [reportType, setReportType] = useState('overview')
+  
+  const reportOptions = [
+    { label: 'Overview', value: 'overview' },
+    { label: 'Revenue', value: 'revenue' },
+    { label: 'Services', value: 'services' },
+    { label: 'Staff Performance', value: 'staff' },
+    { label: 'Customer Analytics', value: 'customers' },
+    { label: 'Inventory', value: 'inventory' }
+  ]
   const [isLoading, setIsLoading] = useState(false)
 
   // Mock data - in real implementation, this would fetch from API
@@ -112,16 +135,9 @@ export const BusinessReports: React.FC<BusinessReportsProps> = ({ dateRange }) =
         <Heading className="text-2xl font-bold text-gray-900">Business Reports</Heading>
         <div className="flex space-x-3">
           <Select
-            value={reportType}
-            onChange={(value) => setReportType(value)}
-            options={[
-              { label: 'Overview', value: 'overview' },
-              { label: 'Revenue', value: 'revenue' },
-              { label: 'Services', value: 'services' },
-              { label: 'Staff Performance', value: 'staff' },
-              { label: 'Customer Analytics', value: 'customers' },
-              { label: 'Inventory', value: 'inventory' }
-            ]}
+            value={reportOptions.find(opt => opt.value === reportType) || reportOptions[0]}
+            onChange={(option: any) => setReportType(typeof option === 'string' ? option : option?.value || 'overview')}
+            options={reportOptions}
           />
           <Button variant="primary">Export PDF</Button>
           <Button variant="secondary">Export Excel</Button>

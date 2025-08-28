@@ -4,7 +4,7 @@ import { sendEmail } from '../../../utils/email';
 
 export async function POST(req: Request) {
   const { firstName, lastName, email, phone, subject, message } = await req.json();
-  const payload = await getPayload({ config: await import('../../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
   // Input validation
   if (!firstName || !lastName || !email || !subject || !message) {
@@ -25,7 +25,6 @@ export async function POST(req: Request) {
     const adminEmail = 'admin@modernmen.com'; // This should ideally come from settings or a dedicated admin user
 
     await sendEmail({
-      from: config.email.fromAddress || 'no-reply@modernmen.com',
       to: adminEmail,
       subject: `Contact Form Submission: ${subject}`,
       html: `
@@ -36,8 +35,9 @@ export async function POST(req: Request) {
         <p><strong>Message:</strong></p>
         <p>${message}</p>
         <hr>
-        <p>${config.email.signature || ''}</p>
+        <p>${config.email?.signature || ''}</p>
       `,
+      from: config.email?.fromAddress || 'no-reply@modernmen.com',
     });
 
     return NextResponse.json({ success: true, message: 'Message sent successfully' });

@@ -1,7 +1,7 @@
 'use client';
-import { lexicalHtmlConverter } from '@payloadcms/richtext-lexical/html';
 
 export default function ContentRenderer({ content }: { content: any }) {
-  const html = lexicalHtmlConverter(content);
+  // For now, just return the content as is or convert to string
+  const html = typeof content === 'string' ? content : JSON.stringify(content);
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }

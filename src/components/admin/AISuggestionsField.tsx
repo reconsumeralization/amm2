@@ -2,7 +2,7 @@
 import { useField } from 'payload/components/forms';
 
 export default function AISuggestionsField({ path }: { path: string }) {
-  const { value, setValue } = useField<string>({ path });
+  const { value, setValue } = useField({ path });
 
   const fetchSuggestions = async () => {
     const res = await fetch('/api/integrations/openai/schedule-suggestions', {

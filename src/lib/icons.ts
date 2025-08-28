@@ -46,7 +46,7 @@ export const Book = Placeholder
 export const BookOpen = Placeholder
 export const Calendar = Placeholder
 export const Clock = Placeholder
-export const rch = Placeholder
+// rch removed - use Search instead
 export const Filter = Placeholder
 export const Loader2 = Placeholder
 export const RefreshCw = Placeholder

@@ -1,14 +1,50 @@
 import { Metadata } from 'next'
 import { GuideRenderer } from '@/components/documentation/GuideRenderer'
 import { InteractiveExample } from '@/components/documentation/InteractiveExample'
-import { UserRole } from '@/types/documentation'
+import { UserRole, GuideContent } from '@/types/documentation'
 
 export const metadata: Metadata = {
-  title: 'Customer Service Protocols - Employee Operations',
-  description: 'Professional customer service standards and communication guidelines for salon employees',
+  title: 'Customer Service Protocols - Employee Operations | Salon Management',
+  description: 'Professional customer service standards and communication guidelines for salon employees. Learn the CARE approach, complaint resolution, upselling techniques, and customer retention strategies.',
+  keywords: [
+    'customer service',
+    'salon employee training',
+    'communication protocols',
+    'complaint resolution',
+    'upselling techniques',
+    'customer retention',
+    'professional standards',
+    'salon operations'
+  ],
+  authors: [{ name: 'Customer Experience Team' }],
+  openGraph: {
+    title: 'Customer Service Protocols - Employee Operations',
+    description: 'Professional customer service standards and communication guidelines for salon employees',
+    type: 'article',
+    locale: 'en_US',
+    siteName: 'Salon Management Documentation',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Customer Service Protocols - Employee Operations',
+    description: 'Professional customer service standards and communication guidelines for salon employees',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  category: 'Business Operations',
+  classification: 'Employee Training',
 }
 
-const customerServiceGuide = {
+const customerServiceGuide: GuideContent = {
   metadata: {
     id: 'customer-service-protocols',
     title: 'Customer Service Protocols',
@@ -97,6 +133,7 @@ const customerServiceGuide = {
 - End calls professionally and ensure customer satisfaction`,
         codeSnippets: [
           {
+            id: 'customer-interaction-tracking',
             language: 'typescript',
             code: `// Customer interaction tracking
 interface CustomerInteraction {
@@ -216,7 +253,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
 - **During Consultation**: Suggest complementary services that enhance results
 - **During Service**: Recommend treatments that address observed needs
 - **At Checkout**: Offer products that maintain the look at home
-- **For Next Visit**: Suggest sonal treatments or maintenance services
+- **For Next Visit**: Suggest seasonal treatments or maintenance services
 
 **Effective Upselling Techniques**
 
@@ -224,7 +261,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
 - Present services as packages that provide better value
 - Explain how services work together for optimal results
 - Offer package pricing that saves money compared to individual services
-- Create sonal or special occasion packages
+- Create seasonal or special occasion packages
 
 **The Maintenance Approach**
 - Educate customers about proper hair care and maintenance
@@ -357,7 +394,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
 - Send appointment confirmations and reminders
 - Offer rescheduling options for conflicts
 - Suggest optimal timing for their next service
-- Provide sonal service recommendations
+- Provide seasonal service recommendations
 
 **Loyalty Program Engagement**
 - Explain loyalty program benefits and point accumulation
@@ -397,19 +434,22 @@ const logInteraction = (interaction: CustomerInteraction) => {
         id: 'angry-customer',
         problem: 'Customer is very angry and raising their voice',
         solution: 'Stay calm, lower your voice, and listen without defending. Acknowledge their feelings, apologize sincerely, and focus on finding a solution. If they remain abusive, politely ask them to lower their voice or escalate to management.',
-        category: 'difficult-customers'
+        category: 'difficult-customers',
+        tags: ['customer-service', 'conflict-resolution', 'communication']
       },
       {
         id: 'unrealistic-expectations',
         problem: 'Customer has unrealistic expectations for their service',
         solution: 'Use visual aids (photos, before/after examples) to show realistic outcomes. Explain limitations honestly and offer alternative solutions. Document the conversation to protect both customer and salon.',
-        category: 'expectations'
+        category: 'expectations',
+        tags: ['customer-service', 'expectations', 'communication']
       },
       {
         id: 'payment-disputes',
         problem: 'Customer disputes charges or refuses to pay',
         solution: 'Review the services provided and pricing clearly. Show them the service menu and explain any additional charges. If dispute continues, involve management immediately and document the situation.',
-        category: 'billing'
+        category: 'billing',
+        tags: ['customer-service', 'billing', 'payments']
       }
     ],
     relatedContent: [
@@ -418,21 +458,24 @@ const logInteraction = (interaction: CustomerInteraction) => {
         title: 'Daily Workflow Guide',
         description: 'Complete daily operations procedures',
         url: '/documentation/business/employee/daily-workflow',
-        type: 'guide'
+        type: 'guide',
+        relevanceScore: 85
       },
       {
         id: 'system-usage',
         title: 'System Usage Guide',
         description: 'Using salon management software effectively',
         url: '/documentation/business/employee/system-usage',
-        type: 'guide'
+        type: 'guide',
+        relevanceScore: 75
       },
       {
         id: 'professional-development',
         title: 'Professional Development',
         description: 'Career growth and skill development resources',
         url: '/documentation/business/employee/professional-development',
-        type: 'guide'
+        type: 'guide',
+        relevanceScore: 70
       }
     ],
     interactiveExamples: [],

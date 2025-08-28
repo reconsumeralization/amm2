@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Business Documentation - Modern Men Hair Salon',
+  title: 'Business Documentation - Modern Men barber shop',
   description: 'Business documentation for salon owners, employees, and customers',
 }
 

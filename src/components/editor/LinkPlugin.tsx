@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 
 export const TOGGLE_LINK_EDITOR_COMMAND = createCommand();
 
-function LinkEditor({ editor }) {
+function LinkEditor({ editor }: { editor: any }) {
   const [linkUrl, setLinkUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef(null);
@@ -32,7 +32,7 @@ function LinkEditor({ editor }) {
   }, []);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
+    return editor.registerUpdateListener(({ editorState }: { editorState: any }) => {
       editorState.read(() => {
         updateLinkEditor();
       });
@@ -56,8 +56,8 @@ function LinkEditor({ editor }) {
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (editorRef.current && !editorRef.current.contains(event.target)) {
+    const handleClickOutside = (event: any) => {
+      if (editorRef.current && 'contains' in editorRef.current && typeof (editorRef.current as any).contains === 'function' && !(editorRef.current as any).contains(event.target)) {
         editor.dispatchCommand(TOGGLE_LINK_EDITOR_COMMAND, false);
       }
     };
@@ -88,7 +88,7 @@ export function LinkPlugin() {
   const [editor] = useLexicalComposerContext();
   const [show, setShow] = useState(false);
 
-  const toggleLinkEditor = useCallback((payload) => {
+  const toggleLinkEditor = useCallback((payload: any) => {
     setShow(payload);
   }, []);
 

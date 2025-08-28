@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { SimpleBarChart, SimplePieChart } from '@/components/ui/chart';
-import { 
-  TrendingUp, 
-  Users, 
-  Eye, 
-  rch, 
-  MessageSquare, 
-  AlertTriangle, 
-  Star, 
-  ThumbsUp 
+import {
+  TrendingUp,
+  Users,
+  Eye,
+  Search,
+  MessageSquare,
+  AlertTriangle,
+  Star,
+  ThumbsUp
 } from '@/lib/icon-mapping';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,9 +92,9 @@ export function AnalyticsDashboard({
         changeType: 'positive' as const
       },
       {
-        title: 'rch Queries',
-        value: formatNumber(metrics.rchQueries.length),
-        icon: rch,
+        title: 'Search Queries',
+        value: formatNumber(metrics.searchQueries.length),
+        icon: Search,
         change: '+15%',
         changeType: 'positive' as const
       },
@@ -126,10 +126,10 @@ export function AnalyticsDashboard({
       }));
   };
 
-  const getrchQueriesData = () => {
+  const getSearchQueriesData = () => {
     if (!metrics) return [];
-    
-    return metrics.rchQueries
+
+    return metrics.searchQueries
       .sort((a, b) => b.count - a.count)
       .slice(0, 10)
       .map(query => ({
@@ -214,7 +214,7 @@ export function AnalyticsDashboard({
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="rch">rch</TabsTrigger>
+          <TabsTrigger value="search">Search</TabsTrigger>
           <TabsTrigger value="feedback">Feedback</TabsTrigger>
         </TabsList>
 
@@ -288,17 +288,17 @@ export function AnalyticsDashboard({
           </Card>
         </TabsContent>
 
-        <TabsContent value="rch" className="space-y-6">
+        <TabsContent value="search" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <rch className="h-5 w-5" />
-                rch Analytics
+                <Search className="h-5 w-5" />
+                Search Analytics
               </CardTitle>
             </CardHeader>
             <CardContent>
               <SimpleBarChart 
-                data={getrchQueriesData()} 
+                data={getSearchQueriesData()} 
                 dataKey="count"
                 width={600}
                 height={400}

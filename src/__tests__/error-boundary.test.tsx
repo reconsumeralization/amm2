@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react';
+import { fireEvent } from '@testing-library/dom';
 import { ErrorBoundary, APIErrorBoundary } from '@/components/ui/error-boundary'
 import { GlobalErrorBoundary } from '@/components/ui/global-error-boundary'
 

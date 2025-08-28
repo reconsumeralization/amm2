@@ -21,6 +21,7 @@ declare module 'next-auth' {
   export interface Session {
     user: User;
     accessToken?: string;
+    expires: string;
   }
   
   export interface JWT {

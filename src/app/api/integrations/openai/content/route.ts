@@ -1,14 +1,15 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
-  const payload = await getPayload({ config: await import('../../../../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
-  // 1. Authentication Check: Ensure user is logged in
-  if (!req.user) { // Assuming req.user is populated by Payload's auth middleware
-    return NextResponse.json({ error: 'Unauthorized: User not authenticated' }, { status: 401 });
+  // 1. Authentication Check: Get user from request headers
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return NextResponse.json({ error: 'Unauthorized: No authentication token' }, { status: 401 });
   }
   // const userId = req.user.id; // Not directly used in this AI call, but available if needed for context/logging
 
@@ -21,16 +22,16 @@ export async function POST(req: Request) {
     const settings = await payload.find({ collection: 'settings', limit: 1 });
     const config = settings.docs[0] || {};
 
-    const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     let generatedText = '';
     try {
-      const response = await openai.createCompletion({
-        model: config.ai.model,
-        prompt,
-        max_tokens: config.ai.maxTokens,
-        temperature: config.ai.temperature,
+      const response = await openai.chat.completions.create({
+        model: config.ai?.model || 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: config.ai?.maxTokens || 1000,
+        temperature: config.ai?.temperature || 0.7,
       });
-      generatedText = response.data.choices[0].text || '';
+      generatedText = response.choices[0].message.content || '';
     } catch (openaiError: any) {
       console.error('OpenAI API call failed:', openaiError.response?.data || openaiError.message);
       return NextResponse.json({ error: 'Failed to generate content from AI' }, { status: 500 });

@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-// import {  X  } from 'lucide-react'; // TODO: Fix icon imports
+import { X } from '@/lib/icon-mapping';
 import React, { createContext, useContext, useEffect, useState } from "react"
 
 interface ToastContextType {

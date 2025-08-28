@@ -1,29 +1,33 @@
 import { getPayload } from 'payload';
 import BookingChatbot from '@/components/chatbot/BookingChatbot';
-import { redirect } from 'next/navigation';
 
-export default async function PortalPage({ params }: { params: { userId?: string } }) {
-  const payload = await getPayload({ config: (await import('../../payload.config')).default });
+export default async function PortalPage({ params }: { params: Promise<{ userId?: string }> }) {
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
-  // Attempt to get user from session (assuming Payload populates req.user in server components)
-  // This is a common pattern, but might need specific Next.js/Payload setup
-  const currentUser = await payload.auth({ req: {} as any }).authenticate(); // Placeholder for getting current user
+  const { userId: paramUserId } = await params;
 
-  let userId: string;
-  if (currentUser?.user?.id) {
-    userId = currentUser.user.id;
-  } else if (params.userId) {
-    userId = params.userId;
-  } else {
-    // If no user in session and no userId in params, redirect to login or show error
-    redirect('/auth/signin'); // Redirect to signin page
-    // Or return <div>Please sign in to view the portal.</div>;
+  // For now, use paramUserId or redirect if not provided
+  if (!paramUserId) {
+    // Instead of redirect, we'll handle this in the component
+    return (
+      <div>
+        <p>Please sign in to access the portal.</p>
+        <a href="/auth/signin">Sign In</a>
+      </div>
+    );
   }
+
+  const userId = paramUserId;
 
   const user = await payload.findByID({ collection: 'users', id: userId });
   if (!user) {
     // Handle case where user ID is invalid or user not found
-    redirect('/auth/signin'); // Or show a user-friendly error
+    return (
+      <div>
+        <p>User not found. Please sign in again.</p>
+        <a href="/auth/signin">Sign In</a>
+      </div>
+    );
   }
 
   const tenantId = user.tenant?.id; // Get tenantId from the user object

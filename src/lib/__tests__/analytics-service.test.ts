@@ -125,22 +125,22 @@ describe('AnalyticsService', () => {
 
   describe('rch Tracking', () => {
     it('tracks rch queries', () => {
-      const rchId = analyticsService.trackrch('test query', 5, 'developer');
+      const rchId = analyticsService.trackSearch('test query', 5, 'developer');
       
       expect(rchId).toMatch(/^rch_\d+_/);
     });
 
     it('tracks rch clicks', () => {
-      analyticsService.trackrch('test query', 5, 'developer');
-      analyticsService.trackrchClick('test query', 'result-1');
+      analyticsService.trackSearch('test query', 5, 'developer');
+      analyticsService.trackSearchClick('test query', 'result-1');
       
       // Should not throw - internal tracking
       expect(true).toBe(true);
     });
 
     it('tracks rch refinements', () => {
-      analyticsService.trackrch('original query', 0, 'developer');
-      analyticsService.trackrchRefinement('original query', 'refined query');
+      analyticsService.trackSearch('original query', 0, 'developer');
+      analyticsService.trackSearchRefinement('original query', 'refined query');
       
       // Should not throw - internal tracking
       expect(true).toBe(true);
@@ -197,14 +197,14 @@ describe('AnalyticsService', () => {
   describe('Content Gap Identification', () => {
     it('identifies gaps from rch queries with no results', async () => {
       // Simulate rches with no results
-      analyticsService.trackrch('missing feature docs', 0, 'developer');
-      analyticsService.trackrch('missing feature docs', 0, 'developer');
-      analyticsService.trackrch('missing feature docs', 0, 'developer');
+      analyticsService.trackSearch('missing feature docs', 0, 'developer');
+      analyticsService.trackSearch('missing feature docs', 0, 'developer');
+      analyticsService.trackSearch('missing feature docs', 0, 'developer');
 
       const recommendations = await analyticsService.getOptimizationRecommendations();
       
       const rchGaps = recommendations.contentGaps.filter(
-        gap => gap.source === 'rch_queries'
+        gap => gap.source === 'search_queries'
       );
       
       expect(rchGaps.length).toBeGreaterThan(0);

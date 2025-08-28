@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Activity, Database, Users, Cog, CheckCircle, XCircle, AlertTriangle, RefreshCw, Zap, Calendar, User, Edit, BarChart } from '@/lib/icon-mapping'
+import { Activity, Database, Users, Cog, CheckCircle, XCircle, AlertTriangle, RefreshCw, Zap, Calendar, User, Edit, BarChart, Settings, AlertCircle } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
 
 interface HealthStatus {

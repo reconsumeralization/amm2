@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Development Setup - Modern Men Hair Salon',
+  title: 'Development Setup - Modern Men barber shop',
   description: 'Complete guide to setting up the development environment',
 }
 
@@ -13,7 +13,7 @@ export default function DeveloperSetupPage() {
           Development Setup
         </h1>
         <p className="text-slate-300">
-          Complete guide to setting up your development environment for the Modern Men Hair Salon management system.
+          Complete guide to setting up your development environment for the Modern Men barber shop management system.
         </p>
       </div>
 

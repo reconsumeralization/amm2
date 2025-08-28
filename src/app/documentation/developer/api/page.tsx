@@ -16,7 +16,7 @@ import {
   FileText,      // Changed from fileText
   BarChart3,     // Changed from barChart3          // Changed from cog
   Book,          // Changed from book
-  rch,        // Changed from rch
+  Search,     // Changed from rch
   ArrowLeft,     // Changed from arrowLeft
   ChevronRight,  // Changed from chevronRight
   Menu,          // Changed from menu
@@ -32,7 +32,7 @@ import { APIDocumentationSection } from '@/types/api-documentation'
 /**
  * API Documentation Page
  * 
- * Displays API documentation for the Modern Men Hair Salon management system.
+ * Displays API documentation for the Modern Men barber shop management system.
  * Falls back to sample data if extraction fails.
  */
 export default async function APIDocumentationPage() {
@@ -168,7 +168,7 @@ export default async function APIDocumentationPage() {
           <div>
             <h1 className="text-3xl font-bold">API Documentation</h1>
             <p className="text-muted-foreground mt-2">
-              Interactive API reference for the Modern Men Hair Salon management system
+              Interactive API reference for the Modern Men barber shop management system
             </p>
           </div>
           <div className="flex items-center gap-2">

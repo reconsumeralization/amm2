@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   useMonitoring,
   useComponentPerformance,
-  upiPerformance,
   useInteractionTracking,
   useErrorBoundary
 } from '@/hooks/useMonitoring'
@@ -22,26 +21,24 @@ export function MonitoringExample() {
     captureError,
     trackMetric,
     trackAction,
-    addBreadcrumb,
     trackApiCall,
     trackPageView,
-    trackFormSubmission,
-    trackrch
+    trackFormSubmission
   } = useMonitoring()
 
   // Get specialized hooks
-  const { trackApiRequest } = upiPerformance()
+  const componentPerformance = useComponentPerformance('MonitoringExample')
   const { trackClick, trackFormInteraction } = useInteractionTracking()
   const { reportError } = useErrorBoundary()
 
   // Component state
-  const [rchQuery, setrchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [formData, setFormData] = useState({ name: '', email: '' })
 
   // Example: Track button clicks
   const handleButtonClick = () => {
     trackClick('example-button', { timestamp: Date.now() })
-    addBreadcrumb('Example button clicked', 'interaction', 'info')
+    logger.info('Example button clicked', { component: 'MonitoringExample' })
   }
 
   // Example: Track form interactions
@@ -68,7 +65,7 @@ export function MonitoringExample() {
       await new Promise(resolve => setTimeout(resolve, 1000))
 
       const duration = performance.now() - startTime
-      trackFormSubmission('example-form', true, duration)
+      trackFormSubmission('example-form', true)
       trackMetric({
         name: 'form_submission_time',
         value: duration,
@@ -76,51 +73,43 @@ export function MonitoringExample() {
         tags: { form: 'example-form' }
       })
 
-      addBreadcrumb('Form submitted successfully', 'form', 'info')
-    } catch (error) {
+      // Form submitted successfully
+    } catch (err) {
       const duration = performance.now() - startTime
-      trackFormSubmission('example-form', false, duration)
+      trackFormSubmission('example-form', false)
 
-      const errorEvent = {
-        message: 'Form submission failed',
-        context: { formData },
-        level: 'error' as const
-      }
-      captureError(errorEvent)
-      reportError(error instanceof Error ? error : new Error('Form submission failed'))
+      const submissionError = new Error('Form submission failed')
+      captureError(submissionError)
+      reportError(err instanceof Error ? err : new Error('Form submission failed'))
     }
   }
 
-  // Example: Track rch
-  const handlerch = () => {
-    if (rchQuery.trim()) {
-      trackrch(rchQuery, Math.floor(Math.random() * 100)) // Mock results count
-      addBreadcrumb(`rch performed: "${rchQuery}"`, 'rch', 'info')
+  // Example: Track search
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      trackAction('search', 'monitoring-example')
+      logger.info(`Search performed: "${searchQuery}"`, { 
+        component: 'MonitoringExample',
+        query: searchQuery 
+      })
     }
   }
 
   // Example: Track API call
   const handleApiCall = async () => {
+    const startTime = Date.now()
     try {
-      const result = await trackApiRequest(
-        '/api/example',
-        'GET',
-        async () => {
-          // Simulate API call
-          await new Promise(resolve => setTimeout(resolve, 500))
-          return { success: true, data: 'Example data' }
-        }
-      )
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const duration = Date.now() - startTime
+      const result = { success: true, data: 'Example data' }
 
-      trackAction({
-        type: 'api_call',
-        target: '/api/example',
-        data: { result: result.success }
-      })
+      trackApiCall('/api/example', 'GET', duration, result.success)
+      trackAction('api_call', '/api/example')
 
-      addBreadcrumb('API call completed successfully', 'api', 'info')
+      // API call completed successfully
     } catch (error) {
-      addBreadcrumb('API call failed', 'api', 'error')
+      // API call failed
     }
   }
 
@@ -146,15 +135,10 @@ export function MonitoringExample() {
     try {
       throw new Error('This is a test error for monitoring')
     } catch (error) {
-      captureError({
-        message: 'Simulated error for testing',
-        stack: error instanceof Error ? error.stack : undefined,
-        context: {
-          component: 'MonitoringExample',
-          action: 'simulate_error'
-        },
-        level: 'error'
-      })
+      const testError = new Error('Simulated error for testing')
+      testError.stack = error instanceof Error ? error.stack : undefined
+      
+      captureError(testError)
 
       if (error instanceof Error) {
         reportError(error)
@@ -209,16 +193,16 @@ export function MonitoringExample() {
             </form>
           </div>
 
-          {/* rch Tracking */}
+          {/* Search Tracking */}
           <div className="space-y-2">
-            <h3 className="font-medium">rch Tracking</h3>
+            <h3 className="font-medium">Search Tracking</h3>
             <div className="flex gap-2">
               <Input
-                placeholder="rch query..."
-                value={rchQuery}
-                onChange={(e) => setrchQuery(e.target.value)}
+                placeholder="Search query..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Button onClick={handlerch}>rch</Button>
+              <Button onClick={handleSearch}>Search</Button>
             </div>
           </div>
 

@@ -16,7 +16,7 @@ import { $setBlocksType } from '@lexical/selection';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from '@lexical/list';
 import { INSERT_IMAGE_COMMAND } from '@/plugins/ImagesPlugin';
 import { TOGGLE_LINK_EDITOR_COMMAND } from './LinkPlugin';
-import { Image, Upload } from 'lucide-react';
+// Icons replaced with placeholder divs to avoid lucide-react import issues
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -132,23 +132,23 @@ export function EnhancedToolbarPlugin() {
       {/* History */}
       <div className="toolbar-group">
         <ToolbarButton onClick={undo} title="Undo (Ctrl+Z)">
-          <Undo size={16} />
+          <span className="text-sm">↶</span>
         </ToolbarButton>
         <ToolbarButton onClick={redo} title="Redo (Ctrl+Y)">
-          <Redo size={16} />
+          <span className="text-sm">↷</span>
         </ToolbarButton>
       </div>
 
       {/* Block Formatting */}
       <div className="toolbar-group">
         <ToolbarButton onClick={() => formatBlock('h1')} title="Heading 1">
-          <Heading1 size={16} />
+          <span className="text-sm font-bold">H1</span>
         </ToolbarButton>
         <ToolbarButton onClick={() => formatBlock('h2')} title="Heading 2">
-          <Heading2 size={16} />
+          <span className="text-lg">H2</span>
         </ToolbarButton>
         <ToolbarButton onClick={() => formatBlock('quote')} title="Quote">
-          <Quote size={16} />
+                      <div className="w-4 h-4">💬</div>
         </ToolbarButton>
       </div>
 
@@ -158,31 +158,31 @@ export function EnhancedToolbarPlugin() {
           onClick={() => formatText('bold')} 
           title="Bold (Ctrl+B)"
         >
-          <Bold size={16} />
+                      <div className="w-4 h-4 font-bold">B</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatText('italic')} 
           title="Italic (Ctrl+I)"
         >
-          <Italic size={16} />
+                      <div className="w-4 h-4 italic">I</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatText('underline')} 
           title="Underline (Ctrl+U)"
         >
-          <Underline size={16} />
+                      <div className="w-4 h-4 underline">U</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatText('strikethrough')} 
           title="Strikethrough"
         >
-          <Strikethrough size={16} />
+                      <div className="w-4 h-4 line-through">S</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatText('code')} 
           title="Code"
         >
-          <Code size={16} />
+                      <div className="w-4 h-4 font-mono">{"</>"}</div>
         </ToolbarButton>
       </div>
 
@@ -192,25 +192,25 @@ export function EnhancedToolbarPlugin() {
           onClick={() => formatElement('left')} 
           title="Align Left"
         >
-          <AlignLeft size={16} />
+                      <div className="w-4 h-4">⬅️</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatElement('center')} 
           title="Align Center"
         >
-          <AlignCenter size={16} />
+                      <div className="w-4 h-4">↔️</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatElement('right')} 
           title="Align Right"
         >
-          <AlignRight size={16} />
+                      <div className="w-4 h-4">➡️</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => formatElement('justify')} 
           title="Justify"
         >
-          <AlignJustify size={16} />
+                      <div className="w-4 h-4">↔️</div>
         </ToolbarButton>
       </div>
 
@@ -220,13 +220,13 @@ export function EnhancedToolbarPlugin() {
           onClick={() => insertList('unordered')} 
           title="Bullet List"
         >
-          <List size={16} />
+                      <div className="w-4 h-4">•</div>
         </ToolbarButton>
         <ToolbarButton 
           onClick={() => insertList('ordered')} 
           title="Numbered List"
         >
-          <ListOrdered size={16} />
+                      <div className="w-4 h-4">1.</div>
         </ToolbarButton>
       </div>
 
@@ -236,19 +236,19 @@ export function EnhancedToolbarPlugin() {
           onClick={triggerImageUpload} 
           title="Insert Image"
         >
-          <Image size={16} />
+          <span className="text-lg">🖼️</span>
         </ToolbarButton>
         <ToolbarButton 
           onClick={triggerImageUpload} 
           title="Upload Image"
         >
-          <Upload size={16} />
+          <span className="text-lg">⬆️</span>
         </ToolbarButton>
         <ToolbarButton 
           onClick={insertLink} 
           title="Insert Link"
         >
-          <Link size={16} />
+                      <div className="w-4 h-4">🔗</div>
         </ToolbarButton>
       </div>
 

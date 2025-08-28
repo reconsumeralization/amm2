@@ -9,11 +9,16 @@ describe('DeprecationWarning', () => {
       contentId: 'test-warning',
       severity: 'warning' as const,
       reason: 'This is a test warning',
-      replacement: null,
-      removalVersion: null,
+      replacement: undefined,
+      removalVersion: undefined,
+      deprecatedVersion: {
+        major: 1,
+        minor: 0,
+        patch: 0
+      },
       autoRedirect: false,
       redirectDelay: 0,
-      migrationInstructions: null,
+      migrationInstructions: '',
     };
     render(<DeprecationWarning warning={mockWarning} />);
   });

@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import { GuideRenderer } from '@/components/documentation/GuideRenderer'
 import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import type { UserRole, GuideContent } from '@/types/documentation'
 
 export const metadata: Metadata = {
-  title: 'Analytics Training Guide - Modern Men Hair Salon',
+  title: 'Analytics Training Guide - Modern Men barber shop',
   description: 'Comprehensive training on using business analytics to grow your salon',
 }
 
@@ -15,7 +16,7 @@ const analyticsTrainingGuide = {
     author: 'Business Analytics Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner'],
+    targetAudience: ['salon_owner'] as UserRole[],
     difficulty: 'intermediate' as const,
     estimatedTime: 60,
     tags: ['analytics', 'business-intelligence', 'reporting', 'kpis'],
@@ -282,19 +283,22 @@ const calculateKPIs = (data: BusinessData) => {
         id: 'insufficient-data',
         problem: 'Not enough data to generate meaningful analytics',
         solution: 'Ensure all appointments and transactions are being recorded properly. Wait for at least 30 days of consistent data collection before drawing conclusions from analytics.',
-        category: 'data'
+        category: 'data',
+        tags: ['data', 'analytics', 'collection', 'metrics']
       },
       {
         id: 'conflicting-metrics',
         problem: 'Different reports showing conflicting information',
         solution: 'Check the date ranges and filters applied to each report. Ensure you\'re comparing like-for-like time periods and customer segments.',
-        category: 'reporting'
+        category: 'reporting',
+        tags: ['reporting', 'metrics', 'data-analysis', 'filters']
       },
       {
         id: 'low-performance-metrics',
         problem: 'Analytics showing declining performance',
         solution: 'Don\'t panic - use the data to identify specific areas for improvement. Look for patterns in customer feedback, staff performance, and market conditions that might explain the decline.',
-        category: 'performance'
+        category: 'performance',
+        tags: ['performance', 'metrics', 'decline', 'improvement']
       }
     ],
     relatedContent: [
@@ -347,11 +351,10 @@ const calculateKPIs = (data: BusinessData) => {
 export default function AnalyticsTrainingPage() {
   return (
     <div className="max-w-4xl">
-      <GuideRenderer 
-        content={analyticsTrainingGuide}
+      <GuideRenderer
+        guide={analyticsTrainingGuide as unknown as GuideContent}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
       />
     </div>
   )

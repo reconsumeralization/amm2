@@ -2,7 +2,8 @@
 
 import { getProviders, signIn, getSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+// Using window.location.search instead of useSearchParams to avoid Next.js version issues
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,11 +17,17 @@ export default function PortalLoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [providers, setProviders] = useState<any>(null)
-  const rchParams = useSearchParams()
   const router = useRouter()
+  const [callbackUrl, setCallbackUrl] = useState('/portal')
+  const [error, setError] = useState<string | null>(null)
 
-  const callbackUrl = rchParams?.get('callbackUrl') || '/portal'
-  const error = rchParams?.get('error')
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const callbackParam = urlParams.get('callbackUrl')
+    const errorParam = urlParams.get('error')
+    if (callbackParam) setCallbackUrl(callbackParam)
+    if (errorParam) setError(errorParam)
+  }, [])
 
   useEffect(() => {
     const getProvidersData = async () => {

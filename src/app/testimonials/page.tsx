@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
-import { Star } from 'lucide-react';
+import { Star, ThumbsUp, Heart } from '@/lib/icon-mapping';
+
+// Quote doesn't exist in our mapping, let's create a simple one
+const Quote = ({ className }: { className?: string }) => <span className={className}>"</span>;
 
 export const metadata: Metadata = {
   title: 'Testimonials - Modern Men Salon',
@@ -159,7 +162,7 @@ export default function TestimonialsPage() {
                   )}
                   <h3 className="font-semibold text-gray-900">{testimonial.name}</h3>
                 </div>
-                <Quote className="text-gray-300" size={24} />
+                <div className="text-gray-300 text-2xl">"</div>
               </div>
 
               {/* Rating */}

@@ -179,7 +179,7 @@ export function AboutSection() {
                 <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                    alt="Modern Men Hair Salon Interior"
+                    alt="Modern Men barber shop Interior"
                     className="w-full h-full object-cover"
                   />
                 </div>

@@ -20,7 +20,7 @@ const sampleGuide: GuideContent = {
   },
   content: {
     introduction: `
-      <p>Welcome to the Modern Men Hair Salon development environment! This guide will walk you through setting up your local development environment, understanding the project structure, and making your first contribution.</p>
+      <p>Welcome to the Modern Men barber shop development environment! This guide will walk you through setting up your local development environment, understanding the project structure, and making your first contribution.</p>
       <p>By the end of this guide, you'll have a fully functional development environment and understand the key concepts needed to work effectively with our codebase.</p>
     `,
     prerequisites: [

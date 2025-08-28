@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Employee Operations Guide - Modern Men Hair Salon',
+  title: 'Employee Operations Guide - Modern Men barber shop',
   description: 'Operational guides for salon employees including daily workflows and customer service',
 }
 
@@ -15,7 +15,7 @@ export default function EmployeeDocumentationPage() {
         </h1>
         <p className="text-slate-300">
           Comprehensive operational guides for salon employees to excel in daily tasks, 
-          customer service, and professional development within the Modern Men Hair Salon system.
+          customer service, and professional development within the Modern Men barber shop system.
         </p>
       </div>
 

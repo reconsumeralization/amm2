@@ -1,5 +1,5 @@
 import { getPayload } from 'payload'
-import config from './payload.config'
+import config from '@/payload.config'
 
 let cached = global.payload
 

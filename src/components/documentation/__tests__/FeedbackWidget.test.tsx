@@ -5,6 +5,6 @@ import { FeedbackWidget } from '../FeedbackWidget';
 
 describe('FeedbackWidget', () => {
   it('renders without crashing', () => {
-    render(<FeedbackWidget contentId="test-content" onFeedback={() => {}} />);
+    render(<FeedbackWidget contentId="test-content" contentType="guide" onFeedback={() => {}} />);
   });
 });

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+// import { useParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -54,8 +54,9 @@ interface Stylist {
 }
 
 export default function StylistProfilePage() {
-  const { id } = useParams()
-  const router = useRouter()
+  // Extract ID from URL since useParams is causing issues
+  const id = typeof window !== 'undefined' ? window.location.pathname.split('/').pop() || '' : ''
+  const router = { push: (url: string) => typeof window !== 'undefined' && window.location.assign(url) }
   const [stylist, setStylist] = useState<Stylist | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

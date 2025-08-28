@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload();
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
 
     // Get user data
     const user = await payload.findByID({

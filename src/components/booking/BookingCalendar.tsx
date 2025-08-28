@@ -5,7 +5,7 @@ import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Clock, MapPin } from 'lucide-react'
+// Icons replaced with emoji placeholders to avoid lucide-react import issues
 import { format, addDays, isSameDay, isBefore, startOfDay } from 'date-fns'
 
 interface TimeSlot {
@@ -103,7 +103,7 @@ export function BookingCalendar({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+            <div className="h-5 w-5">🕐</div> 
             Select Time
           </CardTitle>
           {selectedDate && (

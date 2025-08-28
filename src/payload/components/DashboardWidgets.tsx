@@ -1,5 +1,12 @@
 import React from 'react'
-import { Card, Heading, Text } from '@payloadcms/ui'
+// Use standard HTML elements for components
+const Heading = ({ children, ...props }: any) => <h2 {...props}>{children}</h2>
+const Text = ({ children, ...props }: any) => <p {...props}>{children}</p>
+const Card = ({ children, className, ...props }: any) => (
+  <div className={`border rounded-lg shadow-sm ${className || ''}`} {...props}>
+    {children}
+  </div>
+)
 
 interface MetricCardProps {
   title: string
@@ -50,12 +57,16 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     hour12: true
   })
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     confirmed: 'bg-green-100 text-green-800',
     pending: 'bg-yellow-100 text-yellow-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     completed: 'bg-gray-100 text-gray-800',
     cancelled: 'bg-red-100 text-red-800'
+  }
+  
+  const getStatusColor = (status: string) => {
+    return statusColors[status] || 'bg-gray-100 text-gray-800'
   }
 
   return (
@@ -66,7 +77,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
             <Text className="font-medium text-gray-900">
               {customer?.firstName} {customer?.lastName}
             </Text>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status]}`}>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
               {appointment.status}
             </span>
           </div>

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import PageBuilder from '@/components/editor/PageBuilder';
 

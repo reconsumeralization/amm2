@@ -1,10 +1,11 @@
 import { Metadata } from 'next'
 import { GuideRenderer } from '@/components/documentation/GuideRenderer'
 import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import type { GuideContent, UserRole } from '@/types/documentation'
 import { CodeSnippetRenderer } from '@/components/documentation/CodeSnippetRenderer'
 
 export const metadata: Metadata = {
-  title: 'Salon Owner Dashboard Guide - Modern Men Hair Salon',
+  title: 'Salon Owner Dashboard Guide - Modern Men barber shop',
   description: 'Complete guide to using the salon owner dashboard for business management',
 }
 
@@ -16,7 +17,7 @@ const dashboardGuide = {
     author: 'Documentation Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner'],
+    targetAudience: ['salon_owner'] as UserRole[],
     difficulty: 'beginner' as const,
     estimatedTime: 30,
     tags: ['dashboard', 'business-management', 'analytics'],
@@ -24,7 +25,7 @@ const dashboardGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `The salon owner dashboard is your central command center for managing all aspects of your hair salon business. This comprehensive guide will walk you through each section of the dashboard and show you how to leverage its features for optimal business performance.`,
+    introduction: `The salon owner dashboard is your central command center for managing all aspects of your barber shop business. This comprehensive guide will walk you through each section of the dashboard and show you how to leverage its features for optimal business performance.`,
     prerequisites: [
       {
         id: 'business-setup',
@@ -103,6 +104,7 @@ This section provides a real-time snapshot of your salon's current status:
 - Staff schedule conflicts`,
         codeSnippets: [
           {
+            id: 'dashboard-metrics-example',
             language: 'typescript',
             code: `// Example: Accessing today's metrics
 const todaysMetrics = {
@@ -252,19 +254,22 @@ const todaysMetrics = {
         id: 'dashboard-loading-slow',
         problem: 'Dashboard loading slowly or timing out',
         solution: 'Check your internet connection and try refreshing the page. If the issue persists, contact support as there may be a server issue.',
-        category: 'technical'
+        category: 'technical',
+        tags: ['technical', 'performance', 'loading', 'connection']
       },
       {
         id: 'missing-data',
         problem: 'Revenue or appointment data not showing correctly',
         solution: 'Ensure all staff are properly logging appointments and payments. Check that your POS system integration is working correctly.',
-        category: 'data'
+        category: 'data',
+        tags: ['data', 'revenue', 'appointments', 'integration']
       },
       {
         id: 'notification-issues',
         problem: 'Not receiving important business alerts',
         solution: 'Check your notification settings in the profile menu. Ensure your email and phone number are up to date.',
-        category: 'notifications'
+        category: 'notifications',
+        tags: ['notifications', 'settings', 'alerts', 'contact-info']
       }
     ],
     relatedContent: [
@@ -273,21 +278,24 @@ const todaysMetrics = {
         title: 'Initial Business Setup Guide',
         description: 'Complete guide to setting up your salon profile',
         url: '/documentation/business/owner/setup',
-        type: 'guide'
+        type: 'guide',
+        relevanceScore: 95
       },
       {
         id: 'staff-management',
         title: 'Staff Management Guide',
         description: 'Comprehensive staff management and scheduling guide',
         url: '/documentation/business/owner/staff',
-        type: 'guide'
+        type: 'guide',
+        relevanceScore: 88
       },
       {
         id: 'analytics-training',
         title: 'Analytics Training Course',
         description: 'In-depth training on using business analytics',
         url: '/documentation/business/owner/analytics',
-        type: 'course'
+        type: 'guide',
+        relevanceScore: 92
       }
     ],
     interactiveExamples: [],
@@ -317,11 +325,10 @@ const todaysMetrics = {
 export default function SalonOwnerDashboardPage() {
   return (
     <div className="max-w-4xl">
-      <GuideRenderer 
-        content={dashboardGuide}
+      <GuideRenderer
+        guide={dashboardGuide as unknown as GuideContent}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
       />
     </div>
   )

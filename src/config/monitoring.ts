@@ -1,4 +1,24 @@
-import { MonitoringConfig } from '@/lib/monitoring'
+// MonitoringConfig interface defined locally to avoid import issues
+interface MonitoringConfig {
+  analytics?: {
+    enabled: boolean
+    trackPerformance: boolean
+    trackErrors: boolean
+  }
+  sentry?: {
+    dsn: string
+    environment: string
+    release?: string
+    sampleRate: number
+    tracesSampleRate: number
+    replaysOnErrorSampleRate: number
+    replaysSessionSampleRate: number
+  }
+  logRocket?: {
+    appId: string
+    environment: string
+  }
+}
 
 // Environment-based configuration
 const getMonitoringConfig = (): MonitoringConfig => {

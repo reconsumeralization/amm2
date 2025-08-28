@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { Calendar, Clock, MapPin, Users, Star, ExternalLink } from 'lucide-react';
+// Icons replaced with placeholder divs to avoid lucide-react import issues
 
 interface Event {
   id: string;
@@ -174,7 +174,7 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
   if (events.length === 0) {
     return (
       <div className="text-center py-12">
-        <Calendar className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <div className="h-12 w-12 mx-auto text-gray-400 mb-4 flex items-center justify-center">📅</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No Events Available</h3>
         <p className="text-gray-500">
           {showPast ? 'No past events found.' : 'Check back soon for upcoming events!'}
@@ -209,7 +209,7 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
               {event.featured && (
                 <div className="absolute top-2 right-2">
                   <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                    <Star className="h-3 w-3 mr-1" />
+                    <div className="h-3 w-3 mr-1">⭐</div>
                     Featured
                   </Badge>
                 </div>
@@ -248,21 +248,21 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2" />
+                    <div className="h-4 w-4 mr-2">📅</div>
                     {formatDate(event.date)}
                   </div>
                   <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2" />
+                    <div className="h-4 w-4 mr-2">🕐</div>
                     {formatTime(event.date)} • {event.duration} min
                   </div>
                   <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2" />
+                    <div className="h-4 w-4 mr-2">📍</div>
                     {event.location.type === 'online' ? 'Online Event' :
                      event.location.type === 'external' ? event.location.address :
                      'In-Store Event'}
                   </div>
                   <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-2" />
+                    <div className="h-4 w-4 mr-2">👥</div>  
                     {event.attendees.length}/{event.capacity} attendees
                     {event.waitlist.length > 0 && ` (${event.waitlist.length} waitlisted)`}
                   </div>
@@ -336,7 +336,7 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
                     className="w-full"
                     onClick={() => window.open(event.location.zoomLink, '_blank')}
                   >
-                    <ExternalLink className="h-4 w-4 mr-2" />
+                    <div className="h-4 w-4 mr-2">🔗</div>
                     Join Meeting
                   </Button>
                 )}

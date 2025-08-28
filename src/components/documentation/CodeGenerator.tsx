@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Copy, Download, Code } from '@/lib/icon-mapping'
+// Icons replaced with emoji placeholders to avoid import issues
 import { APIEndpoint, SDKGenerationConfig, CodeGenerationTemplate } from '@/types/api-documentation'
 import { cn } from '@/lib/utils'
 
@@ -110,7 +110,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CodeIcon className="w-5 h-5" />
+            <span className="text-xl">📝</span>
             Code Generation
             <Badge className={cn('font-mono text-xs', 
               endpoint.method === 'GET' ? 'bg-blue-100 text-blue-800' :
@@ -153,7 +153,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
                 onClick={() => copyToClipboard(generatedCode[selectedLanguage] || '')}
                 disabled={!generatedCode[selectedLanguage]}
               >
-                <CopyIcon className="w-4 h-4 mr-2" />
+                <span className="text-lg mr-2">📋</span>
                 Copy
               </Button>
               <Button
@@ -161,7 +161,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
                 onClick={() => downloadCode(selectedLanguage, generatedCode[selectedLanguage] || '')}
                 disabled={!generatedCode[selectedLanguage]}
               >
-                <DownloadIcon className="w-4 h-4 mr-2" />
+                <span className="text-lg mr-2">⬇️</span>
                 Download
               </Button>
             </div>

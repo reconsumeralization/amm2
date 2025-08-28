@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
+import { sendEmail } from '../../../../../utils/email';
 
 
 export async function POST(req: NextRequest) {
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload();
+    const payload = await getPayload({ config: (await import('@/payload.config')).default });
 
     // Get the event
     const event = await payload.findByID({

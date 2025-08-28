@@ -60,7 +60,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Customer first name',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (!value || value.length < 1) return 'First name is required';
         if (value.length > 50) return 'First name too long';
         return true;
@@ -74,7 +74,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Customer last name',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (!value || value.length < 1) return 'Last name is required';
         if (value.length > 50) return 'Last name too long';
         return true;
@@ -104,7 +104,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Primary email address',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (!value) return 'Email is required';
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) return 'Invalid email address';
@@ -117,7 +117,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Primary phone number',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (value) {
           const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
           if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
@@ -133,7 +133,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Secondary phone number',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (value) {
           const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
           if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
@@ -149,7 +149,7 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Customer date of birth',
       },
-      validate: (value) => {
+      validate: (value: any) => {
         if (value) {
           const date = new Date(value);
           const now = new Date();

@@ -5,7 +5,7 @@ import { HelpCircle, ChevronDown, ChevronRight } from '@/lib/icon-mapping'
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions - Documentation',
-  description: 'Find answers to common questions about the Modern Men Hair Salon management system.',
+  description: 'Find answers to common questions about the Modern Men barber shop management system.',
 }
 
 export default function FAQPage() {
@@ -14,7 +14,7 @@ export default function FAQPage() {
       category: 'General',
       questions: [
         {
-          question: 'What is the Modern Men Hair Salon management system?',
+          question: 'What is the Modern Men barber shop management system?',
           answer: 'It is a comprehensive salon management platform that handles appointments, customer management, staff scheduling, inventory, and business analytics.',
           tags: ['overview', 'features']
         },

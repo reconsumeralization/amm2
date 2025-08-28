@@ -6,10 +6,10 @@ import { getUserRoleFromSession, hasDocumentationPermission } from '@/lib/docume
 
 export async function GET(request: NextRequest) {
   try {
-    const { rchParams } = new URL(request.url)
-    const filePath = rchParams.get('path')
-    const validate = rchParams.get('validate') === 'true'
-    const extractMetadata = rchParams.get('metadata') === 'true'
+    const { searchParams } = new URL(request.url)
+    const filePath = searchParams.get('path')
+    const validate = searchParams.get('validate') === 'true'
+    const extractMetadata = searchParams.get('metadata') === 'true'
 
     if (!filePath) {
       return NextResponse.json(
@@ -297,8 +297,8 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const { rchParams } = new URL(request.url)
-    const filePath = rchParams.get('path')
+    const { searchParams } = new URL(request.url)
+    const filePath = searchParams.get('path')
 
     if (!filePath) {
       return NextResponse.json(

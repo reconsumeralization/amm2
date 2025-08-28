@@ -1,10 +1,19 @@
 /* @ts-nocheck */
 import { DocumentationSearchService } from '@/lib/search-service';
-import { SearchConfig } from '@/types/search';
+import { SearchConfig } from '@/lib/search-service';
 
 describe('DocumentationSearchService additional internal methods', () => {
   // Minimal config – the actual values are irrelevant for these internal method tests.
-  const dummyConfig: SearchConfig = {
+  const dummyConfig = {
+    provider: 'test',
+    indexName: 'test-index',
+    maxResults: 20,
+    enableFacets: false,
+    enableSuggestions: true,
+    enableAnalytics: false,
+    enableHighlighting: true,
+    enableTypoTolerance: true,
+    enableSynonyms: false,
     rankingConfig: {
       titleBoost: 1,
       descriptionBoost: 1,
@@ -14,9 +23,11 @@ describe('DocumentationSearchService additional internal methods', () => {
       recencyBoost: 0,
       popularityBoost: 0,
       ratingBoost: 0,
-      completionRateBoost: 0
+      completionRateBoost: 0,
+      accuracyBoost: 1,
+      viewsBoost: 0
     }
-  } as any;
+  } as SearchConfig;
 
   const service = new DocumentationSearchService(dummyConfig);
 

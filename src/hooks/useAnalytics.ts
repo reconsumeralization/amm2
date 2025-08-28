@@ -91,16 +91,16 @@ export function unalytics(options: UnalyticsOptions = {}) {
     await analyticsService.submitFeedback(fullFeedback);
   }, [contentId, contentType, userRole, analyticsService]);
 
-  const trackrch = useCallback((query: string, resultsCount: number) => {
-    return analyticsService.trackrch(query, resultsCount, userRole);
+  const trackSearch = useCallback((query: string, resultsCount: number) => {
+    return analyticsService.trackSearch(query, resultsCount, userRole);
   }, [userRole, analyticsService]);
 
-  const trackrchClick = useCallback((query: string, resultId: string) => {
-    analyticsService.trackrchClick(query, resultId);
+  const trackSearchClick = useCallback((query: string, resultId: string) => {
+    analyticsService.trackSearchClick(query, resultId);
   }, [analyticsService]);
 
-  const trackrchRefinement = useCallback((originalQuery: string, refinedQuery: string) => {
-    analyticsService.trackrchRefinement(originalQuery, refinedQuery);
+  const trackSearchRefinement = useCallback((originalQuery: string, refinedQuery: string) => {
+    analyticsService.trackSearchRefinement(originalQuery, refinedQuery);
   }, [analyticsService]);
 
   const trackCustomEvent = useCallback((eventType: string, target: string, metadata?: Record<string, any>) => {
@@ -113,16 +113,16 @@ export function unalytics(options: UnalyticsOptions = {}) {
 
   return {
     submitFeedback,
-    trackrch,
-    trackrchClick,
-    trackrchRefinement,
+    trackSearch,
+    trackSearchClick,
+    trackSearchRefinement,
     trackCustomEvent,
     sessionId: sessionIdRef.current
   };
 }
 
 // Hook for analytics dashboard data
-export function unalyticsDashboard(timeRange: { start: Date; end: Date }) {
+export function useAnalyticsDashboard(timeRange: { start: Date; end: Date }) {
   const analyticsService = AnalyticsService.getInstance();
 
   const getMetrics = useCallback(async () => {

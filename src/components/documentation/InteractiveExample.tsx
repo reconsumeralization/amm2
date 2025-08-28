@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Play, Code, Terminal, Database, Cog, Copy, Check, AlertTriangle, Loader2, ExternalLink } from '@/lib/icon-mapping'
+import { Play, Code, Terminal, Database, Cog, Copy, Check, AlertTriangle, Loader2, ExternalLink, Globe, AlertCircle } from '@/lib/icon-mapping'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

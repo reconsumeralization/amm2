@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Button } from './ui/button';
-import { Star, Users, Calendar } from 'lucide-react';
+// Icons temporarily replaced with emoji placeholders due to import issues
 
 interface LoyaltyData {
   points: number;
@@ -35,6 +35,7 @@ interface NextTier {
   tier: string;
   name: string;
   pointsNeeded: number;
+  minPoints: number;
 }
 
 interface LoyaltyProgramProps {
@@ -73,14 +74,14 @@ const TIER_CONFIGS: Record<string, TierConfig> = {
 };
 
 const BADGE_ICONS: Record<string, any> = {
-  'First Visit': Calendar,
-  'Loyal Client': Star,
-  'Regular Customer': Users,
-  'Event Attendee': Award,
-  'Product Enthusiast': Gift,
-  'Referrer': Users,
-  'High Spender': Crown,
-  'Anniversary': Trophy,
+  'First Visit': '📅',
+  'Loyal Client': '⭐',
+  'Regular Customer': '👥',
+  'Event Attendee': '🏆',
+  'Product Enthusiast': '🎁',
+  'Referrer': '👥',
+  'High Spender': '👑',
+  'Anniversary': '🏆',
 };
 
 export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
@@ -162,7 +163,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
   if (!loyaltyData) {
     return (
       <div className="text-center py-12">
-        <Trophy className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <div className="h-12 w-12 mx-auto text-gray-400 mb-4 flex items-center justify-center">🏆</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No Loyalty Data</h3>
         <p className="text-gray-500">Start earning points with your first appointment!</p>
       </div>
@@ -184,7 +185,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Crown className="h-6 w-6" style={{ color: currentTier.color }} />
+                <div className="h-6 w-6" style={{ color: currentTier.color }}>👑</div>
                 {currentTier.name} Tier
               </CardTitle>
               <CardDescription>
@@ -219,7 +220,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5" />
+            <div className="h-5 w-5">⚡</div>
             Your Benefits
           </CardTitle>
         </CardHeader>
@@ -239,7 +240,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5" />
+            <div className="h-5 w-5">🏆</div>
             Badges Earned ({loyaltyData.badges.length})
           </CardTitle>
         </CardHeader>
@@ -247,7 +248,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
           {loyaltyData.badges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {loyaltyData.badges.map((badge, index) => {
-                const IconComponent = BADGE_ICONS[badge.badge] || Award;
+                const IconComponent = BADGE_ICONS[badge.badge] || '🏆';
                 return (
                   <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
                     <div className="p-2 bg-yellow-100 rounded-full">
@@ -266,7 +267,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Award className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <span className="text-4xl mx-auto text-gray-400 mb-4">🏆</span>
               <p className="text-gray-500">No badges earned yet. Keep using our services to earn badges!</p>
             </div>
           )}
@@ -279,7 +280,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+              <span className="text-lg">📊</span>
               Total Spent
             </CardTitle>
           </CardHeader>
@@ -297,7 +298,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+              <span className="text-lg">👥</span>
               Referrals
             </CardTitle>
           </CardHeader>
@@ -362,7 +363,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
         <Card className="border-dashed">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+              <span className="text-lg">🎯</span>
               Next Tier: {nextTier.name}
             </CardTitle>
           </CardHeader>

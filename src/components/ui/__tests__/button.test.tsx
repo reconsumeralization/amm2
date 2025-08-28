@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-// // import { fireEvent } from "@testing-library/react"; // TODO: Fix testing library; // Fixed: Use alternative
+import { render, screen } from '@testing-library/react';
+import { fireEvent } from '@testing-library/dom';
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
 

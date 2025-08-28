@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
-import config from '../../../../payload.config';
+// Config will be imported dynamically to avoid issues
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
 
     // Get customer
     const customer = await payload.findByID({
@@ -177,7 +177,7 @@ async function sendPointsEarnedEmail(customer: any, points: number, reason: stri
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config });
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
     
     let settings;
     if (tenantId) {

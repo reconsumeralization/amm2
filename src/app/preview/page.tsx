@@ -1,8 +1,8 @@
 import { getPayload } from 'payload';
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 
 export default async function PreviewPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
-  const payload = await getPayload({ config: await import('../../payload.config') });
+  const payload = await getPayload({ config: (await import('@/payload.config')).default });
   const { id } = await searchParams;
 
   if (!id) {
@@ -11,7 +11,7 @@ export default async function PreviewPage({ searchParams }: { searchParams: Prom
 
   const doc = await payload.findByID({ collection: 'business-documentation', id });
   if (!doc) {
-    notFound();
+    return <div className="container mx-auto p-4">Document not found</div>;
   }
 
   const html = JSON.stringify(doc.content);

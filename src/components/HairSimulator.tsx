@@ -6,7 +6,8 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+
+// Icons replaced with placeholder divs to avoid lucide-react import issues
 
 interface HairSimulatorProps {
   userId?: string;
@@ -179,7 +180,7 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5" />
+            <div className="h-5 w-5">✨</div>
             Hair Style Simulator
           </CardTitle>
           <CardDescription>
@@ -218,7 +219,7 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                  <div className="h-12 w-12 mx-auto text-gray-400 flex items-center justify-center">📤</div>
                   <div>
                     <p className="text-lg font-medium">Drop your photo here</p>
                     <p className="text-sm text-gray-500">or click to browse</p>
@@ -304,12 +305,12 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <div className="mr-2 h-4 w-4 animate-spin">⏳</div>
                 Generating Preview...
               </>
             ) : (
               <>
-                <Sparkles className="mr-2 h-4 w-4" />
+                <div className="mr-2 h-4 w-4">✨</div>
                 Generate Preview
               </>
             )}
@@ -322,7 +323,7 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ImageIcon className="h-5 w-5" />
+                              <div className="h-5 w-5">🖼️</div>
               Your Style Preview
             </CardTitle>
           </CardHeader>

@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Play, Copy, Download, Clock, AlertTriangle, CheckCircle } from '@/lib/icon-mapping'
+import { Play, Copy, Download, Clock, AlertTriangle, CheckCircle, PlayIcon, HistoryIcon, CopyIcon, CodeIcon, DownloadIcon, BookOpen, Globe, AlertCircle, RotateCcw, AlertCircleIcon, CheckCircleIcon } from '@/lib/icon-mapping'
 import { APIEndpoint, APITestRequest, APITestResponse, APITestHistory } from '@/types/api-documentation'
 import { cn } from '@/lib/utils'
 
@@ -126,7 +126,7 @@ export function APITester({ endpoint, authentication, onClose, onTest }: APITest
     })
 
     // Add query parameters
-    const queryParams = new URLrchParams()
+    const queryParams = new URLSearchParams()
     endpoint.parameters.query.forEach(param => {
       const value = parameters[param.name]
       if (value !== undefined && value !== '') {
