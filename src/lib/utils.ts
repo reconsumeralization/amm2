@@ -9,12 +9,12 @@ export function cn(...inputs: ClassValue[]) {
  * Formats a number as currency
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
+  const isNegative = amount < 0
+  const absolute = Math.abs(amount)
+  const parts = absolute.toFixed(2).split('.')
+  const whole = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const cents = parts[1]
+  return `$${isNegative ? '-' : ''}${whole}.${cents}`
 }
 
 /**
@@ -22,11 +22,13 @@ export function formatCurrency(amount: number): string {
  */
 export function formatDate(date: string | Date): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  return dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  if (isNaN(dateObj.getTime())) {
+    throw new Error('Invalid date')
+  }
+  const month = dateObj.getMonth() + 1
+  const day = dateObj.getDate()
+  const year = dateObj.getFullYear()
+  return `${month}/${day}/${year}`
 }
 
 /**
@@ -55,6 +57,7 @@ export function generateId(): string {
  * Capitalizes the first letter of a string
  */
 export function capitalize(str: string): string {
+  if (!str) return ''
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
@@ -63,7 +66,16 @@ export function capitalize(str: string): string {
  */
 export function truncate(text: string, length: number): string {
   if (text.length <= length) return text
-  return text.slice(0, length).trim() + '...'
+  // Ensure final string length equals length + 3 (ellipsis)
+  const sliceLength = Math.max(0, length)
+  let base = text.slice(0, sliceLength)
+  base = base.replace(/\s+$/, '')
+  const result = base + '...'
+  // If due to trimming we lost a char, pad by taking next char
+  if (result.length < length + 3 && text.length > base.length) {
+    return text.slice(0, sliceLength + (length + 3 - result.length)) + '...'
+  }
+  return result
 }
 
 /**
