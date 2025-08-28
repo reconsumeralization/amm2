@@ -1,0 +1,112 @@
+Initializing issue states to Submitted @ 8/28/2025, 12:24:15 PM
+Gathering context for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:24:15 PM
+Detecting tech stack and domain for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:24:15 PM
+Analyzing repository with static tools (profile=xss) @ 8/28/2025, 12:24:15 PM
+eslint: exit=0
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@eslint/eslintrc' imported from /mnt/c/Users/recon/eslint.config.mjs
+Did you mean to import @eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc/dist/eslintrc.cjs?
+    at new NodeError (node:internal/errors:405:5)
+    at packageResolve (node:internal/modules/esm/resolve:916:9)
+    at moduleResolve (node:internal/modules/esm/resolve:973:20)
+    at defaultResolve (node:internal/modules/esm/resolve:1193:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:403:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:372:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:249:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36)
+
+ @ 8/28/2025, 12:24:31 PM
+Issue 001: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 002: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 003: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 004: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 005: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 006: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 007: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 008: Fixed @ 8/28/2025, 12:24:31 PM
+Issue 001: Verified and committed @ 8/28/2025, 12:24:31 PM
+Issue 002: Verified and committed @ 8/28/2025, 12:24:31 PM
+Issue 003: Verified and committed @ 8/28/2025, 12:24:31 PM
+Issue 004: Verified and committed @ 8/28/2025, 12:24:31 PM
+Issue 005: Verified and committed @ 8/28/2025, 12:24:31 PM
+Issue 006: Verified and committed @ 8/28/2025, 12:24:32 PM
+Issue 007: Verified and committed @ 8/28/2025, 12:24:32 PM
+Issue 008: Verified and committed @ 8/28/2025, 12:24:32 PM
+Initializing issue states to Submitted @ 8/28/2025, 12:27:49 PM
+Gathering context for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:27:49 PM
+Detecting tech stack and domain for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:27:49 PM
+Analyzing repository with static tools (profile=all) @ 8/28/2025, 12:27:49 PM
+eslint: exit=0
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@eslint/eslintrc' imported from /mnt/c/Users/recon/eslint.config.mjs
+Did you mean to import @eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc/dist/eslintrc.cjs?
+    at new NodeError (node:internal/errors:405:5)
+    at packageResolve (node:internal/modules/esm/resolve:916:9)
+    at moduleResolve (node:internal/modules/esm/resolve:973:20)
+    at defaultResolve (node:internal/modules/esm/resolve:1193:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:403:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:372:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:249:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36)
+
+ @ 8/28/2025, 12:28:04 PM
+Initializing issue states to Submitted @ 8/28/2025, 12:36:05 PM
+Gathering context for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:36:05 PM
+Detecting tech stack and domain for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:36:05 PM
+Analyzing repository with static tools (profile=all) @ 8/28/2025, 12:36:05 PM
+eslint: exit=0
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@eslint/eslintrc' imported from /mnt/c/Users/recon/eslint.config.mjs
+Did you mean to import @eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc/dist/eslintrc.cjs?
+    at new NodeError (node:internal/errors:405:5)
+    at packageResolve (node:internal/modules/esm/resolve:916:9)
+    at moduleResolve (node:internal/modules/esm/resolve:973:20)
+    at defaultResolve (node:internal/modules/esm/resolve:1193:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:403:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:372:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:249:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36)
+
+ @ 8/28/2025, 12:36:20 PM
+Issue states initialized to Submitted @ 8/28/2025, 12:36:33 PM
+Gathering context for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:36:33 PM
+Detecting tech stack and domain for C:\Users\recon\Desktop\modernmen\modernmen-yolo @ 8/28/2025, 12:36:33 PM
+Analyzing repository with static tools (profile=all) @ 8/28/2025, 12:36:33 PM
+eslint: exit=0
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@eslint/eslintrc' imported from /mnt/c/Users/recon/eslint.config.mjs
+Did you mean to import @eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc/dist/eslintrc.cjs?
+    at new NodeError (node:internal/errors:405:5)
+    at packageResolve (node:internal/modules/esm/resolve:916:9)
+    at moduleResolve (node:internal/modules/esm/resolve:973:20)
+    at defaultResolve (node:internal/modules/esm/resolve:1193:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:403:12)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:372:25)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:249:38)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+    at link (node:internal/modules/esm/module_job:75:36)
+
+ @ 8/28/2025, 12:36:48 PM
