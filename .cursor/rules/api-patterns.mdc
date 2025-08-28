@@ -1,0 +1,215 @@
+# API Route Patterns
+
+## Route Structure
+API routes are located in `/src/app/api/` following Next.js 15 App Router conventions:
+
+```
+/src/app/api/
+├── auth/
+│   ├── [...nextauth]/
+│   │   └── route.ts
+│   └── signin/
+│       └── route.ts
+├── media/
+│   └── route.ts
+├── settings/
+│   └── route.ts
+└── appointments/
+    └── route.ts
+```
+
+## Route Handler Pattern
+Use the new Next.js 15 route handlers:
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayload } from 'payload';
+
+export async function GET(request: NextRequest) {
+  try {
+    const payload = await getPayload();
+    const { searchParams } = new URL(request.url);
+    const tenantId = searchParams.get('tenantId');
+
+    // Validate tenant ID
+    if (!tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Your logic here
+    const data = await payload.find({
+      collection: 'collection-name',
+      where: {
+        tenantId: { equals: tenantId },
+      },
+    });
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const payload = await getPayload();
+    const body = await request.json();
+    const tenantId = request.headers.get('X-Tenant-ID');
+
+    // Validate input
+    if (!tenantId) {
+      return NextResponse.json(
+        { error: 'Tenant ID header is required' },
+        { status: 400 }
+      );
+    }
+
+    // Create with tenant ID
+    const doc = await payload.create({
+      collection: 'collection-name',
+      data: {
+        ...body,
+        tenantId,
+      },
+    });
+
+    return NextResponse.json(doc, { status: 201 });
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+## Error Handling
+Always implement proper error handling:
+
+```typescript
+// Standard error response
+const errorResponse = (message: string, status: number = 400) => {
+  return NextResponse.json(
+    { error: message },
+    { status }
+  );
+};
+
+// Usage
+if (!requiredField) {
+  return errorResponse('Required field is missing');
+}
+```
+
+## Authentication & Authorization
+Use NextAuth.js for authentication:
+
+```typescript
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  
+  if (!session) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  // Check user permissions
+  if (session.user.role !== 'admin') {
+    return NextResponse.json(
+      { error: 'Forbidden' },
+      { status: 403 }
+    );
+  }
+
+  // Continue with logic
+}
+```
+
+## Multi-tenant Support
+Always include tenant ID validation:
+
+```typescript
+// Extract tenant ID from headers or query params
+const tenantId = request.headers.get('X-Tenant-ID') || 
+                 searchParams.get('tenantId');
+
+if (!tenantId) {
+  return errorResponse('Tenant ID is required');
+}
+
+// Filter data by tenant
+const where = {
+  tenantId: { equals: tenantId },
+  // ... other filters
+};
+```
+
+## File Upload Handling
+For file uploads, use FormData:
+
+```typescript
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const tenantId = formData.get('tenantId') as string;
+
+    if (!file) {
+      return errorResponse('File is required');
+    }
+
+    // Upload to PayloadCMS
+    const payload = await getPayload();
+    const media = await payload.create({
+      collection: 'media',
+      data: {
+        tenantId,
+      },
+      file,
+    });
+
+    return NextResponse.json(media);
+  } catch (error) {
+    console.error('Upload error:', error);
+    return errorResponse('Upload failed', 500);
+  }
+}
+```
+
+## Response Headers
+Set appropriate headers for different response types:
+
+```typescript
+// JSON response
+return NextResponse.json(data, {
+  headers: {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+  },
+});
+
+// File download
+return new NextResponse(fileBuffer, {
+  headers: {
+    'Content-Type': 'application/pdf',
+    'Content-Disposition': 'attachment; filename="document.pdf"',
+  },
+});
+```
+description:
+globs:
+alwaysApply: true
+---

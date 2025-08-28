@@ -1,0 +1,143 @@
+# PayloadCMS Patterns & Configuration
+
+## Collection Structure
+Collections are defined in `/src/collections/` and follow this pattern:
+
+```typescript
+import { CollectionConfig } from 'payload/types';
+
+export const CollectionName: CollectionConfig = {
+  slug: 'collection-name',
+  admin: {
+    useAsTitle: 'title',
+  },
+  fields: [
+    // field definitions
+  ],
+  hooks: {
+    // lifecycle hooks
+  },
+};
+```
+
+## Field Types
+Common field patterns used in this project:
+
+```typescript
+// Text fields
+{
+  name: 'title',
+  type: 'text',
+  required: true,
+  validate: (val) => {
+    if (val.length < 3) return 'Title must be at least 3 characters';
+    return true;
+  },
+}
+
+// Rich text fields
+{
+  name: 'content',
+  type: 'richText',
+  required: true,
+}
+
+// Relationship fields
+{
+  name: 'author',
+  type: 'relationship',
+  relationTo: 'users',
+  required: true,
+}
+
+// Media fields
+{
+  name: 'image',
+  type: 'upload',
+  relationTo: 'media',
+  required: false,
+}
+
+// Array fields
+{
+  name: 'tags',
+  type: 'array',
+  fields: [
+    {
+      name: 'tag',
+      type: 'text',
+    },
+  ],
+}
+```
+
+## Multi-tenant Support
+This project uses multi-tenant architecture. Collections should include:
+
+```typescript
+{
+  name: 'tenantId',
+  type: 'text',
+  required: true,
+  admin: {
+    position: 'sidebar',
+  },
+}
+```
+
+## Hooks Pattern
+Use hooks for business logic:
+
+```typescript
+hooks: {
+  beforeChange: [
+    ({ data, req }) => {
+      // Add tenant ID if not present
+      if (!data.tenantId && req.user?.tenantId) {
+        data.tenantId = req.user.tenantId;
+      }
+      return data;
+    },
+  ],
+  afterChange: [
+    ({ doc, operation }) => {
+      // Post-save operations
+      console.log(`${operation} operation on ${doc.id}`);
+    },
+  ],
+},
+```
+
+## Access Control
+Implement proper access control:
+
+```typescript
+access: {
+  read: ({ req: { user } }) => {
+    if (user?.role === 'admin') return true;
+    return {
+      tenantId: { equals: user?.tenantId },
+    };
+  },
+  create: ({ req: { user } }) => {
+    return user?.role === 'admin' || user?.role === 'editor';
+  },
+  update: ({ req: { user } }) => {
+    return user?.role === 'admin' || user?.role === 'editor';
+  },
+  delete: ({ req: { user } }) => {
+    return user?.role === 'admin';
+  },
+},
+```
+
+## Global Configuration
+The main PayloadCMS config is in [src/payload.config.ts](mdc:src/payload.config.ts) and includes:
+- Database configuration
+- Plugin setup
+- Collection registration
+- Admin customization
+description:
+globs:
+alwaysApply: true
+---

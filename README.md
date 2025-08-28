@@ -1,0 +1,69 @@
+# ModernMen-Yolo Barbershop Project
+
+## Overview
+The `modernmen-yolo` project is a multi-tenant barbershop management system built with Next.js 14, Payload CMS, and MongoDB. It includes features like a customer portal, admin dashboard, booking chatbot, hair simulator, loyalty program, events, responsive image optimization, and advanced barber profiles with mini social media features.
+
+## Advanced Barber Profiles
+- **Location**: `/portal/barbers/[barberId]`
+- **Features**:
+  - Displays barber’s name, bio, photo, specialties, and services.
+  - Portfolio gallery with responsive images (WebP, `srcset`) via `ImagePlugin`.
+  - Client testimonials with comments and likes (stored in `Testimonials` collection).
+  - Social sharing buttons for Facebook, Twitter, Instagram.
+  - “Book Now” button integrated with `BookingChatbot`.
+  - Follow functionality with email notifications.
+- **Configuration**:
+  - Managed via `Settings` collection (`/admin/payload/collections/settings`).
+  - Enable/disable profiles, comments, likes, and sharing via `barberProfiles` group.
+- **API Routes**:
+  - `GET /api/barber-profiles/[barberId]`: Fetch profile data.
+  - `POST /api/testimonials`: Create a testimonial.
+  - `PATCH /api/testimonials/[id]`: Like or moderate testimonials.
+- **Gotchas Addressed**:
+  - Multi-tenant isolation with `X-Tenant-ID` header validation.
+  - Performance optimized with caching and lazy loading.
+  - Accessibility with ARIA labels and keyboard navigation.
+  - Error handling for missing settings or invalid barber IDs.
+
+## Setup
+1. Clone the repository: `git clone <repo-url>`
+2. Install dependencies: `npm install`
+3. Configure environment variables in `.env` (see `.env.example`).
+4. Run the development server: `npm run dev`
+5. Access the admin panel: `http://localhost:3000/admin/payload`
+6. Access the customer portal: `http://localhost:3000/portal`
+
+## Environment Variables
+```plaintext
+# .env.example
+DATABASE_URI=mongodb://localhost:27017/modernmen
+PAYLOAD_SECRET=your-secret
+OPENAI_API_KEY=sk-...
+BUNNY_API_KEY=...
+BUNNY_STORAGE_ZONE=modernmen
+STRIPE_SECRET_KEY=sk_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=https://yourdomain.com/api/oauth/callback
+SMTP_HOST=smtp.example.com
+SMTP_USER=user
+SMTP_PASS=pass
+```
+
+## Deployment
+- Deploy to Vercel: `vercel --prod`
+- Ensure MongoDB is configured with indexes for `Users`, `Testimonials`, and `Appointments`.
+- Set up Bunny CDN for media storage.
+- Configure Stripe webhooks and Google Calendar OAuth.
+- **Important**: For production, ensure `NEXTAUTH_URL` in your `.env` is set to an `https` URL (e.g., `https://yourdomain.com`). This is crucial for security, as it enables the `secure` flag for authentication cookies.
+
+## Testing
+- Run unit tests: `npm run test`
+- Test multi-tenant scenarios with different `tenantId` values.
+- Verify responsive images and accessibility with Lighthouse.
+
+## Contributing
+- Add new features via Payload CMS collections or Next.js components.
+- Ensure tenant isolation and settings integration in all changes.
+- Submit pull requests with test coverage.

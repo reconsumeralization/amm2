@@ -1,0 +1,69 @@
+# TypeScript and React Patterns
+
+## Icon Imports
+Always import icons from the custom mapping system, not directly from lucide-react:
+```typescript
+// ❌ Don't import directly from lucide-react
+import { MapPin, Phone, Mail } from 'lucide-react';
+
+// ✅ Import from the custom mapping system
+import { MapPin, Phone, Mail } from '@/lib/icon-mapping';
+```
+
+## Next.js Page Components
+Follow this pattern for new pages:
+```typescript
+import { Metadata } from 'next';
+import { Icon1, Icon2 } from '@/lib/icon-mapping';
+
+export const metadata: Metadata = {
+  title: 'Page Title - Modern Men Salon',
+  description: 'Page description for SEO',
+  keywords: ['keyword1', 'keyword2']
+};
+
+export default function PageName() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Page content */}
+    </div>
+  );
+}
+```
+
+## Payload CMS Collections
+For new Payload collections, use the lexicalEditor for rich text fields:
+```typescript
+import { CollectionConfig } from 'payload';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+
+export const CollectionName: CollectionConfig = {
+  slug: 'collection-name',
+  admin: {
+    useAsTitle: 'title',
+  },
+  fields: [
+    {
+      name: 'content',
+      type: 'richText',
+      editor: lexicalEditor({}),
+    }
+  ]
+};
+```
+
+## TypeScript Best Practices
+- Always use proper type annotations
+- Use interfaces for object shapes
+- Handle async/await properly with Promise types
+- Use proper error handling with try/catch blocks
+
+## Component Patterns
+- Use client-side components with `'use client'` directive when needed
+- Use proper prop interfaces for component props
+- Implement proper error boundaries
+- Use React hooks effectively
+description:
+globs:
+alwaysApply: true
+---

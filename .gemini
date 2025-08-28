@@ -1,0 +1,95 @@
+# Modern Men Salon Project - AI Assistant Rules
+
+## Project Overview
+This is a Next.js 15.5.2 application for a men's hair salon management system with Payload CMS integration, located in Regina, SK.
+
+## Package Management
+- **ALWAYS** use `pnpm` for package management operations
+- Commands: `pnpm install`, `pnpm add <package>`, `pnpm remove <package>`, `pnpm run <script>`
+- Development: `pnpm dev`, Build: `pnpm build`
+
+## Critical Technical Requirements
+
+### Icon Imports
+- **NEVER** import directly from `lucide-react`
+- **ALWAYS** import from the custom mapping system: `@/lib/icon-mapping`
+- Example: `import { MapPin, Phone, Mail } from '@/lib/icon-mapping';`
+
+### Payload CMS Collections
+- Use `lexicalEditor` for rich text fields
+- Import: `import { lexicalEditor } from '@payloadcms/richtext-lexical';`
+- Configure with: `editor: lexicalEditor({})`
+
+### Next.js Page Pattern
+```typescript
+import { Metadata } from 'next';
+import { Icon1, Icon2 } from '@/lib/icon-mapping';
+
+export const metadata: Metadata = {
+  title: 'Page Title - Modern Men Salon',
+  description: 'Page description for SEO',
+  keywords: ['keyword1', 'keyword2']
+};
+
+export default function PageName() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Page content */}
+    </div>
+  );
+}
+```
+
+### TypeScript Requirements
+- Use strict TypeScript with proper type annotations
+- Handle async/await with Promise types
+- Use interfaces for object shapes
+- Implement proper error handling
+
+### Styling Guidelines
+- Use Tailwind CSS with blue/indigo gradient theme
+- Follow established card and button patterns
+- Ensure responsive design for mobile
+- Use gradient: `bg-gradient-to-br from-blue-50 to-indigo-100`
+
+## Project Architecture
+- **Frontend**: Next.js 15.5.2 with App Router
+- **CMS**: Payload CMS with SQLite database
+- **Styling**: Tailwind CSS
+- **Icons**: Custom mapping system in `src/lib/icon-mapping.ts`
+- **Rich Text**: Lexical editor integration
+
+## Key Directories
+- `src/app/` - Next.js pages and API routes
+- `src/collections/` - Payload CMS collections
+- `src/components/` - Reusable React components
+- `src/lib/` - Utilities and configurations
+
+## Existing Pages
+- `/services` - Salon services and pricing
+- `/team` - Staff profiles
+- `/gallery` - Before/after photos
+- `/about` - Salon story and mission
+- `/contact` - Contact information
+- `/testimonials` - Customer reviews
+- `/book` - Appointment booking with chatbot
+- `/editor` - Rich text editor demo
+
+## Database Collections
+- Users, Services, Customers, Appointments
+- Stylists, Media, BusinessDocumentation
+
+## Common Issues to Avoid
+- Direct lucide-react imports (use custom mapping)
+- Missing TypeScript types
+- Incorrect lexicalEditor import syntax
+- Missing page metadata
+- Inconsistent styling patterns
+
+## Development Workflow
+1. Use pnpm for all package operations
+2. Follow TypeScript best practices
+3. Use custom icon mapping system
+4. Include proper metadata on all pages
+5. Test builds before deployment
+6. Maintain consistent code formatting

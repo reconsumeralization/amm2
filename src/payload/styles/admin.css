@@ -1,0 +1,242 @@
+/**
+ * Modern Men Salon – Professional Admin Theme
+ * A refined, high-contrast design system tailored for salon operations.
+ */
+
+:root {
+  /* Core brand palette */
+  --primary-600: #1e40af;   /* Deep Blue */
+  --secondary-700: #8b4513; /* Saddle Brown */
+  --accent-500: #d4af37;    /* Gold */
+  --success-600: #10b981;   /* Emerald */
+  --warning-500: #f59e0b;   /* Amber */
+  --neutral-50: #f8fafc;    /* Light Gray */
+  --neutral-900: #111827;   /* Charcoal */
+  --neutral-100: #f3f4f6;   /* Silver */
+  --neutral-200: #e5e7eb;   /* Light Silver */
+  --neutral-300: #d1d5db;   /* Medium Silver */
+  --neutral-400: #9ca3af;   /* Dark Silver */
+  --neutral-500: #6b7280;   /* Slate */
+  --neutral-600: #4b5563;   /* Dark Slate */
+  --neutral-700: #374151;   /* Charcoal Light */
+  --neutral-800: #1f2937;   /* Charcoal Dark */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-600), var(--secondary-700), var(--accent-500));
+}
+
+/* Global admin overrides */
+.admin__main {
+  --theme-primary: var(--primary-600);
+  --theme-secondary: var(--secondary-700);
+  --theme-accent: var(--accent-500);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header */
+.admin__header {
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.admin__header h1 {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Navigation */
+.nav__list-item a {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  border-radius: 0.375rem;
+}
+
+.nav__list-item a:hover {
+  background-color: rgba(30, 64, 175, 0.08);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn--primary {
+  background: var(--gradient-primary);
+  border: none;
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+}
+
+/* Forms */
+.field-type input,
+.field-type textarea,
+.field-type select {
+  border-radius: 0.5rem;
+  border: 1px solid var(--neutral-300);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.field-type input:focus,
+.field-type textarea:focus,
+.field-type select:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* Cards */
+.card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--neutral-200);
+}
+
+/* Tables */
+.table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--neutral-200);
+}
+
+.table th {
+  background-color: var(--neutral-100);
+  font-weight: 600;
+  color: var(--primary-600);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* Status indicators */
+.status--active {
+  background-color: var(--success-600);
+  color: #ffffff;
+}
+
+.status--inactive {
+  background-color: var(--neutral-500);
+  color: #ffffff;
+}
+
+/* Loading skeleton */
+.loading {
+  background: linear-gradient(90deg, var(--neutral-200) 25%, var(--neutral-300) 50%, var(--neutral-200) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin__main {
+    padding: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .field-type {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Branding */
+.admin__header .logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+}
+
+.admin__header .logo::before {
+  content: "✂ ";
+  margin-right: 0.5rem;
+}
+
+/* Appointment statuses */
+.appointment--confirmed   { background-color: var(--success-600); color: #ffffff; }
+.appointment--pending     { background-color: var(--warning-500); color: #ffffff; }
+.appointment--cancelled   { background-color: #ef4444; color: #ffffff; }
+.appointment--completed   { background-color: var(--success-600); color: #ffffff; }
+.appointment--no-show     { background-color: var(--secondary-700); color: #ffffff; }
+
+/* Commission statuses */
+.commission--pending      { background-color: var(--warning-500); color: #ffffff; }
+.commission--calculated   { background-color: var(--accent-500); color: #ffffff; }
+.commission--approved     { background-color: var(--success-600); color: #ffffff; }
+.commission--paid         { background-color: var(--primary-600); color: #ffffff; }
+.commission--held         { background-color: var(--neutral-500); color: #ffffff; }
+
+/* Loyalty tiers */
+.loyalty--bronze  { background-color: #b45309; color: #ffffff; }
+.loyalty--silver  { background-color: #6b7280; color: #ffffff; }
+.loyalty--gold    { background-color: var(--accent-500); color: #ffffff; }
+.loyalty--platinum{ background-color: var(--primary-600); color: #ffffff; }
+
+/* Service categories */
+.service--haircut   { background-color: var(--primary-600); color: #ffffff; }
+.service--styling   { background-color: var(--secondary-700); color: #ffffff; }
+.service--coloring  { background-color: var(--accent-500); color: #ffffff; }
+.service--treatment { background-color: var(--success-600); color: #ffffff; }
+
+/* Dashboard widgets */
+.dashboard__widget {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--neutral-200);
+}
+
+.dashboard__widget h3 {
+  color: var(--primary-600);
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.dashboard__widget .metric {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent-500);
+}
+
+.dashboard__widget .metric--success { color: var(--success-600); }
+.dashboard__widget .metric--warning { color: var(--warning-500); }
+
+/* Professional form enhancements */
+.field-type--currency input,
+.field-type--percentage input {
+  text-align: right;
+  font-family: 'Inter', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Enhanced tables */
+.table--appointments .appointment-time {
+  font-weight: 700;
+  color: var(--primary-600);
+}
+
+.table--commissions .commission-amount {
+  font-weight: 700;
+  color: var(--accent-500);
+}
+
+.table--services .service-price {
+  color: var(--success-600);
+  font-weight: 700;
+}
