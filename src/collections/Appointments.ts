@@ -3,36 +3,54 @@ import { CollectionConfig } from 'payload';
 export const Appointments: CollectionConfig = {
   slug: 'appointments',
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'user', 'tenant', 'date', 'service', 'status', 'paymentStatus'],
-    group: 'Bookings',
+    useAsTitle: 'appointmentTitle',
+    defaultColumns: ['appointmentTitle', 'customer', 'stylist', 'dateTime', 'service', 'status'],
+    group: 'Appointments',
+    pagination: {
+      defaultLimit: 25,
+      maxLimit: 100,
+    },
   },
   access: {
-    create: ({ req }) => !!req.user, // Only authenticated users
+    create: ({ req }) => !!req.user,
     read: ({ req }) => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      if (req.user.role === 'barber') return true // Barbers need to view appointments
-      return { user: { equals: req.user.id } }
+      return { customer: { equals: req.user.id } }
     },
     update: ({ req }) => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      return { user: { equals: req.user.id } }
+      return { customer: { equals: req.user.id } }
     },
     delete: ({ req }) => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      return { user: { equals: req.user.id } }
+      return { customer: { equals: req.user.id } }
     },
   },
+  indexes: [
+    { name: 'appointments_dateTime_status', fields: ['dateTime', 'status'] },
+    { name: 'appointments_stylist_dateTime', fields: ['stylist', 'dateTime'] },
+  ],
   fields: [
-    { name: 'title', type: 'text', required: true, defaultValue: 'Appointment' },
-    { name: 'user', type: 'relationship', relationTo: 'users', required: true },
+    { name: 'appointmentTitle', type: 'text', required: true, defaultValue: 'Appointment' },
+    { name: 'customer', type: 'relationship', relationTo: 'customers', required: true },
+    { name: 'stylist', type: 'relationship', relationTo: 'stylists', required: true },
     { name: 'tenant', type: 'relationship', relationTo: 'tenants', required: true },
-    { name: 'date', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime' } } },
+    { name: 'dateTime', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime' } } },
     { name: 'service', type: 'text', required: true },
-    { name: 'status', type: 'select', options: ['pending', 'confirmed', 'cancelled', 'rescheduled'], defaultValue: 'pending' },
+    { 
+      name: 'status', 
+      type: 'select', 
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Confirmed', value: 'confirmed' },
+        { label: 'Completed', value: 'completed' },
+        { label: 'Cancelled', value: 'cancelled' },
+      ], 
+      defaultValue: 'pending' 
+    },
     { name: 'paymentStatus', type: 'select', options: ['unpaid', 'paid', 'refunded'], defaultValue: 'unpaid' },
     { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
     { name: 'googleEventId', type: 'text', admin: { readOnly: true } },

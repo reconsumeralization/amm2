@@ -244,7 +244,7 @@ export default function BookingChatbot({
 
       } catch (err) {
         console.error('Error initializing chatbot:', err);
-        setError('Failed to initialize chatbot. Please refresh the page.');
+        setError('Failed to initialize chatbot');
         toast.error('Failed to initialize chatbot');
       } finally {
         setIsInitializing(false);
@@ -586,6 +586,15 @@ export default function BookingChatbot({
     }
   };
 
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Create a synthetic event object for handleSubmit
+      // @ts-expect-error - minimal event shape for submit handler
+      handleSubmit({ preventDefault: () => {} });
+    }
+  };
+
   return (
     <div className={`fixed ${getPositionClasses()} z-50 ${className}`} style={{ maxWidth }}>
       <AnimatePresence>
@@ -718,6 +727,8 @@ export default function BookingChatbot({
                       <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKey}
+                        onKeyDown={handleKey}
                         placeholder="Type your message..."
                         disabled={isLoading}
                         className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -732,7 +743,10 @@ export default function BookingChatbot({
                       {isLoading ? (
                         <LoaderCircle className="h-4 w-4 animate-spin" />
                       ) : (
-                        <Send className="h-4 w-4" />
+                        <>
+                          <Send className="h-4 w-4 mr-2" />
+                          Send
+                        </>
                       )}
                     </Button>
                   </form>
