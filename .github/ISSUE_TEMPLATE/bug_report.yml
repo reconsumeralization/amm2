@@ -1,0 +1,169 @@
+name: "🐛 Bug report"
+description: Report a reproducible problem with details that help us fix it fast
+title: "[Bug]: <short summary>"
+labels: [bug]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a report! Please fill out all required fields. Clear, reproducible reports move fastest.
+
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: Concise summary (e.g., "Checkout crashes on submit in Safari 16")
+      placeholder: Short, action-oriented summary
+    validations:
+      required: true
+
+  - type: input
+    id: reporter
+    attributes:
+      label: Reporter
+      description: Your name or handle
+      placeholder: @username
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser/device, app version, network conditions
+      placeholder: |
+        OS: Ubuntu 22.04
+        Browser: Chrome 118.0.5993.118
+        Device: Desktop (1920x1080)
+        App: v1.4.2 (commit abc123)
+        Network: Wi‑Fi (slow 3G simulated)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps starting from a known state
+      placeholder: |
+        1. Go to /checkout
+        2. Add item to cart
+        3. Click "Submit"
+        4. Observe crash
+      render: bash
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      description: How often can you reproduce this?
+      options:
+        - 1/5
+        - 2/5
+        - 3/5
+        - 4/5
+        - 5/5 (always)
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      placeholder: What should happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      placeholder: What actually happens (include full error text if applicable)
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Visual evidence / logs
+      description: Screenshots, screen recordings, console/server logs
+      placeholder: Drag-and-drop images or paste logs here
+      render: shell
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical (crash/data loss/security)
+        - High (major feature broken)
+        - Medium (workflows degraded)
+        - Low (minor issue)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Urgent
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: businessImpact
+    attributes:
+      label: Business impact
+      description: User pain points, revenue impact, SLAs
+
+  - type: input
+    id: workaround
+    attributes:
+      label: Workaround (if any)
+      placeholder: Temporary steps users can take
+
+  - type: input
+    id: related
+    attributes:
+      label: Related issues
+      placeholder: e.g., #123, #456, links to epics/duplicates
+
+  - type: input
+    id: prLink
+    attributes:
+      label: Patch / PR link (if available)
+      placeholder: URL to the fix branch or PR
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests included (if applicable)
+      description: Unit/integration/e2e tests added or updated
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - New
+        - Triaged
+        - In Progress
+        - Fix Submitted
+        - Verifying
+        - Closed
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Workflow notes / comments
+      description: Extra context, decisions, handoffs
+
