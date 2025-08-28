@@ -8,8 +8,8 @@
  */
 
 import { buildConfig } from 'payload';
-import { postgresAdapter } from '@payloadcms/db-postgres';
-import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import postgresAdapter from '@payloadcms/db-postgres';
+import lexicalEditor from '@payloadcms/richtext-lexical';
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { stripePlugin } from '@payloadcms/plugin-stripe';
 import { searchPlugin } from '@payloadcms/plugin-search';
@@ -53,7 +53,7 @@ const config = buildConfig({
     formBuilderPlugin({
       fields: { text: true, date: true, payment: true },
       formSubmissionOverrides: {
-        access: { create: () => true, read: ({ req }) => !!req.user },
+        access: { create: () => true, read: ({ req }: { req: any }) => !!req.user },
       },
     }),
     stripePlugin({

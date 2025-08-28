@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -8,22 +8,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from './ui/input';
 import {
   Star,
-  ShoppingCart,
+  Package as ShoppingCart,
   Search,
-  ShoppingBag,
-  Sparkles,
+  Package as ShoppingBag,
+  Star as Sparkles,
   TrendingUp,
   Heart,
   Eye,
   Award,
   Package,
   Filter,
-  Grid3X3,
+  Grid,
   List,
   X,
-  Minus,
-  Plus
-} from 'lucide-react';
+  X as Minus,
+  Star as Plus
+} from '@/lib/icon-mapping';
 
 interface Product {
   id: string;

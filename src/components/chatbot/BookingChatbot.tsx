@@ -8,18 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  MessageCircle, 
-  Send, 
-  Minimize, 
-  Maximize, 
-  X, 
-  Clock, 
-  User, 
-  AlertCircle,
+import {
+  MessageCircle,
+  Send,
+  Minimize,
+  Maximize,
+  X,
+  Clock,
+  User,
+  AlertTriangle as AlertCircle,
   Bot,
-  LoaderCircle
-} from 'lucide-react';
+  Loader2 as LoaderCircle
+} from '@/lib/icon-mapping';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 

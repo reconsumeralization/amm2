@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, DollarSign, Calendar, FileText, AlertCircle } from 'lucide-react';
+import { TrendingUp, Package as DollarSign, Calendar, FileText, AlertTriangle as AlertCircle } from '@/lib/icon-mapping';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 

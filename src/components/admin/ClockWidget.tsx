@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, LogIn, LogOut, Users, AlertCircle, Activity } from 'lucide-react';
+import { Clock, ArrowRight as LogIn, LogOut, User, AlertTriangle as AlertCircle, Activity } from '@/lib/icon-mapping';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 

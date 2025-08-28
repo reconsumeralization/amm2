@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CalendarIcon, StarIcon, TrophyIcon, InstagramIcon, FacebookIcon } from 'lucide-react';
+import { Calendar, Star, Award, Instagram, Facebook } from '@/lib/icon-mapping';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -93,7 +93,7 @@ export default function TeamPage() {
                 
                 {/* Rating Badge */}
                 <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 flex items-center space-x-1 shadow-md">
-                  <StarIcon size={14} className="text-yellow-500 fill-current" />
+                  <Star size={14} className="text-yellow-500 fill-current" />
                   <span className="text-sm font-semibold">{stylist.rating}</span>
                   <span className="text-xs text-gray-500">({stylist.reviews})</span>
                 </div>
@@ -105,11 +105,11 @@ export default function TeamPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-1">{stylist.name}</h3>
                   <p className="text-blue-600 font-semibold mb-2">{stylist.role}</p>
                   <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <TrophyIcon size={16} className="mr-2" />
+                    <Award size={16} className="mr-2" />
                     {stylist.experience} experience
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
-                    <CalendarIcon size={16} className="mr-2" />
+                    <Calendar size={16} className="mr-2" />
                     {stylist.availability}
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export default function TeamPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <InstagramIcon size={20} />
+                      <Instagram size={20} />
                     </a>
                     <a 
                       href={`https://facebook.com/${stylist.social.facebook}`}
@@ -148,7 +148,7 @@ export default function TeamPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <FacebookIcon size={20} />
+                      <Facebook size={20} />
                     </a>
                   </div>
                   <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
@@ -172,7 +172,7 @@ export default function TeamPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrophyIcon className="text-blue-600" size={24} />
+                <Award className="text-blue-600" size={24} />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Certified Professionals</h3>
               <p className="text-gray-600 text-sm">All our stylists are licensed and continuously trained in the latest techniques.</p>
@@ -180,7 +180,7 @@ export default function TeamPage() {
             
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <StarIcon className="text-blue-600" size={24} />
+                <Star className="text-blue-600" size={24} />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Proven Excellence</h3>
               <p className="text-gray-600 text-sm">Consistently high ratings and positive reviews from satisfied clients.</p>
@@ -188,7 +188,7 @@ export default function TeamPage() {
             
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CalendarIcon className="text-blue-600" size={24} />
+                <Calendar className="text-blue-600" size={24} />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Flexible Scheduling</h3>
               <p className="text-gray-600 text-sm">Extended hours and various availability to fit your busy schedule.</p>
@@ -196,7 +196,7 @@ export default function TeamPage() {
             
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <InstagramIcon className="text-blue-600" size={24} />
+                <Instagram className="text-blue-600" size={24} />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Latest Trends</h3>
               <p className="text-gray-600 text-sm">Stay connected with our stylists on social media for style inspiration.</p>

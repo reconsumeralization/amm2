@@ -1,5 +1,5 @@
 import { buildConfig } from 'payload';
-import { postgresAdapter } from '@payloadcms/db-postgres';
+import postgresAdapter from '@payloadcms/db-postgres';
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { searchPlugin } from '@payloadcms/plugin-search';
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant';

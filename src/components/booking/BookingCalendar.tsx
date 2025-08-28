@@ -5,7 +5,7 @@ import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Clock, MapPin } from 'lucide-react'
+import { Clock, MapPin } from '@/lib/icon-mapping'
 import { format, addDays, isSameDay, isBefore, startOfDay } from 'date-fns'
 
 interface TimeSlot {

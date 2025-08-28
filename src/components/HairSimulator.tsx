@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
-import { Upload, Image as ImageIcon, Sparkles, LoaderCircle } from 'lucide-react';
+import { Upload, Camera as ImageIcon, Star as Sparkles, Loader2 as LoaderCircle } from '@/lib/icon-mapping';
 
 interface HairSimulatorProps {
   userId?: string;

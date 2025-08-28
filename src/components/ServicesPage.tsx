@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, Star, Scissors, DollarSign, Timer, Zap, CreditCard } from 'lucide-react';
+import { Clock, Star, Scissors, Package as DollarSign, Clock as Timer, Zap, Package as CreditCard } from '@/lib/icon-mapping';
 
 interface Service {
   id: string;
@@ -28,7 +28,7 @@ export default function ServicesPage() {
         const data = await response.json();
         setServices(data);
       } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
       }

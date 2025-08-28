@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Button } from './ui/button';
-import { Star, Users, Calendar, Trophy, Crown, Zap, Award, TrendingUp, Target, Gift, Package } from 'lucide-react';
+import { Star, User, Calendar, Award, Zap, Award as CrownIcon, TrendingUp, Target as TargetIcon, Gift, Package } from '@/lib/icon-mapping';
 
 interface LoyaltyData {
   points: number;
@@ -75,12 +75,12 @@ const TIER_CONFIGS: Record<string, TierConfig> = {
 const BADGE_ICONS: Record<string, any> = {
   'First Visit': Calendar,
   'Loyal Client': Star,
-  'Regular Customer': Users,
+  'Regular Customer': User,
   'Event Attendee': Award,
   'Product Enthusiast': Gift,
-  'Referrer': Users,
-  'High Spender': Crown,
-  'Anniversary': Trophy,
+  'Referrer': User,
+  'High Spender': CrownIcon,
+  'Anniversary': Award,
 };
 
 export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
@@ -162,7 +162,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
   if (!loyaltyData) {
     return (
       <div className="text-center py-12">
-        <Trophy className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <Award className="h-12 w-12 mx-auto text-gray-400 mb-4" />
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No Loyalty Data</h3>
         <p className="text-gray-500">Start earning points with your first appointment!</p>
       </div>
@@ -184,7 +184,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Crown className="h-6 w-6" style={{ color: currentTier.color }} />
+                <CrownIcon className="h-6 w-6" style={{ color: currentTier.color }} />
                 {currentTier.name} Tier
               </CardTitle>
               <CardDescription>
@@ -297,7 +297,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+              <User className="h-5 w-5" />
               Referrals
             </CardTitle>
           </CardHeader>
@@ -362,7 +362,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
         <Card className="border-dashed">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+              <TargetIcon className="h-5 w-5" />
               Next Tier: {nextTier.name}
             </CardTitle>
           </CardHeader>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Star, MessageSquare, ThumbsUp, Heart, Quote } from 'lucide-react';
+import { Star, MessageSquare, ThumbsUp, Heart, MessageSquare as Quote } from '@/lib/icon-mapping';
 
 interface Testimonial {
   id: string;
@@ -29,7 +29,7 @@ export default function TestimonialsPage() {
         const data = await response.json();
         setTestimonials(data);
       } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,7 @@
 import React from 'react'
-import { Card, Heading, Text } from '@payloadcms/ui'
+
+import { Heading } from '@/components/ui/heading'
+import { Text } from '@/components/ui/text'
 
 interface MetricCardProps {
   title: string
@@ -14,7 +16,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, change, trend, ic
                     trend === 'down' ? 'text-red-600' : 'text-gray-600'
 
   return (
-    <Card className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="flex items-center justify-between">
         <div>
           <Text className="text-sm font-medium text-gray-600">{title}</Text>
@@ -27,7 +29,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, change, trend, ic
         </div>
         {icon && <div className="text-3xl">{icon}</div>}
       </div>
-    </Card>
+    </div>
   )
 }
 
@@ -59,14 +61,14 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   }
 
   return (
-    <Card className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <Text className="font-medium text-gray-900">
               {customer?.firstName} {customer?.lastName}
             </Text>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status]}`}>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status as keyof typeof statusColors]}`}>
               {appointment.status}
             </span>
           </div>
@@ -78,7 +80,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </Text>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }
 
@@ -88,7 +90,7 @@ interface LowStockAlertProps {
 
 const LowStockAlert: React.FC<LowStockAlertProps> = ({ product }) => {
   return (
-    <Card className="p-4 bg-red-50 rounded-lg border border-red-200">
+    <div className="p-4 bg-red-50 rounded-lg border border-red-200">
       <div className="flex items-center justify-between">
         <div>
           <Text className="font-medium text-red-900">{product.name}</Text>
@@ -98,7 +100,7 @@ const LowStockAlert: React.FC<LowStockAlertProps> = ({ product }) => {
         </div>
         <div className="text-red-600">⚠</div>
       </div>
-    </Card>
+    </div>
   )
 }
 
@@ -176,7 +178,7 @@ export const DashboardWidgets: React.FC = () => {
 
       {/* Today's Appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
           <Heading className="text-lg font-semibold text-gray-900 mb-4">
             Today's Appointments
           </Heading>
@@ -191,10 +193,10 @@ export const DashboardWidgets: React.FC = () => {
               />
             ))}
           </div>
-        </Card>
+        </div>
 
         {/* Low Stock Alerts */}
-        <Card className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
           <Heading className="text-lg font-semibold text-gray-900 mb-4">
             Low Stock Alerts
           </Heading>
@@ -203,11 +205,11 @@ export const DashboardWidgets: React.FC = () => {
               <LowStockAlert key={index} product={product} />
             ))}
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <Card className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
         <Heading className="text-lg font-semibold text-gray-900 mb-4">
           Quick Actions
         </Heading>
@@ -225,7 +227,7 @@ export const DashboardWidgets: React.FC = () => {
             ⚙ Manage Inventory
           </button>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

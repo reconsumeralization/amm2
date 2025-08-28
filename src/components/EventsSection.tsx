@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
-import { Calendar, Clock, MapPin, Users, Star, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Star, ExternalLink } from '@/lib/icon-mapping';
 
 interface Event {
   id: string;
