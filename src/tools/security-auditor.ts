@@ -191,7 +191,7 @@ function listFilesRecursive(dir: string, exts?: string[]): string[] {
 }
 
 // Basic pattern-based analyzers (fallback if tools missing)
-function analyzePatterns(repoPath: string, profile: ScanProfile): Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath' | 'severity'> & { severity: Severity }[] {
+function analyzePatterns(repoPath: string, profile: ScanProfile): Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath'>[] {
   const findings: Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath'>[] = [];
 
   // 001: Prompt Injection in AI Task Planner (Python)
@@ -406,10 +406,10 @@ function applyFix(issue: IssueRecord): boolean {
       updated = sanitizeFn + '\n' + updated;
     }
     updated = updated.replace(/innerHTML\s*=\s*`([^`]+)`/g, (_m, tpl) => {
-      return `innerHTML = \`$${tpl.replace(/\$\{([^}]+)\}/g, (_m2, v) => `{sanitize(${v.trim()})}`)}\``;
+      return `innerHTML = sanitize(\`${tpl}\`)`;
     });
     updated = updated.replace(/innerHTML\s*=\s*([^;]+);/g, (_m, expr) => {
-      if (expr.includes('sanitize(')) return `innerHTML = sanitize(${expr});`;
+      if (expr.trim().startsWith('sanitize(')) return `innerHTML = ${expr};`;
       return `innerHTML = sanitize(${expr});`;
     });
     if (updated !== content) {
@@ -839,4 +839,3 @@ function nextProfile(last?: ScanProfile): ScanProfile {
   if (idx === -1) return PROFILE_ORDER[0];
   return PROFILE_ORDER[(idx + 1) % PROFILE_ORDER.length];
 }
-

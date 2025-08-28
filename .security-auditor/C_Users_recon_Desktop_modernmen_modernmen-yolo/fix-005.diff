@@ -1,0 +1,4 @@
+diff --git a/.next\static\chunks\fde3840d-448cd7dc554c47a9.js b/.next\static\chunks\fde3840d-448cd7dc554c47a9.js
+--- a/.next\static\chunks\fde3840d-448cd7dc554c47a9.js
++++ b/.next\static\chunks\fde3840d-448cd7dc554c47a9.js
++ Applied automated security fix by security-auditor CLI

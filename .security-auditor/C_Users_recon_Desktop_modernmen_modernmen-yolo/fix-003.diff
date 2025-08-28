@@ -1,0 +1,4 @@
+diff --git a/.next\static\chunks\1540-299563132e1ec0d9.js b/.next\static\chunks\1540-299563132e1ec0d9.js
+--- a/.next\static\chunks\1540-299563132e1ec0d9.js
++++ b/.next\static\chunks\1540-299563132e1ec0d9.js
++ Applied automated security fix by security-auditor CLI
