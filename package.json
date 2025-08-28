@@ -89,5 +89,12 @@
     "tsx": "^4.0.0",
     "typescript": "^5.2.0"
   },
-  "packageManager": "pnpm@10.12.4"
+  "packageManager": "pnpm@10.12.4",
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.0",
+      "@babel/runtime": "^7.26.10",
+      "form-data": "^4.0.4"
+    }
+  }
 }
