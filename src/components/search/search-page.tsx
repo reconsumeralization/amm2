@@ -121,7 +121,11 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5 bg-slate-100"></div>
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+      </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
         {/* Header */}
@@ -290,7 +294,10 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
                   <div className="w-16 h-16 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin"></div>
-                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-amber-400 rounded-full animate-spin" style={{ animationDelay: "0.5s" }}></div>
+                  <div
+                    className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-amber-400 rounded-full animate-spin"
+                    style={{ animationDelay: '0.5s' }}
+                  ></div>
                 </div>
                 <div className="text-center">
                   <p className="text-lg font-semibold text-slate-900 mb-2">Searching...</p>

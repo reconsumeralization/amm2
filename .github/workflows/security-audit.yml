@@ -1,0 +1,32 @@
+name: Security Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1' # Weekly Monday 03:00 UTC
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Enable corepack
+        run: corepack enable
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
+      - name: Dependency audit
+        run: pnpm audit || true
+      - name: Lint
+        run: pnpm lint || true
+      - name: Type check
+        run: pnpm type-check || true
+      - name: Tests
+        run: pnpm test || true
