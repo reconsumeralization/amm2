@@ -406,7 +406,8 @@ function applyFix(issue: IssueRecord): boolean {
       updated = sanitizeFn + '\n' + updated;
     }
     updated = updated.replace(/innerHTML\s*=\s*`([^`]+)`/g, (_m, tpl) => {
-      return `innerHTML = sanitize(\`$${tpl.replace(/\$\{([^}]+)\}/g, (_m2, v) => `{sanitize(${v.trim()})}`)}\``);
+      const sanitizedTpl = tpl.replace(/\$\{([^}]+)\}/g, (_m2, v) => `\${sanitize(${v.trim()})}`);
+      return `innerHTML = sanitize(\`${sanitizedTpl}\`)`;
     });
     updated = updated.replace(/innerHTML\s*=\s*([^;]+);/g, (_m, expr) => {
       if (expr.includes('sanitize(')) return `innerHTML = sanitize(sanitize(${expr}));`;
