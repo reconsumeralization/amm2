@@ -22,19 +22,7 @@ export default function PortalPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (status === 'loading') return
-
-    if (!session?.user) {
-      router.push('/portal/login')
-      return
-    }
-
-    // Fetch user data and portal information
-    fetchPortalData()
-  }, [session, status, router])
-
-  const fetchPortalData = async () => {
+  const fetchPortalData = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
@@ -82,7 +70,19 @@ export default function PortalPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [session])
+
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (!session?.user) {
+      router.push('/portal/login')
+      return
+    }
+
+    // Fetch user data and portal information
+    fetchPortalData()
+  }, [session, status, router, fetchPortalData])
 
   const handleSignOut = async () => {
     await signOut({

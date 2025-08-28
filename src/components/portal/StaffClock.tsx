@@ -24,11 +24,7 @@ export default function StaffClock({ userId, tenantId }: StaffClockProps) {
   const [lastClockRecord, setLastClockRecord] = useState<ClockRecord | null>(null);
   const [currentStatus, setCurrentStatus] = useState<'clocked-out' | 'clocked-in' | 'unknown'>('unknown');
 
-  useEffect(() => {
-    fetchLastClockRecord();
-  }, []);
-
-  const fetchLastClockRecord = async () => {
+  const fetchLastClockRecord = useCallback(async () => {
     try {
       const response = await fetch(`/api/admin/staff-schedules/clock?staff=${userId}&limit=1&sort=-timestamp`);
       if (response.ok) {
@@ -44,7 +40,11 @@ export default function StaffClock({ userId, tenantId }: StaffClockProps) {
     } catch (error) {
       console.error('Error fetching last clock record:', error);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchLastClockRecord();
+  }, [fetchLastClockRecord]);
 
   const handleClockAction = async (action: 'clock-in' | 'clock-out') => {
     setIsLoading(true);

@@ -106,7 +106,7 @@ export default function BookingChatbot({
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<Settings>({});
   // Custom cookie implementation using localStorage
-  const [cookies, setCookie] = useState<{ chatbot_display?: string }>({});
+  const [cookies, setCookies] = useState<{ chatbot_display?: string }>({});
 
   useEffect(() => {
     // Load from localStorage on mount
@@ -206,7 +206,7 @@ export default function BookingChatbot({
       console.error('Error checking visibility:', err);
       setIsVisible(false);
     }
-  }, [tenantId, userId, pathname, appointments, staff, cookies.chatbot_display, setCookie]);
+  }, [tenantId, userId, pathname, cookies.chatbot_display, setCookieValue]);
 
   // Load settings and initialize chatbot
   useEffect(() => {
@@ -620,7 +620,7 @@ export default function BookingChatbot({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center w-8 h-8 bg-white bg-opacity-20 rounded-full">
-                      <Bot className="h-4 w-4" />
+                      <Maximize className="h-4 w-4" />
                     </div>
                     <div>
                       <CardTitle className="text-lg font-semibold">ModernMen Assistant</CardTitle>

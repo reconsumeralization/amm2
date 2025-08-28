@@ -22,7 +22,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
   const [generatedCode, setGeneratedCode] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
-  const availableLanguages = sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl']
+  const availableLanguages = useMemo(() => sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl'], [sdkConfig?.languages]);
 
   useEffect(() => {
     generateCodeForAllLanguages()
@@ -43,7 +43,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
 
     setGeneratedCode(codeMap)
     setLoading(false)
-  }, [availableLanguages, generateCodeForLanguage, sdkConfig])
+  }, [availableLanguages, generateCodeForLanguage])
 
   const generateCodeForLanguage = useCallback(async (language: string): Promise<string> => {
     const baseUrl = sdkConfig?.baseUrl || 'https://api.modernmen.com'

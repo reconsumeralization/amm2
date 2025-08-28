@@ -65,14 +65,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
   const [cart, setCart] = useState<Array<{ product: Product; quantity: number }>>([]);
   const [showCart, setShowCart] = useState(false);
 
-  useEffect(() => {
-    fetchProducts();
-    if (showRecommendations && userId) {
-      fetchRecommendations();
-    }
-  }, [category, searchTerm, sortBy, userId, showRecommendations]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -99,9 +92,9 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, sortBy, category, searchTerm]);
 
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     try {
       const response = await fetch(`/api/products/recommend?userId=${userId}&limit=6`);
       if (response.ok) {
@@ -111,7 +104,14 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     } catch (err) {
       console.error('Failed to fetch recommendations:', err);
     }
-  };
+  }, [userId, limit]);
+
+  useEffect(() => {
+    fetchProducts();
+    if (showRecommendations && userId) {
+      fetchRecommendations();
+    }
+  }, [category, searchTerm, sortBy, userId, showRecommendations, fetchProducts, fetchRecommendations]);
 
   const addToCart = (product: Product) => {
     setCart(prevCart => {

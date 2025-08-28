@@ -138,7 +138,7 @@ export default function ImageEditor({ file, onSave, onCancel, tenantId, settings
       setHistoryIndex(0);
     };
     reader.readAsDataURL(file);
-  }, [file]);
+  }, [file, crop]);
 
   const saveToHistory = useCallback(() => {
     const newState: EditHistory = {
@@ -218,7 +218,7 @@ export default function ImageEditor({ file, onSave, onCancel, tenantId, settings
       const nextIndex = (currentIndex + 1) % tabs.length;
       setActiveTab(tabs[nextIndex]);
     }
-  }, [undo, redo, activeTab]);
+  }, [undo, redo, activeTab, handleSave]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -361,7 +361,7 @@ export default function ImageEditor({ file, onSave, onCancel, tenantId, settings
     [crop, brightness, contrast, grayscale, sepia, saturation, hue, blur, rotation, flipHorizontal, flipVertical, file.type]
   );
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!imageSrc || !imageRef.current) return;
     
     setIsProcessing(true);
@@ -380,7 +380,7 @@ export default function ImageEditor({ file, onSave, onCancel, tenantId, settings
       setError('Failed to process image');
       setIsProcessing(false);
     }
-  };
+  }, [imageSrc, imageRef, setIsProcessing, setError, getCroppedImage, settings, onSave, altText]);
 
   const resetImage = () => {
     setCrop({ unit: '%', width: 50, height: 50, x: 25, y: 25 });
