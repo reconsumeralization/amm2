@@ -4,8 +4,8 @@
 
  Commands:
    - help
-   - run [--once] [--repos <paths>]        main loop over repos
-   - scan <repo>
+   - run [--once] [--repos <paths>] [--profile <xss|prompt|deps|rce|all>]        main loop over repos
+   - scan <repo> [--profile <xss|prompt|deps|rce|all>]
    - fix <issue-id> --repo <repo>
    - verify <issue-id> --repo <repo>
    - status [--repo <repo>]
@@ -17,6 +17,9 @@
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
+
+type ScanProfile = 'xss' | 'prompt' | 'deps' | 'rce' | 'all';
+const PROFILE_ORDER: ScanProfile[] = ['xss', 'prompt', 'deps', 'rce'];
 
 type IssueState =
   | 'Submitted'
@@ -59,6 +62,7 @@ interface RepoState {
   issues: IssueRecord[];
   logs: string[];
   lastRunAt?: string;
+  lastProfile?: ScanProfile;
 }
 
 const WORK_DIR = process.cwd();
@@ -187,77 +191,85 @@ function listFilesRecursive(dir: string, exts?: string[]): string[] {
 }
 
 // Basic pattern-based analyzers (fallback if tools missing)
-function analyzePatterns(repoPath: string): Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath' | 'severity'> & { severity: Severity }[] {
+function analyzePatterns(repoPath: string, profile: ScanProfile): Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath' | 'severity'> & { severity: Severity }[] {
   const findings: Omit<IssueRecord, 'id' | 'state' | 'createdAt' | 'updatedAt' | 'repoPath'>[] = [];
 
   // 001: Prompt Injection in AI Task Planner (Python)
-  for (const file of listFilesRecursive(repoPath, ['.py'])) {
-    const content = readFileSafe(file);
-    if (!content) continue;
-    const lc = content.toLowerCase();
-    if (lc.includes('openai') && /prompt\s*=/.test(content) && /(\+\s*user_input|\{\s*user_input\s*\})/.test(content)) {
-      findings.push({
-        description: 'Prompt Injection risk: user input concatenated into AI prompt',
-        filePath: file,
-        cwe: 'CWE-1427',
-        severity: 'High',
-        cvss: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:N',
-      });
+  if (profile === 'prompt' || profile === 'all') {
+    for (const file of listFilesRecursive(repoPath, ['.py'])) {
+      const content = readFileSafe(file);
+      if (!content) continue;
+      const lc = content.toLowerCase();
+      if (lc.includes('openai') && /prompt\s*=/.test(content) && /(\+\s*user_input|\{\s*user_input\s*\})/.test(content)) {
+        findings.push({
+          description: 'Prompt Injection risk: user input concatenated into AI prompt',
+          filePath: file,
+          cwe: 'CWE-1427',
+          severity: 'High',
+          cvss: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:N',
+        });
+      }
     }
   }
 
   // 002: Reflected XSS in Product Previews (JS/TS)
-  for (const file of listFilesRecursive(repoPath, ['.js', '.jsx', '.ts', '.tsx'])) {
-    const content = readFileSafe(file);
-    if (!content) continue;
-    if (/innerHTML\s*=\s*`?[\s\S]*\$\{[^}]+\}/.test(content) || /innerHTML\s*=\s*.*\+\s*[^;]+/.test(content)) {
-      findings.push({
-        description: 'Potential Reflected XSS: innerHTML used with unsanitized input',
-        filePath: file,
-        cwe: 'CWE-79',
-        severity: 'Medium',
-        cvss: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N',
-      });
+  if (profile === 'xss' || profile === 'all') {
+    for (const file of listFilesRecursive(repoPath, ['.js', '.jsx', '.ts', '.tsx'])) {
+      const content = readFileSafe(file);
+      if (!content) continue;
+      if (/innerHTML\s*=\s*`?[\s\S]*\$\{[^}]+\}/.test(content) || /innerHTML\s*=\s*.*\+\s*[^;]+/.test(content)) {
+        findings.push({
+          description: 'Potential Reflected XSS: innerHTML used with unsanitized input',
+          filePath: file,
+          cwe: 'CWE-79',
+          severity: 'Medium',
+          cvss: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N',
+        });
+      }
     }
   }
 
   // 003: Missing Authorization in Integrations (dependency)
-  const reqFile = path.join(repoPath, 'requirements.txt');
-  if (fs.existsSync(reqFile)) {
-    const content = readFileSafe(reqFile) ?? '';
-    if (/shopify-sdk==1\.2\.3/.test(content)) {
-      findings.push({
-        description: 'Outdated dependency missing auth checks (shopify-sdk==1.2.3)',
-        filePath: reqFile,
-        cwe: 'CWE-862',
-        severity: 'High',
-        cvss: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N',
-      });
+  if (profile === 'deps' || profile === 'all') {
+    const reqFile = path.join(repoPath, 'requirements.txt');
+    if (fs.existsSync(reqFile)) {
+      const content = readFileSafe(reqFile) ?? '';
+      if (/shopify-sdk==1\.2\.3/.test(content)) {
+        findings.push({
+          description: 'Outdated dependency missing auth checks (shopify-sdk==1.2.3)',
+          filePath: reqFile,
+          cwe: 'CWE-862',
+          severity: 'High',
+          cvss: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N',
+        });
+      }
     }
   }
 
   // 004: Arbitrary Code Execution via Jobs (Ruby)
-  for (const file of listFilesRecursive(repoPath, ['.rb'])) {
-    const content = readFileSafe(file) ?? '';
-    if (/system\(/.test(content) || /`[^`]+`/.test(content)) {
-      findings.push({
-        description: 'Potential command injection: system/backtick execution with unvalidated params',
-        filePath: file,
-        cwe: 'CWE-94',
-        severity: 'Critical',
-        cvss: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H',
-      });
+  if (profile === 'rce' || profile === 'all') {
+    for (const file of listFilesRecursive(repoPath, ['.rb'])) {
+      const content = readFileSafe(file) ?? '';
+      if (/system\(/.test(content) || /`[^`]+`/.test(content)) {
+        findings.push({
+          description: 'Potential command injection: system/backtick execution with unvalidated params',
+          filePath: file,
+          cwe: 'CWE-94',
+          severity: 'Critical',
+          cvss: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H',
+        });
+      }
     }
   }
 
   return findings;
 }
 
-function runStaticAnalyzers(repoPath: string, techStack: string[]): { findings: ReturnType<typeof analyzePatterns>; toolLogs: string } {
+function runStaticAnalyzers(repoPath: string, techStack: string[], profile: ScanProfile): { findings: ReturnType<typeof analyzePatterns>; toolLogs: string } {
   let toolLogs = '';
-  const findings = analyzePatterns(repoPath);
+  const findings = analyzePatterns(repoPath, profile);
 
-  if (techStack.includes('Python')) {
+  if ((profile === 'prompt' || profile === 'all') && techStack.includes('Python')) {
     const r = runTool('bash', ['-lc', 'command -v bandit >/dev/null 2>&1 && bandit -r . -f json || true'], repoPath);
     toolLogs += `bandit: exit=${r.code}\n${r.stdout}\n${r.stderr}\n`;
     try {
@@ -281,7 +293,7 @@ function runStaticAnalyzers(repoPath: string, techStack: string[]): { findings: 
     }
   }
 
-  if (techStack.includes('JavaScript')) {
+  if ((profile === 'xss' || profile === 'all') && techStack.includes('JavaScript')) {
     const r = runTool('bash', ['-lc', 'command -v npx >/dev/null 2>&1 && npx -y eslint . -f json || true'], repoPath);
     toolLogs += `eslint: exit=${r.code}\n${r.stdout?.slice(0, 20000)}\n${r.stderr}\n`;
     try {
@@ -510,15 +522,15 @@ function gatherContext(state: RepoState): void {
   state.lastRunAt = now();
 }
 
-function analyzeRepo(state: RepoState): void {
+function analyzeRepo(state: RepoState, profile: ScanProfile): void {
   appendLog(state, `Detecting tech stack and domain for ${state.repoPath}`);
   const tech = detectTechStack(state.repoPath);
   const domain = detectDomain(state.repoPath);
   state.techStack = tech;
   state.domain = domain;
 
-  appendLog(state, `Analyzing repository with static tools`);
-  const { findings, toolLogs } = runStaticAnalyzers(state.repoPath, tech);
+  appendLog(state, `Analyzing repository with static tools (profile=${profile})`);
+  const { findings, toolLogs } = runStaticAnalyzers(state.repoPath, tech, profile);
   if (toolLogs) appendLog(state, toolLogs.slice(0, 5000));
   createOrUpdateIssues(state, findings, domain, tech);
   prioritizeIssues(state);
@@ -607,7 +619,9 @@ function cmdScan(repoArg: string): void {
   const state = loadRepoState(repoPath);
   appendLog(state, `Issue states initialized to Submitted`);
   gatherContext(state);
-  analyzeRepo(state);
+  const profile = (parseArg('--profile') as ScanProfile) || nextProfile(state.lastProfile);
+  state.lastProfile = profile;
+  analyzeRepo(state, profile);
   triageIssues(state);
   planAll(state);
   saveRepoState(state);
@@ -705,7 +719,10 @@ function cmdRunOnce(repos: string[]): void {
     // Initialize new issues to Submitted
     appendLog(st, 'Initializing issue states to Submitted');
     gatherContext(st); // Gathering Context
-    analyzeRepo(st);   // Detecting Domain + Analyzing
+    const provided = (parseArg('--profile') as ScanProfile) || undefined;
+    const chosen = provided || nextProfile(st.lastProfile);
+    st.lastProfile = chosen;
+    analyzeRepo(st, chosen);   // Detecting Domain + Analyzing
     triageIssues(st);  // Triaging
     planAll(st);       // Planning Remediation
     fixTopIssues(st);  // Fixing
@@ -720,8 +737,8 @@ function usage(): void {
 
 Usage:
   tsx src/tools/security-auditor.ts help
-  tsx src/tools/security-auditor.ts run [--once] [--repos <p1,p2>]
-  tsx src/tools/security-auditor.ts scan <repo>
+  tsx src/tools/security-auditor.ts run [--once] [--repos <p1,p2>] [--profile <xss|prompt|deps|rce|all>]
+  tsx src/tools/security-auditor.ts scan <repo> [--profile <xss|prompt|deps|rce|all>]
   tsx src/tools/security-auditor.ts fix <issue-id> --repo <repo>
   tsx src/tools/security-auditor.ts verify <issue-id> --repo <repo>
   tsx src/tools/security-auditor.ts status [--repo <repo>]
@@ -815,4 +832,11 @@ function main(): void {
 }
 
 main();
+
+function nextProfile(last?: ScanProfile): ScanProfile {
+  if (!last) return PROFILE_ORDER[0];
+  const idx = PROFILE_ORDER.indexOf(last);
+  if (idx === -1) return PROFILE_ORDER[0];
+  return PROFILE_ORDER[(idx + 1) % PROFILE_ORDER.length];
+}
 
