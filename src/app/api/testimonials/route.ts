@@ -1,8 +1,9 @@
 import { getPayload } from 'payload';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../../utils/email';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const tenantId = req.headers.get('X-Tenant-ID');
   const { content, barber, client } = await req.json();
 
@@ -11,7 +12,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const { default: config } = await import('../../../payload.config');
+    const payload = await getPayload({ config });
     const testimonial = await payload.create({
       collection: 'testimonials',
       data: { content, barber, client, tenant: tenantId, status: 'pending' },
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: any) {
   const tenantId = req.headers.get('X-Tenant-ID');
   const { action } = await req.json();
 
@@ -48,7 +50,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../payload.config') });
+    const { default: config } = await import('../../../payload.config');
+    const payload = await getPayload({ config });
     if (action === 'like') {
       const testimonial = await payload.update({
         collection: 'testimonials',

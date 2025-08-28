@@ -45,6 +45,8 @@ export const ERROR_CODES = {
   CONFIGURATION_ERROR: 'CONFIGURATION_ERROR',
 } as const;
 
+export const APIErrors = ERROR_CODES
+
 /**
  * Create a standardized error response
  */
@@ -293,3 +295,19 @@ export class RateLimiter {
 
 // Global rate limiter instance
 export const globalRateLimiter = new RateLimiter(100, 60000); // 100 requests per minute
+
+export function createSuccessResponse<T>(data: T, message: string = 'Success', meta?: Record<string, any>) {
+  return NextResponse.json({ success: true, message, data, meta, timestamp: new Date().toISOString() })
+}
+
+export type Handler = (request: Request) => Promise<NextResponse> | NextResponse
+
+export function withErrorHandler(handler: Handler) {
+  return async (request: Request) => {
+    try {
+      return await handler(request)
+    } catch (error: any) {
+      return handleAPIError(error, 'API')
+    }
+  }
+}
