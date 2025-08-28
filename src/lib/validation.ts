@@ -60,7 +60,7 @@ export const appointmentSchemas = {
     customerId: z.string().uuid('Invalid customer ID'),
     stylistId: z.string().uuid('Invalid stylist ID'),
     serviceId: z.string().uuid('Invalid service ID'),
-    date: z.date('Invalid date'),
+    date: z.date({ invalid_type_error: 'Invalid date' }),
     time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
     duration: z.number().min(15, 'Minimum duration is 15 minutes').max(480, 'Maximum duration is 8 hours'),
     notes: z.string().max(500, 'Notes too long').optional(),
@@ -212,7 +212,9 @@ export const userSchemas = {
     password: z.string().min(8, 'Password must be at least 8 characters'),
     firstName: z.string().min(1, 'First name is required').max(50, 'First name too long'),
     lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
-    role: z.enum(['admin', 'manager', 'stylist', 'customer'], 'Invalid role'),
+    role: z.enum(['admin', 'manager', 'stylist', 'customer'], { 
+      errorMap: () => ({ message: 'Invalid role' })
+    }),
     phone: z.string().optional(),
     isActive: z.boolean().optional(),
   }),
@@ -227,24 +229,31 @@ export const userSchemas = {
   }),
 }
 
+// Define pagination schema first to avoid circular reference
+const paginationSchema = z.object({
+  page: z.number().min(1).optional(),
+  limit: z.number().min(1).max(100).optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+})
+
 // API request validation schemas
-export const apiSchemas = {
-  pagination: z.object({
-    page: z.number().min(1).optional(),
-    limit: z.number().min(1).max(100).optional(),
-    sortBy: z.string().optional(),
-    sortOrder: z.enum(['asc', 'desc']).optional(),
-  }),
+export const apiSchemas: {
+  pagination: typeof paginationSchema;
+  search: z.ZodObject<any>;
+  dateRange: z.ZodEffects<z.ZodObject<any>, any, any>;
+} = {
+  pagination: paginationSchema,
 
   search: z.object({
     query: z.string().min(1, 'Search query is required').max(100, 'Search query too long'),
     filters: z.record(z.any()).optional(),
-    ...apiSchemas.pagination.shape,
+    ...paginationSchema.shape,
   }),
 
   dateRange: z.object({
-    startDate: z.date('Invalid start date'),
-    endDate: z.date('Invalid end date'),
+    startDate: z.date({ errorMap: () => ({ message: 'Invalid start date' }) }),
+    endDate: z.date({ errorMap: () => ({ message: 'Invalid end date' }) }),
   }).refine((data) => data.startDate <= data.endDate, {
     message: 'Start date must be before or equal to end date',
     path: ['endDate'],
@@ -272,7 +281,7 @@ export const validateRequest = async <T>(
 }
 
 export const validatePartial = async <T>(
-  schema: z.ZodSchema<T>,
+  schema: z.ZodObject<any>,
   data: unknown
 ): Promise<Partial<T>> => {
   try {

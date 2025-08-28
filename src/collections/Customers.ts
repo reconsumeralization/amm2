@@ -1,4 +1,6 @@
 import { CollectionConfig } from 'payload'
+import { customerSchemas } from '../lib/validation'
+import { yoloMonitoring } from '../lib/monitoring'
 
 export const Customers: CollectionConfig = {
   slug: 'customers',
@@ -8,6 +10,47 @@ export const Customers: CollectionConfig = {
     group: 'Customers',
     defaultColumns: ['fullName', 'email', 'phone', 'loyaltyTier', 'totalSpent'],
   },
+  
+  // Add access control
+  access: {
+    create: ({ req }) => !!req.user, // Only authenticated users
+    read: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
+    update: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
+    delete: ({ req }) => req.user?.role === 'admin' || { createdBy: { equals: req.user?.id } },
+  },
+
+  // Add hooks for validation and monitoring
+  hooks: {
+    beforeChange: [
+      ({ data, operation }) => {
+        // Validate data using Zod schema
+        const schema = operation === 'create' ? customerSchemas.create : customerSchemas.update;
+        const result = schema.safeParse(data);
+        if (!result.success) {
+          throw new Error(`Validation failed: ${result.error.message}`);
+        }
+      }
+    ],
+    afterChange: [
+      ({ doc, operation }) => {
+        // Track customer operations
+        yoloMonitoring.trackPayloadOperation('customers', operation, doc.createdBy);
+        
+        // Track business metrics
+        if (operation === 'create') {
+          yoloMonitoring.trackBusinessMetric('customers_created', 1, 'customers');
+        }
+      }
+    ],
+    afterDelete: [
+      ({ doc }) => {
+        // Track customer deletion
+        yoloMonitoring.trackPayloadOperation('customers', 'delete', doc.createdBy);
+        yoloMonitoring.trackBusinessMetric('customers_deleted', 1, 'customers');
+      }
+    ],
+  },
+
   fields: [
     {
       name: 'firstName',
@@ -17,6 +60,11 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Customer first name',
       },
+      validate: (value) => {
+        if (!value || value.length < 1) return 'First name is required';
+        if (value.length > 50) return 'First name too long';
+        return true;
+      },
     },
     {
       name: 'lastName',
@@ -25,6 +73,11 @@ export const Customers: CollectionConfig = {
       index: true,
       admin: {
         description: 'Customer last name',
+      },
+      validate: (value) => {
+        if (!value || value.length < 1) return 'Last name is required';
+        if (value.length > 50) return 'Last name too long';
+        return true;
       },
     },
     {
@@ -51,12 +104,27 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Primary email address',
       },
+      validate: (value) => {
+        if (!value) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return 'Invalid email address';
+        return true;
+      },
     },
     {
       name: 'phone',
       type: 'text',
       admin: {
         description: 'Primary phone number',
+      },
+      validate: (value) => {
+        if (value) {
+          const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+          if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
+            return 'Invalid phone number format';
+          }
+        }
+        return true;
       },
     },
     {
@@ -65,12 +133,30 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Secondary phone number',
       },
+      validate: (value) => {
+        if (value) {
+          const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+          if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
+            return 'Invalid phone number format';
+          }
+        }
+        return true;
+      },
     },
     {
       name: 'dateOfBirth',
       type: 'date',
       admin: {
         description: 'Customer date of birth',
+      },
+      validate: (value) => {
+        if (value) {
+          const date = new Date(value);
+          const now = new Date();
+          const age = now.getFullYear() - date.getFullYear();
+          if (age < 0 || age > 120) return 'Invalid date of birth';
+        }
+        return true;
       },
     },
     {
@@ -99,63 +185,84 @@ export const Customers: CollectionConfig = {
           ],
         },
         {
-          name: 'hairLength',
-          type: 'select',
-          options: [
-            { label: 'Short (above ears)', value: 'short' },
-            { label: 'Medium (ears to shoulders)', value: 'medium' },
-            { label: 'Long (below shoulders)', value: 'long' },
-            { label: 'Very Long (below chest)', value: 'very-long' },
-          ],
-        },
-        {
-          name: 'hairDensity',
+          name: 'hairTexture',
           type: 'select',
           options: [
             { label: 'Fine', value: 'fine' },
             { label: 'Medium', value: 'medium' },
-            { label: 'Thick', value: 'thick' },
+            { label: 'Coarse', value: 'coarse' },
           ],
         },
         {
-          name: 'scalpCondition',
-          type: 'select',
-          options: [
-            { label: 'Normal', value: 'normal' },
-            { label: 'Dry', value: 'dry' },
-            { label: 'Oily', value: 'oily' },
-            { label: 'Sensitive', value: 'sensitive' },
-            { label: 'Dandruff', value: 'dandruff' },
-          ],
-        },
-        {
-          name: 'chemicalHistory',
-          type: 'array',
+          name: 'hairColor',
+          type: 'text',
           admin: {
-            description: 'Previous chemical treatments',
+            description: 'Natural hair color',
           },
-          fields: [
-            {
-              name: 'treatment',
-              type: 'select',
-              required: true,
-              options: [
-                { label: 'Color', value: 'color' },
-                { label: 'Perm', value: 'perm' },
-                { label: 'Relaxer', value: 'relaxer' },
-                { label: 'Highlights', value: 'highlights' },
-                { label: 'Other', value: 'other' },
-              ],
-            },
-            {
-              name: 'date',
-              type: 'date',
-            },
-            {
-              name: 'notes',
-              type: 'text',
-            },
+        },
+        {
+          name: 'preferredStyles',
+          type: 'select',
+          hasMany: true,
+          options: [
+            { label: 'Classic', value: 'classic' },
+            { label: 'Modern', value: 'modern' },
+            { label: 'Trendy', value: 'trendy' },
+            { label: 'Professional', value: 'professional' },
+            { label: 'Casual', value: 'casual' },
           ],
+        },
+        {
+          name: 'allergies',
+          type: 'textarea',
+          admin: {
+            description: 'Any hair product allergies or sensitivities',
+          },
+        },
+      ],
+    },
+    {
+      name: 'address',
+      type: 'group',
+      admin: {
+        description: 'Customer address information',
+      },
+      fields: [
+        {
+          name: 'street',
+          type: 'text',
+          admin: {
+            description: 'Street address',
+          },
+        },
+        {
+          name: 'city',
+          type: 'text',
+          admin: {
+            description: 'City',
+          },
+        },
+        {
+          name: 'state',
+          type: 'text',
+          admin: {
+            description: 'State/Province',
+          },
+        },
+        {
+          name: 'zipCode',
+          type: 'text',
+          admin: {
+            description: 'ZIP/Postal code',
+          },
+        },
+        {
+          name: 'country',
+          type: 'text',
+          defaultValue: 'United States',
+          admin: {
+            description: 'Country',
+          },
         },
       ],
     },
@@ -163,87 +270,49 @@ export const Customers: CollectionConfig = {
       name: 'preferences',
       type: 'group',
       admin: {
-        description: 'Service and communication preferences',
+        description: 'Customer preferences and settings',
       },
       fields: [
+        {
+          name: 'communicationMethod',
+          type: 'select',
+          options: [
+            { label: 'Email', value: 'email' },
+            { label: 'SMS', value: 'sms' },
+            { label: 'Phone', value: 'phone' },
+          ],
+          defaultValue: 'email',
+        },
+        {
+          name: 'marketingConsent',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Consent to receive marketing communications',
+          },
+        },
+        {
+          name: 'appointmentReminders',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Receive appointment reminders',
+          },
+        },
         {
           name: 'preferredStylist',
           type: 'relationship',
           relationTo: 'stylists',
           admin: {
-            description: 'Preferred stylist',
+            description: 'Preferred stylist for appointments',
           },
         },
         {
-          name: 'preferredServices',
-          type: 'relationship',
-          relationTo: 'services',
-          hasMany: true,
+          name: 'notes',
+          type: 'textarea',
           admin: {
-            description: 'Frequently requested services',
+            description: 'Additional customer notes',
           },
-        },
-        {
-          name: 'emailReminders',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Send email appointment reminders',
-          },
-        },
-        {
-          name: 'smsReminders',
-          type: 'checkbox',
-          defaultValue: false,
-          admin: {
-            description: 'Send SMS appointment reminders',
-          },
-        },
-        {
-          name: 'marketingEmails',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Send promotional emails',
-          },
-        },
-        {
-          name: 'specialOffers',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            description: 'Send special offers and promotions',
-          },
-        },
-        {
-          name: 'preferredDays',
-          type: 'select',
-          hasMany: true,
-          admin: {
-            description: 'Preferred days for appointments',
-          },
-          options: [
-            { label: 'Monday', value: 'monday' },
-            { label: 'Tuesday', value: 'tuesday' },
-            { label: 'Wednesday', value: 'wednesday' },
-            { label: 'Thursday', value: 'thursday' },
-            { label: 'Friday', value: 'friday' },
-            { label: 'Saturday', value: 'saturday' },
-            { label: 'Sunday', value: 'sunday' },
-          ],
-        },
-        {
-          name: 'preferredTimes',
-          type: 'select',
-          hasMany: true,
-          admin: {
-            description: 'Preferred times for appointments',
-          },
-          options: [
-            { label: 'Morning (9-12)', value: 'morning' },
-            { label: 'Afternoon (12-5)', value: 'afternoon' },
-            { label: 'Evening (5-8)', value: 'evening' },
-          ],
         },
       ],
     },
@@ -255,27 +324,22 @@ export const Customers: CollectionConfig = {
       },
       fields: [
         {
-          name: 'loyaltyPoints',
-          type: 'number',
-          defaultValue: 0,
-          min: 0,
-          admin: {
-            description: 'Current loyalty points balance',
-            readOnly: true,
-          },
-        },
-        {
           name: 'loyaltyTier',
           type: 'select',
-          defaultValue: 'bronze',
           options: [
-            { label: 'Bronze (0-99 points)', value: 'bronze' },
-            { label: 'Silver (100-299 points)', value: 'silver' },
-            { label: 'Gold (300-699 points)', value: 'gold' },
-            { label: 'Platinum (700+ points)', value: 'platinum' },
+            { label: 'Bronze', value: 'bronze' },
+            { label: 'Silver', value: 'silver' },
+            { label: 'Gold', value: 'gold' },
+            { label: 'Platinum', value: 'platinum' },
           ],
+          defaultValue: 'bronze',
+        },
+        {
+          name: 'points',
+          type: 'number',
+          defaultValue: 0,
           admin: {
-            description: 'Current loyalty tier',
+            description: 'Current loyalty points',
             readOnly: true,
           },
         },
@@ -283,19 +347,8 @@ export const Customers: CollectionConfig = {
           name: 'totalSpent',
           type: 'number',
           defaultValue: 0,
-          min: 0,
           admin: {
-            description: 'Total amount spent (in cents)',
-            readOnly: true,
-          },
-        },
-        {
-          name: 'visitCount',
-          type: 'number',
-          defaultValue: 0,
-          min: 0,
-          admin: {
-            description: 'Total number of visits',
+            description: 'Total amount spent',
             readOnly: true,
           },
         },
@@ -303,8 +356,18 @@ export const Customers: CollectionConfig = {
           name: 'memberSince',
           type: 'date',
           admin: {
-            description: 'Loyalty program join date',
+            description: 'Date customer joined loyalty program',
             readOnly: true,
+          },
+          hooks: {
+            beforeChange: [
+              ({ operation, siblingData }) => {
+                if (operation === 'create' && !siblingData.memberSince) {
+                  return new Date();
+                }
+                return siblingData.memberSince;
+              },
+            ],
           },
         },
       ],
@@ -340,33 +403,11 @@ export const Customers: CollectionConfig = {
       ],
     },
     {
-      name: 'notes',
-      type: 'textarea',
-      admin: {
-        description: 'Internal notes about this customer',
-      },
-    },
-    {
-      name: 'tags',
-      type: 'array',
-      admin: {
-        description: 'Customer tags for organization',
-      },
-      fields: [
-        {
-          name: 'tag',
-          type: 'text',
-          required: true,
-        },
-      ],
-    },
-    {
       name: 'isActive',
       type: 'checkbox',
       defaultValue: true,
       admin: {
-        description: 'Active customer account',
-        position: 'sidebar',
+        description: 'Whether the customer account is active',
       },
     },
     {
@@ -375,77 +416,16 @@ export const Customers: CollectionConfig = {
       admin: {
         description: 'Date of last visit',
         readOnly: true,
-        position: 'sidebar',
       },
     },
     {
       name: 'nextAppointment',
-      type: 'date',
+      type: 'relationship',
+      relationTo: 'appointments',
       admin: {
-        description: 'Date of next scheduled appointment',
+        description: 'Next scheduled appointment',
         readOnly: true,
-        position: 'sidebar',
       },
     },
   ],
-  hooks: {
-    beforeChange: [
-      async ({ data, req, operation }: { data: any, req: any, operation: string }) => {
-        if (operation === 'create') {
-          // Set member since date for new customers
-          if (!data.memberSince) {
-            data.memberSince = new Date()
-          }
-        }
-
-        // Update loyalty tier based on points
-        if (data.loyaltyPoints !== undefined) {
-          if (data.loyaltyPoints >= 700) {
-            data.loyaltyTier = 'platinum'
-          } else if (data.loyaltyPoints >= 300) {
-            data.loyaltyTier = 'gold'
-          } else if (data.loyaltyPoints >= 100) {
-            data.loyaltyTier = 'silver'
-          } else {
-            data.loyaltyTier = 'bronze'
-          }
-        }
-
-        return data
-      },
-    ],
-    afterChange: [
-      async ({ doc, req, operation }: { doc: any, req: any, operation: string }) => {
-        if (operation === 'create') {
-          console.log(`New customer created: ${doc.fullName} (${doc.email})`)
-        }
-      },
-    ],
-  },
-  access: {
-    read: ({ req }: { req: any }) => {
-      const user = req.user
-      if (!user) return false
-      // Customers can read their own data, staff can read all
-      if (user.role === 'customer') {
-        return { id: { equals: user.id } }
-      }
-      return true
-    },
-    create: ({ req }: { req: any }) => {
-      // Allow customers to create their own accounts via frontend
-      return true
-    },
-    update: ({ req }: { req: any }) => {
-      const user = req.user
-      if (!user) return false
-      if (user.role === 'admin' || user.role === 'manager' || user.role === 'staff') return true
-      // Customers can update their own data
-      return { id: { equals: user.id } }
-    },
-    delete: ({ req }: { req: any }) => {
-      return req.user?.role === 'admin'
-    },
-  },
-  timestamps: true,
-}
+};

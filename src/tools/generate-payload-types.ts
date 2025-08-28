@@ -9,7 +9,7 @@
 
 import { buildConfig } from 'payload';
 import { mongooseAdapter } from '@payloadcms/db-mongodb';
-import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import lexicalEditor from '@payloadcms/richtext-lexical';
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { stripePlugin } from '@payloadcms/plugin-stripe';
 import { searchPlugin } from '@payloadcms/plugin-search';
@@ -22,7 +22,7 @@ import sharp from 'sharp';
 
 // Import collections
 import { Appointments, BusinessDocumentation, Users, Tenants, Media, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders } from '../collections';
-import { productAnalyticsEndpoint, bulkProductOperationsEndpoint } from '../endpoints';
+// import { productAnalyticsEndpoint, bulkProductOperationsEndpoint } from '../endpoints'; // TODO: Fix endpoint types
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -37,7 +37,7 @@ const config = buildConfig({
   },
   editor: lexicalEditor(),
   collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders],
-  endpoints: [] // TODO: Fix endpoint types,
+  endpoints: [], // TODO: Fix endpoint types
   db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
   sharp: sharp as any,
@@ -80,4 +80,3 @@ const config = buildConfig({
 });
 
 export default config;
-
