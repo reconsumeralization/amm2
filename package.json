@@ -22,7 +22,8 @@
     "db:reset": "payload migrate:reset",
     "generate:types": "tsx src/scripts/generate-payload-types.ts",
     "export:docs": "tsx src/scripts/export-docs.ts",
-    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts"
+    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts",
+    "security:bootstrap": "tsx scripts/security-bootstrap.ts"
   },
   "dependencies": {
     "@ai-stack/payloadcms": "3.2.16-beta",
