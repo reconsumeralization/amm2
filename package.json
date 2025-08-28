@@ -23,7 +23,11 @@
     "db:reset": "payload migrate:reset",
     "generate:types": "tsx src/scripts/generate-payload-types.ts",
     "export:docs": "tsx src/scripts/export-docs.ts",
-    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts"
+    "deploy:vercel": "tsx src/scripts/deploy-vercel.ts",
+    "audit:help": "tsx src/tools/security-auditor.ts help",
+    "audit:run": "REPO_LIST=. tsx src/tools/security-auditor.ts run --once",
+    "audit:scan": "tsx src/tools/security-auditor.ts scan .",
+    "audit:status": "tsx src/tools/security-auditor.ts status --repo ."
   },
   "dependencies": {
     "@ai-stack/payloadcms": "3.2.16-beta",
