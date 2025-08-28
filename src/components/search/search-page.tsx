@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrendingUp, Clock, Users, Target, Zap, Search, Filter, Star, Calendar, MapPin, BookOpen, Scissors, Brush } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
-import { searchService, SeaSearchResult } from '@/lib/search-service'
+import { searchService, SearchResult } from '@/lib/search-service'
 // --- FIX: Use correct import for Search icon from lucide-react ---
 // The 'Search' icon may not be available in some versions of lucide-react.
 // To avoid runtime errors, use a fallback icon if not present.
@@ -88,7 +88,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
     }
   }
 
-  const handleResultClick = (result: SeaSearchResult) => {
+  const handleResultClick = (result: SearchResult) => {
     addBreadcrumb(`Clicked search result: ${result.title}`, 'interaction', 'info')
 
     // Track result click
@@ -164,7 +164,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                 placeholder="Search for services, stylists, documentation, or anything else..."
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSearch(query)
                 }}
                 className="w-full pl-12 pr-32 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-lg hover:shadow-xl transition-all duration-300"

@@ -28,12 +28,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { rchParams } = new URL(request.url)
-    const userId = rchParams.get('userId')
-    const action = rchParams.get('action')
-    const resource = rchParams.get('resource')
-    const limit = parseInt(rchParams.get('limit') || '50')
-    const page = parseInt(rchParams.get('page') || '1')
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+    const action = searchParams.get('action')
+    const resource = searchParams.get('resource')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const page = parseInt(searchParams.get('page') || '1')
 
     // In a real implementation, this would query an audit_logs collection
     // For now, we'll simulate with sample data

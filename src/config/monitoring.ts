@@ -1,4 +1,23 @@
-import { MonitoringConfig } from '@/lib/monitoring'
+// Define MonitoringConfig interface locally
+interface MonitoringConfig {
+  analytics: {
+    enabled: boolean;
+    providers: string[];
+  };
+  errorTracking: {
+    enabled: boolean;
+    provider: string;
+    dsn?: string;
+  };
+  performance: {
+    enabled: boolean;
+    sampleRate: number;
+  };
+  logging: {
+    level: string;
+    providers: string[];
+  };
+}
 
 // Environment-based configuration
 const getMonitoringConfig = (): MonitoringConfig => {

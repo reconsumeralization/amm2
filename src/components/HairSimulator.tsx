@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+import { Upload, Image as ImageIcon, Sparkles, LoaderCircle } from 'lucide-react';
 
 interface HairSimulatorProps {
   userId?: string;
@@ -304,7 +304,7 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                 Generating Preview...
               </>
             ) : (

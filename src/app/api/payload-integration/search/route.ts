@@ -12,10 +12,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { rchParams } = new URL(request.url)
-    const query = rchParams.get('q') || ''
-    const collections = rchParams.get('collections')?.split(',') || ['services', 'customers', 'stylists', 'documentation']
-    const limit = parseInt(rchParams.get('limit') || '20')
+    const { searchParams } = new URL(request.url)
+    const query = searchParams.get('q') || ''
+    const collections = searchParams.get('collections')?.split(',') || ['services', 'customers', 'stylists', 'documentation']
+    const limit = parseInt(searchParams.get('limit') || '20')
 
     if (!query.trim()) {
       return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 })
@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
     const payloadService = getPayloadIntegrationService()
     await payloadService.initialize()
     
-    const results = await payloadService.globalrch(query, collections, limit)
+    const results = await payloadService.globalSearch(query, collections, limit)
 
     return NextResponse.json(results)
   } catch (error) {
-    console.error('Error performing global rch:', error)
+    console.error('Error performing global search:', error)
     return NextResponse.json(
-      { error: 'rch failed' },
+      { error: 'search failed' },
       { status: 500 }
     )
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -111,7 +111,7 @@ export function VersionHistory({
     }));
   };
 
-  const generateDiff = async () => {
+  const generateDiff = useCallback(async () => {
     if (!selectedVersions.from || !selectedVersions.to) return;
     
     setLoading(true);
@@ -144,13 +144,13 @@ export function VersionHistory({
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedVersions, versions]);
 
   useEffect(() => {
     if (selectedVersions.from && selectedVersions.to) {
       generateDiff();
     }
-  }, [selectedVersions]);
+  }, [selectedVersions, generateDiff]);
 
   return (
     <div className={`space-y-6 ${className}`}>

@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Copy, Download, Code } from '@/lib/icon-mapping'
+import { getIcon } from '@/lib/icon-mapping'
 import { APIEndpoint, SDKGenerationConfig, CodeGenerationTemplate } from '@/types/api-documentation'
 import { cn } from '@/lib/utils'
 
@@ -22,13 +22,13 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
   const [generatedCode, setGeneratedCode] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
-  const availableLanguages = sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl']
+  const availableLanguages = useMemo(() => sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl'], [sdkConfig?.languages]);
 
   useEffect(() => {
     generateCodeForAllLanguages()
-  }, [endpoint])
+  }, [endpoint, generateCodeForAllLanguages])
 
-  const generateCodeForAllLanguages = async () => {
+  const generateCodeForAllLanguages = useCallback(async () => {
     setLoading(true)
     const codeMap: Record<string, string> = {}
 
@@ -43,9 +43,9 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
 
     setGeneratedCode(codeMap)
     setLoading(false)
-  }
+  }, [availableLanguages, generateCodeForLanguage])
 
-  const generateCodeForLanguage = async (language: string): Promise<string> => {
+  const generateCodeForLanguage = useCallback(async (language: string): Promise<string> => {
     const baseUrl = sdkConfig?.baseUrl || 'https://api.modernmen.com'
     const includeAuth = sdkConfig?.includeAuth !== false
 
@@ -65,7 +65,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
       default:
         return `// ${language} code generation not implemented`
     }
-  }
+  }, [endpoint, sdkConfig])
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code)
@@ -110,7 +110,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CodeIcon className="w-5 h-5" />
+            {React.createElement(getIcon('code'), { className: 'w-5 h-5' })}
             Code Generation
             <Badge className={cn('font-mono text-xs', 
               endpoint.method === 'GET' ? 'bg-blue-100 text-blue-800' :
@@ -153,7 +153,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
                 onClick={() => copyToClipboard(generatedCode[selectedLanguage] || '')}
                 disabled={!generatedCode[selectedLanguage]}
               >
-                <CopyIcon className="w-4 h-4 mr-2" />
+                {React.createElement(getIcon('copy'), { className: 'w-4 h-4 mr-2' })}
                 Copy
               </Button>
               <Button
@@ -161,7 +161,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
                 onClick={() => downloadCode(selectedLanguage, generatedCode[selectedLanguage] || '')}
                 disabled={!generatedCode[selectedLanguage]}
               >
-                <DownloadIcon className="w-4 h-4 mr-2" />
+                {React.createElement(getIcon('download'), { className: 'w-4 h-4 mr-2' })}
                 Download
               </Button>
             </div>
@@ -270,7 +270,7 @@ interface ${endpoint.operationId}Request {
   })
 
   const queryStringCode = endpoint.parameters.query.length > 0 ? `
-  const queryParams = new URLrchParams()
+  const queryParams = new URLSearchParams()
   ${endpoint.parameters.query.map(p => `
   if (params.${p.name} !== undefined) {
     queryParams.append('${p.name}', String(params.${p.name}))
@@ -313,7 +313,7 @@ function generateJavaScriptCode(endpoint: APIEndpoint, baseUrl: string, includeA
 
   const pathParams = endpoint.parameters.path.map(p => p.name).join(', ')
   const queryParams = endpoint.parameters.query.length > 0 ? `
-  const queryParams = new URLrchParams()
+  const queryParams = new URLSearchParams()
   ${endpoint.parameters.query.map(p => `
   if (${p.name} !== undefined) {
     queryParams.append('${p.name}', String(${p.name}))

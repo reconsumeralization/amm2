@@ -111,7 +111,7 @@ export class PayloadIntegrationService {
       type?: string[]
       category?: string[]
       status?: string[]
-      rch?: string
+      search?: string
       limit?: number
       page?: number
     } = {}
@@ -162,12 +162,12 @@ export class PayloadIntegrationService {
       whereClause.and[1] = { status: { in: filters.status } }
     }
 
-    if (filters.rch) {
+    if (filters.search) {
       whereClause.and.push({
         or: [
-          { title: { contains: filters.rch } },
-          { excerpt: { contains: filters.rch } },
-          { content: { contains: filters.rch } }
+          { title: { contains: filters.search } },
+          { excerpt: { contains: filters.search } },
+          { content: { contains: filters.search } }
         ]
       })
     }
@@ -482,9 +482,9 @@ export class PayloadIntegrationService {
   }
 
   /**
-   * rch across all collections
+   * search across all collections
    */
-  async globalrch(
+  async globalSearch(
     query: string,
     collections: string[] = ['services', 'customers', 'stylists', 'documentation'],
     limit: number = 20
@@ -493,7 +493,7 @@ export class PayloadIntegrationService {
     total: number
     collections: Record<string, number>
   }> {
-    const cacheKey = `global-rch-${query}-${collections.join(',')}-${limit}`
+    const cacheKey = `global-search-${query}-${collections.join(',')}-${limit}`
     
     if (this.config.enableCaching && this.isValidCache(cacheKey)) {
       return this.getFromCache(cacheKey)
@@ -505,11 +505,11 @@ export class PayloadIntegrationService {
 
     try {
       for (const collection of collections) {
-        let rchResult: any
-        
+        let searchResult: any
+
         switch (collection) {
           case 'services':
-            rchResult = await payload.find({
+            searchResult = await payload.find({
               collection: 'services',
               where: {
                 or: [
@@ -520,9 +520,9 @@ export class PayloadIntegrationService {
               limit: Math.ceil(limit / collections.length)
             })
             break
-            
+
           case 'customers':
-            rchResult = await payload.find({
+            searchResult = await payload.find({
               collection: 'customers',
               where: {
                 or: [
@@ -534,9 +534,9 @@ export class PayloadIntegrationService {
               limit: Math.ceil(limit / collections.length)
             })
             break
-            
+
           case 'stylists':
-            rchResult = await payload.find({
+            searchResult = await payload.find({
               collection: 'stylists',
               where: {
                 or: [
@@ -548,9 +548,9 @@ export class PayloadIntegrationService {
               limit: Math.ceil(limit / collections.length)
             })
             break
-            
+
           case 'documentation':
-            rchResult = await payload.find({
+            searchResult = await payload.find({
               collection: 'documentation',
               where: {
                 and: [
@@ -572,58 +572,84 @@ export class PayloadIntegrationService {
             continue
         }
 
-        if (rchResult) {
-          const mappedResults = rchResult.docs.map((doc: Record<string, any>) => ({
+        if (searchResult) {
+          const mappedResults = searchResult.docs.map((doc: Record<string, any>) => ({
             ...doc,
             _collection: collection,
             _type: collection.slice(0, -1) // Remove 's' from plural
           }))
-          
+
           results.push(...mappedResults)
-          collectionCounts[collection] = rchResult.docs.length
+          collectionCounts[collection] = searchResult.docs.length
         }
       }
 
-      const rchResults = {
+      const searchResults = {
         results,
         total: results.length,
         collections: collectionCounts
       }
 
       if (this.config.enableCaching) {
-        this.setCache(cacheKey, rchResults)
+        this.setCache(cacheKey, searchResults)
       }
 
-      return rchResults
+      return searchResults
     } catch (error) {
-      console.error('Error performing global rch:', error)
-      throw new Error('rch failed')
+      console.error('Error performing global search:', error)
+      throw new Error('search failed')
     }
   }
 
   /**
    * Sync appointment data with external calendar systems
+   * Note: Google Calendar integration is disabled to prevent build issues
    */
-  async syncAppointments(): Promise<void> {
+  async syncAppointments(): Promise<{ synced: number; failed: number; errors: string[] }> {
     const payload = await this.getPayloadInstance()
-    
+
+    let syncedCount = 0
+    let failedCount = 0
+    const errors: string[] = []
+
     try {
+      // Get appointments that need syncing (confirmed/rescheduled without Google Event ID)
       const appointments = await payload.find({
         collection: 'appointments',
         where: {
-          status: { in: ['confirmed', 'rescheduled'] },
-          date: { greater_than: new Date() }
-        }
+          and: [
+            { status: { in: ['confirmed', 'rescheduled'] } },
+            { date: { greater_than: new Date() } },
+            {
+              or: [
+                { googleEventId: { exists: false } },
+                { googleEventId: { equals: null } },
+                { googleEventId: { equals: '' } }
+              ]
+            }
+          ]
+        },
+        populate: ['user', 'tenant']
       })
 
-      // Here you would integrate with Google Calendar, Outlook, etc.
-      console.log(`Syncing ${appointments.docs.length} appointments with external calendars`)
-      
-      // Implementation would depend on the calendar service
-      // This is a placeholder for the actual sync logic
+      console.log(`Google Calendar sync is currently disabled to prevent build issues. Found ${appointments.docs.length} appointments that would need syncing.`)
+
+      // Temporarily disabled to prevent build issues with Google APIs
+      errors.push('Google Calendar integration is currently disabled to prevent build issues')
+
+      return {
+        synced: 0,
+        failed: appointments.docs.length,
+        errors: ['Google Calendar integration is currently disabled to prevent build issues']
+      }
+
     } catch (error) {
-      console.error('Error syncing appointments:', error)
+      console.error('Error during appointment sync:', error)
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+      errors.push(`Sync process failed: ${errorMsg}`)
     }
+
+    return { synced: syncedCount, failed: failedCount, errors }
   }
 
   /**
@@ -662,7 +688,7 @@ export class PayloadIntegrationService {
         averageTimeOnPage: 0,
         bounceRate: 0,
         completionRate: 0,
-        rchRanking: 0,
+        searchRanking: 0,
         popularSections: [],
         commonExitPoints: [],
         userFeedback: { helpful: 0, notHelpful: 0, averageRating: 0, totalRatings: 0 },

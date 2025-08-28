@@ -285,7 +285,7 @@ export const validatePartial = async <T>(
   data: unknown
 ): Promise<Partial<T>> => {
   try {
-    return await schema.partial().parseAsync(data)
+    return await schema.partial().parseAsync(data) as Partial<T>
   } catch (error) {
     if (error instanceof z.ZodError) {
       const formattedErrors = error.errors.map(err => ({
@@ -299,6 +299,158 @@ export const validatePartial = async <T>(
   }
 }
 
+// Content validation schemas
+export const contentSchemas = {
+  create: z.object({
+    title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
+    slug: z.string().min(1, 'Slug is required').max(100, 'Slug too long').regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
+    description: z.string().max(500, 'Description too long').optional(),
+    content: z.any().optional(),
+    lexicalContent: z.any().optional(),
+    status: z.enum(['draft', 'published', 'archived', 'scheduled']).default('draft'),
+    publishDate: z.date().optional(),
+    pageType: z.enum(['landing', 'about', 'services', 'contact', 'blog', 'gallery', 'custom']).default('custom'),
+    category: z.string().optional(),
+    tags: z.array(z.object({ tag: z.string().min(1).max(50) })).optional(),
+    featured: z.boolean().default(false),
+    featuredOrder: z.number().min(0).default(0),
+    seo: z.object({
+      metaTitle: z.string().max(60, 'Meta title too long').optional(),
+      metaDescription: z.string().max(160, 'Meta description too long').optional(),
+      metaKeywords: z.string().optional(),
+      canonicalUrl: z.string().url().optional(),
+      ogTitle: z.string().optional(),
+      ogDescription: z.string().optional(),
+      twitterCard: z.enum(['summary', 'summary_large_image', 'app', 'player']).optional(),
+    }).optional(),
+    settings: z.object({
+      showTableOfContents: z.boolean().default(false),
+      enableComments: z.boolean().default(false),
+      enableSharing: z.boolean().default(true),
+      passwordProtected: z.boolean().default(false),
+      password: z.string().optional(),
+      customCss: z.string().optional(),
+      customJs: z.string().optional(),
+    }).optional(),
+  }),
+
+  update: z.object({
+    title: z.string().min(1).max(200).optional(),
+    slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens').optional(),
+    description: z.string().max(500).optional(),
+    content: z.any().optional(),
+    lexicalContent: z.any().optional(),
+    status: z.enum(['draft', 'published', 'archived', 'scheduled']).optional(),
+    publishDate: z.date().optional(),
+    pageType: z.enum(['landing', 'about', 'services', 'contact', 'blog', 'gallery', 'custom']).optional(),
+    category: z.string().optional(),
+    tags: z.array(z.object({ tag: z.string().min(1).max(50) })).optional(),
+    featured: z.boolean().optional(),
+    featuredOrder: z.number().min(0).optional(),
+    seo: z.object({
+      metaTitle: z.string().max(60).optional(),
+      metaDescription: z.string().max(160).optional(),
+      metaKeywords: z.string().optional(),
+      canonicalUrl: z.string().url().optional(),
+      ogTitle: z.string().optional(),
+      ogDescription: z.string().optional(),
+      twitterCard: z.enum(['summary', 'summary_large_image', 'app', 'player']).optional(),
+    }).optional(),
+    settings: z.object({
+      showTableOfContents: z.boolean().optional(),
+      enableComments: z.boolean().optional(),
+      enableSharing: z.boolean().optional(),
+      passwordProtected: z.boolean().optional(),
+      password: z.string().optional(),
+      customCss: z.string().optional(),
+      customJs: z.string().optional(),
+    }).optional(),
+  }),
+}
+
+// Template validation schemas
+export const templateSchemas = {
+  create: z.object({
+    name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
+    description: z.string().max(500, 'Description too long').optional(),
+    category: z.string().min(1, 'Category is required'),
+    thumbnail: z.string().optional(),
+    templateData: z.any().optional(),
+    css: z.string().optional(),
+    variables: z.array(z.object({
+      name: z.string().min(1, 'Variable name is required'),
+      type: z.enum(['text', 'richText', 'image', 'link', 'color', 'number', 'boolean']),
+      defaultValue: z.string().optional(),
+      label: z.string().min(1, 'Label is required'),
+      description: z.string().optional(),
+      required: z.boolean().default(false),
+    })).optional(),
+    blocks: z.array(z.object({
+      name: z.string().min(1, 'Block name is required'),
+      type: z.enum(['text', 'image', 'button', 'video', 'quote', 'list', 'table', 'custom']),
+      content: z.any().optional(),
+      position: z.number().min(0).optional(),
+      isRequired: z.boolean().default(false),
+      isEditable: z.boolean().default(true),
+    })).optional(),
+    tags: z.array(z.object({ tag: z.string().min(1).max(50) })).optional(),
+    isActive: z.boolean().default(true),
+    isPublic: z.boolean().default(false),
+    compatibility: z.object({
+      minEditorVersion: z.string().optional(),
+      maxEditorVersion: z.string().optional(),
+      mobileCompatible: z.boolean().default(true),
+      touchFriendly: z.boolean().default(false),
+    }).optional(),
+    metadata: z.object({
+      author: z.string().optional(),
+      license: z.string().optional(),
+      documentation: z.string().optional(),
+      changelog: z.string().optional(),
+    }).optional(),
+  }),
+
+  update: z.object({
+    name: z.string().min(1).max(100).optional(),
+    description: z.string().max(500).optional(),
+    category: z.string().optional(),
+    thumbnail: z.string().optional(),
+    templateData: z.any().optional(),
+    css: z.string().optional(),
+    variables: z.array(z.object({
+      name: z.string().min(1),
+      type: z.enum(['text', 'richText', 'image', 'link', 'color', 'number', 'boolean']),
+      defaultValue: z.string().optional(),
+      label: z.string().min(1),
+      description: z.string().optional(),
+      required: z.boolean().optional(),
+    })).optional(),
+    blocks: z.array(z.object({
+      name: z.string().min(1),
+      type: z.enum(['text', 'image', 'button', 'video', 'quote', 'list', 'table', 'custom']),
+      content: z.any().optional(),
+      position: z.number().min(0).optional(),
+      isRequired: z.boolean().optional(),
+      isEditable: z.boolean().optional(),
+    })).optional(),
+    tags: z.array(z.object({ tag: z.string().min(1).max(50) })).optional(),
+    isActive: z.boolean().optional(),
+    isPublic: z.boolean().optional(),
+    compatibility: z.object({
+      minEditorVersion: z.string().optional(),
+      maxEditorVersion: z.string().optional(),
+      mobileCompatible: z.boolean().optional(),
+      touchFriendly: z.boolean().optional(),
+    }).optional(),
+    metadata: z.object({
+      author: z.string().optional(),
+      license: z.string().optional(),
+      documentation: z.string().optional(),
+      changelog: z.string().optional(),
+    }).optional(),
+  }),
+}
+
 // Collection-specific validation schemas
 export const validationSchemas = {
   customers: customerSchemas,
@@ -306,6 +458,8 @@ export const validationSchemas = {
   services: serviceSchemas,
   stylists: stylistSchemas,
   users: userSchemas,
+  content: contentSchemas,
+  templates: templateSchemas,
   api: apiSchemas,
 }
 
@@ -320,3 +474,7 @@ export type StylistCreateInput = z.infer<typeof stylistSchemas.create>
 export type StylistUpdateInput = z.infer<typeof stylistSchemas.update>
 export type UserCreateInput = z.infer<typeof userSchemas.create>
 export type UserUpdateInput = z.infer<typeof userSchemas.update>
+export type ContentCreateInput = z.infer<typeof contentSchemas.create>
+export type ContentUpdateInput = z.infer<typeof contentSchemas.update>
+export type TemplateCreateInput = z.infer<typeof templateSchemas.create>
+export type TemplateUpdateInput = z.infer<typeof templateSchemas.update>

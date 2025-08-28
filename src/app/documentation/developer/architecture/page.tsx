@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { DocumentationLayoutClient } from '@/app/documentation/DocumentationLayoutClient';
 import { Metadata } from 'next';
 
@@ -20,7 +21,7 @@ export default function ArchitecturePage() {
 
         <h2>High‑Level Diagram</h2>
         <figure>
-          <img src="/assets/architecture-diagram.png" alt="Architecture diagram" />
+          <Image src="/assets/architecture-diagram.png" alt="Architecture diagram" width={800} height={600} />
           <figcaption>Core components and their interactions.</figcaption>
         </figure>
 

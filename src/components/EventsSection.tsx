@@ -46,11 +46,7 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
   const [error, setError] = useState('');
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchEvents();
-  }, [showPast]);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -73,7 +69,11 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, showPast]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handleRSVP = async (eventId: string, action: 'attend' | 'waitlist' | 'cancel') => {
     if (!userId) {

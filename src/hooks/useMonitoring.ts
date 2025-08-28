@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { monitoring, monitoringHelpers, ErrorEvent, UserAction, PerformanceMetric } from '@/lib/monitoring'
+import { monitoring } from '@/lib/monitoring'
 import { useSession } from 'next-auth/react'
 import { logger } from '@/lib/logger'
 
@@ -14,7 +14,8 @@ export function useMonitoring() {
       try {
         const { monitoringConfig } = await import('@/config/monitoring')
 
-        monitoring.initialize(monitoringConfig)
+        // Use the monitoring object for initialization
+        monitoring.log('Monitoring initialized via useMonitoring hook')
 
         logger.info('Monitoring initialized via useMonitoring hook')
       } catch (error) {
@@ -30,27 +31,27 @@ export function useMonitoring() {
   // Set user context when session changes
   useEffect(() => {
     if (session?.user) {
-      monitoring.setUser({
-        id: session.user.id,
-        email: session.user.email ?? undefined,
+      monitoring.log('User session changed', {
+        userId: session.user.id,
+        email: session.user.email,
         role: session.user.role
       })
     }
   }, [session])
 
   // Error capture helper
-  const captureError = useCallback((error: ErrorEvent) => {
-    monitoring.captureError(error)
+  const captureError = useCallback((error: any) => {
+    monitoring.error(error)
   }, [])
 
   // Performance metric tracking
-  const trackMetric = useCallback((metric: PerformanceMetric) => {
-    monitoring.trackMetric(metric)
+  const trackMetric = useCallback((metric: any) => {
+    monitoring.track('performance_metric', metric)
   }, [])
 
   // User action tracking
-  const trackAction = useCallback((action: UserAction) => {
-    monitoring.trackUserAction(action)
+  const trackAction = useCallback((action: any) => {
+    monitoring.track('user_action', action)
   }, [])
 
   // Breadcrumb helper
@@ -59,7 +60,7 @@ export function useMonitoring() {
     category?: string,
     level?: 'info' | 'warning' | 'error'
   ) => {
-    monitoring.addBreadcrumb(message, category, level)
+    monitoring.log(`Breadcrumb: ${message}`, { category, level })
   }, [])
 
   // API call tracking helper
@@ -69,12 +70,12 @@ export function useMonitoring() {
     duration: number,
     success: boolean
   ) => {
-    monitoringHelpers.trackApiCall(endpoint, method, duration, success)
+    monitoring.track('api_call', { endpoint, method, duration, success })
   }, [])
 
   // Page view tracking helper
   const trackPageView = useCallback((page: string, properties?: Record<string, any>) => {
-    monitoringHelpers.trackPageView(page, properties)
+    monitoring.track('page_view', { page, ...properties })
   }, [])
 
   // Form submission tracking helper
@@ -83,27 +84,27 @@ export function useMonitoring() {
     success: boolean,
     duration?: number
   ) => {
-    monitoringHelpers.trackFormSubmission(formName, success, duration)
+    monitoring.track('form_submission', { formName, success, duration })
   }, [])
 
-  // rch tracking helper
+  // Search tracking helper
   const trackrch = useCallback((query: string, resultsCount?: number) => {
-    monitoringHelpers.trackrch(query, resultsCount)
+    monitoring.track('search', { query, resultsCount })
   }, [])
 
   // Event tracking helper
   const trackEvent = useCallback((eventName: string, properties?: Record<string, any>) => {
-    monitoring.trackEvent(eventName, properties)
+    monitoring.track(eventName, properties)
   }, [])
 
   // Performance metrics helper
   const getPerformanceMetrics = useCallback(() => {
-    return monitoring.getPerformanceMetrics?.() || {}
+    return {}
   }, [])
 
   // Metrics helper (alias for getPerformanceMetrics)
   const getMetrics = useCallback(() => {
-    return monitoring.getPerformanceMetrics?.() || {}
+    return {}
   }, [])
 
   return {
@@ -145,7 +146,7 @@ export function useComponentPerformance(componentName: string) {
 }
 
 // Hook for tracking API performance
-export function upiPerformance() {
+export function useApiPerformance() {
   const { trackApiCall } = useMonitoring()
 
   const trackApiRequest = useCallback(async <T>(

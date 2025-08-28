@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Button } from './ui/button';
-import { Star, Users, Calendar } from 'lucide-react';
+import { Star, Users, Calendar, Trophy, Crown, Zap, Award, TrendingUp, Target, Gift, Package } from 'lucide-react';
 
 interface LoyaltyData {
   points: number;
@@ -89,11 +89,7 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchLoyaltyData();
-  }, [userId]);
-
-  const fetchLoyaltyData = async () => {
+  const fetchLoyaltyData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/loyalty?userId=${userId}`);
@@ -107,7 +103,11 @@ export default function LoyaltyProgram({ userId }: LoyaltyProgramProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchLoyaltyData();
+  }, [fetchLoyaltyData, userId]);
 
   const getTierConfig = (tier: string) => {
     return TIER_CONFIGS[tier] || TIER_CONFIGS.bronze;

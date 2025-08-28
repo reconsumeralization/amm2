@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Copy, Play, RefreshCw } from '@/lib/icon-mapping';
+import { Copy, Play, RefreshCw, RotateCcw } from '@/lib/icon-mapping';
 import { toast } from 'sonner';
 
 // Client-side service for fetching documentation

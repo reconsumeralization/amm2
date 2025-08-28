@@ -38,6 +38,8 @@ type Monitoring = {
   trackEvent: (eventName: string, properties?: Record<string, any>) => void
   getPerformanceMetrics?: () => Record<string, any>
   track: (eventName: string, properties?: Record<string, any>) => void
+  error?: (error: Error, context?: Record<string, any>) => void
+  log?: (message: string, context?: Record<string, any>) => void
 }
 
 let currentUser: UserContext | undefined
@@ -74,6 +76,12 @@ export const monitoring: Monitoring = {
   track: (eventName, properties) => {
     console.info('[monitoring] track', { eventName, properties })
   },
+  error: (error, context) => {
+    console.error('[monitoring] error', { message: error.message, stack: error.stack, context })
+  },
+  log: (message, context) => {
+    console.log('[monitoring] log', { message, context })
+  }
 }
 
 export const monitoringHelpers = {
@@ -120,6 +128,7 @@ export class YoloMonitoring {
     })
   }
 
+  // Track business metrics
   trackBusinessMetric(metric: string, value: number, category: string) {
     monitoring.track('business_metric', {
       metric,

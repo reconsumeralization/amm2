@@ -16,7 +16,7 @@ import { $setBlocksType } from '@lexical/selection';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from '@lexical/list';
 import { INSERT_IMAGE_COMMAND } from '@/plugins/ImagesPlugin';
 import { TOGGLE_LINK_EDITOR_COMMAND } from './LinkPlugin';
-import { Image, Upload } from 'lucide-react';
+import { Image, Upload, Undo, Redo, Heading1, Heading2, Bold, Italic, Underline, Quote, Strikethrough, Code, AlignLeft, AlignCenter, AlignRight, AlignJustify, List, ListOrdered, Link, Sparkles, Loader2 } from 'lucide-react';
 
 interface ToolbarButtonProps {
   onClick: () => void;

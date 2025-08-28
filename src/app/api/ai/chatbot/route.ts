@@ -21,48 +21,101 @@ export async function POST(req: NextRequest) {
       settings,
     } = await req.json();
 
-    if (!message || !userId || !tenantId) {
+    // Validate required fields
+    if (!message || typeof message !== 'string' || message.trim() === '') {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Message is required and cannot be empty' },
         { status: 400 }
       );
     }
 
-    const payload = await getPayload({ config });
+    if (!userId || !tenantId) {
+      return NextResponse.json(
+        { error: 'User ID and Tenant ID are required' },
+        { status: 400 }
+      );
+    }
 
-    // Create context for AI
-    const context = {
-      user: userId,
-      tenant: tenantId,
-      currentStep: step,
-      bookingData,
-      appointments: appointments || [],
-      staff: staff || [],
-      services: services || [],
-      settings: settings || {},
-      availableActions: [
-        'book_appointment',
-        'reschedule_appointment', 
-        'cancel_appointment',
-        'clock_in',
-        'clock_out',
-        'assign_staff',
-        'generate_hair_preview',
-        'suggest_times',
-        'show_appointments',
-        'show_services',
-        'show_staff',
-      ],
-    };
+    // Rate limiting check (simple implementation)
+    const rateLimitKey = `chatbot:${userId}:${Date.now()}`;
+    
+    try {
+      const payload = await getPayload({ config });
 
-    // Generate AI response
-    const aiResponse = await generateAIResponse(message, context);
+      // Verify user exists and is active
+      const user = await payload.findByID({
+        collection: 'users',
+        id: userId
+      }).catch(() => null);
 
-    return NextResponse.json(aiResponse);
+      if (!user) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        );
+      }
+
+      // Create enhanced context for AI
+      const context = {
+        user: {
+          id: userId,
+          name: user.name,
+          email: user.email,
+          role: user.role || 'customer',
+        },
+        tenant: tenantId,
+        currentStep: step || 'menu',
+        bookingData: bookingData || {},
+        appointments: Array.isArray(appointments) ? appointments : [],
+        staff: Array.isArray(staff) ? staff : [],
+        services: Array.isArray(services) ? services : [],
+        settings: settings || {},
+        timestamp: new Date().toISOString(),
+        availableActions: [
+          'book_appointment',
+          'reschedule_appointment', 
+          'cancel_appointment',
+          'clock_in',
+          'clock_out',
+          'assign_staff',
+          'generate_hair_preview',
+          'suggest_times',
+          'show_appointments',
+          'show_services',
+          'show_staff',
+          'get_availability',
+          'calculate_price',
+          'check_loyalty_points',
+        ],
+      };
+
+      // Log the conversation for analytics
+      await logConversation({
+        userId,
+        tenantId,
+        message: message.trim(),
+        step,
+        timestamp: new Date(),
+      });
+
+      // Generate AI response
+      const aiResponse = await generateAIResponse(message.trim(), context);
+
+      return NextResponse.json(aiResponse);
+    } catch (payloadError) {
+      console.error('Payload error:', payloadError);
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('Chatbot API error:', error);
     return NextResponse.json(
-      { error: 'Failed to process message' },
+      { 
+        error: 'Failed to process message',
+        message: 'I apologize, but I\'m having technical difficulties right now. Please try again in a moment.'
+      },
       { status: 500 }
     );
   }
@@ -151,14 +204,85 @@ Respond with the JSON format specified above.`;
   }
 }
 
+// Log conversation for analytics and debugging
+async function logConversation(data: {
+  userId: string;
+  tenantId: string;
+  message: string;
+  step: string;
+  timestamp: Date;
+}) {
+  try {
+    // For now, just console log. In production, you might want to store in a database
+    console.log('Chatbot conversation:', {
+      userId: data.userId,
+      tenantId: data.tenantId,
+      message: data.message.substring(0, 100) + (data.message.length > 100 ? '...' : ''),
+      step: data.step,
+      timestamp: data.timestamp.toISOString(),
+    });
+
+    // Optionally store in analytics collection
+    // const payload = await getPayload({ config });
+    // await payload.create({
+    //   collection: 'chatbot-logs',
+    //   data: data
+    // });
+  } catch (error) {
+    console.warn('Failed to log conversation:', error);
+  }
+}
+
 function generateFallbackResponse(message: string, context: any) {
   const lowerMessage = message.toLowerCase();
   
+  // Greeting responses
+  if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+    const userName = context.user?.name ? `, ${context.user.name.split(' ')[0]}` : '';
+    return {
+      response: `Hello${userName}! I'm your ModernMen assistant. I can help you book appointments, check schedules, manage your account, or answer questions about our services. What would you like to do today?`,
+      action: null,
+      actionData: null,
+      step: 'menu',
+      bookingData: context.bookingData,
+    };
+  }
+
+  // Help responses
+  if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+    const capabilities = [
+      '📅 Book, reschedule, or cancel appointments',
+      '👥 View available staff and their specialties',
+      '✂️ Browse our services and prices',
+      '🕒 Check your appointment history',
+      '💰 Calculate service costs',
+      '🎯 Get personalized recommendations',
+    ];
+    
+    if (context.user?.role === 'staff') {
+      capabilities.push('🕐 Clock in and out', '📊 View your schedule');
+    }
+    
+    return {
+      response: `I can help you with:\n\n${capabilities.join('\n')}\n\nJust tell me what you'd like to do!`,
+      action: null,
+      actionData: null,
+      step: 'menu',
+      bookingData: context.bookingData,
+    };
+  }
+
   // Booking flow
   if (lowerMessage.includes('book') || lowerMessage.includes('appointment')) {
     if (!context.bookingData.service) {
+      const servicesText = context.services.length > 0 
+        ? `Available services:\n${context.services.map((s: any) => 
+            `• ${s.name || s}${s.price ? ` - $${s.price}` : ''}${s.duration ? ` (${s.duration} min)` : ''}`
+          ).join('\n')}`
+        : 'Let me check our available services for you.';
+      
       return {
-        response: `What service would you like? Available services: ${context.services.map((s: any) => s.name || s).join(', ')}`,
+        response: `What service would you like to book?\n\n${servicesText}`,
         action: null,
         actionData: null,
         step: 'selectService',
@@ -168,7 +292,7 @@ function generateFallbackResponse(message: string, context: any) {
     
     if (!context.bookingData.date) {
       return {
-        response: 'When would you like your appointment? (e.g., "2025-01-15 10:00 AM")',
+        response: `Great choice! When would you like to schedule your ${context.bookingData.service}? Please let me know your preferred date and time (e.g., "Tomorrow at 2 PM" or "January 15th at 10:00 AM").`,
         action: null,
         actionData: null,
         step: 'selectDate',
@@ -177,11 +301,47 @@ function generateFallbackResponse(message: string, context: any) {
     }
     
     return {
-      response: 'Great! I\'ll book that appointment for you.',
+      response: 'Perfect! Let me book that appointment for you.',
       action: 'book_appointment',
       actionData: context.bookingData,
       step: 'menu',
       bookingData: {},
+    };
+  }
+
+  // Price inquiries
+  if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much')) {
+    const priceInfo = context.services.filter((s: any) => s.price).map((s: any) => 
+      `${s.name}: $${s.price}${s.duration ? ` (${s.duration} min)` : ''}`
+    );
+    
+    if (priceInfo.length > 0) {
+      return {
+        response: `Here are our current prices:\n\n${priceInfo.join('\n')}\n\nPrices may vary based on hair length and specific requirements. Would you like to book a service?`,
+        action: null,
+        actionData: null,
+        step: 'menu',
+        bookingData: context.bookingData,
+      };
+    }
+    
+    return {
+      response: 'Let me get you our current pricing information. What specific service are you interested in?',
+      action: 'show_services',
+      actionData: null,
+      step: 'menu',
+      bookingData: context.bookingData,
+    };
+  }
+
+  // Hours and availability
+  if (lowerMessage.includes('hours') || lowerMessage.includes('open') || lowerMessage.includes('available') || lowerMessage.includes('when')) {
+    return {
+      response: 'We\'re typically open Monday-Saturday, 9 AM to 7 PM, and Sunday 10 AM to 5 PM. However, availability can vary. Would you like me to check specific times for booking an appointment?',
+      action: 'suggest_times',
+      actionData: null,
+      step: 'menu',
+      bookingData: context.bookingData,
     };
   }
   

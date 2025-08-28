@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -37,7 +37,7 @@ export function DocumentationSearch({
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!query.trim()) return;
 
     setLoading(true);
@@ -51,7 +51,7 @@ export function DocumentationSearch({
     } finally {
       setLoading(false);
     }
-  };
+  }, [query]);
 
   const handleResultClick = (result: SearchResult) => {
     if (onResultClick) {
@@ -66,7 +66,7 @@ export function DocumentationSearch({
     if (initialQuery && initialQuery !== query) {
       setQuery(initialQuery);
     }
-  }, [initialQuery]);
+  }, [initialQuery, query]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -76,7 +76,7 @@ export function DocumentationSearch({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query]);
+  }, [query, handleSearch]);
 
   return (
     <div className={`space-y-4 ${className}`}>

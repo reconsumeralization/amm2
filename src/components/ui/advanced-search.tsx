@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
-import { rch, X, Clock, TrendingUp } from '@/lib/icon-mapping'
+import { Search, X, Clock, TrendingUp } from '@/lib/icon-mapping'
 import { cn } from '@/lib/utils'
 import { useDebounce } from '@/hooks/use-debounce'
 import { motion, AnimatePresence } from 'framer-motion'
 
-interface rchResult {
+interface SearchResult {
   id: string
   title: string
   description: string
@@ -15,19 +15,19 @@ interface rchResult {
   image?: string
 }
 
-interface rchProps {
-  onSelect?: (result: rchResult) => void
+interface SearchProps {
+  onSelect?: (result: SearchResult) => void
   placeholder?: string
   className?: string
 }
 
-export function Advancedrch({ onSelect, placeholder = "rch...", className }: rchProps) {
+export function AdvancedSearch({ onSelect, placeholder = "search...", className }: SearchProps) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<rchResult[]>([])
+  const [results, setResults] = useState<SearchResult[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [recentrches, setRecentrches] = useState<string[]>([])
-  const [popularrches] = useState(['Next.js', 'React', 'TypeScript', 'Tailwind CSS'])
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [popularSearches] = useState(['Next.js', 'React', 'TypeScript', 'Tailwind CSS'])
   
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,50 +45,50 @@ export function Advancedrch({ onSelect, placeholder = "rch...", className }: rch
   }, [])
 
   useEffect(() => {
-    const loadRecentrches = () => {
-      const saved = localStorage.getItem('recent-rches')
+    const loadRecentSearches = () => {
+      const saved = localStorage.getItem('recent-searches')
       if (saved) {
-        setRecentrches(JSON.parse(saved))
+        setRecentSearches(JSON.parse(saved))
       }
     }
-    loadRecentrches()
+    loadRecentSearches()
   }, [])
 
   useEffect(() => {
     if (debouncedQuery.length > 2) {
-      performrch(debouncedQuery)
+      performSearch(debouncedQuery)
     } else {
       setResults([])
       setIsLoading(false)
     }
   }, [debouncedQuery])
-  const performrch = async (rchQuery: string) => {
+  const performSearch = async (searchQuery: string) => {
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/rch?q=${encodeURIComponent(rchQuery)}`)
+      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`)
       if (response.ok) {
         const data = await response.json()
         setResults(data.results)
       }
     } catch (error) {
-      console.error('rch error:', error)
+      console.error('search error:', error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleSelect = (result: rchResult) => {
-    const newRecentrches = [result.title, ...recentrches.filter(s => s !== result.title)].slice(0, 5)
-    setRecentrches(newRecentrches)
-    localStorage.setItem('recent-rches', JSON.stringify(newRecentrches))
-    
+  const handleSelect = (result: SearchResult) => {
+    const newRecentSearches = [result.title, ...recentSearches.filter(s => s !== result.title)].slice(0, 5)
+    setRecentSearches(newRecentSearches)
+    localStorage.setItem('recent-searches', JSON.stringify(newRecentSearches))
+
     setQuery('')
     setIsOpen(false)
     onSelect?.(result)
   }
 
-  const handleRecentrch = (rch: string) => {
-    setQuery(rch)
+  const handleRecentSearch = (search: string) => {
+    setQuery(search)
     inputRef.current?.focus()
   }
 
@@ -101,7 +101,7 @@ export function Advancedrch({ onSelect, placeholder = "rch...", className }: rch
   return (
     <div ref={containerRef} className={cn("relative w-full max-w-lg", className)}>
       <div className="relative">
-        <rch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           ref={inputRef}
           type="text"
@@ -158,36 +158,36 @@ export function Advancedrch({ onSelect, placeholder = "rch...", className }: rch
 
             {!isLoading && query.length <= 2 && (
               <div className="p-2">
-                {recentrches.length > 0 && (
+                {recentSearches.length > 0 && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2 text-xs font-medium text-muted-foreground">
                       <Clock className="h-3 w-3" />
-                      Recent rches
+                      Recent searches
                     </div>
-                    {recentrches.map((rch) => (
+                    {recentSearches.map((search) => (
                       <button
-                        key={rch}
-                        onClick={() => handleRecentrch(rch)}
+                        key={search}
+                        onClick={() => handleRecentSearch(search)}
                         className="block w-full rounded p-2 text-left text-sm hover:bg-accent"
                       >
-                        {rch}
+                        {search}
                       </button>
                     ))}
                   </div>
                 )}
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-2 text-xs font-medium text-muted-foreground">
                     <TrendingUp className="h-3 w-3" />
-                    Popular rches
+                    Popular searches
                   </div>
-                  {popularrches.map((rch) => (
+                  {popularSearches.map((search) => (
                     <button
-                      key={rch}
-                      onClick={() => handleRecentrch(rch)}
+                      key={search}
+                      onClick={() => handleRecentSearch(search)}
                       className="block w-full rounded p-2 text-left text-sm hover:bg-accent"
                     >
-                      {rch}
+                      {search}
                     </button>
                   ))}
                 </div>

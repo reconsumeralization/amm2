@@ -1,10 +1,10 @@
-// Simplified rch service for immediate implementation
+// Simplified search service for immediate implementation
 import { logger } from './logger'
-import { rchQuery, rchResult, rchAnalytics } from './rch-core'
+import { searchQuery, searchResult, searchAnalytics } from './search-core'
 
 class SearchService {
   private static instance: SearchService
-  private rchIndex: Map<string, any> = new Map()
+  private searchIndex: Map<string, any> = new Map()
   private analytics: any[] = []
 
   static getInstance(): SearchService {
@@ -16,7 +16,7 @@ class SearchService {
 
   // Initialize with mock data for demonstration
   async initialize(): Promise<void> {
-    this.rchIndex.set('button-component', {
+    this.searchIndex.set('button-component', {
       id: 'button-component',
       title: 'Button Component',
       description: 'A reusable button component with multiple variants and states',
@@ -32,17 +32,17 @@ class SearchService {
       }
     })
 
-    logger.info('rch service initialized with mock data')
+    logger.info('search service initialized with mock data')
   }
 
-  async rch(query: any): Promise<{
+  async search(query: any): Promise<{
     results: any[]
     total: number
     analytics: any
   }> {
     const startTime = performance.now()
 
-    const results = Array.from(this.rchIndex.values()).filter(item =>
+    const results = Array.from(this.searchIndex.values()).filter(item =>
       item.title.toLowerCase().includes(query.query.toLowerCase()) ||
       item.description.toLowerCase().includes(query.query.toLowerCase())
     )
@@ -62,6 +62,21 @@ class SearchService {
       analytics
     }
   }
+
+  getSearchPerformanceMetrics(): any {
+    return {
+      totalSearches: this.analytics.length,
+      averageResponseTime: this.analytics.reduce((sum, a) => sum + a.responseTime, 0) / this.analytics.length || 0,
+      popularQueries: [],
+      searchTrends: [],
+      errorRate: 0,
+      cacheHitRate: 0
+    }
+  }
+
+  getPopularSearchTerms(): any[] {
+    return []
+  }
 }
 
-export const rchService = SearchService.getInstance()
+export const searchService = SearchService.getInstance()
