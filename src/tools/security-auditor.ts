@@ -397,7 +397,7 @@ function applyFix(issue: IssueRecord): boolean {
       return `innerHTML = \`$${tpl.replace(/\$\{([^}]+)\}/g, (_m2, v) => `{sanitize(${v.trim()})}`)}\``;
     });
     updated = updated.replace(/innerHTML\s*=\s*([^;]+);/g, (_m, expr) => {
-      if (expr.includes('sanitize(')) return `innerHTML = ${expr};`;
+      if (expr.includes('sanitize(')) return `innerHTML = sanitize(${expr});`;
       return `innerHTML = sanitize(${expr});`;
     });
     if (updated !== content) {
