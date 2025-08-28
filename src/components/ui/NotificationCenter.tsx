@@ -41,9 +41,9 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
         eventSourceRef.current.close()
       }
     }
-  }, [userId])
+  }, [userId, connectToNotificationStream, loadNotificationHistory]);
 
-  const connectToNotificationStream = () => {
+  const connectToNotificationStream = useCallback(() => {
     try {
       const eventSource = new EventSource(`/api/notifications/stream?history=true`)
       eventSourceRef.current = eventSource
@@ -86,9 +86,9 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
       console.error('Failed to connect to notification stream:', error)
       setIsConnected(false)
     }
-  }
+  }, [handleNewNotification, setIsConnected, notifications, updateUnreadCount]);
 
-  const loadNotificationHistory = async () => {
+  const loadNotificationHistory = useCallback(async () => {
     try {
       // In a real implementation, fetch notification history from API
       // For now, we'll use sample data
@@ -109,9 +109,9 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
     } catch (error) {
       console.error('Failed to load notification history:', error)
     }
-  }
+  }, [setNotifications, updateUnreadCount]);
 
-  const handleNewNotification = (notification: Notification) => {
+  const handleNewNotification = useCallback((notification: Notification) => {
     setNotifications(prev => [notification, ...prev])
 
     // Show toast for high priority notifications
@@ -126,12 +126,12 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
     }
 
     updateUnreadCount([notification, ...notifications])
-  }
+  }, [notifications, setNotifications, setIsOpen, toast, updateUnreadCount]);
 
-  const updateUnreadCount = (notifs: Notification[]) => {
+  const updateUnreadCount = useCallback((notifs: Notification[]) => {
     const unread = notifs.filter(n => !n.read).length
     setUnreadCount(unread)
-  }
+  }, [setUnreadCount]);
 
   const markAsRead = async (notificationId: string) => {
     try {

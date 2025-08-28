@@ -88,7 +88,7 @@ export default function ImageComponent({
     ].join(' ');
     
     ctx.filter = filterString;
-  }, [filters]);
+  }, [filters.brightness, filters.contrast, filters.saturation, filters.blur, filters.grayscale, filters.sepia, filters.hue]);
 
   const getCroppedImg = useCallback(async () => {
     if (!imgRef.current || !completedCrop) {

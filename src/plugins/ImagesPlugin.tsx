@@ -2,7 +2,16 @@ import React from 'react'
 import { $createImageNode } from '@/nodes/ImageNode'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR } from 'lexical'
-import { INSERT_IMAGE_COMMAND } from '@/components/editor/LexicalEditor'
+import { createCommand, LexicalCommand } from 'lexical'
+
+// Define the INSERT_IMAGE_COMMAND
+export const INSERT_IMAGE_COMMAND: LexicalCommand<{
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number | 'auto';
+  caption?: string;
+}> = createCommand('INSERT_IMAGE_COMMAND')
 
 export function ImagesPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
@@ -34,3 +43,5 @@ export function ImagesPlugin(): JSX.Element | null {
 
   return null
 }
+
+export default ImagesPlugin

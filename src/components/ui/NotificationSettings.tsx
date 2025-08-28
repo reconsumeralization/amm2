@@ -76,11 +76,7 @@ export function NotificationSettings({ userId, className = '' }: NotificationSet
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
-  useEffect(() => {
-    loadUserPreferences()
-  }, [userId])
-
-  const loadUserPreferences = async () => {
+  const loadUserPreferences = useCallback(async () => {
     try {
       // In a real implementation, fetch from API
       // For demo, use default preferences
@@ -88,7 +84,11 @@ export function NotificationSettings({ userId, className = '' }: NotificationSet
     } catch (error) {
       console.error('Failed to load notification preferences:', error)
     }
-  }
+  }, [userId]);
+
+  useEffect(() => {
+    loadUserPreferences()
+  }, [loadUserPreferences, userId])
 
   const updatePreference = (category: keyof NotificationPreferences, field: string, value: any) => {
     setPreferences(prev => {

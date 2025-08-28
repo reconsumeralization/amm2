@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Star, MessageSquare, ThumbsUp, Heart, MessageCircle } from 'lucide-react';
+import { Star, MessageSquare, ThumbsUp, Heart, Quote } from 'lucide-react';
 
 interface Testimonial {
   id: string;

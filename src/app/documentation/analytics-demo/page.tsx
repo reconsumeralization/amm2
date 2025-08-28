@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { FeedbackWidget } from '@/components/documentation/FeedbackWidget';
 import { AnalyticsDashboard } from '@/components/documentation/AnalyticsDashboard';
 import { ContentGapAnalyzer } from '@/components/documentation/ContentGapAnalyzer';
-import { unalytics } from '@/hooks/useAnalytics';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,7 +14,7 @@ export default function AnalyticsDemoPage() {
   const [selectedGap, setSelectedGap] = useState<ContentGap | null>(null);
   const [demoFeedback, setDemoFeedback] = useState<UserFeedback[]>([]);
   
-  const analytics = unalytics({
+  const analytics = useAnalytics({
     contentId: 'analytics-demo-page',
     contentType: 'guide',
     userRole: 'developer',
@@ -238,10 +238,10 @@ export default function AnalyticsDemoPage() {
                 
                 <h4>1. Add Analytics Hook to Your Page</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-{`import { unalytics } from '@/hooks/unalytics';
+{`import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function MyDocumentationPage() {
-  const analytics = unalytics({
+  const analytics = useAnalytics({
     contentId: 'my-page-id',
     contentType: 'guide',
     userRole: 'developer',

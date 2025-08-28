@@ -30,11 +30,7 @@ export default function StaffSchedule({ userId, tenantId }: StaffScheduleProps) 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchSchedules();
-  }, [userId, tenantId]);
-
-  const fetchSchedules = async () => {
+  const fetchSchedules = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -61,7 +57,11 @@ export default function StaffSchedule({ userId, tenantId }: StaffScheduleProps) 
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId, tenantId]);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, [fetchSchedules, userId, tenantId]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

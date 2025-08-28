@@ -323,7 +323,7 @@ export function SmartRecommendations({
     } finally {
       setIsLoading(false)
     }
-  }, [userRole, userBehavior])
+  }, [userRole])
 
   useEffect(() => {
     generateSmartRecommendations()
