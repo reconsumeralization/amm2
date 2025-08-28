@@ -12,4 +12,5 @@ export * from './Settings';
 export * from './StaffSchedules';
 export * from './Stylists';
 export * from './Tenants';
+export * from './Testimonials';
 export * from './Users';

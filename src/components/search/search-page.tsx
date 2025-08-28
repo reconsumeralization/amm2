@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrendingUp, Clock, Users, Target, Zap, Search, Filter, Star, Calendar, MapPin, BookOpen, Scissors, Brush } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
-import { searchService, SearchResult } from '@/lib/search-service'
+import { searchService, SeaSearchResult } from '@/lib/search-service'
 // --- FIX: Use correct import for Search icon from lucide-react ---
 // The 'Search' icon may not be available in some versions of lucide-react.
 // To avoid runtime errors, use a fallback icon if not present.
@@ -63,7 +63,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
     setQuery(searchQuery)
 
     try {
-      const searchResult = await searchService.search(
+      const seaSearchResult = await searchService.search(
         {
           query: searchQuery,
           pagination: { page: 1, limit: 20 }
@@ -71,14 +71,14 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
         'guest'
       )
 
-      setResults(searchResult.results)
+      setResults(seaSearchResult.results)
 
       // Update search stats
       setSearchStats(prev => ({
         ...prev,
         totalSearches: prev.totalSearches + 1,
-        averageResponseTime: searchResult.executionTime,
-        noResultsRate: searchResult.totalCount === 0 ? 100 : 0
+        averageResponseTime: seaSearchResult.executionTime,
+        noResultsRate: seaSearchResult.totalCount === 0 ? 100 : 0
       }))
     } catch (error) {
       console.error('search failed:', error)
@@ -88,7 +88,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
     }
   }
 
-  const handleResultClick = (result: SearchResult) => {
+  const handleResultClick = (result: SeaSearchResult) => {
     addBreadcrumb(`Clicked search result: ${result.title}`, 'interaction', 'info')
 
     // Track result click
@@ -124,7 +124,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+        } />
       </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
@@ -158,7 +158,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
         >
           <div className="relative">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div className="icon-placeholder">Search</div>
               <Input
                 type="text"
                 placeholder="Search for services, stylists, documentation, or anything else..."
@@ -166,7 +166,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Enter') handleSearch(query)
-                }}
+                }
                 className="w-full pl-12 pr-32 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-lg hover:shadow-xl transition-all duration-300"
                 aria-label="Search input"
               />
@@ -188,7 +188,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <Search className="h-4 w-4" />
+                      <div className="icon-placeholder">Search</div>
                       Search
                     </div>
                   )}
@@ -262,9 +262,9 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
         {/* Search Results */}
         <motion.div 
           className="max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          initial={{ opacity: 0, y: 20 }
+          animate={{ opacity: 1, y: 0 }
+          transition={{ duration: 0.8, delay: 0.6 }
         >
           {query && (
             <motion.div 
@@ -294,7 +294,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
                   <div className="w-16 h-16 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin"></div>
-                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-amber-400 rounded-full animate-spin" style={{ animationDelay: '0.5s' }}></div>
+                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-amber-400 rounded-full animate-spin" style={{ animationDelay: '0.5s' }></div>
                 </div>
                 <div className="text-center">
                   <p className="text-lg font-semibold text-slate-900 mb-2">Searching...</p>
@@ -358,12 +358,12 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-amber-500" />
+                              <div className="icon-placeholder">Star</div>
                               <span>Score: {result.relevanceScore}</span>
                             </div>
                             {result.type === 'service' && (
                               <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
+                                <div className="icon-placeholder">Calendar</div>
                                 <span>Book Now</span>
                               </div>
                             )}
@@ -444,7 +444,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
               <CardHeader className="text-center pb-6">
                 <CardTitle className="flex items-center justify-center gap-3 text-2xl">
                   <div className="p-2 rounded-full bg-amber-100">
-                    <Search className="h-6 w-6 text-amber-600" />
+                    <div className="icon-placeholder">Search</div>
                   </div>
                   Search Tips & Categories
                 </CardTitle>
@@ -458,7 +458,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 rounded-full bg-blue-100">
-                        <Target className="h-5 w-5 text-blue-600" />
+                        <div className="icon-placeholder">Target</div>
                       </div>
                       <h3 className="text-lg font-semibold text-slate-900">Search by Type</h3>
                     </div>
@@ -518,7 +518,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 rounded-full bg-purple-100">
-                        <TrendingUp className="h-5 w-5 text-purple-600" />
+                        <div className="icon-placeholder">TrendingUp</div>
                       </div>
                       <h3 className="text-lg font-semibold text-slate-900">Popular Searches</h3>
                     </div>

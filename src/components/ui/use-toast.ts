@@ -133,12 +133,12 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+type ToastProps = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
+function createToast({ ...props }: ToastProps) {
   const id = genId()
 
-  const update = (props: ToasterToast) =>
+  const update = (props: Partial<ToasterToast>) =>
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },
@@ -162,6 +162,10 @@ function toast({ ...props }: Toast) {
     dismiss,
     update,
   }
+}
+
+const toast = ({ ...props }: ToastProps) => {
+  return createToast({ ...props });
 }
 
 function useToast() {
