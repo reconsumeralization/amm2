@@ -1,12 +1,12 @@
 import { buildConfig } from 'payload';
-import { postgresAdapter } from '@payloadcms/db-postgres';
+import postgresAdapter from '@payloadcms/db-postgres';
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { searchPlugin } from '@payloadcms/plugin-search';
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant';
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage';
 import { stripePlugin } from '@payloadcms/plugin-stripe';
 
-import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram } from './collections';
+import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks } from './collections';
 
 export default buildConfig({
   admin: {
@@ -18,10 +18,10 @@ export default buildConfig({
       // Custom logo component path - we'll create this
       graphics: {
         Logo: {
-          path: '@/components/payload/Logo',
+          path: '@/payload/components/Logo',
         },
         Icon: {
-          path: '@/components/payload/Icon',
+          path: '@/payload/components/Icon',
         },
       },
     },
@@ -31,7 +31,7 @@ export default buildConfig({
       prefillOnly: true
     } : false,
   },
-  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram],
+  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks],
   endpoints: [
     // Custom endpoints will be implemented via Next.js API routes
   ],

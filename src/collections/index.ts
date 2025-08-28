@@ -22,3 +22,7 @@ export * from './Users';
 export * from './Contacts';
 export * from './LoyaltyProgram';
 export * from './MediaFolders';
+export * from './Pages';
+export * from './NavigationMenus';
+export * from './Redirects';
+export * from './Blocks';
