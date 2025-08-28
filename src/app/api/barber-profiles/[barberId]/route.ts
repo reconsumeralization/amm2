@@ -1,14 +1,16 @@
 import { getPayload } from 'payload';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-export async function GET(req: Request, { params }: { params: { barberId: string } }) {
+export async function GET(req: NextRequest, { params }: any) {
   const tenantId = req.headers.get('X-Tenant-ID');
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant ID is required' }, { status: 400 });
   }
 
   try {
-    const payload = await getPayload({ config: await import('../../../../payload.config') });
+    const { default: config } = await import('../../../../payload.config');
+    const payload = await getPayload({ config });
     const profile = await payload.findByID({
       collection: 'users',
       id: params.barberId,
