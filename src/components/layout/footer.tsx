@@ -30,7 +30,32 @@ const services = [
   'Kids Cut'
 ]
 
-export function Footer() {
+type FooterMenuItem = {
+  label: string
+  linkType: 'page' | 'external' | 'content'
+  page?: { slug?: string } | string
+  content?: { slug?: string } | string
+  url?: string
+  newTab?: boolean
+  children?: FooterMenuItem[]
+}
+
+export function Footer({ items }: { items?: FooterMenuItem[] }) {
+  const resolveHref = (item: FooterMenuItem): string => {
+    if (item.linkType === 'external' && item.url) return item.url
+    if (item.linkType === 'page') {
+      const page = item.page as any
+      const slug = typeof page === 'string' ? page : page?.slug
+      return slug ? `/${slug}` : '#'
+    }
+    if (item.linkType === 'content') {
+      const content = item.content as any
+      const slug = typeof content === 'string' ? content : content?.slug
+      return slug ? `/${slug}` : '#'
+    }
+    return '#'
+  }
+
   return (
     <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
       {/* Background Pattern */}
@@ -131,7 +156,7 @@ export function Footer() {
             </motion.div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links (CMS-driven if available) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -143,7 +168,11 @@ export function Footer() {
               Quick Links
             </h3>
             <div className="space-y-3">
-              {quickLinks.map((link, index) => (
+              {(items && items.length > 0 ? items.map(i => ({
+                name: i.label,
+                href: resolveHref(i),
+                target: i.newTab ? '_blank' : undefined,
+              })) : quickLinks).map((link: any, index: number) => (
                 <motion.div
                   key={link.name}
                   initial={{ opacity: 0, x: -20 }}
@@ -153,9 +182,10 @@ export function Footer() {
                 >
                   <Link 
                     href={link.href}
+                    target={link.target}
                     className="flex items-center gap-2 text-gray-300 hover:text-amber-400 transition-colors duration-300 group"
                   >
-                    <span className="text-sm">{link.icon}</span>
+                    <span className="text-sm">•</span>
                     <span className="group-hover:translate-x-1 transition-transform duration-300">
                       {link.name}
                     </span>

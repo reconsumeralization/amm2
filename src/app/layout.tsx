@@ -2,6 +2,8 @@ import './globals.css';
 import '../styles/responsive-image.css';
 import { Providers } from '@/providers/providers';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { Footer } from '@/components/layout/footer';
+import { getPayload } from 'payload';
 
 import { Metadata } from 'next';
 
@@ -10,7 +12,24 @@ export const metadata: Metadata = {
   description: 'Regina\'s Premier Men\'s Grooming',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function getFooterMenuItems() {
+  try {
+    if (process.env.NODE_ENV === 'test') return []
+    const payload = await getPayload({ config: await import('../payload.config') })
+    const res = await payload.find({
+      collection: 'navigationMenus',
+      where: { location: { equals: 'footer' } },
+      depth: 2,
+      limit: 1,
+    })
+    return res.docs?.[0]?.items || []
+  } catch {
+    return []
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const footerItems = await getFooterMenuItems()
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -33,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ErrorBoundary>
           <Providers>
             {children}
+            <Footer items={footerItems} />
           </Providers>
         </ErrorBoundary>
       </body>

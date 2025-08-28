@@ -221,6 +221,7 @@ export default function BookingChatbot({
     const initializeChatbot = async () => {
       try {
         if (process.env.NODE_ENV === 'test') {
+          // In tests, still initialize minimal state but allow component to render and handle errors from API
           setMessages([{ 
             text: 'Hello! How can I help you today?', 
             sender: 'bot', 
@@ -228,8 +229,7 @@ export default function BookingChatbot({
             id: generateMessageId()
           }]);
           setIsVisible(true);
-          setIsInitializing(false);
-          return;
+          // Do not early return; proceed to attempt loading data so tests can surface errors (e.g., 500)
         }
 
         setIsInitializing(true);
@@ -376,16 +376,21 @@ export default function BookingChatbot({
         }),
       });
 
+      let data: any = null
       if (!response.ok) {
-        throw new Error(`Failed to get response: ${response.statusText}`);
+        // Surface error message in UI even in tests
+        const text = await response.text()
+        const msg = text || response.statusText
+        addMessage(`Sorry, I encountered an error: ${msg}`, 'bot')
+        setError(msg)
+      } else {
+        data = await response.json();
       }
-
-      const data = await response.json();
       
       if (data.error) {
         addMessage(`Sorry, I encountered an error: ${data.error}`, 'bot');
         toast.error(data.error);
-      } else {
+      } else if (data) {
         addMessage(data.response, 'bot');
         
         if (data.action) {

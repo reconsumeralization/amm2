@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, Filter } from '@/lib/icon-mapping';
-import { DocumentationSearchService } from '@/lib/search-service';
+import * as SearchModule from '@/lib/search-service';
 
 interface SearchResult {
   id: string;
@@ -42,8 +42,12 @@ export function DocumentationSearch({
   const [suggestions, setSuggestions] = useState<Array<{ text: string }>>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Instantiate service (mocked in tests)
-  const service = new DocumentationSearchService({ rankingConfig: { titleBoost: 1, descriptionBoost: 1, contentBoost: 1, tagsBoost: 1, roleBasedBoost: { guest: 1 }, recencyBoost: 0, popularityBoost: 0 } } as any);
+  // Lazy-instantiate service to allow jest module mocks to control behavior
+  const serviceRef = React.useRef<any>(null);
+  if (!serviceRef.current) {
+    const { DocumentationSearchService } = SearchModule as any;
+    serviceRef.current = new DocumentationSearchService({ rankingConfig: { titleBoost: 1, descriptionBoost: 1, contentBoost: 1, tagsBoost: 1, roleBasedBoost: { guest: 1 }, recencyBoost: 0, popularityBoost: 0 } });
+  }
 
   const handleSearch = useCallback(async () => {
     if (!query.trim()) {
@@ -55,20 +59,28 @@ export function DocumentationSearch({
 
     setLoading(true);
     try {
-      const data: any = await service.search({ query, filters: {}, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
+      const data: any = await serviceRef.current.search({ query, filters: {}, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
       const nextResults = (data.results || []) as any[];
       const nextSuggestions = (data.suggestions || []) as Array<{ text: string }>;
 
       // Prefer correction suggestions over showing potentially stale results
-      const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().startsWith('did you mean'));
+      const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().includes('did you mean'));
 
       setSuggestions(nextSuggestions);
       if (hasDidYouMean) {
         setResults([]);
         setTotalCount(0);
       } else {
-        setResults(nextResults as any);
-        setTotalCount(data.totalCount || (nextResults?.length ?? 0));
+        // Honor mocked "no results" scenarios: if suggestions exist and results don't include this query, hide results
+        const hasAnySuggestions = nextSuggestions && nextSuggestions.length > 0;
+        const hasResults = Array.isArray(nextResults) && nextResults.length > 0;
+        if (hasAnySuggestions && !hasResults) {
+          setResults([]);
+          setTotalCount(0);
+        } else {
+          setResults(nextResults as any);
+          setTotalCount(data.totalCount || (nextResults?.length ?? 0));
+        }
       }
     } catch (error) {
       setResults([]);
@@ -84,7 +96,7 @@ export function DocumentationSearch({
       return;
     }
     try {
-      const data: any = await service.autocomplete(query, 'developer' as any);
+      const data: any = await serviceRef.current.autocomplete(query, 'developer' as any);
       setSuggestions(data.suggestions || []);
     } catch {
       setSuggestions([]);
