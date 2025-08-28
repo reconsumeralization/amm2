@@ -56,9 +56,20 @@ export function DocumentationSearch({
     setLoading(true);
     try {
       const data: any = await service.search({ query, filters: {}, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
-      setResults((data.results || []) as any);
-      setTotalCount(data.totalCount || (data.results?.length ?? 0));
-      if (data.suggestions) setSuggestions(data.suggestions);
+      const nextResults = (data.results || []) as any[];
+      const nextSuggestions = (data.suggestions || []) as Array<{ text: string }>;
+
+      // Prefer correction suggestions over showing potentially stale results
+      const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().startsWith('did you mean'));
+
+      setSuggestions(nextSuggestions);
+      if (hasDidYouMean) {
+        setResults([]);
+        setTotalCount(0);
+      } else {
+        setResults(nextResults as any);
+        setTotalCount(data.totalCount || (nextResults?.length ?? 0));
+      }
     } catch (error) {
       setResults([]);
       setTotalCount(0);

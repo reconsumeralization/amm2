@@ -34,6 +34,12 @@ jest.mock('next/server', () => {
   return { NextRequest, NextResponse };
 });
 
+// Ensure test isolation for module mocks
+afterEach(() => {
+  jest.clearAllMocks();
+  jest.resetModules();
+});
+
 global.renderHook = (hook) => {
   let result;
   function TestComponent() {
