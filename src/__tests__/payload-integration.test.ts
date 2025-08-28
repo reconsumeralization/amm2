@@ -195,7 +195,7 @@ describe('Payload Integration', () => {
 
       service['payload'] = mockPayload as any
 
-      const result = await service.globalrch('test', ['services', 'customers', 'documentation'])
+      const result = await service.globalSearch('test', ['services', 'customers', 'documentation'])
 
       expect(result).toBeTruthy()
       expect(result.results).toHaveLength(3)

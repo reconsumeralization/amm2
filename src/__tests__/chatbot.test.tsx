@@ -25,7 +25,7 @@ describe('BookingChatbot', () => {
     jest.clearAllMocks();
     
     // Mock successful API responses
-    mockFetch.mockImplementation((url: string) => {
+    mockFetch.mockImplementation((url: any) => {
       if (url.includes('/api/settings')) {
         return Promise.resolve({
           ok: true,
@@ -213,11 +213,11 @@ describe('BookingChatbot', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    mockFetch.mockImplementationOnce(() => 
+    mockFetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
         status: 500,
-      })
+      } as any)
     );
 
     render(
@@ -243,7 +243,7 @@ describe('BookingChatbot', () => {
   });
 
   it('does not render when chatbot is disabled', async () => {
-    mockFetch.mockImplementationOnce(() => 
+    mockFetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({
@@ -251,7 +251,7 @@ describe('BookingChatbot', () => {
             enabled: false,
           },
         }),
-      })
+      } as any)
     );
 
     const { container } = render(
@@ -267,11 +267,11 @@ describe('BookingChatbot', () => {
   });
 
   it('handles settings loading error', async () => {
-    mockFetch.mockImplementationOnce(() => 
+    mockFetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
         status: 404,
-      })
+      } as any)
     );
 
     render(

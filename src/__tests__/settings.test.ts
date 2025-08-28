@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { useSettings } from '../hooks/useSettings';
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn() as any;
 
 describe('Settings System', () => {
   beforeEach(() => {

@@ -227,7 +227,7 @@ export const authOptions: NextAuthOptions = {
 
           // Check Payload CMS users
           try {
-            const payload = await getPayload({ config: await import('../payload.config') })
+            const payload = await getPayload({ config: (await import('../payload.config')).default })
 
             // Find user by email
             const users = await payload.find({

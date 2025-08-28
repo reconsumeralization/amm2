@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Select, Table } from '@payloadcms/ui'
+// Using standard HTML elements and our UI components
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface ReportData {
   totalRevenue: number
@@ -111,24 +113,21 @@ export const BusinessReports: React.FC<BusinessReportsProps> = ({ dateRange }) =
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Business Reports</h1>
         <div className="flex space-x-3">
-          <Select
-            value={{ label: reportType.charAt(0).toUpperCase() + reportType.slice(1), value: reportType }}
-            onChange={(option) => {
-              if (option && !Array.isArray(option) && typeof option === 'object' && 'value' in option) {
-                setReportType(option.value as string)
-              }
-            }}
-            options={[
-              { label: 'Overview', value: 'overview' },
-              { label: 'Revenue', value: 'revenue' },
-              { label: 'Services', value: 'services' },
-              { label: 'Staff Performance', value: 'staff' },
-              { label: 'Customer Analytics', value: 'customers' },
-              { label: 'Inventory', value: 'inventory' }
-            ]}
-          />
-          <Button>Export PDF</Button>
-          <Button>Export Excel</Button>
+          <Select value={reportType} onValueChange={setReportType}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select report type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="overview">Overview</SelectItem>
+              <SelectItem value="revenue">Revenue</SelectItem>
+              <SelectItem value="services">Services</SelectItem>
+              <SelectItem value="staff">Staff Performance</SelectItem>
+              <SelectItem value="customers">Customer Analytics</SelectItem>
+              <SelectItem value="inventory">Inventory</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline">Export PDF</Button>
+          <Button variant="outline">Export Excel</Button>
         </div>
       </div>
 

@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { Heading } from '@/components/ui/heading'
-import { Text } from '@/components/ui/text'
+// Using standard HTML elements instead of custom UI components
 
 interface MetricCardProps {
   title: string
@@ -19,12 +18,12 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, change, trend, ic
     <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="flex items-center justify-between">
         <div>
-          <Text className="text-sm font-medium text-gray-600">{title}</Text>
-          <Heading className="text-2xl font-bold text-gray-900 mt-1">{value}</Heading>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <h3 className="text-2xl font-bold text-gray-900 mt-1">{value}</h3>
           {change && (
-            <Text className={`text-sm mt-1 ${trendColor}`}>
+            <p className={`text-sm mt-1 ${trendColor}`}>
               {trend === 'up' && '↗'} {trend === 'down' && '↘'} {change}
-            </Text>
+            </p>
           )}
         </div>
         {icon && <div className="text-3xl">{icon}</div>}
@@ -65,19 +64,19 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <Text className="font-medium text-gray-900">
+            <p className="font-medium text-gray-900">
               {customer?.firstName} {customer?.lastName}
-            </Text>
+            </p>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status as keyof typeof statusColors]}`}>
               {appointment.status}
             </span>
           </div>
-          <Text className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             {service?.name} with {stylist?.name}
-          </Text>
-          <Text className="text-sm text-gray-500 mt-1">
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
             {appointmentTime}
-          </Text>
+          </p>
         </div>
       </div>
     </div>
@@ -93,10 +92,10 @@ const LowStockAlert: React.FC<LowStockAlertProps> = ({ product }) => {
     <div className="p-4 bg-red-50 rounded-lg border border-red-200">
       <div className="flex items-center justify-between">
         <div>
-          <Text className="font-medium text-red-900">{product.name}</Text>
-          <Text className="text-sm text-red-700">
+          <p className="font-medium text-red-900">{product.name}</p>
+          <p className="text-sm text-red-700">
             Only {product.currentStock} {product.unit} remaining
-          </Text>
+          </p>
         </div>
         <div className="text-red-600">⚠</div>
       </div>
@@ -179,9 +178,9 @@ export const DashboardWidgets: React.FC = () => {
       {/* Today's Appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-          <Heading className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Today's Appointments
-          </Heading>
+          </h3>
           <div className="space-y-3">
             {mockData.recentAppointments.map((appointment) => (
               <AppointmentCard
@@ -197,9 +196,9 @@ export const DashboardWidgets: React.FC = () => {
 
         {/* Low Stock Alerts */}
         <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-          <Heading className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Low Stock Alerts
-          </Heading>
+          </h3>
           <div className="space-y-3">
             {mockData.lowStockProducts.map((product, index) => (
               <LowStockAlert key={index} product={product} />
@@ -210,9 +209,9 @@ export const DashboardWidgets: React.FC = () => {
 
       {/* Quick Actions */}
       <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
-        <Heading className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Quick Actions
-        </Heading>
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <button className="p-3 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 text-blue-700 font-medium transition-colors">
             + New Appointment

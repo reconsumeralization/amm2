@@ -4,7 +4,7 @@ import { sendEmail } from '../../../utils/email';
 
 export async function POST(req: Request) {
   const { firstName, lastName, email, phone, subject, message } = await req.json();
-  const payload = await getPayload({ config: await import('../../../payload.config') });
+  const payload = await getPayload({ config: (await import('../../../payload.config')).default });
 
   // Input validation
   if (!firstName || !lastName || !email || !subject || !message) {

@@ -7,7 +7,7 @@ global.fetch = jest.fn(() =>
   Promise.resolve({
     ok: true,
     json: () => Promise.resolve({ success: true }),
-  } as Response)
+  } as any)
 );
 
 describe('ContactForm', () => {

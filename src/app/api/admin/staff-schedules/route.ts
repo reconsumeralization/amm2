@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../payload.config') });
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
     const data = await req.json();
 
     // Validate required fields
@@ -91,7 +91,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../payload.config') });
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
     const { searchParams } = new URL(req.url);
 
     // Build query based on user role and filters

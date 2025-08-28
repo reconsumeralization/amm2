@@ -1,5 +1,7 @@
 import postgresAdapter from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+
+
+import lexicalEditor from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import type { Config } from 'payload'
 import path from 'path'
@@ -73,7 +75,7 @@ export default buildConfig({
     {
       path: '/api/auth/check',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         // Check if user is authenticated via our existing system
         const session = req.headers?.get?.('x-user-id') || req.headers?.['x-user-id']
         if (!session) {
@@ -92,7 +94,7 @@ export default buildConfig({
     {
       path: '/api/rch',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         try {
           const payload = await getPayloadClient()
           const { rchParams } = new URL(req.url)
@@ -174,7 +176,7 @@ export default buildConfig({
     {
       path: '/api/analytics',
       method: 'get',
-      handler: async (req: Request) => {
+      handler: async (req: any) => {
         try {
           const payload = await getPayloadClient()
 

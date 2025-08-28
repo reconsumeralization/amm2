@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { getPayloadIntegrationService } from '@/lib/payload-integration'
 import { getUserFromSession } from '@/lib/documentation-auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const user = getUserFromSession(session)
     
     if (!user) {

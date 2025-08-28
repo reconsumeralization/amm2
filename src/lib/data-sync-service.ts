@@ -16,7 +16,7 @@ export interface SyncResult {
 }
 
 export class DataSyncService {
-  private payload: any = null;
+  public payload: any = null;
 
   async initialize(): Promise<void> {
     if (!this.payload) {

@@ -2,7 +2,7 @@ import { getPayload } from 'payload';
 import Editor from '@/components/editor/Editor';
 
 export default async function EditorPage({ params }: { params: { id?: string } }) {
-  const payload = await getPayload({ config: await import('../../payload.config') });
+  const payload = await getPayload({ config: (await import('../../payload.config')).default });
   let initialContent = '';
   if (params.id) {
     const doc = await payload.findByID({ collection: 'business-documentation', id: params.id });

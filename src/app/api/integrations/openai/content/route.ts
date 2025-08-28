@@ -4,7 +4,7 @@ import { Configuration, OpenAIApi } from 'openai';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
-  const payload = await getPayload({ config: await import('../../../../../payload.config') });
+  const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
 
   // 1. Authentication Check: Ensure user is logged in
   if (!req.user) { // Assuming req.user is populated by Payload's auth middleware
