@@ -20,11 +20,15 @@ const customJestConfig = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^payload/database$': '<rootDir>/src/__mocks__/payload.js',
-    '^payload/config$': '<rootDir>/src/__mocks__/payload.js',
+    '^@payloadcms/db-postgres$': '<rootDir>/src/__mocks__/payload-db.js',
+    '^@payloadcms/richtext-lexical$': '<rootDir>/src/__mocks__/payload-lexical.js',
+    '^@payloadcms/bundler-webpack$': '<rootDir>/src/__mocks__/payload-bundler.js',
+    '^payload$': '<rootDir>/src/__mocks__/payload.js',
+    'payload/database': '<rootDir>/src/__mocks__/payload.js',
+    'payload/config': '<rootDir>/src/__mocks__/payload.js',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!@payloadcms|@lexical).+\\.(js|jsx|ts|tsx)$',
+    '/node_modules/(?!(?:@payloadcms|@lexical)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

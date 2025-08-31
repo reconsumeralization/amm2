@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: 'Regina\'s Premier Men\'s Grooming',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
