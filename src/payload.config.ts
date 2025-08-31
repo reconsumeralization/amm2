@@ -3,7 +3,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 
 // Import all collections from the organized structure
-import collections from './payload/collections/index.ts'
+import collections from './payload/collections/index'
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',
@@ -29,7 +29,7 @@ export default buildConfig({
   endpoints: [],
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URL || 'file:./dev.db',
+      url: process.env.DATABASE_URI || 'file:./dev.db',
     },
   }),
   typescript: {

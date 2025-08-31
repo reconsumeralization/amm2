@@ -1,13 +1,15 @@
 // src/payload/utils/withLexicalEditor.ts
 import type { CollectionConfig, Field } from 'payload'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import lexicalEditorModule from '@payloadcms/richtext-lexical'
+
+const lexical = (lexicalEditorModule as any)?.lexicalEditor ?? (lexicalEditorModule as any)?.default ?? (lexicalEditorModule as any)
 
 function attachEditorRecursively(field: Field): Field {
   // If this is a richText field and no editor is defined, attach lexical
   if ((field as any).type === 'richText' && !(field as any).editor) {
     return {
       ...field,
-      editor: lexicalEditor(),
+      editor: (lexical as any)(),
     } as Field
   }
 
