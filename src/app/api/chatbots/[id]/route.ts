@@ -18,7 +18,7 @@ export async function GET(
     })
 
     if (!chatbot) {
-      return createErrorResponse('Chatbot not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Chatbot not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     return createSuccessResponse(chatbot, 'Chatbot retrieved successfully')
@@ -45,7 +45,7 @@ export async function PUT(
     })
 
     if (!existingChatbot) {
-      return createErrorResponse('Chatbot not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Chatbot not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Update chatbot
@@ -81,7 +81,7 @@ export async function DELETE(
     })
 
     if (!existingChatbot) {
-      return createErrorResponse('Chatbot not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Chatbot not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Delete chatbot

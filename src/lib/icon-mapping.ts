@@ -37,6 +37,8 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     fileText: Icons.FileText,
     barChart3: Icons.BarChart3,
     trendingUp: Icons.TrendingUp,
+    moon: FallbackIcon, // Moon icon not available
+    sun: FallbackIcon, // Sun icon not available
     clock: Icons.Clock,
     refreshCw: Icons.RefreshCw,
     eye: Icons.Eye,
@@ -309,3 +311,5 @@ export const DownloadIcon = Icons.Download // Download icon
 export const AlertCircleIcon = Icons.AlertTriangle // Alert circle icon
 export const CheckCircleIcon = Icons.CheckCircle // Check circle icon
 export const Component = Icons.Settings // Component icon (using Settings as fallback)
+export const Moon = FallbackIcon // Moon icon
+export const Sun = FallbackIcon // Sun icon

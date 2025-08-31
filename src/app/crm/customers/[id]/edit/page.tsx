@@ -25,7 +25,8 @@ const formSchema = z.object({
   phone: z.string().optional(),
 });
 
-const EditCustomerPage = ({ params }: { params: { id: string } }) => {
+const EditCustomerPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const resolvedParams = await params;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,7 +42,7 @@ const EditCustomerPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const response = await fetch(`/api/customers/${params.id}`);
+        const response = await fetch(`/api/customers/${resolvedParams.id}`);
         if (response.ok) {
           const customer = await response.json();
           form.reset(customer);
@@ -53,12 +54,12 @@ const EditCustomerPage = ({ params }: { params: { id: string } }) => {
       }
     };
     fetchCustomer();
-  }, [params.id, form]);
+  }, [resolvedParams.id, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/customers/${params.id}`, {
+      const response = await fetch(`/api/customers/${resolvedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ const EditCustomerPage = ({ params }: { params: { id: string } }) => {
 
       if (response.ok) {
         toast.success('Customer updated successfully!');
-        router.push(`/crm/customers/${params.id}`);
+        router.push(`/crm/customers/${resolvedParams.id}`);
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to update customer');

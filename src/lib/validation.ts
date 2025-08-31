@@ -60,7 +60,7 @@ export const appointmentSchemas = {
     customerId: z.string().uuid('Invalid customer ID'),
     stylistId: z.string().uuid('Invalid stylist ID'),
     serviceId: z.string().uuid('Invalid service ID'),
-    date: z.date({ invalid_type_error: 'Invalid date' }),
+    date: z.date(),
     time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
     duration: z.number().min(15, 'Minimum duration is 15 minutes').max(480, 'Maximum duration is 8 hours'),
     notes: z.string().max(500, 'Notes too long').optional(),
@@ -212,9 +212,7 @@ export const userSchemas = {
     password: z.string().min(8, 'Password must be at least 8 characters'),
     firstName: z.string().min(1, 'First name is required').max(50, 'First name too long'),
     lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
-    role: z.enum(['admin', 'manager', 'stylist', 'customer'], { 
-      errorMap: () => ({ message: 'Invalid role' })
-    }),
+    role: z.enum(['admin', 'manager', 'stylist', 'customer']),
     phone: z.string().optional(),
     isActive: z.boolean().optional(),
   }),
@@ -241,19 +239,19 @@ const paginationSchema = z.object({
 export const apiSchemas: {
   pagination: typeof paginationSchema;
   search: z.ZodObject<any>;
-  dateRange: z.ZodEffects<z.ZodObject<any>, any, any>;
+  dateRange: z.ZodEffects<z.ZodObject<any>, any>;
 } = {
   pagination: paginationSchema,
 
   search: z.object({
     query: z.string().min(1, 'Search query is required').max(100, 'Search query too long'),
-    filters: z.record(z.any()).optional(),
+    filters: z.record(z.string(), z.any()).optional(),
     ...paginationSchema.shape,
   }),
 
   dateRange: z.object({
-    startDate: z.date({ errorMap: () => ({ message: 'Invalid start date' }) }),
-    endDate: z.date({ errorMap: () => ({ message: 'Invalid end date' }) }),
+    startDate: z.date(),
+    endDate: z.date(),
   }).refine((data) => data.startDate <= data.endDate, {
     message: 'Start date must be before or equal to end date',
     path: ['endDate'],
@@ -269,7 +267,7 @@ export const validateRequest = async <T>(
     return await schema.parseAsync(data)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = error.issues.map((err: any) => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
@@ -288,7 +286,7 @@ export const validatePartial = async <T>(
     return await schema.partial().parseAsync(data) as Partial<T>
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const formattedErrors = error.errors.map(err => ({
+      const formattedErrors = error.issues.map((err: any) => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,

@@ -16,7 +16,8 @@ import { getPayloadClient } from '@/payload';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
-async function getCustomers({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+async function getCustomers({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const resolvedSearchParams = await searchParams;
   const session = await getServerSession(authOptions);
   if (!(session as any)?.user || (((session as any).user)?.role !== 'admin' && ((session as any).user)?.role !== 'manager')) {
     throw new Error('Unauthorized');
@@ -24,9 +25,9 @@ async function getCustomers({ searchParams }: { searchParams: { [key: string]: s
 
   const payload = await getPayloadClient();
 
-  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
-  const limit = typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10;
-  const searchQuery = typeof searchParams.search === 'string' ? searchParams.search : undefined;
+  const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1;
+  const limit = typeof resolvedSearchParams.limit === 'string' ? parseInt(resolvedSearchParams.limit) : 10;
+  const searchQuery = typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined;
 
   const where: any = {};
   if (searchQuery) {

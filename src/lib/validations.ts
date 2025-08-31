@@ -60,9 +60,7 @@ export const createUserSchema = z.object({
   lastName: nameSchema,
   phone: phoneSchema.optional(),
   password: passwordSchema,
-  role: z.enum(['admin', 'manager', 'stylist', 'staff', 'customer'], {
-    errorMap: () => ({ message: 'Invalid role' }),
-  }),
+  role: z.enum(['admin', 'manager', 'stylist', 'staff', 'customer']),
   isActive: z.boolean().default(true),
   avatar: z.string().url('Invalid avatar URL').optional(),
 })
@@ -84,9 +82,7 @@ export const createEmployeeSchema = z.object({
   firstName: nameSchema,
   lastName: nameSchema,
   phone: phoneSchema,
-  role: z.enum(['stylist', 'manager'], {
-    errorMap: () => ({ message: 'Role must be stylist or manager' }),
-  }),
+  role: z.enum(['stylist', 'manager']),
   specializations: z.array(z.string()).min(1, 'At least one specialization is required'),
   experience: z.number().min(0, 'Experience cannot be negative').max(50, 'Experience seems too high'),
   bio: z.string().min(10, 'Bio must be at least 10 characters').max(1000, 'Bio must be less than 1000 characters'),
@@ -218,7 +214,7 @@ export const sendNotificationSchema = z.object({
   type: z.enum(['user_created', 'user_updated', 'employee_created', 'appointment_booked', 'system_alert', 'security_alert']),
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   message: z.string().min(1, 'Message is required').max(1000, 'Message must be less than 1000 characters'),
-  data: z.record(z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
 })
 
@@ -293,19 +289,19 @@ export const healthCheckResponseSchema = z.object({
 })
 
 // Utility functions for validation
-export function validateAndParse<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: z.ZodError['errors'] } {
+export function validateAndParse<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: z.ZodError['issues'] } {
   try {
     const validatedData = schema.parse(data)
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, errors: error.errors }
+      return { success: false, errors: error.issues }
     }
     throw error
   }
 }
 
-export function formatValidationErrors(errors: z.ZodError['errors']): string[] {
+export function formatValidationErrors(errors: z.ZodError['issues']): string[] {
   return errors.map(error => {
     const path = error.path.join('.')
     return path ? `${path}: ${error.message}` : error.message

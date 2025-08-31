@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (!tenant) {
-      return createErrorResponse('Tenant not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Tenant not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     const chatbot = await payload.create({

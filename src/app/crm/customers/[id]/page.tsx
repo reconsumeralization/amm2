@@ -8,19 +8,20 @@ import { Separator } from "@/components/ui/separator";
 import Link from 'next/link';
 import AddNoteForm from '@/components/crm/AddNoteForm';
 
-const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
+const CustomerDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const resolvedParams = await params;
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchCustomerDashboard = useCallback(async () => {
     setLoading(true);
-    const response = await fetch(`/api/customers/${params.id}/dashboard`);
+    const response = await fetch(`/api/customers/${resolvedParams.id}/dashboard`);
     if (response.ok) {
       const data = await response.json();
       setDashboardData(data);
     }
     setLoading(false);
-  }, [params.id]);
+  }, [resolvedParams.id]);
 
   useEffect(() => {
     fetchCustomerDashboard();
@@ -48,7 +49,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
           <p className="text-muted-foreground">{customer.email}</p>
         </div>
         <Button asChild>
-          <Link href={`/crm/customers/${params.id}/edit`}>Edit Customer</Link>
+          <Link href={`/crm/customers/${resolvedParams.id}/edit`}>Edit Customer</Link>
         </Button>
       </div>
 
@@ -83,7 +84,7 @@ const CustomerDetailPage = ({ params }: { params: { id: string } }) => {
             <CardTitle>Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            <AddNoteForm customerId={params.id} onNoteAdded={fetchCustomerDashboard} />
+            <AddNoteForm customerId={resolvedParams.id} onNoteAdded={fetchCustomerDashboard} />
             <ul className="space-y-2 mt-4">
               {notes.map((note: any) => (
                 <li key={note.id} className="text-sm p-2 bg-gray-100 dark:bg-gray-800 rounded-md">

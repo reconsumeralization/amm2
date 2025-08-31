@@ -21,7 +21,7 @@ export async function validateRequestBody<T>(
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(err => {
+      const errors = error.issues.map((err: any) => {
         const path = err.path.join('.')
         return path ? `${path}: ${err.message}` : err.message
       })
@@ -44,7 +44,7 @@ export function validateSearchParams<T>(
     return { success: true, data: validatedData }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(err => {
+      const errors = error.issues.map((err: any) => {
         const path = err.path.join('.')
         return path ? `${path}: ${err.message}` : err.message
       })
@@ -108,7 +108,7 @@ export async function validateAuthenticatedRequest<T>(
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(err => {
+      const errors = error.issues.map((err: any) => {
         const path = err.path.join('.')
         return path ? `${path}: ${err.message}` : err.message
       })
