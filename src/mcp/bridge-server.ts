@@ -132,7 +132,7 @@ router.get('/sse', (req: Request, res: Response) => {
     res.write(': keepalive\n\n')
   }, 30000)
 
-  req.on('close', () => {
+  ;(req as any).on('close', () => {
     clearInterval(interval)
   })
 })

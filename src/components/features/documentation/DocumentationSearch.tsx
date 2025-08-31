@@ -29,7 +29,12 @@ export function DocumentationSearch({
   className = ''
 }: DocumentationSearchProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search)
+    }
+    return new URLSearchParams()
+  });
   const [results, setResults] = useState<SearchResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -42,6 +47,12 @@ export function DocumentationSearch({
     difficulty: searchParams.get('difficulty')?.split(',') || [],
     tags: searchParams.get('tags')?.split(',') || [],
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSearchParams(new URLSearchParams(window.location.search))
+    }
+  }, [])
 
   const serviceRef = React.useRef<any>(null);
   if (!serviceRef.current) {
