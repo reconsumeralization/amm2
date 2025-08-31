@@ -29,7 +29,7 @@ import {
   hasDocumentationPermission
 } from "@/lib/documentation-permissions"
 import { DocumentationProvider, useDocumentation, usePermissions } from "@/contexts/DocumentationContext"
-import { RouteGuard } from "@/components/documentation/RouteGuard"
+import { RouteGuard } from "@/components/features/documentation/RouteGuard"
 import { UserRole, BreadcrumbItem, SidebarConfig } from "@/types/documentation"
 import { title } from "process"
 
@@ -74,7 +74,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
       // Capitalize and format segment names
       const label = pathSegments[i]
         .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
 
       breadcrumbs.push({
@@ -216,7 +216,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
                 <div className="flex items-center space-x-2">
                   <Database className="h-6 w-6 text-cyan-500" />
                   <span className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    Modern Men Hair Salon
+                    Modern Men Hair BarberShop
                   </span>
                 </div>
 

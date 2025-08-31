@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Icons } from '@/components/ui/icons'
 import { motion } from 'framer-motion'
@@ -112,10 +113,11 @@ export function InstagramFeed({ stylistName, username, posts = [], className = '
             className="group relative aspect-square overflow-hidden rounded-lg cursor-pointer"
             onClick={() => window.open(post.link, '_blank')}
           >
-            <img
+            <Image
               src={post.image}
               alt={post.caption}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center">

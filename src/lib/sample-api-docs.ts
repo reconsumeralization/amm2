@@ -231,13 +231,13 @@ export const sampleAPIDocumentation: APIDocumentationSection[] = [
   {
     id: 'employees',
     title: 'Employee Management',
-    description: 'Endpoints for managing salon employees, stylists, and their profiles',
+    description: 'Endpoints for managing BarberShop employees, stylists, and their profiles',
     endpoints: [
       {
         path: '/api/employees',
         method: 'GET',
         summary: 'Get employees',
-        description: 'Retrieve a list of salon employees with their profiles and performance data',
+        description: 'Retrieve a list of BarberShop employees with their profiles and performance data',
         operationId: 'getEmployees',
         tags: ['Employees'],
         parameters: {
@@ -329,7 +329,7 @@ export const sampleAPIDocumentation: APIDocumentationSection[] = [
   {
     id: 'appointments',
     title: 'Appointment Management',
-    description: 'Endpoints for managing salon appointments, bookings, and scheduling',
+    description: 'Endpoints for managing BarberShop appointments, bookings, and scheduling',
     endpoints: [
       {
         path: '/api/core/appointments',

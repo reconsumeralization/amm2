@@ -2,13 +2,13 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import BookingChatbot from '@/components/chatbot/BookingChatbot'
-import StaffClock from '@/components/portal/StaffClock'
-import StaffSchedule from '@/components/portal/StaffSchedule'
+import { useEffect, useState, useCallback } from 'react'
+import BookingChatbot from '@/components/features/chatbot/BookingChatbot'
+import StaffClock from '@/components/features/portal/StaffClock'
+import StaffSchedule from '@/components/features/portal/StaffSchedule'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LoaderCircle, LogOut, User } from 'lucide-react'
+import { Loader2, LogOut as LogOutIcon, User as UserIcon } from '@/lib/icons'
 import { signOut } from 'next-auth/react'
 
 export default function PortalPage() {
@@ -49,7 +49,7 @@ export default function PortalPage() {
       }
 
       // Fetch clock records for staff users
-      if (session.user.role === 'staff') {
+      if (session?.user?.role === 'staff') {
         const clockResponse = await fetch('/api/admin/clock-records')
         if (clockResponse.ok) {
           const clockData = await clockResponse.json()
@@ -76,7 +76,7 @@ export default function PortalPage() {
     if (status === 'loading') return
 
     if (!session?.user) {
-      router.push('/portal/login')
+      router.push('/auth/signin?callbackUrl=/portal')
       return
     }
 
@@ -95,7 +95,7 @@ export default function PortalPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <LoaderCircle className="h-12 w-12 animate-spin mx-auto mb-4 text-amber-600" />
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-amber-600" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Loading Portal...</h2>
           <p className="text-gray-600">Please wait while we set up your dashboard.</p>
         </div>
@@ -132,14 +132,14 @@ export default function PortalPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <User className="h-6 w-6 text-amber-600" />
+              <UserIcon className="h-6 w-6 text-amber-600" />
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">Customer Portal</h1>
                 <p className="text-sm text-gray-600">Welcome back, {session?.user?.name || session?.user?.email}</p>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
+              <LogOutIcon className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
           </div>
@@ -151,10 +151,10 @@ export default function PortalPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Staff Components */}
-            {(session.user as any).role === 'staff' && (
+            {(session?.user as any)?.role === 'staff' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <StaffClock userId={session.user.id} tenantId="default" />
-                <StaffSchedule userId={session.user.id} tenantId="default" />
+                <StaffClock userId={session?.user?.id} tenantId="default" />
+                <StaffSchedule userId={session?.user?.id} tenantId="default" />
               </div>
             )}
 
@@ -181,8 +181,8 @@ export default function PortalPage() {
                         }`}>
                           {appointment.status}
                         </span>
-            </div>
-          ))}
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className="text-gray-600">No appointments found.</p>
@@ -203,8 +203,8 @@ export default function PortalPage() {
                         <h4 className="font-medium">{service.name}</h4>
                         <p className="text-sm text-gray-600">{service.description}</p>
                         <p className="text-sm font-semibold text-green-600 mt-2">${service.price}</p>
-            </div>
-          ))}
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p className="text-gray-600">No services available.</p>
@@ -231,7 +231,7 @@ export default function PortalPage() {
                     {appointments.filter((apt: any) => new Date(apt.date) > new Date()).length}
                   </span>
                 </div>
-                {(session.user as any).role === 'staff' && (
+                {(session?.user as any)?.role === 'staff' && (
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Clock Records</span>
                     <span className="font-semibold">{clockRecords.length}</span>

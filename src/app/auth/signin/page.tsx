@@ -2,7 +2,7 @@
 
 import { signIn, getSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -116,33 +116,43 @@ export default function SignInPage() {
           <div className="space-y-2 text-sm">
             <button
               onClick={() => {
-                setEmail('john.smith@email.com')
-                setPassword('password123')
+                setEmail('admin@modernmen.ca')
+                setPassword('admin123')
               }}
               className="w-full text-left p-2 rounded bg-white hover:bg-amber-50 border border-amber-100 text-gray-700 hover:text-gray-800 transition-colors"
             >
-              <strong>Email:</strong> john.smith@email.com<br/>
-              <strong>Password:</strong> password123
+              <strong>Admin:</strong> admin@modernmen.ca<br/>
+              <strong>Password:</strong> admin123
             </button>
             <button
               onClick={() => {
-                setEmail('mike.brown@email.com')
-                setPassword('password123')
+                setEmail('manager@modernmen.ca')
+                setPassword('manager123')
               }}
               className="w-full text-left p-2 rounded bg-white hover:bg-amber-50 border border-amber-100 text-gray-700 hover:text-gray-800 transition-colors"
             >
-              <strong>Email:</strong> mike.brown@email.com<br/>
-              <strong>Password:</strong> password123
+              <strong>Manager:</strong> manager@modernmen.ca<br/>
+              <strong>Password:</strong> manager123
             </button>
             <button
               onClick={() => {
-                setEmail('rob.davis@email.com')
-                setPassword('password123')
+                setEmail('barber@modernmen.ca')
+                setPassword('barber123')
               }}
               className="w-full text-left p-2 rounded bg-white hover:bg-amber-50 border border-amber-100 text-gray-700 hover:text-gray-800 transition-colors"
             >
-              <strong>Email:</strong> rob.davis@email.com<br/>
-              <strong>Password:</strong> password123
+              <strong>Barber:</strong> barber@modernmen.ca<br/>
+              <strong>Password:</strong> barber123
+            </button>
+            <button
+              onClick={() => {
+                setEmail('customer@modernmen.ca')
+                setPassword('customer123')
+              }}
+              className="w-full text-left p-2 rounded bg-white hover:bg-amber-50 border border-amber-100 text-gray-700 hover:text-gray-800 transition-colors"
+            >
+              <strong>Customer:</strong> customer@modernmen.ca<br/>
+              <strong>Password:</strong> customer123
             </button>
           </div>
         </div>

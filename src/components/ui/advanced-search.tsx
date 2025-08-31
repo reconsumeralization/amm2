@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { Search, X, Clock, TrendingUp } from '@/lib/icon-mapping'
 import { cn } from '@/lib/utils'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -144,7 +145,7 @@ export function AdvancedSearch({ onSelect, placeholder = "search...", className 
                     className="flex w-full items-center gap-3 rounded-md p-3 text-left text-sm hover:bg-accent hover:text-accent-foreground"
                   >
                     {result.image && (
-                      <img src={result.image} alt="" className="h-8 w-8 rounded object-cover" />
+                      <Image src={result.image} alt="" width={32} height={32} className="h-8 w-8 rounded object-cover" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{result.title}</div>

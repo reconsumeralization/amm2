@@ -1,7 +1,7 @@
 # ModernMen Payload CMS Configuration
 
 ## Overview
-This document outlines the complete Payload CMS setup for ModernMen Hair Salon, including white labeling, collections, and configurations.
+This document outlines the complete Payload CMS setup for ModernMen Hair BarberShop, including white labeling, collections, and configurations.
 
 ## ✅ White Labeling Features
 
@@ -23,7 +23,7 @@ This document outlines the complete Payload CMS setup for ModernMen Hair Salon, 
 
 ### Core Collections
 1. **Users** - Authentication and user management with roles (admin, manager, barber, customer)
-2. **Tenants** - Multi-tenant support for different salon locations
+2. **Tenants** - Multi-tenant support for different BarberShop locations
 3. **Appointments** - Booking system with status tracking and payments
 4. **Customers** - Customer profiles with loyalty points and preferences
 5. **Services** - Service catalog with pricing and duration

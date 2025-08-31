@@ -66,8 +66,8 @@ export class APIDocumentationExtractor {
     const spec: OpenAPISpec = {
       openapi: '3.0.3',
       info: {
-        title: 'Modern Men Hair Salon API',
-        description: 'API documentation for the Modern Men Hair Salon management system',
+        title: 'Modern Men Hair BarberShop API',
+        description: 'API documentation for the Modern Men Hair BarberShop management system',
         version: '1.0.0',
         contact: {
           name: 'API Support',

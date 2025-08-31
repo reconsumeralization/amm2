@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
-import LexicalEditor from '@/components/editor/LexicalEditor'
+import LexicalEditor from '@/components/features/editor/LexicalEditor'
 
 export const metadata: Metadata = {
-  title: 'Text Editor - Modern Men Salon',
+  title: 'Text Editor - Modern Men BarberShop',
   description: 'Professional rich text editor for creating and editing content with Modern Men branding.',
   keywords: ['text editor', 'rich text', 'content creation', 'lexical editor', 'Modern Men']
 }
@@ -15,7 +15,7 @@ export default function TextEditorPage() {
           Modern Men Text Editor
         </h1>
         <p className="text-gray-600">
-          Professional rich text editor for creating compelling content for your salon.
+          Professional rich text editor for creating compelling content for your BarberShop.
         </p>
       </div>
 

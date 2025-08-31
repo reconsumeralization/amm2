@@ -1,9 +1,10 @@
-
-import { NextResponse } from 'next/server';
-import payload from 'payload';
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayload } from 'payload';
+// Dynamic import for payload config
 
 export async function GET() {
   try {
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
     const galleryItems = await payload.find({
       collection: 'gallery',
       limit: 100,
@@ -12,5 +13,20 @@ export async function GET() {
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+    const data = await req.json();
+    const newGalleryItem = await payload.create({
+      collection: 'gallery',
+      data,
+    });
+    return NextResponse.json(newGalleryItem, { status: 201 });
+  } catch (error) {
+    console.error('Error creating gallery item:', error);
+    return NextResponse.json({ error: 'Failed to create gallery item' }, { status: 500 });
   }
 }

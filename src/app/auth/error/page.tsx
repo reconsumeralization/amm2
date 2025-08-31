@@ -1,6 +1,6 @@
 'use client'
 
-import { userchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ const errorMessages: Record<string, string> = {
 }
 
 const AuthErrorPage = () => {
-  const rchParams = userchParams()
+  const rchParams = useSearchParams()
   const error = rchParams?.get('error') || 'Default'
 
   return (

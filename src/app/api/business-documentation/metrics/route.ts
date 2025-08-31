@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Only admins and owners can view metrics
-    if (!['system_admin', 'salon_owner'].includes(user.role)) {
+    if (!['system_admin', 'BarberShop_owner'].includes(user.role)) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 

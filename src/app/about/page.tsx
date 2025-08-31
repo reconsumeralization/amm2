@@ -1,10 +1,19 @@
 import { Metadata } from 'next';
-import { MapPin, Clock, Star, Users, Scissors, Award, Phone, Mail } from 'lucide-react';
+import {
+  MapPin,
+  Clock,
+  Star,
+  Users,
+  Scissors,
+  Award,
+  Phone,
+  Mail
+} from '@/lib/icons';
 
 export const metadata: Metadata = {
-  title: 'About Us - Modern Men Salon',
-  description: 'Learn about Modern Men Salon\'s story, mission, and commitment to providing exceptional grooming services in Regina.',
-  keywords: ['about us', 'modern men salon', 'story', 'mission', 'regina salon']
+  title: 'About Us - Modern Men BarberShop',
+  description: 'Learn about Modern Men BarberShop\'s story, mission, and commitment to providing exceptional grooming services in Regina.',
+  keywords: ['about us', 'modern men BarberShop', 'story', 'mission', 'regina BarberShop']
 };
 
 export default function AboutPage() {
@@ -17,7 +26,7 @@ export default function AboutPage() {
             About Modern Men
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            More than just a salon - we're a destination for the modern man who values quality, 
+            More than just a BarberShop - we're a destination for the modern man who values quality, 
             style, and an exceptional grooming experience.
           </p>
         </div>
@@ -29,7 +38,7 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Modern Men Salon was founded in 2020 by Mike Johnson with a simple vision: to create 
+                  Modern Men BarberShop was founded in 2020 by Mike Johnson with a simple vision: to create 
                   a premium grooming destination where men could feel confident, comfortable, and cared for.
                 </p>
                 <p>

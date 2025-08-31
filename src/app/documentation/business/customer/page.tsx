@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Customer Help Center - Modern Men Hair Salon',
+  title: 'Customer Help Center - Modern Men Hair BarberShop',
   description: 'Self-service guides for customers using the booking and account features',
 }
 
@@ -14,8 +14,8 @@ export default function CustomerDocumentationPage() {
           Customer Help Center
         </h1>
         <p className="text-slate-300">
-          Welcome to the Modern Men Hair Salon customer help center. Find answers to common questions, 
-          learn how to book appointments, manage your account, and make the most of your salon experience.
+          Welcome to the Modern Men Hair BarberShop customer help center. Find answers to common questions, 
+          learn how to book appointments, manage your account, and make the most of your BarberShop experience.
         </p>
       </div>
 

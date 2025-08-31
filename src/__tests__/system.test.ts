@@ -87,7 +87,7 @@ describe('System-wide sanity tests', () => {
   test('filterNavigationItems removes inaccessible items', () => {
     const nav = [
       { href: '/documentation/developer', requiredRole: ['developer'] },
-      { href: '/documentation/business', requiredRole: ['salon_owner'] }
+      { href: '/documentation/business', requiredRole: ['BarberShop_owner'] }
     ]
     const filtered = filterNavigationItems(nav, mockUser)
     expect(filtered).toHaveLength(1)
@@ -119,8 +119,8 @@ describe('System-wide sanity tests', () => {
   })
 
   test('getRestrictedContentFallback returns appropriate fallback', () => {
-    const fallback = getRestrictedContentFallback('developer', 'salon_customer')
+    const fallback = getRestrictedContentFallback('developer', 'BarberShop_customer')
     expect(fallback.title).toBe('Developer Documentation Restricted')
-    expect(fallback.message).toContain('salon customer')
+    expect(fallback.message).toContain('BarberShop customer')
   })
 })

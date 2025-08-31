@@ -74,43 +74,43 @@ class SMSService {
 
   // Template methods for different types of SMS messages
   async sendAppointmentConfirmation(to: string, customerName: string, stylistName: string, date: string, time: string): Promise<void> {
-    const message = `Hi ${customerName}! Your appointment with ${stylistName} is confirmed for ${date} at ${time}. See you at Modern Men Salon! ✂`
+    const message = `Hi ${customerName}! Your appointment with ${stylistName} is confirmed for ${date} at ${time}. See you at Modern Men BarberShop! ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendAppointmentReminder(to: string, customerName: string, stylistName: string, date: string, time: string): Promise<void> {
-    const message = `Hi ${customerName}! Reminder: You have an appointment with ${stylistName} tomorrow at ${time}. Modern Men Salon ✂`
+    const message = `Hi ${customerName}! Reminder: You have an appointment with ${stylistName} tomorrow at ${time}. Modern Men BarberShop ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendAppointmentCancellation(to: string, customerName: string, stylistName: string, date: string): Promise<void> {
-    const message = `Hi ${customerName}, your appointment with ${stylistName} on ${date} has been cancelled. Contact us to reschedule. Modern Men Salon ✂`
+    const message = `Hi ${customerName}, your appointment with ${stylistName} on ${date} has been cancelled. Contact us to reschedule. Modern Men BarberShop ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendWelcomeSMS(to: string, name: string, role: string): Promise<void> {
-    const message = `Welcome to Modern Men Salon, ${name}! Your ${role} account is now active. Access the portal to get started. ✂`
+    const message = `Welcome to Modern Men BarberShop, ${name}! Your ${role} account is now active. Access the portal to get started. ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendPasswordResetSMS(to: string, name: string, resetCode: string): Promise<void> {
-    const message = `Hi ${name}, your password reset code is: ${resetCode}. This code expires in 10 minutes. Modern Men Salon ✂`
+    const message = `Hi ${name}, your password reset code is: ${resetCode}. This code expires in 10 minutes. Modern Men BarberShop ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendStylistNotification(to: string, stylistName: string, appointmentCount: number): Promise<void> {
-    const message = `Hi ${stylistName}, you have ${appointmentCount} appointment${appointmentCount !== 1 ? 's' : ''} scheduled today. Check the portal for details. Modern Men Salon ✂`
+    const message = `Hi ${stylistName}, you have ${appointmentCount} appointment${appointmentCount !== 1 ? 's' : ''} scheduled today. Check the portal for details. Modern Men BarberShop ✂`
 
     await this.sendSMS({ to, message })
   }
 
   async sendSystemAlert(to: string, message: string): Promise<void> {
-    const alertMessage = `SYSTEM ALERT: ${message}. Please check the admin dashboard. Modern Men Salon ⚠️`
+    const alertMessage = `SYSTEM ALERT: ${message}. Please check the admin dashboard. Modern Men BarberShop ⚠️`
 
     await this.sendSMS({ to, message: alertMessage })
   }

@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         limit: 50, // Limit to prevent overwhelming sync
       });
 
-      let userSyncResults = { synced: 0, failed: 0, errors: [] };
+      let userSyncResults = { synced: 0, failed: 0, errors: [] as string[] };
       
       if (users?.docs) {
         for (const user of users.docs) {

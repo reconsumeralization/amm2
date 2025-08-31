@@ -6,7 +6,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 export async function GET() {
   noStore();
   try {
-    const payload = await getPayload();
+    const payload = await getPayload({ config: (await import('../../payload.config')).default });
     const stylists = await payload.find({
       collection: 'stylists',
       limit: 100, // Adjust limit as needed

@@ -11,27 +11,27 @@ import { Home, ArrowLeft, Search, MessageCircle, MapPin, Phone, Clock } from '@/
 
 export default function NotFound() {
   const router = useRouter()
+  const [path, setPath] = useState<string>('')
 
   useEffect(() => {
     // Log the 404 event
+    const href = typeof window !== 'undefined' ? window.location.href : ''
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
+    setPath(pathname)
     logger.warn('404 Page Not Found', {
-      url: typeof window !== 'undefined' ? window.location.href : 'unknown',
+      url: href || 'unknown',
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
       timestamp: new Date().toISOString()
     })
   }, [])
 
   const handleGoHome = () => {
-    logger.info('User clicked go home from 404 page', {
-      from: typeof window !== 'undefined' ? window.location.href : 'unknown'
-    })
+    logger.info('User clicked go home from 404 page', {})
     router.push('/')
   }
 
   const handleGoBack = () => {
-    logger.info('User clicked go back from 404 page', {
-      from: typeof window !== 'undefined' ? window.location.href : 'unknown'
-    })
+    logger.info('User clicked go back from 404 page', {})
     router.back()
   }
 
@@ -42,13 +42,7 @@ export default function NotFound() {
 
   const handleContact = () => {
     logger.info('User clicked contact from 404 page')
-    // Scroll to contact section or navigate to contact page
-    const contactSection = document.getElementById('contact')
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      router.push('/#contact')
-    }
+    router.push('/contact')
   }
 
   return (
@@ -116,7 +110,7 @@ export default function NotFound() {
                 <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 rounded-lg p-4 border border-amber-200">
                   <p className="text-sm text-amber-800 font-medium mb-2">Attempted URL:</p>
                   <p className="text-sm text-amber-700 font-mono break-all">
-                    {typeof window !== 'undefined' ? window.location.pathname : 'unknown'}
+                    {path || '/'}
                   </p>
                 </div>
               </motion.div>

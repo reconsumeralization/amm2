@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 // // import { fireEvent } from "@testing-library/react"; // TODO: Fix testing library; // Fixed: Use alternative
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
@@ -28,7 +29,7 @@ describe('Button Component', () => {
     render(<Button onClick={handleClick}>Click me</Button>)
 
     const button = screen.getByTestId('button')
-    fireEvent.click(button)
+    await user.click(button)
 
     expect(handleClick).toHaveBeenCalledTimes(1)
   })
@@ -62,7 +63,7 @@ describe('Button Component', () => {
     render(<Button onClick={handleClick} disabled>Click me</Button>)
 
     const button = screen.getByTestId('button')
-    fireEvent.click(button)
+    await user.click(button)
 
     expect(handleClick).not.toHaveBeenCalled()
   })

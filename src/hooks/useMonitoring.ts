@@ -15,7 +15,7 @@ export function useMonitoring() {
         const { monitoringConfig } = await import('@/config/monitoring')
 
         // Use the monitoring object for initialization
-        monitoring.log('Monitoring initialized via useMonitoring hook')
+        monitoring.log?.('Monitoring initialized via useMonitoring hook')
 
         logger.info('Monitoring initialized via useMonitoring hook')
       } catch (error) {
@@ -31,7 +31,7 @@ export function useMonitoring() {
   // Set user context when session changes
   useEffect(() => {
     if (session?.user) {
-      monitoring.log('User session changed', {
+      monitoring.log?.('User session changed', {
         userId: session.user.id,
         email: session.user.email,
         role: session.user.role
@@ -41,7 +41,7 @@ export function useMonitoring() {
 
   // Error capture helper
   const captureError = useCallback((error: any) => {
-    monitoring.error(error)
+    monitoring.error?.(error)
   }, [])
 
   // Performance metric tracking
@@ -60,7 +60,7 @@ export function useMonitoring() {
     category?: string,
     level?: 'info' | 'warning' | 'error'
   ) => {
-    monitoring.log(`Breadcrumb: ${message}`, { category, level })
+    monitoring.log?.(`Breadcrumb: ${message}`, { category, level })
   }, [])
 
   // API call tracking helper

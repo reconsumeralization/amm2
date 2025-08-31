@@ -1,5 +1,5 @@
 import React from 'react'
-import { $createImageNode } from '@/nodes/ImageNode'
+import { ImageNode, $createImageNode } from '@/nodes/ImageNode'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR } from 'lexical'
 import { createCommand, LexicalCommand } from 'lexical'
@@ -17,7 +17,7 @@ export function ImagesPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
 
   React.useEffect(() => {
-    if (!editor.hasNodes([$createImageNode])) {
+    if (!editor.hasNodes([ImageNode])) {
       throw new Error('ImagesPlugin: ImageNode not registered on editor')
     }
 
@@ -31,7 +31,8 @@ export function ImagesPlugin(): JSX.Element | null {
 
         const focusNode = selection.focus.getNode()
         if (focusNode !== null) {
-          const imageNode = $createImageNode(payload)
+          const { src, alt, width, height, caption } = payload
+          const imageNode = $createImageNode(src, alt, width, height, caption)
           selection.insertNodes([imageNode])
         }
 

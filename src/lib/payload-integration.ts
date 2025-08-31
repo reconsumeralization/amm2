@@ -1,6 +1,6 @@
 /**
  * Payload CMS Integration Service
- * Provides mless integration between Payload CMS and the Modern Men Hair Salon application
+ * Provides mless integration between Payload CMS and the Modern Men Hair BarberShop application
  */
 
 import { getPayload } from 'payload'
@@ -132,11 +132,11 @@ export class PayloadIntegrationService {
     // Build role-based access query
     // Define role hierarchy with explicit typing to satisfy TypeScript
     const roleHierarchy: Record<UserRole, UserRole[]> = {
-      salon_customer: ['guest', 'salon_customer'],
-      salon_employee: ['guest', 'salon_customer', 'salon_employee'],
-      salon_owner: ['guest', 'salon_customer', 'salon_employee', 'salon_owner'],
-      developer: ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer'],
-      system_admin: ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer', 'system_admin'],
+      BarberShop_customer: ['guest', 'BarberShop_customer'],
+      BarberShop_employee: ['guest', 'BarberShop_customer', 'BarberShop_employee'],
+      BarberShop_owner: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner'],
+      developer: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer'],
+      system_admin: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer', 'system_admin'],
       guest: ['guest']
     }
 
@@ -413,9 +413,9 @@ export class PayloadIntegrationService {
   }
 
   /**
-   * Get salon analytics from Payload
+   * Get BarberShop analytics from Payload
    */
-  async getSalonAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
+  async getBarberShopAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
     appointments: number
     customers: number
     services: number
@@ -423,7 +423,7 @@ export class PayloadIntegrationService {
     topServices: any[]
     topStylists: any[]
   }> {
-    const cacheKey = `salon-analytics-${dateRange?.start?.toISOString()}-${dateRange?.end?.toISOString()}`
+    const cacheKey = `BarberShop-analytics-${dateRange?.start?.toISOString()}-${dateRange?.end?.toISOString()}`
     
     if (this.config.enableCaching && this.isValidCache(cacheKey)) {
       return this.getFromCache(cacheKey)
@@ -476,7 +476,7 @@ export class PayloadIntegrationService {
 
       return analytics
     } catch (error) {
-      console.error('Error fetching salon analytics:', error)
+      console.error('Error fetching BarberShop analytics:', error)
       throw new Error('Failed to fetch analytics')
     }
   }

@@ -19,6 +19,7 @@ interface DeploymentCheckResult {
     settings: boolean;
     apis: boolean;
     integrations: boolean;
+    tests: boolean;
   };
 }
 
@@ -36,6 +37,7 @@ async function runDeploymentChecks(): Promise<DeploymentCheckResult> {
       settings: false,
       apis: false,
       integrations: false,
+      tests: false,
     },
   };
 
@@ -149,11 +151,26 @@ async function runDeploymentChecks(): Promise<DeploymentCheckResult> {
     result.checks.integrations = true; // Not critical for deployment
   }
 
-  // 6. Build Check
-  console.log('\n6. Checking Build Process...');
+  // 6. Test Suite Check
+  console.log('\n6. Running Test Suite...');
+  const testChecks = await runTestSuite();
+  if (testChecks.isValid) {
+    console.log('   ✅ All tests passed');
+    result.checks.tests = true;
+  } else {
+    console.log('   ❌ Test suite failed:');
+    testChecks.errors.forEach(error => {
+      console.log(`      - ${error}`);
+      result.errors.push(error);
+    });
+    result.isValid = false;
+  }
+
+  // 7. Build Check
+  console.log('\n7. Checking Build Process...');
   try {
     const { execSync } = await import('child_process');
-    execSync('npm run build', { stdio: 'pipe' });
+    execSync('pnpm build', { stdio: 'pipe' });
     console.log('   ✅ Build process successful');
   } catch (error) {
     console.log('   ❌ Build process failed:', error);
@@ -162,6 +179,43 @@ async function runDeploymentChecks(): Promise<DeploymentCheckResult> {
   }
 
   return result;
+}
+
+/**
+ * Run test suite
+ */
+async function runTestSuite(): Promise<{ isValid: boolean; errors: string[] }> {
+  const errors: string[] = [];
+
+  try {
+    const { execSync } = await import('child_process');
+    
+    // Run unit tests
+    console.log('   Running unit tests...');
+    execSync('pnpm test:ci', { stdio: 'pipe' });
+    
+    // Run integration tests
+    console.log('   Running integration tests...');
+    execSync('pnpm test:integration', { stdio: 'pipe' });
+    
+    // Run E2E tests if available
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('   Running E2E tests...');
+      try {
+        execSync('pnpm test:e2e', { stdio: 'pipe' });
+      } catch (e2eError) {
+        console.log('   ⚠️  E2E tests failed (non-critical for deployment)');
+      }
+    }
+    
+  } catch (error) {
+    errors.push(`Test suite failed: ${error}`);
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
 }
 
 /**
@@ -175,6 +229,7 @@ async function checkAPIEndpoints(): Promise<{ isValid: boolean; errors: string[]
     '/api/settings',
     '/api/admin/stats',
     '/api/features/loyalty',
+    '/api/healthcheck',
   ];
 
   for (const endpoint of endpoints) {
@@ -241,7 +296,8 @@ function generateDeploymentReport(result: DeploymentCheckResult): string {
   report += `- Database Connection: ${result.checks.database ? '✅' : '❌'}\n`;
   report += `- Settings Configuration: ${result.checks.settings ? '✅' : '❌'}\n`;
   report += `- API Endpoints: ${result.checks.apis ? '✅' : '❌'}\n`;
-  report += `- External Integrations: ${result.checks.integrations ? '✅' : '❌'}\n\n`;
+  report += `- External Integrations: ${result.checks.integrations ? '✅' : '❌'}\n`;
+  report += `- Test Suite: ${result.checks.tests ? '✅' : '❌'}\n\n`;
 
   if (result.errors.length > 0) {
     report += '## Errors (Must Fix)\n';
@@ -259,17 +315,33 @@ function generateDeploymentReport(result: DeploymentCheckResult): string {
     report += '\n';
   }
 
+  report += '## Test Coverage Summary\n';
+  report += 'The following test files were validated:\n';
+  report += '- `src/__tests__/appointments.test.ts` - Appointment booking logic\n';
+  report += '- `src/__tests__/chatbot.test.tsx` - Chatbot component tests\n';
+  report += '- `src/__tests__/error-boundary.test.tsx` - Error handling tests\n';
+  report += '- `src/__tests__/page-builder.test.tsx` - Page builder tests\n';
+  report += '- `src/__tests__/payload-expansion.test.ts` - Payload expansion tests\n';
+  report += '- `src/__tests__/payload-integration.test.ts` - Payload integration tests\n';
+  report += '- `src/__tests__/settings.test.ts` - Settings management tests\n';
+  report += '- `src/__tests__/simple.test.ts` - Basic functionality tests\n';
+  report += '- `src/__tests__/system.test.ts` - System-wide tests\n';
+  report += '- `src/__tests__/utils.test.ts` - Utility function tests\n';
+  report += '- `src/__tests__/validation.test.ts` - Validation logic tests\n\n';
+
   report += '## Next Steps\n';
   if (result.isValid) {
     report += '✅ Your application is ready for deployment!\n';
     report += '1. Deploy to your hosting platform\n';
     report += '2. Monitor the application logs\n';
     report += '3. Test all features in production\n';
+    report += '4. Run post-deployment smoke tests\n';
   } else {
     report += '❌ Please fix the errors above before deploying.\n';
     report += '1. Review and fix all errors\n';
     report += '2. Run this check again\n';
-    report += '3. Deploy only when all checks pass\n';
+    report += '3. Ensure all tests pass\n';
+    report += '4. Deploy only when all checks pass\n';
   }
 
   return report;

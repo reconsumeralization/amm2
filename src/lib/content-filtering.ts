@@ -293,7 +293,7 @@ export function getRestrictedContentFallback(
       title: 'Business Documentation Restricted',
       message: `This business documentation is not accessible with your current role (${roleDisplay}).`,
       suggestions: [
-        'Contact your salon owner or manager',
+        'Contact your BarberShop owner or manager',
         'View the customer help section',
         'Check the shared resources section'
       ]

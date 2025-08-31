@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from "react"
-import type React from "react"
+import React, { useState, useRef, useCallback, useEffect } from "react"
+import Image from 'next/image'
 
-import { Upload, Download, MousePointer, Type, Sliders, RotateCcw, Eye, Move, ZoomIn, ZoomOut, Crop, Undo, Redo, Save, Settings } from 'lucide-react'
+import { Upload, Download, MousePointer, Type, Sliders, RotateCcw, Eye, Move, ZoomIn, ZoomOut, Crop, Undo, Redo, Save, Settings } from '@/lib/icons'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
@@ -181,10 +181,11 @@ const modernMenPages = [
           </div>
         </nav>
         <div className="relative h-96 bg-black flex items-center justify-center overflow-hidden">
-          <img
+          <Image
             src={imageUrl || "/placeholder.svg"}
             alt="Hero"
-            className="absolute inset-0 w-full h-full object-cover opacity-70"
+            fill
+            className="object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="relative z-10 text-center text-white">
@@ -221,7 +222,7 @@ const modernMenPages = [
           <h2 className="text-4xl font-black text-center mb-12 text-red-600">OUR SERVICES</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden border border-red-600">
-              <img src={imageUrl || "/placeholder.svg"} alt="Service" className="w-full h-48 object-cover" />
+              <Image src={imageUrl || "/placeholder.svg"} alt="Service" width={400} height={192} className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 text-white">Premium Haircut</h3>
                 <p className="text-gray-300">Professional styling for the modern gentleman</p>
@@ -282,9 +283,11 @@ const modernMenPages = [
               </p>
             </div>
             <div className="relative">
-              <img
+              <Image
                 src={imageUrl || "/placeholder.svg"}
                 alt="About"
+                width={800}
+                height={384}
                 className="w-full h-96 object-cover rounded-lg shadow-lg border border-red-600"
               />
             </div>
@@ -1020,7 +1023,7 @@ export default function ModernMenImageEditor() {
           setIsInlineEditing(true)
 
           // Load the image for editing
-          const newImg = new Image()
+          const newImg = new window.Image()
           newImg.crossOrigin = "anonymous"
           newImg.onload = () => {
             setImage(newImg)

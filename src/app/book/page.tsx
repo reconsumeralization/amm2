@@ -1,4 +1,4 @@
-import BookingChatbot from '@/components/chatbot/BookingChatbot';
+import BookingChatbot from '@/components/features/chatbot/BookingChatbot';
 
 export default function BookPage() {
   return (

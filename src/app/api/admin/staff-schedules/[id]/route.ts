@@ -4,15 +4,15 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 // GET - Get specific schedule
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
 
     const schedule = await payload.findByID({
       collection: 'staff-schedules',
@@ -38,15 +38,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // PUT - Update schedule
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+    const { id } = await params;
     const data = await req.json();
 
     // Get existing schedule
@@ -91,14 +91,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
               or: [
                 {
                   and: [
-                    { startTime: { less_than_or_equal: startTime } },
+                    { startTime: { less_than_equal: startTime } },
                     { endTime: { greater_than: startTime } }
                   ]
                 },
                 {
                   and: [
                     { startTime: { less_than: endTime } },
-                    { endTime: { greater_than_or_equal: endTime } }
+                    { endTime: { greater_than_equal: endTime } }
                   ]
                 }
               ]
@@ -130,15 +130,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // DELETE - Delete schedule
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+    const { id } = await params;
 
     // Get existing schedule
     const existingSchedule = await payload.findByID({

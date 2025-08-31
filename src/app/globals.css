@@ -5,47 +5,47 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 0 0% 0%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%; /* pure black */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 100% 50%; /* pure red */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 0 0% 90%;
+    --input: 0 0% 95%;
+    --ring: 0 100% 50%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 100% 50%; /* pure red */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 35%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
+    --ring: 0 100% 50%;
   }
 }
 
@@ -95,6 +95,17 @@
   .animate-scale-in {
     animation: scaleIn 0.4s ease-out;
   }
+  
+  /* Accent helpers */
+  .accent-red {
+    color: hsl(var(--accent));
+  }
+  .bg-accent-red {
+    background-color: hsl(var(--accent));
+  }
+  .ring-accent-red {
+    --tw-ring-color: hsl(var(--accent));
+  }
 }
 
 @keyframes fadeIn {
@@ -130,7 +141,7 @@
 
 /* High-end button styles */
 .btn-premium {
-  @apply relative overflow-hidden transition-all duration-300 ease-out;
+  @apply relative overflow-hidden transition-all duration-300 ease-out text-white bg-black;
 }
 
 .btn-premium::before {
@@ -142,24 +153,57 @@
   @apply opacity-100;
 }
 
+/* Red accent button variant */
+.btn-accent {
+  @apply relative overflow-hidden transition-all duration-300 ease-out text-white;
+  background-color: hsl(var(--accent));
+}
+
+.btn-accent:hover {
+  background-color: hsl(var(--accent) / 0.9);
+}
+
 /* Elegant card styles */
 .card-premium {
-  @apply bg-white border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300;
+  @apply bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-lg transition-all duration-300;
   backdrop-filter: blur(10px);
 }
 
 .card-premium:hover {
-  @apply border-gray-300 transform -translate-y-1;
+  @apply border-gray-300 dark:border-gray-700 transform -translate-y-1;
+}
+
+/* Red accent card variant */
+.card-accent {
+  @apply bg-white dark:bg-black border-2 shadow-sm hover:shadow-lg transition-all duration-300;
+  border-color: hsl(var(--accent));
+  backdrop-filter: blur(10px);
+}
+
+.card-accent:hover {
+  @apply transform -translate-y-1;
+  border-color: hsl(var(--accent) / 0.8);
 }
 
 /* Sophisticated input styles */
 .input-premium {
-  @apply border-gray-300 focus:border-black focus:ring-1 focus:ring-black transition-all duration-200;
+  @apply border-gray-300 dark:border-gray-700 focus:border-black dark:focus:border-white focus:ring-1 focus:ring-black dark:focus:ring-white transition-all duration-200;
+}
+
+/* Red accent input variant */
+.input-accent {
+  @apply border-gray-300 dark:border-gray-700 transition-all duration-200;
+}
+
+.input-accent:focus {
+  border-color: hsl(var(--accent));
+  --tw-ring-color: hsl(var(--accent));
+  @apply ring-1;
 }
 
 /* Premium navigation */
 .nav-premium {
-  @apply bg-white/95 backdrop-blur-md border-b border-gray-200;
+  @apply bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800;
 }
 
 /* High-end section styling */
@@ -168,7 +212,7 @@
 }
 
 .section-premium:nth-child(even) {
-  @apply bg-gray-50;
+  @apply bg-gray-50 dark:bg-gray-950;
 }
 
 /* Elegant spacing utilities */
@@ -186,16 +230,31 @@
 
 /* Premium text gradients */
 .text-gradient {
-  @apply bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent;
+}
+
+/* Red accent text gradient */
+.text-gradient-accent {
+  background: linear-gradient(to right, hsl(var(--accent)), hsl(var(--accent) / 0.7));
+  @apply bg-clip-text text-transparent;
 }
 
 /* Sophisticated borders */
 .border-premium {
-  @apply border border-gray-200;
+  @apply border border-gray-200 dark:border-gray-800;
 }
 
 .border-premium-thick {
-  @apply border-2 border-black;
+  @apply border-2 border-black dark:border-white;
+}
+
+/* Red accent borders */
+.border-accent {
+  border-color: hsl(var(--accent));
+}
+
+.border-accent-thick {
+  border: 2px solid hsl(var(--accent));
 }
 
 /* High-end shadows */
@@ -207,6 +266,15 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* Red accent shadows */
+.shadow-accent {
+  box-shadow: 0 4px 6px -1px hsl(var(--accent) / 0.2), 0 2px 4px -1px hsl(var(--accent) / 0.1);
+}
+
+.shadow-accent-lg {
+  box-shadow: 0 10px 15px -3px hsl(var(--accent) / 0.2), 0 4px 6px -2px hsl(var(--accent) / 0.1);
+}
+
 /* Elegant hover effects */
 .hover-lift {
   @apply transition-transform duration-300 ease-out;
@@ -216,6 +284,15 @@
   @apply transform -translate-y-1;
 }
 
+/* Red accent hover effects */
+.hover-accent {
+  @apply transition-all duration-300 ease-out;
+}
+
+.hover-accent:hover {
+  color: hsl(var(--accent));
+}
+
 /* Premium loading states */
 .loading-premium {
   @apply relative overflow-hidden;
@@ -223,7 +300,7 @@
 
 .loading-premium::after {
   content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20;
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white dark:via-gray-800 to-transparent opacity-20;
   animation: shimmer 1.5s infinite;
 }
 
@@ -238,9 +315,10 @@
 
 /* Lexical Editor Styles */
 .lexical-editor {
-  border: 1px solid #e5e7eb;
+  border: 1px solid hsl(var(--border));
   border-radius: 0.5rem;
   overflow: hidden;
+  @apply bg-background;
 }
 
 .editor-toolbar {
@@ -248,8 +326,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  @apply bg-muted border-b border-border;
 }
 
 .toolbar-group {
@@ -257,7 +334,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0 0.5rem;
-  border-right: 1px solid #e5e7eb;
+  @apply border-r border-border;
 }
 
 .toolbar-group:last-child {
@@ -275,14 +352,16 @@
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.2s;
+  @apply text-foreground;
 }
 
 .toolbar-button:hover {
-  background-color: #e5e7eb;
+  @apply bg-secondary;
 }
 
 .toolbar-button.active {
-  background-color: #d1d5db;
+  background-color: hsl(var(--accent));
+  @apply text-accent-foreground;
 }
 
 .toolbar-button.disabled {
@@ -297,6 +376,7 @@
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
+  @apply bg-background text-foreground;
 }
 
 .editor-input:focus {
@@ -307,7 +387,7 @@
   position: absolute;
   top: 1rem;
   left: 1rem;
-  color: #9ca3af;
+  @apply text-muted-foreground;
   pointer-events: none;
   font-size: 1rem;
   line-height: 1.5;
@@ -334,12 +414,12 @@
 }
 
 .editor-link {
-  color: #2563eb;
+  color: hsl(var(--accent));
   text-decoration: underline;
 }
 
 .editor-link:hover {
-  color: #1d4ed8;
+  color: hsl(var(--accent) / 0.8);
 }
 
 .editor-list-ul {
@@ -401,28 +481,23 @@
 }
 
 .editor-input.drag-over {
-  background-color: rgba(59, 130, 246, 0.1);
-  border: 2px dashed #3b82f6;
+  background-color: hsl(var(--accent) / 0.1);
+  border: 2px dashed hsl(var(--accent));
 }
 
 /* Image Upload Zone */
 .image-upload-zone {
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
-  padding: 2rem;
-  text-align: center;
-  background-color: #f9fafb;
-  transition: all 0.2s ease-in-out;
+  @apply border-2 border-dashed border-border rounded-lg p-8 text-center bg-muted transition-all duration-200;
 }
 
 .image-upload-zone:hover {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.05);
+  border-color: hsl(var(--accent));
+  background-color: hsl(var(--accent) / 0.05);
 }
 
 .image-upload-zone.drag-over {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.1);
+  border-color: hsl(var(--accent));
+  background-color: hsl(var(--accent) / 0.1);
 }
 
 /* Modal Styles */
@@ -437,9 +512,7 @@
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  @apply bg-background border border-border rounded-lg p-6;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
@@ -448,8 +521,8 @@
 /* Crop Overlay */
 .crop-overlay {
   position: absolute;
-  border: 2px solid #3b82f6;
-  background-color: rgba(59, 130, 246, 0.2);
+  border: 2px solid hsl(var(--accent));
+  background-color: hsl(var(--accent) / 0.2);
   cursor: move;
 }
 
@@ -457,8 +530,8 @@
   position: absolute;
   width: 8px;
   height: 8px;
-  background-color: #3b82f6;
-  border: 1px solid white;
+  background-color: hsl(var(--accent));
+  border: 1px solid hsl(var(--background));
   border-radius: 50%;
 }
 

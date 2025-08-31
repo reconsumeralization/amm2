@@ -13,12 +13,17 @@ const footerStats = [
 ]
 
 const quickLinks = [
-  { name: 'Book Appointment', href: '/booking', icon: '📅' },
+  { name: 'Book Appointment', href: '/book', icon: '📅' },
   { name: 'Our Services', href: '/services', icon: '✂️' },
   { name: 'Meet The Team', href: '/team', icon: '👥' },
   { name: 'About Us', href: '/about', icon: 'ℹ️' },
   { name: 'Contact', href: '/contact', icon: '📞' },
-  { name: 'Customer Portal', href: '/portal', icon: '🔐' }
+  { name: 'Customer Portal', href: '/portal', icon: '🔐' },
+  { name: 'FAQ', href: '/faq', icon: '❓' },
+  { name: 'Careers', href: '/careers', icon: '💼' },
+  { name: 'Gift Cards', href: '/gift-cards', icon: '🎁' },
+  { name: 'Privacy Policy', href: '/privacy-policy', icon: '🔒' },
+  { name: 'Terms of Service', href: '/terms', icon: '📜' }
 ]
 
 const services = [
@@ -77,7 +82,7 @@ export function Footer() {
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-white">Modern Men</div>
-                    <div className="text-sm text-amber-400">Premium Salon</div>
+                    <div className="text-sm text-amber-400">Premium BarberShop</div>
                   </div>
                 </div>
               </Link>
@@ -122,7 +127,7 @@ export function Footer() {
                   className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                   asChild
                 >
-                  <Link href="/booking">
+                  <Link href="/book">
                     <Clock className="mr-2 h-4 w-4" />
                     Book Your Appointment
                   </Link>
@@ -279,7 +284,7 @@ export function Footer() {
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <p className="text-gray-400 text-sm">
-                © 2025 Modern Men Hair Salon. All rights reserved.
+                © 2025 Modern Men Hair BarberShop. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <Link href="/privacy-policy" className="text-gray-400 hover:text-amber-400 text-sm transition-colors duration-300">

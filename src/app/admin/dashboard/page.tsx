@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
-import { UserManagement } from '@/components/admin/UserManagement'
-import { EmployeeManagement } from '@/components/admin/EmployeeManagement'
-import { AuditLogs } from '@/components/admin/AuditLogs'
-import { PayloadHealthCheck } from '@/components/admin/PayloadHealthCheck'
+import { UserManagement } from '@/components/features/admin/UserManagement'
+import { EmployeeManagement } from '@/components/features/admin/EmployeeManagement'
+import { AuditLogs } from '@/components/features/admin/AuditLogs'
+import { PayloadHealthCheck } from '@/components/features/admin/PayloadHealthCheck'
 import { NotificationCenter } from '@/components/ui/NotificationCenter'
 import { motion } from 'framer-motion'
 
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
     if (status === 'loading') return
 
     if (!session) {
-      router.push('/portal/login')
+      router.push('/auth/signin?callbackUrl=/admin/dashboard')
       return
     }
 

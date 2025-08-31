@@ -15,7 +15,7 @@ export default function DocumentationPage() {
     {
       id: 'developer',
       title: 'Developer Documentation',
-      description: 'Comprehensive guides for developers building and extending the salon management system',
+      description: 'Comprehensive guides for developers building and extending the BarberShop management system',
       icon: <Code className="h-8 w-8 text-cyan-500" />,
       href: '/documentation/developer',
       features: [
@@ -29,11 +29,11 @@ export default function DocumentationPage() {
     {
       id: 'business',
       title: 'Business Documentation',
-      description: 'Operational guides for salon owners, employees, and customers',
+      description: 'Operational guides for BarberShop owners, employees, and customers',
       icon: <Users className="h-8 w-8 text-green-500" />,
       href: '/documentation/business',
       features: [
-        'Salon Owner Management',
+        'BarberShop Owner Management',
         'Employee Operations',
         'Customer Self-Service',
         'Business Analytics'
@@ -85,7 +85,7 @@ export default function DocumentationPage() {
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
-          Welcome to the Modern Men Hair Salon management system documentation. 
+          Welcome to the Modern Men Hair BarberShop management system documentation. 
           Find comprehensive guides, API references, and operational procedures tailored to your role.
         </p>
         
@@ -116,7 +116,7 @@ export default function DocumentationPage() {
               Development Setup
             </Link>
           )}
-          {(userRole === 'salon_owner' || userRole === 'salon_employee') && (
+          {(userRole === 'BarberShop_owner' || userRole === 'BarberShop_employee') && (
             <Link 
               href="/documentation/business/owner" 
               className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
@@ -124,7 +124,7 @@ export default function DocumentationPage() {
               Business Setup
             </Link>
           )}
-          {userRole === 'salon_customer' && (
+          {userRole === 'BarberShop_customer' && (
             <Link 
               href="/documentation/business/customer" 
               className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"

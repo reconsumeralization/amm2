@@ -3,19 +3,34 @@ interface MonitoringConfig {
   analytics: {
     enabled: boolean;
     providers: string[];
+    trackPerformance?: boolean;
+    trackErrors?: boolean;
   };
-  errorTracking: {
+  errorTracking?: {
     enabled: boolean;
     provider: string;
     dsn?: string;
   };
-  performance: {
+  performance?: {
     enabled: boolean;
     sampleRate: number;
   };
-  logging: {
+  logging?: {
     level: string;
     providers: string[];
+  };
+  sentry?: {
+    dsn: string;
+    environment: string;
+    release?: string;
+    sampleRate: number;
+    tracesSampleRate: number;
+    replaysOnErrorSampleRate?: number;
+    replaysSessionSampleRate?: number;
+  };
+  logRocket?: {
+    appId: string;
+    environment: string;
   };
 }
 
@@ -27,6 +42,7 @@ const getMonitoringConfig = (): MonitoringConfig => {
   const baseConfig: MonitoringConfig = {
     analytics: {
       enabled: true,
+      providers: ['sentry'],
       trackPerformance: true,
       trackErrors: true
     }

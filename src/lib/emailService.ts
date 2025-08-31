@@ -82,13 +82,13 @@ class EmailService {
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #2563eb, #8b5cf6); color: white; padding: 20px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="margin: 0; font-size: 2rem;">✂ Modern Men Salon</h1>
-          <p style="margin: 5px 0 0 0; opacity: 0.9;">Professional Salon Management</p>
+          <h1 style="margin: 0; font-size: 2rem;">✂ Modern Men BarberShop</h1>
+          <p style="margin: 5px 0 0 0; opacity: 0.9;">Professional BarberShop Management</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px; margin: 20px 0;">
           <h2>Welcome to the Team, ${name}!</h2>
           <p>Your account has been created successfully with the role: <strong>${role.toUpperCase()}</strong></p>
-          <p>You can now access the Modern Men Salon management system with your credentials.</p>
+          <p>You can now access the Modern Men BarberShop management system with your credentials.</p>
           ${role === 'stylist' ? '<p><strong>Next Steps:</strong> Please complete your stylist profile, upload your portfolio photos, and set your working hours.</p>' : ''}
           <div style="text-align: center; margin: 30px 0;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL}/portal/login"
@@ -98,14 +98,14 @@ class EmailService {
           </div>
         </div>
         <p style="text-align: center; opacity: 0.8; font-size: 0.9rem;">
-          Modern Men Salon - Professional Grooming Services
+          Modern Men BarberShop - Professional Grooming Services
         </p>
       </div>
     `
 
     await this.sendEmail({
       to,
-      subject: 'Welcome to Modern Men Salon!',
+      subject: 'Welcome to Modern Men BarberShop!',
       html
     })
   }
@@ -117,11 +117,11 @@ class EmailService {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #2563eb, #8b5cf6); color: white; padding: 20px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h1 style="margin: 0; font-size: 2rem;">🔐 Password Reset</h1>
-          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men Salon</p>
+          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men BarberShop</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px; margin: 20px 0;">
           <h2>Hi ${name},</h2>
-          <p>We received a request to reset your password for your Modern Men Salon account.</p>
+          <p>We received a request to reset your password for your Modern Men BarberShop account.</p>
           <p>Click the button below to reset your password. This link will expire in 1 hour.</p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${resetUrl}"
@@ -134,14 +134,14 @@ class EmailService {
           </p>
         </div>
         <p style="text-align: center; opacity: 0.8; font-size: 0.9rem;">
-          Modern Men Salon - Secure Account Management
+          Modern Men BarberShop - Secure Account Management
         </p>
       </div>
     `
 
     await this.sendEmail({
       to,
-      subject: 'Reset Your Password - Modern Men Salon',
+      subject: 'Reset Your Password - Modern Men BarberShop',
       html
     })
   }
@@ -151,7 +151,7 @@ class EmailService {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 20px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h1 style="margin: 0; font-size: 2rem;">📅 New Appointment</h1>
-          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men Salon</p>
+          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men BarberShop</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px; margin: 20px 0;">
           <h2>New Appointment Booked!</h2>
@@ -171,14 +171,14 @@ class EmailService {
           </div>
         </div>
         <p style="text-align: center; opacity: 0.8; font-size: 0.9rem;">
-          Modern Men Salon - Appointment Management System
+          Modern Men BarberShop - Appointment Management System
         </p>
       </div>
     `
 
     await this.sendEmail({
       to,
-      subject: 'New Appointment Booked - Modern Men Salon',
+      subject: 'New Appointment Booked - Modern Men BarberShop',
       html
     })
   }
@@ -195,7 +195,7 @@ class EmailService {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #1f2937, #374151); color: white; padding: 20px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h1 style="margin: 0; font-size: 2rem; color: ${priorityColors[priority]};">⚠️ System Alert</h1>
-          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men Salon</p>
+          <p style="margin: 5px 0 0 0; opacity: 0.9;">Modern Men BarberShop</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px; margin: 20px 0;">
           <h2 style="color: ${priorityColors[priority]};">${alertType}</h2>
@@ -213,14 +213,14 @@ class EmailService {
           </div>
         </div>
         <p style="text-align: center; opacity: 0.8; font-size: 0.9rem;">
-          Modern Men Salon - System Monitoring
+          Modern Men BarberShop - System Monitoring
         </p>
       </div>
     `
 
     await this.sendEmail({
       to,
-      subject: `[${priority.toUpperCase()}] System Alert - Modern Men Salon`,
+      subject: `[${priority.toUpperCase()}] System Alert - Modern Men BarberShop`,
       html
     })
   }

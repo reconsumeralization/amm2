@@ -1,67 +1,42 @@
-'use client';
+import { Metadata } from 'next'
+import { DocumentationSearchPage } from '@/components/features/documentation/DocumentationSearchPage'
 
-import React, { Suspense } from 'react';
-import { userchParams } from 'next/navigation';
-import { DocumentationSearch } from '@/components/documentation/DocumentationSearch';
-import { Card, CardContent } from '@/components/ui/card';
-import { rch, Loader2 } from '@/lib/icon-mapping';
-
-function rchPageContent() {
-  const rchParams = userchParams();
-  const initialQuery = rchParams.get('q') || '';
-
-  return (
-    <div className="max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <rch className="h-8 w-8 text-blue-500" />
-          <h1 className="text-3xl font-bold text-slate-100">
-            rch Documentation
-          </h1>
-        </div>
-        <p className="text-slate-300 text-lg">
-          Find guides, API references, and resources across our comprehensive documentation.
-        </p>
-      </div>
-
-      <DocumentationSearch 
-        initialQuery={initialQuery}
-        showFilters={true}
-        compact={false}
-      />
-    </div>
-  );
+export const metadata: Metadata = {
+  title: 'Search Documentation - ModernMen BarberShop',
+  description: 'Search through our comprehensive documentation including guides, API references, and resources.',
+  keywords: ['documentation', 'search', 'guides', 'API', 'references'],
 }
 
-function rchPageLoading() {
-  return (
-    <div className="max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <rch className="h-8 w-8 text-blue-500" />
-          <h1 className="text-3xl font-bold text-slate-100">
-            rch Documentation
-          </h1>
-        </div>
-        <p className="text-slate-300 text-lg">
-          Find guides, API references, and resources across our comprehensive documentation.
-        </p>
-      </div>
-
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardContent className="p-8 text-center">
-          <Loader2 className="h-8 w-8 text-slate-400 mx-auto mb-4 animate-spin" />
-          <p className="text-slate-400">Loading rch...</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+/**
+ * Props for the DocumentationSearchPageRoute component.
+ */
+interface DocumentationSearchPageProps {
+  searchParams: Promise<{
+    q?: string
+    category?: string
+    type?: string
+  }>
 }
 
-export default function rchPage() {
+/**
+ * Server component for the documentation search page route.
+ * @param {DocumentationSearchPageProps} props - The search params from the URL.
+ * @returns {JSX.Element} The rendered documentation search page.
+ */
+export default async function DocumentationSearchPageRoute({ searchParams }: DocumentationSearchPageProps) {
+  // Defensive: Ensure searchParams is defined and is an object
+  const params = await searchParams
+  const initialQuery = typeof params.q === 'string' ? params.q : ''
+  const initialCategory = typeof params.category === 'string' ? params.category : ''
+  const initialType = typeof params.type === 'string' ? params.type : ''
+
   return (
-    <Suspense fallback={<rchPageLoading />}>
-      <rchPageContent />
-    </Suspense>
-  );
+    <DocumentationSearchPage
+      initialQuery={initialQuery}
+      initialCategory={initialCategory}
+      initialType={initialType}
+      showFilters={true}
+      compact={false}
+    />
+  )
 }

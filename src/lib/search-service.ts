@@ -11,6 +11,9 @@ export interface SearchResult {
   tags: string[];
   relevanceScore: number;
   highlights: SearchHighlight[];
+  lastModified?: string;
+  isNew?: boolean;
+  popularity?: number;
 }
 
 export interface SearchHighlight {
@@ -20,6 +23,7 @@ export interface SearchHighlight {
 
 export interface SearchQuery {
   query: string;
+  sortBy?: string;
   filters?: {
     categories?: string[];
     types?: string[];
@@ -86,6 +90,12 @@ export interface SearchQueryParams {
 }
 
 export class DocumentationSearchService {
+  removeDocument(id: any) {
+    throw new Error('Method not implemented.');
+  }
+  indexDocument(arg0: { id: any; title: any; description: any; content: any; path: string; type: any; role: any; category: any; tags: any; author: any; lastUpdated: any; difficulty: any; estimatedReadTime: any; metadata: any; rchableText: string; keywords: never[]; }) {
+    throw new Error('Method not implemented.');
+  }
   private config: SearchConfig;
 
   constructor(config: SearchConfig) {

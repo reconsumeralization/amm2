@@ -3,11 +3,11 @@ import { Metadata } from 'next'
 import { DocumentationLayoutClient } from "./DocumentationLayoutClient"
 
 export const metadata: Metadata = {
-  title: 'Documentation - Modern Men Hair Salon',
+  title: 'Documentation - Modern Men Hair BarberShop',
   description: 'Comprehensive documentation for developers, business users, and administrators',
-  keywords: ['documentation', 'API', 'guides', 'salon management', 'developer tools'],
+  keywords: ['documentation', 'API', 'guides', 'BarberShop management', 'developer tools'],
   openGraph: {
-    title: 'Modern Men Hair Salon - Documentation',
+    title: 'Modern Men Hair BarberShop - Documentation',
     description: 'Comprehensive documentation for developers, business users, and administrators',
     type: 'website',
   },

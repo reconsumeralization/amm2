@@ -9,15 +9,15 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or manager
     if (session.user.role !== 'admin' && session.user.role !== 'manager' && session.user.role !== 'owner') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default })
 
     // Get URL parameters for date range filtering
     const url = new URL(request.url)
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
         inactiveStylists: totalStylists.totalDocs - activeStylists.totalDocs,
         totalAppointments,
         totalReviews,
-        averageRating: parseFloat(finalAverageRating),
+        averageRating: typeof finalAverageRating === 'string' ? parseFloat(finalAverageRating) : finalAverageRating,
         averageAppointmentsPerStylist: averageAppointmentsPerStylist,
       },
       performance: {
@@ -172,6 +172,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching stylist analytics:', error)
-    return createErrorResponse('Failed to fetch stylist analytics', 500)
+    return createErrorResponse('Failed to fetch stylist analytics', 'INTERNAL_SERVER_ERROR')
   }
 }

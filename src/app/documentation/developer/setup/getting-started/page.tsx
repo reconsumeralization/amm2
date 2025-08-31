@@ -1,5 +1,5 @@
 import React from 'react'
-import { GuideRenderer } from '@/components/documentation'
+import { GuideRenderer } from '@/components/features/documentation'
 import { GuideContent } from '@/types/documentation'
 
 // Sample guide data - in a real app, this would come from a CMS or API
@@ -20,7 +20,7 @@ const sampleGuide: GuideContent = {
   },
   content: {
     introduction: `
-      <p>Welcome to the Modern Men Hair Salon development environment! This guide will walk you through setting up your local development environment, understanding the project structure, and making your first contribution.</p>
+      <p>Welcome to the Modern Men Hair BarberShop development environment! This guide will walk you through setting up your local development environment, understanding the project structure, and making your first contribution.</p>
       <p>By the end of this guide, you'll have a fully functional development environment and understand the key concepts needed to work effectively with our codebase.</p>
     `,
     prerequisites: [
@@ -73,10 +73,10 @@ const sampleGuide: GuideContent = {
             id: 'git-clone',
             language: 'bash',
             code: `# Clone the repository
-git clone https://github.com/your-org/modern-men-salon.git
+git clone https://github.com/your-org/modern-men-BarberShop.git
 
 # Navigate to the project directory
-cd modern-men-salon
+cd modern-men-BarberShop
 
 # Check the current branch
 git branch`,
@@ -140,7 +140,7 @@ openssl rand -base64 32`,
             id: 'env-example',
             language: 'bash',
             code: `# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/salon_db"
+DATABASE_URL="postgresql://user:password@localhost:5432/BarberShop_db"
 
 # Authentication
 NEXTAUTH_SECRET="your-secret-key-here"
@@ -195,7 +195,7 @@ npm run db:seed`,
               endpoint: '/api/health/database',
               method: 'GET',
               headers: {},
-              expectedResponse: { status: 'connected', database: 'salon_db' }
+              expectedResponse: { status: 'connected', database: 'BarberShop_db' }
             }
           }
         ]

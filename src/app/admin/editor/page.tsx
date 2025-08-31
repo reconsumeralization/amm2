@@ -1,8 +1,8 @@
-import { AdminNavigation } from '@/components/admin/AdminNavigation'
+import { AdminNavigation } from '@/components/features/admin/AdminNavigation'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import Editor from '@/components/editor/Editor'
+import Editor from '@/components/features/editor/Editor'
 
 export default async function AdminEditorPage() {
   const session = await getServerSession(authOptions)
@@ -74,7 +74,7 @@ export default async function AdminEditorPage() {
               </p>
               
               <Editor 
-                initialContent="Welcome to Modern Men Hair Salon! We offer premium grooming services tailored to your style."
+                initialContent="Welcome to Modern Men Hair BarberShop! We offer premium grooming services tailored to your style."
                 onSaveAction={handleSave}
                 tenantId="demo-tenant"
               />
@@ -96,3 +96,4 @@ export default async function AdminEditorPage() {
     </div>
   )
 }
+

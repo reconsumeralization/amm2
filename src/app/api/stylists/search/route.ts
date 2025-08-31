@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured') === 'true'
 
     if (!query || query.length < 2) {
-      return createErrorResponse('Search query must be at least 2 characters', 400)
+      return createErrorResponse('Search query must be at least 2 characters', 'VALIDATION_ERROR')
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default })
 
     // Build search query
     const where: any = {
@@ -69,6 +69,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error searching stylists:', error)
-    return createErrorResponse('Failed to search stylists', 500)
+    return createErrorResponse('Failed to search stylists', 'INTERNAL_SERVER_ERROR')
   }
 }

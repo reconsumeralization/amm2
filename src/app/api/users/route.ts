@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       page: parseInt(searchParams.get('page') || '1')
     }
 
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
 
     // Build where clause
     const where: any = {
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     const { firstName, lastName, email, role, phone, password } = validation.data!
     const name = `${firstName} ${lastName}` // Combine first and last name
 
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
 
     // Check if user already exists
     const existingUser = await payload.find({

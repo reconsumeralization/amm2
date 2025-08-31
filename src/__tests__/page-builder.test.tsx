@@ -1,6 +1,8 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import PageBuilder from '@/components/editor/PageBuilder';
+import PageBuilder from '@/components/features/editor/PageBuilder';
 
 // Mock the Lexical composer context
 jest.mock('@lexical/react/LexicalComposerContext', () => ({
@@ -12,7 +14,7 @@ jest.mock('@lexical/react/LexicalComposerContext', () => ({
 }));
 
 // Mock the ImageEditor component
-jest.mock('@/components/editor/ImageEditor', () => {
+jest.mock('@/components/features/editor/ImageEditor', () => {
   return function MockImageEditor({ onSave, onCancel }: any) {
     return (
       <div data-testid="image-editor">
@@ -24,7 +26,7 @@ jest.mock('@/components/editor/ImageEditor', () => {
 });
 
 // Mock the BookingChatbot component
-jest.mock('@/components/chatbot/BookingChatbot', () => {
+jest.mock('@/components/features/chatbot/BookingChatbot', () => {
   return function MockBookingChatbot() {
     return <div data-testid="booking-chatbot">Booking Chatbot</div>;
   };
@@ -107,7 +109,8 @@ describe('PageBuilder Component', () => {
     expect(screen.getByText('+ Testimonial')).toBeInTheDocument();
   });
 
-  it('adds text component when text button is clicked', () => {
+  it('adds text component when text button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <PageBuilder
         tenantId="test-tenant"
@@ -116,12 +119,13 @@ describe('PageBuilder Component', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('+ Text'));
+    await user.click(screen.getByText('+ Text'));
 
     expect(screen.getByText('New text content')).toBeInTheDocument();
   });
 
-  it('adds button component when button button is clicked', () => {
+  it('adds button component when button button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <PageBuilder
         tenantId="test-tenant"
@@ -130,7 +134,7 @@ describe('PageBuilder Component', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('+ Button'));
+    await user.click(screen.getByText('+ Button'));
 
     expect(screen.getByText('Click Me')).toBeInTheDocument();
   });
@@ -149,6 +153,7 @@ describe('PageBuilder Component', () => {
   });
 
   it('calls onSave when save button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <PageBuilder
         tenantId="test-tenant"
@@ -158,17 +163,19 @@ describe('PageBuilder Component', () => {
     );
 
     // Add a component first
-    fireEvent.click(screen.getByText('+ Text'));
+    await user.click(screen.getByText('+ Text'));
 
     // Click save
-    fireEvent.click(screen.getByText('Save Page'));
+    await user.click(screen.getByText('Save Page'));
 
-    await waitFor(() => {
-      expect(mockOnSave).toHaveBeenCalled();
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
     });
+    expect(mockOnSave).toHaveBeenCalled();
   });
 
-  it('deletes component when delete button is clicked', () => {
+  it('deletes component when delete button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <PageBuilder
         tenantId="test-tenant"
@@ -178,11 +185,11 @@ describe('PageBuilder Component', () => {
     );
 
     // Add a component
-    fireEvent.click(screen.getByText('+ Text'));
+    await user.click(screen.getByText('+ Text'));
     expect(screen.getByText('New text content')).toBeInTheDocument();
 
     // Delete the component
-    fireEvent.click(screen.getByText('Delete'));
+    await user.click(screen.getByText('Delete'));
     expect(screen.queryByText('New text content')).not.toBeInTheDocument();
   });
 });

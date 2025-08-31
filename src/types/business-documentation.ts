@@ -46,7 +46,7 @@ export type BusinessDocumentationType =
   | 'template'
 
 export type BusinessDocumentationCategory =
-  | 'salon-operations'
+  | 'BarberShop-operations'
   | 'customer-service'
   | 'booking-management'
   | 'staff-training'

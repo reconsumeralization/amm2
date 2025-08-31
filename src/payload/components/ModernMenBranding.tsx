@@ -38,7 +38,7 @@ export const ModernMenBranding: React.FC = () => {
             WebkitTextFillColor: 'transparent',
             margin: 0
           }}>
-            Modern Men Salon
+            Modern Men BarberShop
           </h1>
         </div>
         <p style={{
@@ -47,7 +47,7 @@ export const ModernMenBranding: React.FC = () => {
           fontWeight: '500',
           margin: 0
         }}>
-          Professional Salon Management System
+          Professional BarberShop Management System
         </p>
       </div>
 
@@ -72,7 +72,7 @@ export const ModernMenBranding: React.FC = () => {
           fontSize: '1.1rem',
           marginBottom: '2rem'
         }}>
-          Streamline your salon operations with our comprehensive management system
+          Streamline your BarberShop operations with our comprehensive management system
         </p>
         <div style={{
           display: 'grid',
@@ -222,7 +222,7 @@ export const ModernMenBranding: React.FC = () => {
         color: '#6b7280'
       }}>
         <p style={{ margin: 0, fontSize: '0.9rem' }}>
-          Modern Men Salon Management System • Professional • Reliable • Efficient
+          Modern Men BarberShop Management System • Professional • Reliable • Efficient
         </p>
       </div>
     </div>

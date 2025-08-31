@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { XIcon } from 'lucide-react';
+import { X } from '@/lib/icons';
 import React, { createContext, useContext, useEffect, useState } from "react"
 
 interface ToastContextType {
@@ -72,7 +72,7 @@ function ToastContainer() {
               onClick={() => removeToast(toast.id)}
               className="absolute top-2 right-2 rounded-sm opacity-70 hover:opacity-100"
             >
-              <XIcon className="h-4 w-4" />
+              <X className="h-4 w-4" />   
             </button>
             {toast.title && (
               <div className="font-semibold mb-1">{toast.title}</div>

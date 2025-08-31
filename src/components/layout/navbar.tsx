@@ -36,17 +36,16 @@ import {
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home, description: 'Return to homepage' },
-  { name: 'Services', href: '/services', icon: Scissors, description: 'Our salon services' },
+  { name: 'Services', href: '/services', icon: Scissors, description: 'Our BarberShop services' },
   { name: 'About', href: '/about', icon: Star, description: 'Learn about us' },
   { name: 'Our Team', href: '/team', icon: User, description: 'Meet our stylists' },
   { name: 'Gallery', href: '/gallery', icon: Camera, description: 'View our work' },
   { name: 'Contact', href: '/contact', icon: Phone, description: 'Get in touch' },
-  { name: 'Privacy Policy', href: '/privacy-policy', icon: BookOpen, description: 'Our privacy policy' },
 ]
 
 const quickActions = [
   { name: 'Search', href: '/search', icon: 'search', description: 'Find services & info' },
-  { name: 'Book Now', href: '/booking', icon: 'calendar', description: 'Schedule appointment', primary: true },
+  { name: 'Book Now', href: '/book', icon: 'calendar', description: 'Schedule appointment', primary: true },
   { name: 'Call Us', href: 'tel:(306)522-4111', icon: 'phone', description: 'Call (306) 522-4111' },
 ]
 
@@ -118,7 +117,7 @@ export function Navbar() {
                 <span className="text-xl font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
                   Modern Men
                 </span>
-                <span className="text-xs text-slate-500 -mt-1">Premium Salon</span>
+                <span className="text-xs text-slate-500 -mt-1">Premium BarberShop</span>
               </div>
             </Link>
           </motion.div>
@@ -504,7 +503,7 @@ export function Navbar() {
                   </div>
                 )}
                 <p className="text-xs text-slate-500">
-                  © 2024 Modern Men • Premium Hair Salon
+                  © 2024 Modern Men • Premium Hair BarberShop
                 </p>
               </motion.div>
             </div>

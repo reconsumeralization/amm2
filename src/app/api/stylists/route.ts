@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const specialization = searchParams.get('specialization')
     const sort = searchParams.get('sort') || 'displayOrder'
 
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
 
     // Build query filters
     const where: any = {}
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Stylists API error:', error)
-    return createErrorResponse('Failed to fetch stylists', 500)
+    return createErrorResponse('Failed to fetch stylists', 'INTERNAL_SERVER_ERROR')
   }
 }
 
@@ -91,20 +91,20 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or manager
     if (session.user.role !== 'admin' && session.user.role !== 'manager') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
     const body = await request.json()
 
     // Validate stylist data (you can add more validation here)
     if (!body.user) {
-      return createErrorResponse('User ID is required', 400)
+      return createErrorResponse('User ID is required', 'VALIDATION_ERROR')
     }
 
     // Create stylist
@@ -120,10 +120,10 @@ export async function POST(request: NextRequest) {
     return createSuccessResponse({
       stylist,
       message: 'Stylist created successfully'
-    }, 201)
+    }, '201')
 
   } catch (error) {
     console.error('Error creating stylist:', error)
-    return createErrorResponse('Failed to create stylist', 500)
+    return createErrorResponse('Failed to create stylist', 'INTERNAL_SERVER_ERROR')
   }
 }

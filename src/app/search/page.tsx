@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
-import { SearchPage } from '@/components/search/search-page'
+import { SearchPage } from '@/components/features/search/search-page'
 
 export const metadata: Metadata = {
-  title: 'Search - {{companyName}} Salon',
+  title: 'Search - {{companyName}} BarberShop',
   description: 'Search through our services, stylists, and documentation.',
   keywords: ['search', 'services', 'stylists', 'documentation'],
 }

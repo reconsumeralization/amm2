@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for configuring the Modern Men Hair Salon application for production deployment on Vercel.
+This guide provides step-by-step instructions for configuring the Modern Men Hair BarberShop application for production deployment on Vercel.
 
 ## Required Environment Variables
 

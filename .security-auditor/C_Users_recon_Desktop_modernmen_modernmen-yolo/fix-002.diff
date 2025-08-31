@@ -1,4 +1,0 @@
-diff --git a/.next\server\app\text-editor\page.js b/.next\server\app\text-editor\page.js
---- a/.next\server\app\text-editor\page.js
-+++ b/.next\server\app\text-editor\page.js
-+ Applied automated security fix by security-auditor CLI

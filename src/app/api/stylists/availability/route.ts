@@ -10,10 +10,10 @@ export async function GET(request: NextRequest) {
     const serviceId = searchParams.get('serviceId')
 
     if (!stylistId || !date) {
-      return createErrorResponse('Stylist ID and date are required', 400)
+      return createErrorResponse('Stylist ID and date are required', 'VALIDATION_ERROR')
     }
 
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
 
     // Get stylist with schedule information
     const stylist = await payload.findByID({
@@ -23,11 +23,11 @@ export async function GET(request: NextRequest) {
     })
 
     if (!stylist) {
-      return createErrorResponse('Stylist not found', 404)
+      return createErrorResponse('Stylist not found', 'RESOURCE_NOT_FOUND')
     }
 
     if (!stylist.isActive) {
-      return createErrorResponse('Stylist is not available', 400)
+      return createErrorResponse('Stylist is not available', 'VALIDATION_ERROR')
     }
 
     // Get service duration if provided
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     // Parse the requested date
     const requestedDate = new Date(date)
-    const dayOfWeek = requestedDate.toLocaleLowerCase('en-US', { weekday: 'long' })
+    const dayOfWeek = requestedDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
 
     // Check if stylist works on this day
     const schedule = stylist.schedule
@@ -169,6 +169,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error checking stylist availability:', error)
-    return createErrorResponse('Failed to check stylist availability', 500)
+    return createErrorResponse('Failed to check stylist availability', 'INTERNAL_SERVER_ERROR')
   }
 }

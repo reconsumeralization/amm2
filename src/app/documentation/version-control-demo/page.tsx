@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { VersionHistory } from '@/components/documentation/VersionHistory';
-import { DeprecationWarnings } from '@/components/documentation/DeprecationWarning';
+import { VersionHistory } from '@/components/features/documentation/VersionHistory';
+import { DeprecationWarnings } from '@/components/features/documentation/DeprecationWarning';
 import { VersionControlService } from '@/lib/version-control-service';
 import { 
   DocumentationVersion, 

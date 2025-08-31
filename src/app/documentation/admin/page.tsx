@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'System Administration - Modern Men Hair Salon',
+  title: 'System Administration - Modern Men Hair BarberShop',
   description: 'System administration documentation for deployment, monitoring, and maintenance',
 }
 
@@ -14,7 +14,7 @@ export default function AdminDocumentationPage() {
         </h1>
         <p className="text-slate-300">
           Comprehensive system administration documentation for deploying, monitoring, 
-          and maintaining the Modern Men Hair Salon management system in production environments.
+          and maintaining the Modern Men Hair BarberShop management system in production environments.
         </p>
       </div>
 

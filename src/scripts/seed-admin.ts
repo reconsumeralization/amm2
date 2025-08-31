@@ -2,7 +2,7 @@ import getPayloadClient from '../payload'
 
 async function seedAdmin() {
   try {
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) })
     
     // Check if admin user already exists
     const existingAdmin = await payload.find({

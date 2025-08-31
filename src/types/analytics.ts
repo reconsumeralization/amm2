@@ -160,8 +160,8 @@ export interface FeedbackSummary {
 
 export type UserRole = 
   | 'developer'
-  | 'salon_owner' 
-  | 'salon_employee'
-  | 'salon_customer'
+  | 'BarberShop_owner' 
+  | 'BarberShop_employee'
+  | 'BarberShop_customer'
   | 'system_admin'
   | 'guest';

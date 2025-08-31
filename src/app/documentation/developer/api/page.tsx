@@ -1,5 +1,5 @@
 import React from 'react'
-import { APIDocumentation } from '@/components/documentation/APIDocumentation'
+import { APIDocumentation } from '@/components/features/documentation/APIDocumentation'
 import { apiDocExtractor } from '@/lib/api-documentation-extractor'
 import { sampleAPIDocumentation } from '@/lib/sample-api-docs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,7 +32,7 @@ import { APIDocumentationSection } from '@/types/api-documentation'
 /**
  * API Documentation Page
  * 
- * Displays API documentation for the Modern Men Hair Salon management system.
+ * Displays API documentation for the Modern Men Hair BarberShop management system.
  * Falls back to sample data if extraction fails.
  */
 export default async function APIDocumentationPage() {
@@ -168,7 +168,7 @@ export default async function APIDocumentationPage() {
           <div>
             <h1 className="text-3xl font-bold">API Documentation</h1>
             <p className="text-muted-foreground mt-2">
-              Interactive API reference for the Modern Men Hair Salon management system
+              Interactive API reference for the Modern Men Hair BarberShop management system
             </p>
           </div>
           <div className="flex items-center gap-2">

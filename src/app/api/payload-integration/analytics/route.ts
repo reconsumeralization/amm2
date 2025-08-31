@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Only allow salon owners and admins to view analytics
-    if (!['salon_owner', 'system_admin'].includes(user.role)) {
+    // Only allow BarberShop owners and admins to view analytics
+    if (!['BarberShop_owner', 'system_admin'].includes(user.role)) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
@@ -32,11 +32,11 @@ export async function GET(request: NextRequest) {
     const payloadService = getPayloadIntegrationService()
     await payloadService.initialize()
     
-    const analytics = await payloadService.getSalonAnalytics(dateRange)
+    const analytics = await payloadService.getBarberShopAnalytics(dateRange)
 
     return NextResponse.json(analytics)
   } catch (error) {
-    console.error('Error fetching salon analytics:', error)
+    console.error('Error fetching BarberShop analytics:', error)
     return NextResponse.json(
       { error: 'Failed to fetch analytics' },
       { status: 500 }

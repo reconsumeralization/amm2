@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 import { UserRole } from '@/types/documentation'
 
 export const metadata: Metadata = {
   title: 'Booking Appointments Guide - Customer Help',
-  description: 'Complete guide to booking, modifying, and managing your salon appointments',
+  description: 'Complete guide to booking, modifying, and managing your BarberShop appointments',
 }
 
 const bookingGuide = {
   metadata: {
     id: 'customer-booking-guide',
     title: 'Booking Appointments Guide',
-    description: 'Learn how to book, modify, and manage your salon appointments online',
+    description: 'Learn how to book, modify, and manage your BarberShop appointments online',
     author: 'Customer Experience Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_customer' as UserRole],
+    targetAudience: ['BarberShop_customer' as UserRole],
     difficulty: 'beginner' as const,
     estimatedTime: 15,
     tags: ['booking', 'appointments', 'scheduling'],
@@ -24,7 +24,7 @@ const bookingGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Booking your appointment at Modern Men Hair Salon is quick and easy with our online booking system. This guide will walk you through the entire process, from selecting services to confirming your appointment, plus how to manage your bookings after they're made.`,
+    introduction: `Booking your appointment at Modern Men Hair BarberShop is quick and easy with our online booking system. This guide will walk you through the entire process, from selecting services to confirming your appointment, plus how to manage your bookings after they're made.`,
     prerequisites: [
       {
         id: 'customer-account',
@@ -124,7 +124,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'BookingSimulator',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'BarberShop_customer' }
             }
           }
         ]
@@ -211,7 +211,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'ServiceSelector',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'BarberShop_customer' }
             }
           }
         ]
@@ -233,7 +233,7 @@ const bookingConfirmation = {
 - **24+ Hours Notice**: Free rescheduling with no penalties
 - **12-24 Hours Notice**: $10 rescheduling fee may apply
 - **Less than 12 Hours**: Subject to availability and fees
-- **Same Day**: Call the salon directly for assistance
+- **Same Day**: Call the BarberShop directly for assistance
 
 **Cancellation Process**
 1. **Online Cancellation**: Use your customer portal for cancellations
@@ -291,7 +291,7 @@ const bookingConfirmation = {
 - Appointment date, time, and duration
 - Services booked and total estimated cost
 - Stylist name and any special instructions
-- Salon address and parking information
+- BarberShop address and parking information
 - Links to reschedule or cancel if needed
 
 **Managing Your Notification Preferences**
@@ -325,7 +325,7 @@ const bookingConfirmation = {
 - Unsubscribe links in all emails
 - Reply STOP to text messages
 - Disable push notifications in app settings
-- Call salon to update preferences by phone
+- Call BarberShop to update preferences by phone
 
 **Special Notifications**
 
@@ -336,7 +336,7 @@ const bookingConfirmation = {
 
 **Schedule Changes**
 - Stylist illness or emergency changes
-- Salon closure notifications
+- BarberShop closure notifications
 - Alternative appointment options
 
 **Promotional Notifications**
@@ -353,7 +353,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'NotificationPreferences',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'BarberShop_customer' }
             }
           }
         ]
@@ -414,13 +414,13 @@ const bookingConfirmation = {
 - Try different stylists or service combinations
 - Consider off-peak hours or days
 - Join waiting lists for preferred times
-- Call the salon for additional options
+- Call the BarberShop for additional options
 
 **Booking System Problems**
 - Clear your browser cache and cookies
 - Try a different browser or device
 - Disable ad blockers that might interfere
-- Call the salon for phone booking assistance
+- Call the BarberShop for phone booking assistance
 
 **Special Requests**
 - Add detailed notes during booking

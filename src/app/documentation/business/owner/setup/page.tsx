@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 import { UserRole } from '@/types/documentation'
 
 export const metadata: Metadata = {
-  title: 'Business Setup Guide - Modern Men Hair Salon',
-  description: 'Complete guide to setting up your salon business profile and initial configuration',
+  title: 'Business Setup Guide - Modern Men Hair BarberShop',
+  description: 'Complete guide to setting up your BarberShop business profile and initial configuration',
 }
 
 const businessSetupGuide = {
   metadata: {
     id: 'business-setup-guide',
     title: 'Business Setup Guide',
-    description: 'Step-by-step guide to configure your salon business profile and get started',
+    description: 'Step-by-step guide to configure your BarberShop business profile and get started',
     author: 'Documentation Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner' as UserRole],
+    targetAudience: ['BarberShop_owner' as UserRole],
     difficulty: 'beginner' as const,
     estimatedTime: 45,
     tags: ['setup', 'configuration', 'business-profile'],
@@ -24,7 +24,7 @@ const businessSetupGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Setting up your salon business profile is the foundation for using the Modern Men Hair Salon management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
+    introduction: `Setting up your BarberShop business profile is the foundation for using the Modern Men Hair BarberShop management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
     prerequisites: [
       {
         id: 'admin-account',
@@ -49,11 +49,11 @@ const businessSetupGuide = {
       {
         id: 'business-profile',
         title: 'Business Profile Configuration',
-        description: 'Setting up your salon\'s basic business information',
+        description: 'Setting up your BarberShop\'s basic business information',
         content: `**Business Information Setup**
 
 **Basic Details**
-1. **Salon Name**: Enter your official business name as it appears on legal documents
+1. **BarberShop Name**: Enter your official business name as it appears on legal documents
 2. **Business Address**: Complete address including street, city, state, and ZIP code
 3. **Contact Information**: Primary phone number, email, and website URL
 4. **Business Hours**: Set your regular operating hours for each day of the week
@@ -66,16 +66,16 @@ const businessSetupGuide = {
 4. **Sales Tax Rate**: Local sales tax percentage for service calculations
 
 **Branding and Appearance**
-1. **Logo Upload**: Upload your salon logo (recommended: 300x300px PNG)
+1. **Logo Upload**: Upload your BarberShop logo (recommended: 300x300px PNG)
 2. **Brand Colors**: Set primary and secondary colors for your booking interface
-3. **Business Description**: Write a brief description of your salon and services
+3. **Business Description**: Write a brief description of your BarberShop and services
 4. **Social Media Links**: Add links to your Facebook, Instagram, and other profiles`,
         codeSnippets: [
           {
             language: 'typescript',
             code: `// Example business profile configuration
 const businessProfile = {
-  name: "Modern Men Hair Salon",
+  name: "Modern Men Hair BarberShop",
   address: {
     street: "123 Main Street",
     city: "Downtown",
@@ -239,7 +239,7 @@ const serviceMenu = {
             type: 'component-playground' as const,
             configuration: {
               component: 'StaffSetupWizard',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -336,7 +336,7 @@ const serviceMenu = {
     relatedContent: [
       {
         id: 'dashboard-guide',
-        title: 'Salon Owner Dashboard Guide',
+        title: 'BarberShop Owner Dashboard Guide',
         description: 'Learn to use your business dashboard effectively',
         url: '/documentation/business/owner/dashboard',
         type: 'guide'
@@ -384,10 +384,10 @@ export default function BusinessSetupPage() {
   return (
     <div className="max-w-4xl">
       <GuideRenderer 
-        content={businessSetupGuide}
+        guide={businessSetupGuide}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
+        userRole="BarberShop_owner"
       />
     </div>
   )

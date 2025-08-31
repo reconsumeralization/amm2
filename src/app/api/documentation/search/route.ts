@@ -18,9 +18,9 @@ const searchConfig: SearchConfig = {
   rankingConfig: {
     roleBasedBoost: {
       guest: 1,
-      salon_customer: 1.1,
-      salon_employee: 1.2,
-      salon_owner: 1.3,
+      BarberShop_customer: 1.1,
+      BarberShop_employee: 1.2,
+      BarberShop_owner: 1.3,
       developer: 1.4,
       system_admin: 1.5
     },

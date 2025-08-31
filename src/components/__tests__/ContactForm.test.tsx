@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ContactForm from '../ContactForm';
 
 global.fetch = jest.fn(() =>
@@ -12,13 +13,14 @@ global.fetch = jest.fn(() =>
 
 describe('ContactForm', () => {
   it('submits the form', async () => {
+    const user = userEvent.setup();
     render(<ContactForm />);
 
-    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'john.doe@example.com' } });
-    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'Test message' } });
+    await user.type(screen.getByLabelText('Name'), 'John Doe');
+    await user.type(screen.getByLabelText('Email'), 'john.doe@example.com');
+    await user.type(screen.getByLabelText('Message'), 'Test message');
 
-    fireEvent.click(screen.getByText('Submit'));
+    await user.click(screen.getByText('Submit'));
 
     await screen.findByText('Thank you for your message!');
 

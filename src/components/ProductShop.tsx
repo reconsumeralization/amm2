@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -104,7 +105,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     } catch (err) {
       console.error('Failed to fetch recommendations:', err);
     }
-  }, [userId, limit]);
+  }, [userId]);
 
   useEffect(() => {
     fetchProducts();
@@ -354,9 +355,11 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                 <div className="space-y-4">
                   {cart.map((item) => (
                     <div key={item.product.id} className="flex gap-4 p-4 border rounded-lg">
-                      <img
-                        src={item.product.images[0]?.image.url}
+                      <Image
+                        src={item.product.images[0]?.image.url || ''}
                         alt={item.product.name}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 object-cover rounded"
                       />
                       <div className="flex-1">
@@ -429,10 +432,11 @@ function ProductCard({ product, onAddToCart, formatPrice, getDiscountPercentage 
     >
       {/* Product Image */}
       <div className="aspect-square relative overflow-hidden">
-        <img
-          src={product.images[0]?.image.url}
+        <Image
+          src={product.images[0]?.image.url || ''}
           alt={product.images[0]?.image.alt || product.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         
         {/* Badges */}

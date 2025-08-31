@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block admin areas
+Disallow: /admin
+Disallow: /api/admin
+
+# Block auth pages
+Disallow: /auth
+Disallow: /api/auth
+
+# Allow sitemap
+Sitemap: https://modernmen.ca/sitemap.xml

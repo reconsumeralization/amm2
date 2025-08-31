@@ -32,11 +32,11 @@ export async function GET(
 
     // Check if user can access this documentation
     const roleHierarchy = {
-      'salon_customer': ['guest', 'salon_customer'],
-      'salon_employee': ['guest', 'salon_customer', 'salon_employee'],
-      'salon_owner': ['guest', 'salon_customer', 'salon_employee', 'salon_owner'],
-      'developer': ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer'],
-      'system_admin': ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer', 'system_admin']
+      'BarberShop_customer': ['guest', 'BarberShop_customer'],
+      'BarberShop_employee': ['guest', 'BarberShop_customer', 'BarberShop_employee'],
+      'BarberShop_owner': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner'],
+      'developer': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer'],
+      'system_admin': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer', 'system_admin']
     }
 
     const accessibleRoles = roleHierarchy[user.role as keyof typeof roleHierarchy] || [user.role]
@@ -68,7 +68,7 @@ export async function PATCH(
     }
 
     // Check if user can edit documentation
-    if (!['system_admin', 'salon_owner', 'developer'].includes(user.role)) {
+    if (!['system_admin', 'BarberShop_owner', 'developer'].includes(user.role)) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
@@ -104,7 +104,7 @@ export async function DELETE(
     }
 
     // Only admins and owners can delete documentation
-    if (!['system_admin', 'salon_owner'].includes(user.role)) {
+    if (!['system_admin', 'BarberShop_owner'].includes(user.role)) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 

@@ -35,6 +35,7 @@ interface NextTier {
   tier: string;
   name: string;
   pointsNeeded: number;
+  minPoints: number;
 }
 
 interface LoyaltyProgramProps {

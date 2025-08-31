@@ -33,6 +33,7 @@ export interface Content {
     averageTimeOnPage: number
     bounceRate: number
     conversionRate: number
+    lastAnalyticsUpdate?: string
   }
   settings?: {
     showTableOfContents: boolean
@@ -48,6 +49,7 @@ export interface Content {
     alt?: string
     caption?: string
     position?: number
+    featured?: boolean
   }>
   revisions: Array<{
     id: string
@@ -60,6 +62,7 @@ export interface Content {
   }>
   template?: string
   theme?: string
+  tenant?: string
   createdBy: string
   updatedBy: string
   publishedBy?: string
@@ -75,6 +78,7 @@ export interface ContentFilters {
   category?: string
   featured?: boolean
   template?: string
+  tenant?: string
   sort?: string
 }
 
@@ -281,16 +285,25 @@ export function useContent() {
       version: 1,
     }
 
-    // Remove fields that shouldn't be duplicated
-    delete duplicatedData.id
-    delete duplicatedData.createdAt
-    delete duplicatedData.updatedAt
-    delete duplicatedData.createdBy
-    delete duplicatedData.updatedBy
-    delete duplicatedData.publishedBy
-    delete duplicatedData.publishedAt
+    // Remove fields that shouldn't be duplicated using object destructuring
+    const {
+      id: contentId,
+      createdAt,
+      updatedAt,
+      createdBy,
+      updatedBy,
+      publishedBy,
+      publishedAt,
+      ...cleanData
+    } = duplicatedData
 
-    return createContent(duplicatedData)
+    // Create the final data object with publishDate as Date
+    const dataToCreate = {
+      ...cleanData,
+      publishDate: new Date(),
+    }
+
+    return createContent(dataToCreate)
   }, [content, createContent])
 
   return {

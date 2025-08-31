@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FeedbackWidget } from '@/components/documentation/FeedbackWidget';
-import { AnalyticsDashboard } from '@/components/documentation/AnalyticsDashboard';
-import { ContentGapAnalyzer } from '@/components/documentation/ContentGapAnalyzer';
+import { FeedbackWidget } from '@/components/features/documentation/FeedbackWidget';
+import { AnalyticsDashboard } from '@/components/features/documentation/AnalyticsDashboard';
+import { ContentGapAnalyzer } from '@/components/features/documentation/ContentGapAnalyzer';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,7 +51,7 @@ export default function AnalyticsDemoPage() {
         rating: 2,
         helpful: false,
         comment: 'This is confusing and missing examples',
-        userRole: 'salon_owner'
+        userRole: 'BarberShop_owner'
       },
       {
         contentId: 'sample-api-1',
@@ -256,7 +256,7 @@ export default function MyDocumentationPage() {
 
                 <h4>2. Add Feedback Widget</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-{`import { FeedbackWidget } from '@/components/documentation/FeedbackWidget';
+{`import { FeedbackWidget } from '@/components/features/documentation/FeedbackWidget';
 
 <FeedbackWidget
   contentId="my-content-id"
@@ -282,7 +282,7 @@ analytics.trackrchRefinement(originalQuery, refinedQuery);`}
 
                 <h4>4. View Analytics Dashboard</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-{`import { AnalyticsDashboard } from '@/components/documentation/AnalyticsDashboard';
+{`import { AnalyticsDashboard } from '@/components/features/documentation/AnalyticsDashboard';
 
 <AnalyticsDashboard
   timeRange={{ start: startDate, end: endDate }}
@@ -292,7 +292,7 @@ analytics.trackrchRefinement(originalQuery, refinedQuery);`}
 
                 <h4>5. Analyze Content Gaps</h4>
                 <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
-{`import { ContentGapAnalyzer } from '@/components/documentation/ContentGapAnalyzer';
+{`import { ContentGapAnalyzer } from '@/components/features/documentation/ContentGapAnalyzer';
 
 <ContentGapAnalyzer
   onGapSelect={(gap) => console.log('Address gap:', gap)}

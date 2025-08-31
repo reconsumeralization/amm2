@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Only allow salon owners and admins to sync appointments
-    if (!['salon_owner', 'system_admin'].includes(user.role)) {
+    // Only allow BarberShop owners and admins to sync appointments
+    if (!['BarberShop_owner', 'system_admin'].includes(user.role)) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 

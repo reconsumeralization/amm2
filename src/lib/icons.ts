@@ -167,3 +167,25 @@ export const HomeIcon = Home
 export const LineChartIcon = LineChart
 export const TrendingDownIcon = TrendingDown
 export const RotateCcwIcon = RotateCcw
+export const Package = Placeholder
+export const DollarSign = Placeholder
+
+// Alignment icons
+export const AlignLeft = Placeholder
+export const AlignCenter = Placeholder
+export const AlignRight = Placeholder
+export const AlignJustify = Placeholder
+
+// Additional editor icons
+export const ZoomIn = Placeholder
+export const ZoomOut = Placeholder
+export const Crop = Placeholder
+export const Move = Placeholder
+export const Undo = Placeholder
+export const Redo = Placeholder
+
+// Additional missing icons
+export const FileX = Placeholder
+export const Share = Placeholder
+export const Printer = Placeholder
+export const History = Placeholder

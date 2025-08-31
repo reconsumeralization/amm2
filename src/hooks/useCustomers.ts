@@ -49,6 +49,12 @@ export interface Customer {
   isActive?: boolean
   lastVisit?: string
   nextAppointment?: string
+  // Subscription fields from Stripe integration
+  stripeCustomerId?: string
+  subscriptionStatus?: 'active' | 'canceled' | 'incomplete' | 'expired' | 'past_due' | 'unpaid' | 'trialing' | 'inactive'
+  subscriptionCurrentPeriodEnd?: string
+  subscriptionCurrentPeriodStart?: string
+  subscriptionCancelAtPeriodEnd?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -57,6 +63,7 @@ export interface CustomerFilters {
   search?: string
   status?: 'active' | 'inactive' | 'all'
   loyaltyTier?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'all'
+  subscriptionStatus?: 'active' | 'canceled' | 'incomplete' | 'expired' | 'past_due' | 'unpaid' | 'trialing' | 'inactive' | 'all'
   sort?: string
 }
 
@@ -80,6 +87,14 @@ export interface CustomerAnalytics {
     totalSpent: number
     averageSpentPerCustomer: string
   }
+  subscription: {
+    activeSubscriptions: number
+    canceledSubscriptions: number
+    trialingSubscriptions: number
+    pastDueSubscriptions: number
+    totalSubscriptionRevenue: number
+    averageSubscriptionValue: string
+  }
   topSpenders: Array<{
     id: string
     name: string
@@ -87,6 +102,7 @@ export interface CustomerAnalytics {
     totalSpent: number
     tier: string
     memberSince?: string
+    subscriptionStatus?: string
   }>
   dateRange?: {
     startDate?: string
@@ -235,6 +251,52 @@ export function useCustomers() {
     }
   }, [])
 
+  const updateCustomerSubscription = useCallback(async (
+    stripeCustomerId: string,
+    subscriptionData: {
+      subscriptionStatus: Customer['subscriptionStatus']
+      subscriptionCurrentPeriodEnd?: string
+      subscriptionCurrentPeriodStart?: string
+      subscriptionCancelAtPeriodEnd?: boolean
+    }
+  ) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/customers/subscription', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stripeCustomerId,
+          ...subscriptionData,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update customer subscription')
+      }
+
+      const data = await response.json()
+
+      // Update the customer in the list if they exist
+      setCustomers(prev => prev.map(customer =>
+        customer.stripeCustomerId === stripeCustomerId ? data.customer : customer
+      ))
+
+      return data.customer
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      throw new Error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   return {
     customers,
     loading,
@@ -246,6 +308,7 @@ export function useCustomers() {
     createCustomer,
     updateCustomer,
     deleteCustomer,
+    updateCustomerSubscription,
   }
 }
 
@@ -332,5 +395,123 @@ export function useCustomer(id: string | null) {
     loading,
     error,
     refetch: fetchCustomer,
+  }
+}
+
+// Hook for customer subscription management
+export function useCustomerSubscription(customerId: string | null) {
+  const [subscription, setSubscription] = useState<{
+    status: Customer['subscriptionStatus']
+    currentPeriodEnd?: string
+    currentPeriodStart?: string
+    cancelAtPeriodEnd?: boolean
+  } | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchSubscription = useCallback(async () => {
+    if (!customerId) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/customers/${customerId}/subscription`)
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setSubscription(null)
+          return
+        }
+        throw new Error('Failed to fetch customer subscription')
+      }
+
+      const data = await response.json()
+      setSubscription(data.subscription)
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error fetching customer subscription:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [customerId])
+
+  const cancelSubscription = useCallback(async (cancelAtPeriodEnd: boolean = true) => {
+    if (!customerId) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/customers/${customerId}/subscription/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cancelAtPeriodEnd }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to cancel subscription')
+      }
+
+      const data = await response.json()
+      setSubscription(data.subscription)
+
+      return data.subscription
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      throw new Error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }, [customerId])
+
+  const reactivateSubscription = useCallback(async () => {
+    if (!customerId) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/customers/${customerId}/subscription/reactivate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to reactivate subscription')
+      }
+
+      const data = await response.json()
+      setSubscription(data.subscription)
+
+      return data.subscription
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      throw new Error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }, [customerId])
+
+  useEffect(() => {
+    fetchSubscription()
+  }, [fetchSubscription])
+
+  return {
+    subscription,
+    loading,
+    error,
+    refetch: fetchSubscription,
+    cancelSubscription,
+    reactivateSubscription,
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -165,7 +165,7 @@ export function NotificationSettings({ userId, className = '' }: NotificationSet
 
   const testNotification = async (type: 'email' | 'sms' | 'push') => {
     try {
-      const testMessage = `This is a test ${type.toUpperCase()} notification from Modern Men Salon.`
+      const testMessage = `This is a test ${type.toUpperCase()} notification from Modern Men BarberShop.`
 
       // In a real implementation, send test notification via API
       console.log(`Sending test ${type} notification:`, testMessage)

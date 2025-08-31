@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -69,9 +70,11 @@ export function Testimonials({ testimonials, stylistName, className = '' }: Test
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
                 {testimonial.clientImage ? (
-                  <img
+                  <Image
                     src={testimonial.clientImage}
                     alt={testimonial.clientName}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
@@ -144,9 +147,11 @@ export function Testimonials({ testimonials, stylistName, className = '' }: Test
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               {currentTestimonial.clientImage ? (
-                <img
+                <Image
                   src={currentTestimonial.clientImage}
                   alt={currentTestimonial.clientName}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (

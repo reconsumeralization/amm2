@@ -1,40 +1,23 @@
 import './globals.css';
-import '../styles/responsive-image.css';
-import { Providers } from '@/providers/providers';
-import { ErrorBoundary } from '@/components/error-boundary';
 
 import { Metadata } from 'next';
+import { Providers } from '@/providers/providers'
 
 export const metadata: Metadata = {
-  title: 'ModernMen Hair Salon',
+  title: 'ModernMen Hair BarberShop',
   description: 'Regina\'s Premier Men\'s Grooming',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark')
-                } else {
-                  document.documentElement.classList.remove('dark')
-                }
-              } catch (_) {}
-            `,
-          }}
-        />
       </head>
-      <body suppressHydrationWarning>
-        <ErrorBoundary>
-          <Providers>
-            {children}
-          </Providers>
-        </ErrorBoundary>
+      <body>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

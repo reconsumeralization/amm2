@@ -1,6 +1,6 @@
 # Development Tools
 
-The `src/tools` directory contains a collection of utility scripts that help with common development tasks for the Modern Men Hair Salon project.
+The `src/tools` directory contains a collection of utility scripts that help with common development tasks for the Modern Men Hair BarberShop project.
 
 ## Scripts
 

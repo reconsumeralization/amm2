@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -32,18 +32,31 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
   const [unreadCount, setUnreadCount] = useState(0)
   const eventSourceRef = useRef<EventSource | null>(null)
 
-  useEffect(() => {
-    connectToNotificationStream()
-    loadNotificationHistory()
+  const updateUnreadCount = useCallback((notifs: Notification[]) => {
+    const unread = notifs.filter(n => !n.read).length
+    setUnreadCount(unread)
+  }, [])
 
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close()
-      }
+  const handleNewNotification = useCallback((notification: Notification) => {
+    setNotifications(prev => {
+      const newNotifications = [notification, ...prev]
+      updateUnreadCount(newNotifications)
+      return newNotifications
+    })
+
+    // Show toast for high priority notifications
+    if (notification.priority === 'high' || notification.priority === 'urgent') {
+      toast(notification.title, {
+        description: notification.message,
+        action: {
+          label: 'View',
+          onClick: () => setIsOpen(true)
+        }
+      })
     }
-  }, [userId, connectToNotificationStream, loadNotificationHistory]);
+  }, [updateUnreadCount])
 
-  const connectToNotificationStream = useCallback(() => {
+  const connectToNotificationStream = useCallback((): void => {
     try {
       const eventSource = new EventSource(`/api/notifications/stream?history=true`)
       eventSourceRef.current = eventSource
@@ -86,7 +99,7 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
       console.error('Failed to connect to notification stream:', error)
       setIsConnected(false)
     }
-  }, [handleNewNotification, setIsConnected, notifications, updateUnreadCount]);
+  }, [handleNewNotification])
 
   const loadNotificationHistory = useCallback(async () => {
     try {
@@ -109,37 +122,27 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
     } catch (error) {
       console.error('Failed to load notification history:', error)
     }
-  }, [setNotifications, updateUnreadCount]);
+  }, [updateUnreadCount])
 
-  const handleNewNotification = useCallback((notification: Notification) => {
-    setNotifications(prev => [notification, ...prev])
+  useEffect(() => {
+    connectToNotificationStream()
+    loadNotificationHistory()
 
-    // Show toast for high priority notifications
-    if (notification.priority === 'high' || notification.priority === 'urgent') {
-      toast(notification.title, {
-        description: notification.message,
-        action: {
-          label: 'View',
-          onClick: () => setIsOpen(true)
-        }
-      })
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close()
+      }
     }
-
-    updateUnreadCount([notification, ...notifications])
-  }, [notifications, setNotifications, setIsOpen, toast, updateUnreadCount]);
-
-  const updateUnreadCount = useCallback((notifs: Notification[]) => {
-    const unread = notifs.filter(n => !n.read).length
-    setUnreadCount(unread)
-  }, [setUnreadCount]);
+  }, [userId, connectToNotificationStream, loadNotificationHistory])
 
   const markAsRead = async (notificationId: string) => {
     try {
       // In a real implementation, call API to mark as read
-      setNotifications(prev =>
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
-      )
-      updateUnreadCount(notifications.map(n => n.id === notificationId ? { ...n, read: true } : n))
+      setNotifications(prev => {
+        const updated = prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+        updateUnreadCount(updated)
+        return updated
+      })
     } catch (error) {
       console.error('Failed to mark notification as read:', error)
     }
@@ -158,8 +161,11 @@ export function NotificationCenter({ userId, className = '' }: NotificationCente
   const deleteNotification = async (notificationId: string) => {
     try {
       // In a real implementation, call API to delete notification
-      setNotifications(prev => prev.filter(n => n.id !== notificationId))
-      updateUnreadCount(notifications.filter(n => n.id !== notificationId))
+      setNotifications(prev => {
+        const filtered = prev.filter(n => n.id !== notificationId)
+        updateUnreadCount(filtered)
+        return filtered
+      })
     } catch (error) {
       console.error('Failed to delete notification:', error)
     }

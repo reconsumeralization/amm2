@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         action: 'EMPLOYEE_CREATED',
         resource: 'stylists',
         resourceId: 'stylist-789',
-        details: { name: 'New Stylist', email: 'new@salon.com' },
+        details: { name: 'New Stylist', email: 'new@BarberShop.com' },
         ipAddress: '192.168.1.101',
         userAgent: 'Chrome/91.0...',
         timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() // 2 hours ago

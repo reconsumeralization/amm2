@@ -3,6 +3,16 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { z } from 'zod'
 import { logger } from './logger'
 import { getPayload } from 'payload'
+import { ROLES, ROLE_PERMISSIONS, logAuthEvent } from './auth-utils'
+
+// Dynamic import for payload config to avoid client-side bundling
+let payloadConfig: any = null
+const getPayloadConfig = async () => {
+  if (!payloadConfig) {
+    payloadConfig = (await import('../payload.config')).default
+  }
+  return payloadConfig
+}
 
 // Define types for NextAuth callbacks
 interface JWTToken {
@@ -87,18 +97,9 @@ type DemoUser = AdminUser | ManagerUser | BarberUser | CustomerUser
 
 // Helper function to get permissions based on role
 function getPermissionsForRole(role: string): string[] {
-  switch (role) {
-    case 'admin':
-      return ['manage_appointments', 'manage_customers', 'manage_services', 'view_reports', 'manage_users', 'manage_content', 'manage_settings']
-    case 'manager':
-      return ['manage_appointments', 'manage_customers', 'manage_services', 'view_reports', 'manage_staff', 'manage_content']
-    case 'barber':
-      return ['view_appointments', 'manage_own_appointments', 'view_customers', 'manage_content']
-    case 'customer':
-      return ['view_appointments', 'book_appointments', 'view_profile']
-    default:
-      return ['view_profile']
-  }
+  // Use centralized role permissions mapping
+  const roleKey = role.toUpperCase() as keyof typeof ROLE_PERMISSIONS
+  return ROLE_PERMISSIONS[roleKey] || ROLE_PERMISSIONS[ROLES.CUSTOMER] || []
 }
 
 // Demo users for development (will be replaced with Payload CMS integration)
@@ -108,24 +109,24 @@ const DEMO_USERS: Record<string, DemoUser> = {
     email: 'admin@modernmen.ca',
     password: 'admin123',
     name: 'Admin User',
-    role: 'admin',
-    permissions: getPermissionsForRole('admin')
+    role: ROLES.ADMIN,
+    permissions: getPermissionsForRole(ROLES.ADMIN)
   },
   manager: {
     id: '2',
     email: 'manager@modernmen.ca',
     password: 'manager123',
     name: 'Manager User',
-    role: 'manager',
-    permissions: getPermissionsForRole('manager')
+    role: ROLES.MANAGER,
+    permissions: getPermissionsForRole(ROLES.MANAGER)
   },
   barber: {
     id: '3',
     email: 'barber@modernmen.ca',
     password: 'barber123',
     name: 'Michael Chen',
-    role: 'barber',
-    permissions: getPermissionsForRole('barber'),
+    role: ROLES.BARBER,
+    permissions: getPermissionsForRole(ROLES.BARBER),
     stylistId: 'STYL001',
     specialties: ['Fades', 'Pompadours', 'Beard Grooming']
   },
@@ -134,8 +135,8 @@ const DEMO_USERS: Record<string, DemoUser> = {
     email: 'customer@modernmen.ca',
     password: 'customer123',
     name: 'John Smith',
-    role: 'customer',
-    permissions: getPermissionsForRole('customer'),
+    role: ROLES.CUSTOMER,
+    permissions: getPermissionsForRole(ROLES.CUSTOMER),
     customerId: 'CUST001',
     phone: '(306) 555-0123',
     address: '123 Main St, Regina, SK'
@@ -167,21 +168,21 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            logger.authEvent('signin_failed_missing_credentials')
-            throw new Error('Missing credentials')
+                      logAuthEvent('signin_failed_missing_credentials', { email: credentials.email || 'unknown' })
+          throw new Error('Missing credentials')
           }
 
           const validatedFields = loginSchema.safeParse(credentials)
           if (!validatedFields.success) {
-            logger.authEvent('signin_failed_invalid_format', {
-              email: credentials.email
+            logAuthEvent('signin_failed_invalid_format', {
+              email: credentials.email || 'unknown'
             })
             throw new Error('Invalid email or password format')
           }
 
           const { email, password } = validatedFields.data
 
-          logger.authEvent('signin_attempt', {
+          logAuthEvent('signin_attempt', {
             email: email.toLowerCase()
           })
 
@@ -191,7 +192,7 @@ export const authOptions: NextAuthOptions = {
           )
 
           if (demoUser) {
-            logger.authEvent('signin_success_demo', {
+            logAuthEvent('signin_success_demo', {
               userId: demoUser.id,
               email: demoUser.email,
               role: demoUser.role
@@ -227,7 +228,8 @@ export const authOptions: NextAuthOptions = {
 
           // Check Payload CMS users
           try {
-            const payload = await getPayload({ config: (await import('../payload.config')).default })
+            const config = await getPayloadConfig()
+            const payload = await getPayload({ config })
 
             // Find user by email
             const users = await payload.find({
@@ -243,7 +245,7 @@ export const authOptions: NextAuthOptions = {
 
               // For demo purposes, we'll accept any password for Payload users
               // In production, you'd implement proper password hashing and verification
-              logger.authEvent('signin_success_payload', {
+              logAuthEvent('signin_success_payload', {
                 userId: String(user.id),
                 email: user.email,
                 role: user.role
@@ -268,7 +270,7 @@ export const authOptions: NextAuthOptions = {
             console.warn('Payload CMS authentication failed, falling back to demo users:', payloadError)
           }
 
-          logger.authEvent('signin_failed_invalid_credentials', {
+          logAuthEvent('signin_failed_invalid_credentials', {
             email: email.toLowerCase()
           })
           throw new Error('Invalid credentials')

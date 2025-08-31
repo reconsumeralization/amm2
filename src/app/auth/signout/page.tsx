@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogOut, Loader2 } from 'lucide-react'
+import { LogOut, Loader2 } from '@/lib/icon-mapping';
 
 export default function SignOutPage() {
   const [isSigningOut, setIsSigningOut] = useState(true)

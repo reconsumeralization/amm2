@@ -10,22 +10,22 @@ interface Params {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Params }
+  { params }: { params: Promise<Params> }
 ) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or has customer access
     if (session.user.role !== 'admin' && session.user.role !== 'employee') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload()
-    const { id } = params
+    const { id } = await params
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
 
     // Fetch customer
     const customer = await payload.findByID({
@@ -35,35 +35,35 @@ export async function GET(
     })
 
     if (!customer) {
-      return createErrorResponse('Customer not found', 404)
+      return createErrorResponse('Customer not found', 'RESOURCE_NOT_FOUND')
     }
 
     // Check if user can access this customer
     if (session.user.role !== 'admin' && customer.createdBy !== session.user.id) {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
     return createSuccessResponse({ customer })
 
   } catch (error) {
     console.error('Error fetching customer:', error)
-    return createErrorResponse('Failed to fetch customer', 500)
+    return createErrorResponse('Failed to fetch customer', 'INTERNAL_SERVER_ERROR')
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Params }
+  { params }: { params: Promise<Params> }
 ) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
-    const payload = await getPayload()
-    const { id } = params
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
+    const { id } = await params
     const body = await request.json()
 
     // Check if user is admin or owns this customer
@@ -75,7 +75,7 @@ export async function PUT(
       })
 
       if (!existingCustomer || existingCustomer.createdBy !== session.user.id) {
-        return createErrorResponse('Insufficient permissions', 403)
+        return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
       }
     }
 
@@ -97,28 +97,28 @@ export async function PUT(
 
   } catch (error) {
     console.error('Error updating customer:', error)
-    return createErrorResponse('Failed to update customer', 500)
+    return createErrorResponse('Failed to update customer', 'INTERNAL_SERVER_ERROR')
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Params }
+  { params }: { params: Promise<Params> }
 ) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Only admins can delete customers
     if (session.user.role !== 'admin') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload()
-    const { id } = params
+    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
+    const { id } = await params
 
     // Check if customer exists
     const customer = await payload.findByID({
@@ -127,7 +127,7 @@ export async function DELETE(
     })
 
     if (!customer) {
-      return createErrorResponse('Customer not found', 404)
+      return createErrorResponse('Customer not found', 'RESOURCE_NOT_FOUND')
     }
 
     // Delete customer
@@ -142,6 +142,6 @@ export async function DELETE(
 
   } catch (error) {
     console.error('Error deleting customer:', error)
-    return createErrorResponse('Failed to delete customer', 500)
+    return createErrorResponse('Failed to delete customer', 'INTERNAL_SERVER_ERROR')
   }
 }

@@ -1,10 +1,10 @@
-// Core documentation types for the Modern Men Hair Salon documentation system
+// Core documentation types for the Modern Men Hair BarberShop documentation system
 
 export type UserRole =
   | "developer"
-  | "salon_owner"
-  | "salon_employee"
-  | "salon_customer"
+  | "BarberShop_owner"
+  | "BarberShop_employee"
+  | "BarberShop_customer"
   | "system_admin"
   | "guest";
 

@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
-import { CodeSnippetRenderer } from '@/components/documentation/CodeSnippetRenderer'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
+import { CodeSnippetRenderer } from '@/components/features/documentation/CodeSnippetRenderer'
 
 export const metadata: Metadata = {
-  title: 'Salon Owner Dashboard Guide - Modern Men Hair Salon',
-  description: 'Complete guide to using the salon owner dashboard for business management',
+  title: 'BarberShop Owner Dashboard Guide - Modern Men Hair BarberShop',
+  description: 'Complete guide to using the BarberShop owner dashboard for business management',
 }
 
 const dashboardGuide = {
   metadata: {
-    id: 'salon-owner-dashboard',
-    title: 'Salon Owner Dashboard Guide',
-    description: 'Learn how to effectively use your salon owner dashboard to manage your business',
+    id: 'BarberShop-owner-dashboard',
+    title: 'BarberShop Owner Dashboard Guide',
+    description: 'Learn how to effectively use your BarberShop owner dashboard to manage your business',
     author: 'Documentation Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner'],
+    targetAudience: ['BarberShop_owner'],
     difficulty: 'beginner' as const,
     estimatedTime: 30,
     tags: ['dashboard', 'business-management', 'analytics'],
@@ -24,12 +24,12 @@ const dashboardGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `The salon owner dashboard is your central command center for managing all aspects of your hair salon business. This comprehensive guide will walk you through each section of the dashboard and show you how to leverage its features for optimal business performance.`,
+    introduction: `The BarberShop owner dashboard is your central command center for managing all aspects of your hair BarberShop business. This comprehensive guide will walk you through each section of the dashboard and show you how to leverage its features for optimal business performance.`,
     prerequisites: [
       {
         id: 'business-setup',
         title: 'Complete Business Setup',
-        description: 'Your salon profile and initial configuration must be completed',
+        description: 'Your BarberShop profile and initial configuration must be completed',
         required: true,
       },
       {
@@ -67,7 +67,7 @@ const dashboardGuide = {
             type: 'component-playground' as const,
             configuration: {
               component: 'DashboardTour',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -75,10 +75,10 @@ const dashboardGuide = {
       {
         id: 'daily-operations',
         title: 'Daily Operations Management',
-        description: 'Managing your salon\'s day-to-day operations from the dashboard',
+        description: 'Managing your BarberShop\'s day-to-day operations from the dashboard',
         content: `**Today's Overview Section**
 
-This section provides a real-time snapshot of your salon's current status:
+This section provides a real-time snapshot of your BarberShop's current status:
 
 **Appointment Summary**
 - Total appointments scheduled for today
@@ -166,7 +166,7 @@ const todaysMetrics = {
             type: 'component-playground' as const,
             configuration: {
               component: 'RevenueAnalytics',
-              props: { timeRange: '30d', userRole: 'salon_owner' }
+              props: { timeRange: '30d', userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -241,7 +241,7 @@ const todaysMetrics = {
             type: 'component-playground' as const,
             configuration: {
               component: 'CustomerAnalytics',
-              props: { timeRange: '90d', userRole: 'salon_owner' }
+              props: { timeRange: '90d', userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -271,7 +271,7 @@ const todaysMetrics = {
       {
         id: 'business-setup',
         title: 'Initial Business Setup Guide',
-        description: 'Complete guide to setting up your salon profile',
+        description: 'Complete guide to setting up your BarberShop profile',
         url: '/documentation/business/owner/setup',
         type: 'guide'
       },
@@ -314,14 +314,14 @@ const todaysMetrics = {
   }
 }
 
-export default function SalonOwnerDashboardPage() {
+export default function BarberShopOwnerDashboardPage() {
   return (
     <div className="max-w-4xl">
       <GuideRenderer 
-        content={dashboardGuide}
+        guide={dashboardGuide}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
+        userRole="BarberShop_owner"
       />
     </div>
   )

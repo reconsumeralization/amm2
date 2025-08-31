@@ -4,15 +4,15 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 // GET - Get specific clock record
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
 
     const clockRecord = await payload.findByID({
       collection: 'clock-records',
@@ -38,15 +38,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // PUT - Update clock record (admin only)
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+    const { id } = await params;
     const data = await req.json();
 
     // Get existing record
@@ -75,15 +75,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // DELETE - Delete clock record (admin only)
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const payload = await getPayload({ config: await import('../../../../../../payload.config') });
-    const { id } = params;
+    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+    const { id } = await params;
 
     // Get existing record
     const existingRecord = await payload.findByID({

@@ -6,7 +6,7 @@ import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant';
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage';
 import { stripePlugin } from '@payloadcms/plugin-stripe';
 
-import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram } from './collections';
+import collections from './payload/collections';
 
 export default buildConfig({
   admin: {
@@ -31,7 +31,7 @@ export default buildConfig({
       prefillOnly: true
     } : false,
   },
-  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram],
+  collections: collections,
   endpoints: [
     // Custom endpoints will be implemented via Next.js API routes
   ],

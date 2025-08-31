@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
-import { RevenueChart } from '@/components/charts/RevenueChart'
-import { ServicePerformanceChart } from '@/components/charts/ServicePerformanceChart'
-import { EmployeeAnalyticsChart } from '@/components/charts/EmployeeAnalyticsChart'
+import { RevenueChart } from '@/components/features/charts/RevenueChart'
+import { ServicePerformanceChart } from '@/components/features/charts/ServicePerformanceChart'
+import { EmployeeAnalyticsChart } from '@/components/features/charts/EmployeeAnalyticsChart'
 import { motion } from 'framer-motion'
 
 interface DashboardStats {

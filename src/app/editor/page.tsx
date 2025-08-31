@@ -1,5 +1,5 @@
 import { getPayload } from 'payload';
-import Editor from '@/components/editor/Editor';
+import Editor from '@/components/features/editor/Editor';
 
 export default async function EditorPage({ params }: { params: { id?: string } }) {
   const payload = await getPayload({ config: (await import('../../payload.config')).default });
@@ -23,7 +23,7 @@ export default async function EditorPage({ params }: { params: { id?: string } }
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl mb-4">Content Editor</h1>
-      <Editor initialContent={initialContent} onSave={handleSave} />
+      <Editor initialContent={initialContent} onSaveAction={handleSave} />
     </div>
   );
 }

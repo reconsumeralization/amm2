@@ -1,19 +1,19 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Salon Owner Guide - Modern Men Hair Salon',
-  description: 'Complete business management guide for salon owners',
+  title: 'BarberShop Owner Guide - Modern Men Hair BarberShop',
+  description: 'Complete business management guide for BarberShop owners',
 }
 
-export default function SalonOwnerPage() {
+export default function BarberShopOwnerPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4 text-gradient bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          Salon Owner Guide
+          BarberShop Owner Guide
         </h1>
         <p className="text-slate-300">
-          Comprehensive business management guide for salon owners to effectively operate and grow their hair salon business.
+          Comprehensive business management guide for BarberShop owners to effectively operate and grow their hair BarberShop business.
         </p>
       </div>
 

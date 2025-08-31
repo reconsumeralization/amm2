@@ -1,21 +1,21 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 
 export const metadata: Metadata = {
-  title: 'Analytics Training Guide - Modern Men Hair Salon',
-  description: 'Comprehensive training on using business analytics to grow your salon',
+  title: 'Analytics Training Guide - Modern Men Hair BarberShop',
+  description: 'Comprehensive training on using business analytics to grow your BarberShop',
 }
 
 const analyticsTrainingGuide = {
   metadata: {
     id: 'analytics-training-guide',
     title: 'Analytics Training Guide',
-    description: 'Master business analytics to make data-driven decisions for your salon',
+    description: 'Master business analytics to make data-driven decisions for your BarberShop',
     author: 'Business Analytics Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner'],
+    targetAudience: ['BarberShop_owner'],
     difficulty: 'intermediate' as const,
     estimatedTime: 60,
     tags: ['analytics', 'business-intelligence', 'reporting', 'kpis'],
@@ -23,12 +23,12 @@ const analyticsTrainingGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Business analytics are crucial for making informed decisions that drive salon growth and profitability. This comprehensive training guide will teach you how to interpret key metrics, identify trends, and use data insights to optimize your salon operations and increase revenue.`,
+    introduction: `Business analytics are crucial for making informed decisions that drive BarberShop growth and profitability. This comprehensive training guide will teach you how to interpret key metrics, identify trends, and use data insights to optimize your BarberShop operations and increase revenue.`,
     prerequisites: [
       {
         id: 'business-setup-complete',
         title: 'Complete Business Setup',
-        description: 'Your salon must be fully configured with services and staff',
+        description: 'Your BarberShop must be fully configured with services and staff',
         required: true,
       },
       {
@@ -40,7 +40,7 @@ const analyticsTrainingGuide = {
       {
         id: 'dashboard-familiarity',
         title: 'Dashboard Familiarity',
-        description: 'Basic understanding of the salon owner dashboard',
+        description: 'Basic understanding of the BarberShop owner dashboard',
         required: false,
       }
     ],
@@ -48,13 +48,13 @@ const analyticsTrainingGuide = {
       {
         id: 'key-performance-indicators',
         title: 'Understanding Key Performance Indicators (KPIs)',
-        description: 'Learn the most important metrics for salon business success',
+        description: 'Learn the most important metrics for BarberShop business success',
         content: `**Financial KPIs**
 
 **Revenue Metrics**
 - **Total Revenue**: Overall income from all services and products
 - **Average Transaction Value (ATV)**: Revenue per customer visit
-- **Revenue Per Available Hour**: Efficiency of salon capacity utilization
+- **Revenue Per Available Hour**: Efficiency of BarberShop capacity utilization
 - **Monthly Recurring Revenue**: Predictable income from memberships/packages
 
 **Profitability Indicators**
@@ -106,11 +106,11 @@ const calculateKPIs = (data: BusinessData) => {
           {
             id: 'kpi-calculator',
             title: 'KPI Calculator',
-            description: 'Interactive tool to calculate and understand your salon KPIs',
+            description: 'Interactive tool to calculate and understand your BarberShop KPIs',
             type: 'component-playground' as const,
             configuration: {
               component: 'KPICalculator',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -153,7 +153,7 @@ const calculateKPIs = (data: BusinessData) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'RevenueForecastingTool',
-              props: { timeRange: '12m', userRole: 'salon_owner' }
+              props: { timeRange: '12m', userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -196,7 +196,7 @@ const calculateKPIs = (data: BusinessData) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'CustomerSegmentationTool',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -252,7 +252,7 @@ const calculateKPIs = (data: BusinessData) => {
 - **Retention Campaign Targeting**: Use data to identify re-engagement opportunities
 
 **Operational Improvements**
-- **Capacity Planning**: Use utilization data to optimize salon capacity
+- **Capacity Planning**: Use utilization data to optimize BarberShop capacity
 - **Inventory Management**: Analyze product usage patterns for better stocking
 - **Service Menu Optimization**: Add or remove services based on performance data
 - **Staff Scheduling**: Create data-driven schedules for maximum efficiency
@@ -271,7 +271,7 @@ const calculateKPIs = (data: BusinessData) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'ActionPlanGenerator',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'BarberShop_owner' }
             }
           }
         ]
@@ -300,7 +300,7 @@ const calculateKPIs = (data: BusinessData) => {
     relatedContent: [
       {
         id: 'dashboard-guide',
-        title: 'Salon Owner Dashboard Guide',
+        title: 'BarberShop Owner Dashboard Guide',
         description: 'Learn to navigate your business dashboard',
         url: '/documentation/business/owner/dashboard',
         type: 'guide'
@@ -348,10 +348,10 @@ export default function AnalyticsTrainingPage() {
   return (
     <div className="max-w-4xl">
       <GuideRenderer 
-        content={analyticsTrainingGuide}
+        guide={analyticsTrainingGuide}
         interactive={true}
         stepByStep={true}
-        userRole="salon_owner"
+        userRole="BarberShop_owner"
       />
     </div>
   )

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -200,9 +201,11 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
             >
               {imagePreview ? (
                 <div className="space-y-4">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    width={320}
+                    height={240}
                     className="max-w-xs mx-auto rounded-lg shadow-md"
                   />
                   <Button 
@@ -328,9 +331,11 @@ export default function HairSimulator({ userId }: HairSimulatorProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <img 
-                src={preview} 
-                alt="Style Preview" 
+              <Image
+                src={preview}
+                alt="Style Preview"
+                width={400}
+                height={300}
                 className="max-w-full rounded-lg shadow-lg"
               />
               

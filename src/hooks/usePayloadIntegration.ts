@@ -95,9 +95,9 @@ export function usePayloadIntegration() {
   }, [session])
 
   /**
-   * Get salon analytics from Payload
+   * Get BarberShop analytics from Payload
    */
-  const getSalonAnalytics = useCallback(async (
+  const getBarberShopAnalytics = useCallback(async (
     dateRange?: { start: Date; end: Date }
   ): Promise<PayloadAnalytics | null> => {
     if (!session) return null
@@ -333,7 +333,7 @@ export function usePayloadIntegration() {
     globalSearch,
     
     // Analytics
-    getSalonAnalytics,
+    getBarberShopAnalytics,
     
     // Appointments
     syncAppointments,

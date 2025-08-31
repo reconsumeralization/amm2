@@ -1,11 +1,11 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 import { UserRole } from '@/types/documentation'
 
 export const metadata: Metadata = {
   title: 'Customer Service Protocols - Employee Operations',
-  description: 'Professional customer service standards and communication guidelines for salon employees',
+  description: 'Professional customer service standards and communication guidelines for BarberShop employees',
 }
 
 const customerServiceGuide = {
@@ -16,7 +16,7 @@ const customerServiceGuide = {
     author: 'Customer Experience Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_employee' as UserRole],
+    targetAudience: ['BarberShop_employee' as UserRole],
     difficulty: 'intermediate' as const,
     estimatedTime: 40,
     tags: ['customer-service', 'communication', 'protocols'],
@@ -24,7 +24,7 @@ const customerServiceGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Exceptional customer service is the foundation of our salon's success. This guide provides comprehensive protocols and techniques to ensure every customer receives professional, personalized, and memorable service that encourages loyalty and positive word-of-mouth referrals.`,
+    introduction: `Exceptional customer service is the foundation of our BarberShop's success. This guide provides comprehensive protocols and techniques to ensure every customer receives professional, personalized, and memorable service that encourages loyalty and positive word-of-mouth referrals.`,
     prerequisites: [
       {
         id: 'communication-training',
@@ -35,7 +35,7 @@ const customerServiceGuide = {
       {
         id: 'product-knowledge',
         title: 'Product and Service Knowledge',
-        description: 'Understanding of all salon services and retail products',
+        description: 'Understanding of all BarberShop services and retail products',
         required: true,
       },
       {
@@ -97,6 +97,7 @@ const customerServiceGuide = {
 - End calls professionally and ensure customer satisfaction`,
         codeSnippets: [
           {
+            id: 'customer-interaction-interface',
             language: 'typescript',
             code: `// Customer interaction tracking
 interface CustomerInteraction {
@@ -126,7 +127,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'CommunicationScenarios',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -183,7 +184,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
 
 **Staff Behavior Concerns**
 - Take the complaint seriously and document details
-- Apologize on behalf of the salon and staff member
+- Apologize on behalf of the BarberShop and staff member
 - Escalate to management immediately for investigation
 - Follow up to ensure customer satisfaction with resolution`,
         codeSnippets: [],
@@ -195,7 +196,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'ComplaintResolutionSimulator',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -260,7 +261,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'UpsellingPractice',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -323,7 +324,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
 - Be clear about what services can and cannot achieve
 - Explain time requirements and realistic outcomes
 - Document interactions for future reference
-- Follow salon policies consistently and fairly`,
+- Follow BarberShop policies consistently and fairly`,
         codeSnippets: [],
         interactiveExamples: []
       },
@@ -386,7 +387,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
             type: 'component-playground' as const,
             configuration: {
               component: 'RetentionStrategies',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -402,7 +403,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
       {
         id: 'unrealistic-expectations',
         problem: 'Customer has unrealistic expectations for their service',
-        solution: 'Use visual aids (photos, before/after examples) to show realistic outcomes. Explain limitations honestly and offer alternative solutions. Document the conversation to protect both customer and salon.',
+        solution: 'Use visual aids (photos, before/after examples) to show realistic outcomes. Explain limitations honestly and offer alternative solutions. Document the conversation to protect both customer and BarberShop.',
         category: 'expectations'
       },
       {
@@ -423,7 +424,7 @@ const logInteraction = (interaction: CustomerInteraction) => {
       {
         id: 'system-usage',
         title: 'System Usage Guide',
-        description: 'Using salon management software effectively',
+        description: 'Using BarberShop management software effectively',
         url: '/documentation/business/employee/system-usage',
         type: 'guide'
       },
