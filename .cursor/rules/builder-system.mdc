@@ -1,0 +1,163 @@
+---
+globs: src/payload/collections/builder/**/*.ts
+description: Visual page builder system navigation and patterns
+---
+
+# Visual Page Builder System
+
+The project includes a comprehensive visual page builder with 19 specialized collections:
+
+## 🏗️ Builder Architecture
+
+### **Core Hierarchy:**
+```
+Templates → Pages → Sections → Blocks
+    ↓        ↓        ↓        ↓
+  Themes → Layouts → Animations → Components
+```
+
+### **Collection Relationships:**
+- **Pages** reference **Templates**, **Sections**, **Themes**
+- **Sections** contain **Blocks** and use **Layouts**
+- **Blocks** can be **ReusableComponents** or **DynamicData**
+- **Everything** connects to **Animations** and **ConditionalRules**
+
+## 📋 Collection Reference
+
+### **Content Creation:**
+- `builder-pages` - Full pages with sections and SEO
+- `builder-sections` - Page sections (header, hero, footer, etc.)
+- `builder-blocks` - Individual content blocks (text, image, CTA, etc.)
+- `builder-templates` - Reusable page templates
+
+### **Design System:**
+- `builder-layouts` - Grid/flexbox layout configurations
+- `builder-themes` - Color schemes and typography
+- `builder-animations` - CSS animations and transitions
+- `builder-global-styles` - Site-wide CSS variables
+
+### **Advanced Features:**
+- `builder-forms` - Custom form builder
+- `builder-dynamic-data` - Dynamic content sources
+- `builder-conditional-rules` - Show/hide logic
+- `builder-reusable-components` - Pre-built components
+
+### **Workflow & Versioning:**
+- `builder-drafts` - Draft versions of content
+- `builder-page-revisions` - Version history for pages
+- `builder-block-revisions` - Version history for blocks
+- `builder-publish-queue` - Scheduled publishing
+
+### **Content Enhancement:**
+- `builder-seo` - Advanced SEO settings
+- `builder-translations` - Multi-language support
+- `builder-integrations` - Third-party service integrations
+
+## 🎨 Block Types Available
+
+### **Content Blocks:**
+```typescript
+type BlockType =
+  | 'text'        // Rich text content
+  | 'image'       // Single images
+  | 'gallery'     // Image galleries
+  | 'video'       // Video embeds
+  | 'cta'         // Call-to-action buttons
+  | 'form'        // Form integration
+  | 'html'        // Custom HTML
+  | 'dynamic'     // Dynamic content
+```
+
+### **Data Blocks:**
+```typescript
+type DataBlockType =
+  | 'products'      // Product listings
+  | 'blog_posts'    // Blog post feeds
+  | 'testimonials'  // Customer testimonials
+  | 'events'        // Event listings
+  | 'services'      // Service information
+  | 'team'          // Team member profiles
+```
+
+## 🔧 Builder Patterns
+
+### **Creating a New Page:**
+1. **Choose Template** from `builder-templates`
+2. **Add Sections** from `builder-sections`
+3. **Configure Layout** from `builder-layouts`
+4. **Apply Theme** from `builder-themes`
+5. **Add Blocks** from `builder-blocks`
+6. **Set SEO** from `builder-seo`
+
+### **Block Configuration:**
+```typescript
+{
+  name: 'Hero Section',
+  type: 'text',
+  content: { /* block-specific content */ },
+  styling: { /* visual styling */ },
+  animation: 'fade-in', // Reference to builder-animations
+  conditionalRules: [] // References to builder-conditional-rules
+}
+```
+
+## 🎯 Navigation Tips
+
+### **Finding Block Types:**
+```typescript
+// Text blocks
+src/payload/collections/builder/Blocks.ts (type: 'text')
+
+// Form blocks
+src/payload/collections/builder/Blocks.ts (type: 'form')
+src/payload/collections/builder/Forms.ts
+
+// Dynamic blocks
+src/payload/collections/builder/Blocks.ts (type: 'dynamic')
+src/payload/collections/builder/DynamicData.ts
+```
+
+### **Layout Options:**
+```typescript
+// Grid layouts
+src/payload/collections/builder/Layouts.ts (type: 'grid')
+
+// Flexbox layouts
+src/payload/collections/builder/Layouts.ts (type: 'flex')
+
+// Custom layouts
+src/payload/collections/builder/Layouts.ts (type: 'custom')
+```
+
+## 🚀 Builder Best Practices
+
+1. **Use Templates** for consistent page structure
+2. **Leverage ReusableComponents** for common elements
+3. **Apply ConditionalRules** for dynamic content
+4. **Utilize Animations** sparingly for performance
+5. **Configure SEO** early in the page creation process
+6. **Use Drafts** for iterative development
+7. **Schedule Publishing** with the publish queue
+
+## 🔍 Debugging Builder Issues
+
+### **Common Problems:**
+- **Missing Relationships**: Check `relationTo` fields
+- **Access Denied**: Verify user roles and permissions
+- **Broken Layouts**: Check `builder-layouts` configuration
+- **Animation Issues**: Verify `builder-animations` setup
+
+### **Quick Fixes:**
+```typescript
+// Fix missing tenant relationship
+tenant: {
+  relationTo: 'tenants',
+  required: true
+}
+
+// Fix missing user tracking
+createdBy: {
+  relationTo: 'users',
+  admin: { readOnly: true }
+}
+```

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import HeroSection from '@/components/sections/hero-section'
+import HeroSection from '@/components/features/sections/hero-section'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

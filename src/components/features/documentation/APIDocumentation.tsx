@@ -311,11 +311,12 @@ export function APIDocumentation({
       )}
 
       {/* Code Generator Modal */}
-      {showCodeGen && selectedEndpoint && (
+      {selectedEndpoint && (
         <CodeGenerator
           endpoint={selectedEndpoint}
           sdkConfig={sdkGeneration}
-          onClose={() => setShowCodeGen(false)}
+          open={showCodeGen}
+          onOpenChange={setShowCodeGen}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler'
@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const { id } = await params
 
     const stylist = await payload.findByID({
@@ -59,23 +59,23 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401)
     }
 
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const { id } = await params
     const body = await request.json()
 
     // Check permissions - admin can update any stylist, stylists can update their own profile
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       // For non-admin users, verify they own the stylist profile
       const existingStylist = await payload.findByID({
         collection: 'stylists',
         id,
       })
 
-      if (!existingStylist || existingStylist.user !== session.user.id) {
+      if (!existingStylist || existingStylist.user !== (session as any).user.id) {
         return createErrorResponse('Insufficient permissions', ERROR_CODES.FORBIDDEN, 403)
       }
     }
@@ -86,7 +86,7 @@ export async function PUT(
       id,
       data: {
         ...body,
-        updatedBy: session.user.id,
+        updatedBy: (session as any).user.id,
       },
       depth: 2,
     })
@@ -109,16 +109,16 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401)
     }
 
     // Only admins can delete stylists
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       return createErrorResponse('Insufficient permissions', ERROR_CODES.FORBIDDEN, 403)
     }
 
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const { id } = await params
 
     // Check if stylist exists

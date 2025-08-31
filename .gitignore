@@ -118,12 +118,3 @@ temp/
 
 # Payload CMS
 payload.config.ts
-
-# SWC cache
-.swc/
-
-# Claude cache
-.claude/
-
-# Cursor cache
-.cursor/

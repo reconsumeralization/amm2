@@ -30,7 +30,11 @@ import { SEOSettings } from './content/SEOSettings';
 import { Tags } from './content/Tags';
 
 // CRM Collections
+import { Appointments } from './crm/Appointments-main'; // Added: migrated from main collections
 import { Cancellations } from './crm/Cancellations';
+import { Chatbot } from './crm/Chatbot';
+import { ChatConversations as CRMChatConversations } from './crm/ChatConversations';
+import { ChatMessages } from './crm/ChatMessages';
 import { Contacts } from './crm/Contacts';
 import { CustomerNotes } from './crm/CustomerNotes';
 import { CustomerTags } from './crm/CustomerTags';
@@ -40,7 +44,6 @@ import { LoyaltyProgram } from './crm/LoyaltyProgram';
 import { Reviews } from './crm/Reviews';
 import { Subscriptions } from './crm/Subscriptions';
 import { Testimonials } from './crm/Testimonials';
-import { Appointments } from './crm/Appointments-main'; // Added: migrated from main collections
 
 // Staff Collections
 import { ClockRecords } from './staff/ClockRecords';
@@ -156,7 +159,11 @@ const rawCollections = [
   Tags,
 
   // CRM Collections
+  Appointments, // Migrated from main collections
   Cancellations,
+  Chatbot,
+  CRMChatConversations, // CRM version
+  ChatMessages,
   Contacts,
   CustomerNotes,
   CustomerTags,
@@ -166,7 +173,6 @@ const rawCollections = [
   Reviews,
   Subscriptions,
   Testimonials,
-  Appointments, // Migrated from main collections
 
   // Staff Collections
   ClockRecords,

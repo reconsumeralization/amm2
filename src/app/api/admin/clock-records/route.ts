@@ -1,25 +1,26 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 
 // GET - List clock records with filtering
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const { searchParams } = new URL(req.url);
 
     // Build query based on user role and filters
     let where: any = {};
 
     // Filter by staff if user is not admin/manager
-    if (session.user.role !== 'admin' && session.user.role !== 'manager') {
-      where.staff = { equals: session.user.id };
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager') {
+      where.staff = { equals: (session as any).user.id };
     }
 
     // Apply filters from query params

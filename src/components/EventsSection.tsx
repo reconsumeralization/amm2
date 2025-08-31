@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -46,11 +47,7 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
   const [error, setError] = useState('');
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchEvents();
-  }, [showPast]);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -73,7 +70,11 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, showPast]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [showPast, fetchEvents]);
 
   const handleRSVP = async (eventId: string, action: 'attend' | 'waitlist' | 'cancel') => {
     if (!userId) {
@@ -217,9 +218,11 @@ export default function EventsSection({ userId, limit = 6, showPast = false }: E
 
               <CardHeader className="pb-3">
                 <div className="aspect-video relative overflow-hidden rounded-lg mb-4">
-                  <img
+                  <Image
                     src={event.image.url}
                     alt={event.image.alt || event.title}
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover"
                   />
                 </div>

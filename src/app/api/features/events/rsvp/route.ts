@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { sendEmail } from '../../../../../utils/email';
 
 
@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Get the event
     const event = await payload.findByID({

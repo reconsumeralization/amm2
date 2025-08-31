@@ -2,8 +2,7 @@ import './globals.css';
 import '../styles/responsive-image.css';
 import { Providers } from '@/providers/providers';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { Navbar } from '@/components/layout/navbar';
-import { Footer } from '@/components/layout/footer';
+import { ClientLayout } from '@/components/layout/client-layout';
 
 import { Metadata } from 'next';
 
@@ -34,11 +33,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body suppressHydrationWarning>
         <ErrorBoundary>
           <Providers>
-            <Navbar />
-            <main className="pt-16 min-h-screen">
+            <ClientLayout>
               {children}
-            </main>
-            <Footer />
+            </ClientLayout>
           </Providers>
         </ErrorBoundary>
       </body>

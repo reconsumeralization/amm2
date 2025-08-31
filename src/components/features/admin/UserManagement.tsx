@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,11 +39,7 @@ export function UserManagement() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [showCreateForm, setShowCreateForm] = useState(false)
 
-  useEffect(() => {
-    fetchUsers()
-  }, [searchTerm, roleFilter, statusFilter])
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -81,7 +77,11 @@ export function UserManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchTerm, roleFilter, statusFilter])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [searchTerm, roleFilter, statusFilter, fetchUsers])
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {

@@ -1,15 +1,16 @@
 // src/app/api/reviews/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Dynamic import for payload config
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const review = await payload.findByID({
       collection: 'reviews',
       id: id,
@@ -28,11 +29,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED');
     }
 
-    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const review = await payload.findByID({
         collection: 'reviews',
         id: id,
@@ -42,7 +44,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         return createErrorResponse('Review not found', 'RESOURCE_NOT_FOUND');
     }
 
-    if (review.user.id !== session.user.id && session.user.role !== 'admin' && session.user.role !== 'manager') {
+    if (review.user.id !== (session as any).user.id && (session as any).user.role !== 'admin' && (session as any).user.role !== 'manager') {
         return createErrorResponse('Forbidden', 'FORBIDDEN');
     }
 
@@ -63,11 +65,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED');
     }
 
-    const payload = await getPayload({ config: (await import('../../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const review = await payload.findByID({
         collection: 'reviews',
         id: id,
@@ -77,7 +80,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         return createErrorResponse('Review not found', 'RESOURCE_NOT_FOUND');
     }
 
-    if (review.user.id !== session.user.id && session.user.role !== 'admin' && session.user.role !== 'manager') {
+    if (review.user.id !== (session as any).user.id && (session as any).user.role !== 'admin' && (session as any).user.role !== 'manager') {
         return createErrorResponse('Forbidden', 'FORBIDDEN');
     }
 

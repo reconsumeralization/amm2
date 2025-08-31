@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import { OpenAIApi, Configuration } from 'openai';
+import { getPayloadClient } from '@/payload';
+import OpenAI from 'openai';
 import sharp from 'sharp';
 import config from '../../../../../payload.config';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 // Valid formats for sharp
 const VALID_FORMATS = ['jpeg', 'png', 'webp', 'avif', 'gif', 'tiff'] as const;
@@ -25,7 +24,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Get Payload instance
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Fetch the uploaded image
     const media = await payload.findByID({
@@ -49,18 +49,18 @@ export async function POST(req: NextRequest) {
     const imageFile = new File([blob], 'image.jpg', { type: 'image/jpeg' });
 
     // Generate the hair style preview using OpenAI
-    const response = await openai.createImage({
+    const response = await openai.images.generate({
       prompt: `${prompt}. Professional barbershop quality, natural lighting, realistic result.`,
       n: 1,
       size: "1024x1024",
     });
 
-    if (!response.data || !response.data.data || !response.data.data[0]?.url) {
+    if (!response.data || !response.data[0]?.url) {
       throw new Error('Failed to generate image');
     }
 
     // Download the generated image and upload to our media collection
-    const generatedImageResponse = await fetch(response.data.data[0].url);
+    const generatedImageResponse = await fetch(response.data[0].url);
     const generatedImageBuffer = await generatedImageResponse.arrayBuffer();
     const generatedImageBlob = new Blob([generatedImageBuffer]);
     const generatedImageFile = new File([generatedImageBlob], 'hair-preview.jpg', { type: 'image/jpeg' });

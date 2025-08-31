@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import type React from "react"
+import Image from "next/image"
 // Icons temporarily replaced with text placeholders due to import issues
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -180,9 +181,11 @@ const modernMenPages = [
           </div>
         </nav>
         <div className="relative h-96 bg-black flex items-center justify-center overflow-hidden">
-          <img
+          <Image
             src={imageUrl || "/placeholder.svg"}
             alt="Hero"
+            width={800}
+            height={384}
             className="absolute inset-0 w-full h-full object-cover opacity-70"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -220,7 +223,7 @@ const modernMenPages = [
           <h2 className="text-4xl font-black text-center mb-12 text-red-600">OUR SERVICES</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden border border-red-600">
-              <img src={imageUrl || "/placeholder.svg"} alt="Service" className="w-full h-48 object-cover" />
+              <Image src={imageUrl || "/placeholder.svg"} alt="Service" width={400} height={192} className="w-full h-48 object-cover" />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 text-white">Premium Haircut</h3>
                 <p className="text-gray-300">Professional styling for the modern gentleman</p>
@@ -281,9 +284,11 @@ const modernMenPages = [
               </p>
             </div>
             <div className="relative">
-              <img
+              <Image
                 src={imageUrl || "/placeholder.svg"}
                 alt="About"
+                width={600}
+                height={384}
                 className="w-full h-96 object-cover rounded-lg shadow-lg border border-red-600"
               />
             </div>
@@ -1019,7 +1024,7 @@ export default function ModernMenImageEditor() {
           setIsInlineEditing(true)
 
           // Load the image for editing
-          const newImg = new Image()
+          const newImg = new (window.Image as any)()
           newImg.crossOrigin = "anonymous"
           newImg.onload = () => {
             setImage(newImg)
@@ -1449,7 +1454,7 @@ export default function ModernMenImageEditor() {
                   </label>
                   <Slider
                     value={[adjustments.brightness]}
-                    onValueChange={([value]) => {
+                    onValueChange={([value]: [number]) => {
                       setAdjustments((prev) => ({ ...prev, brightness: value }))
                       if (realTimePreview) {
                         setTimeout(applyAdjustments, 100)
@@ -1473,7 +1478,7 @@ export default function ModernMenImageEditor() {
                   </label>
                   <Slider
                     value={[adjustments.contrast]}
-                    onValueChange={([value]) => {
+                    onValueChange={([value]: [number]) => {
                       setAdjustments((prev) => ({ ...prev, contrast: value }))
                       if (realTimePreview) {
                         setTimeout(applyAdjustments, 100)
@@ -1497,7 +1502,7 @@ export default function ModernMenImageEditor() {
                   </label>
                   <Slider
                     value={[adjustments.saturation]}
-                    onValueChange={([value]) => {
+                    onValueChange={([value]: [number]) => {
                       setAdjustments((prev) => ({ ...prev, saturation: value }))
                       if (realTimePreview) {
                         setTimeout(applyAdjustments, 100)
@@ -1518,7 +1523,7 @@ export default function ModernMenImageEditor() {
                   </label>
                   <Slider
                     value={[adjustments.scale]}
-                    onValueChange={([value]) => {
+                    onValueChange={([value]: [number]) => {
                       setAdjustments((prev) => ({ ...prev, scale: value }))
                       if (realTimePreview) {
                         setTimeout(applyAdjustments, 100)
@@ -1728,10 +1733,12 @@ export default function ModernMenImageEditor() {
                       />
                     </div>
 
-                    <img
+                    <Image
                       ref={imageRef}
                       src={uploadedImage || "/placeholder.svg"}
                       alt="Uploaded"
+                      width={800}
+                      height={600}
                       className="hidden"
                       onLoad={applyAdjustments}
                     />
@@ -1813,7 +1820,7 @@ export default function ModernMenImageEditor() {
                         <Label className="text-gray-300">Brightness</Label>
                         <Slider
                           value={[brightness]}
-                          onValueChange={(value) => setBrightness(value[0])}
+                          onValueChange={(value: number[]) => setBrightness(value[0])}
                           min={-100}
                           max={100}
                           step={1}
@@ -1824,7 +1831,7 @@ export default function ModernMenImageEditor() {
                         <Label className="text-gray-300">Contrast</Label>
                         <Slider
                           value={[contrast]}
-                          onValueChange={(value) => setContrast(value[0])}
+                          onValueChange={(value: number[]) => setContrast(value[0])}
                           min={-100}
                           max={100}
                           step={1}
@@ -1835,7 +1842,7 @@ export default function ModernMenImageEditor() {
                         <Label className="text-gray-300">Saturation</Label>
                         <Slider
                           value={[saturation]}
-                          onValueChange={(value) => setSaturation(value[0])}
+                          onValueChange={(value: number[]) => setSaturation(value[0])}
                           min={-100}
                           max={100}
                           step={1}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Calendar, CalendarProps } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,8 +15,8 @@ interface TimeSlot {
 }
 
 interface BookingCalendarProps {
-  onDateSelect: (date: Date) => void
-  onTimeSelect: (time: string) => void
+  onDateSelect?: (date: Date) => void
+  onTimeSelect?: (time: string) => void
   selectedDate?: Date
   selectedTime?: string
   stylistId?: string
@@ -46,13 +46,7 @@ export function BookingCalendar({
     return isBefore(date, today) || dayOfWeek === 0 // Sunday
   }
 
-  useEffect(() => {
-    if (selectedDate) {
-      fetchAvailableSlots(selectedDate)
-    }
-  }, [selectedDate, stylistId])
-
-  const fetchAvailableSlots = async (date: Date) => {
+  const fetchAvailableSlots = useCallback(async (date: Date) => {
     setLoading(true)
     try {
       const response = await fetch(`/api/appointments/availability?date=${date.toISOString()}&stylistId=${stylistId || ''}`)
@@ -65,13 +59,19 @@ export function BookingCalendar({
     } finally {
       setLoading(false)
     }
-  }
+  }, [stylistId])
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      onDateSelect(date)
+      onDateSelect?.(date)
     }
   }
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchAvailableSlots(selectedDate)
+    }
+  }, [selectedDate, stylistId, fetchAvailableSlots])
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -124,7 +124,7 @@ export function BookingCalendar({
                   key={slot.time}
                   variant={selectedTime === slot.time ? "default" : "outline"}
                   disabled={!slot.available}
-                  onClick={() => onTimeSelect(slot.time)}
+                  onClick={() => onTimeSelect?.(slot.time)}
                   className={`h-12 ${
                     selectedTime === slot.time 
                       ? 'bg-amber-500 hover:bg-amber-600' 

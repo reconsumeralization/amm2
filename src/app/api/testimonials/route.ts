@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../../utils/email';
 
@@ -11,7 +11,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const testimonial = await payload.create({
       collection: 'testimonials',
       data: { content, barber, client, tenant: tenantId, status: 'pending' },

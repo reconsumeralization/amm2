@@ -11,9 +11,9 @@ export function TestSession() {
       <p>Status: {status}</p>
       {session ? (
         <div>
-          <p>User: {session.user?.name}</p>
-          <p>Email: {session.user?.email}</p>
-          <p>Role: {session.user?.role}</p>
+          <p>User: {(session as any).user?.name}</p>
+          <p>Email: {(session as any).user?.email}</p>
+          <p>Role: {(session as any).user?.role}</p>
         </div>
       ) : (
         <p>No session</p>

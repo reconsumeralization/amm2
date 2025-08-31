@@ -30,11 +30,11 @@ export function useMonitoring() {
 
   // Set user context when session changes
   useEffect(() => {
-    if (session?.user) {
+    if ((session as any)?.user) {
       monitoring.log?.('User session changed', {
-        userId: session.user.id,
-        email: session.user.email,
-        role: session.user.role
+        userId: ((session as any).user)?.id,
+        email: ((session as any).user)?.email,
+        role: ((session as any).user)?.role
       })
     }
   }, [session])

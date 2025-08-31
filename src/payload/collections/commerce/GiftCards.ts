@@ -6,10 +6,17 @@ export const GiftCards: CollectionConfig = {
     useAsTitle: 'code',
   },
   access: {
-    read: () => true,
-    create: ({ req }: any) => !!req.user && req.user.roles?.includes('admin'),
-    update: ({ req }: any) => !!req.user && req.user.roles?.includes('admin'),
-    delete: ({ req }: any) => !!req.user && req.user.roles?.includes('admin'),
+    read: ({ req }) => {
+      if (!req.user) return false;
+      // Only authenticated users with proper tenant access
+      if (req.user.role === 'admin' || req.user.role === 'manager') {
+        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      }
+      return false;
+    },
+    create: ({ req }: any) => !!req.user && req.user?.role === 'admin',
+    update: ({ req }: any) => !!req.user && req.user?.role === 'admin',
+    delete: ({ req }: any) => !!req.user && req.user?.role === 'admin',
   },
   fields: [
     {

@@ -78,7 +78,7 @@ export const Orders: CollectionConfig = {
         },
       ],
     },
-    {
+        {
       name: 'pricing',
       type: 'group',
       admin: {
@@ -98,8 +98,8 @@ export const Orders: CollectionConfig = {
         {
           name: 'tax',
           type: 'number',
-          defaultValue: 0,
           min: 0,
+          defaultValue: 0,
           admin: {
             description: 'Tax amount in cents',
             readOnly: true,
@@ -108,8 +108,8 @@ export const Orders: CollectionConfig = {
         {
           name: 'shipping',
           type: 'number',
-          defaultValue: 0,
           min: 0,
+          defaultValue: 0,
           admin: {
             description: 'Shipping cost in cents',
             readOnly: true,
@@ -118,8 +118,8 @@ export const Orders: CollectionConfig = {
         {
           name: 'discount',
           type: 'number',
-          defaultValue: 0,
           min: 0,
+          defaultValue: 0,
           admin: {
             description: 'Discount amount in cents',
             readOnly: true,
@@ -131,8 +131,16 @@ export const Orders: CollectionConfig = {
           required: true,
           min: 0,
           admin: {
-            description: 'Total order amount in cents',
+            description: 'Total amount in cents',
             readOnly: true,
+          },
+        },
+        {
+          name: 'appliedPromotion',
+          type: 'relationship',
+          relationTo: 'promotions',
+          admin: {
+            description: 'Applied promotion/coupon',
           },
         },
       ],
@@ -619,32 +627,32 @@ export const Orders: CollectionConfig = {
           }
         }
 
-        // Call existing hooks if they exist
-        try {
-          await updateInventory(doc, operation);
-          await updateLoyaltyPoints(doc, req);
-          await sendOrderNotifications(doc, operation, req);
-          await updateOrderAnalytics(doc, operation);
-        } catch (error) {
-          console.error('Error in legacy hooks:', error);
-        }
+        // Legacy hooks have been integrated into the main hook logic above
       },
     ],
   },
   access: {
-    read: ({ req }) => {
+    read: ({ req }: any): any => {
+      if (!req.user) return false;
+      
+      // Super-admin has access to all orders
+      if (req.user.role === 'super-admin') return true;
+      
+      // Admin/Manager: tenant-based access
+      if (req.user.role === 'admin' || req.user.role === 'manager') {
+        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      }
+      
+      // Customer can only see their own orders
+      return { customer: { equals: req.user.id } };
+    },
+    create: ({ req }: any): any => !!req.user,
+    update: ({ req }: any): any => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      if (req.user.role === 'barber') return true // Barbers may need to view orders
       return { customer: { equals: req.user.id } }
     },
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => {
-      if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      return { customer: { equals: req.user.id } }
-    },
-    delete: ({ req }) => {
+    delete: ({ req }: any): any => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
       return false // Customers cannot delete orders
@@ -668,59 +676,4 @@ export const Orders: CollectionConfig = {
   timestamps: true,
 };
 
-async function updateInventory(doc: any, operation: string) {
-  try {
-    if (operation === 'create' && doc.items) {
-      for (const item of doc.items) {
-        // Decrease product inventory
-        // This would be implemented based on your inventory management system
-        console.log(`Updating inventory for product ${item.product}: -${item.quantity}`);
-      }
-    }
-  } catch (error) {
-    console.error('Inventory update failed:', error);
-  }
-}
-
-async function updateLoyaltyPoints(doc: any, req: any) {
-  try {
-    if (doc.loyaltyPoints?.earned > 0) {
-      // Add points to customer's loyalty account
-      // await req.payload.update({
-      //   collection: 'customers',
-      //   id: doc.customer,
-      //   data: {
-      //     'loyalty.points': { increment: doc.loyaltyPoints.earned }
-      //   },
-      // });
-    }
-  } catch (error) {
-    console.error('Loyalty points update failed:', error);
-  }
-}
-
-async function sendOrderNotifications(doc: any, operation: string, req: any) {
-  try {
-    // Send order confirmation email
-    if (operation === 'create') {
-      // await sendOrderConfirmationEmail(doc);
-    }
-    
-    // Send status update notifications
-    if (operation === 'update') {
-      // await sendStatusUpdateNotification(doc);
-    }
-  } catch (error) {
-    console.error('Order notifications failed:', error);
-  }
-}
-
-async function updateOrderAnalytics(doc: any, operation: string) {
-  try {
-    // Update order analytics and reporting
-    // This would integrate with your analytics system
-    console.log(`Order analytics updated for order: ${doc.orderNumber}`);
-  } catch (error) {
-    console.error('Order analytics update failed:', error);
-  }
-}
+// Helper functions for order processing have been integrated into the main hooks above

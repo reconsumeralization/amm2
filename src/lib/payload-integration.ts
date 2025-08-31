@@ -3,7 +3,7 @@
  * Provides mless integration between Payload CMS and the Modern Men barber shop application
  */
 
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
 import type { Payload } from 'payload/types'
 import { getUserFromSession } from '@/lib/documentation-auth'
 import { BusinessDocumentation } from '@/types/business-documentation'
@@ -35,9 +35,7 @@ export class PayloadIntegrationService {
    */
   async initialize(): Promise<void> {
     if (!this.payload) {
-      this.payload = await getPayload({
-        config: require('../payload.config.ts').default
-      })
+      this.payload = await getPayloadClient()
     }
   }
 

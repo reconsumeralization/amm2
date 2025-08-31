@@ -172,7 +172,7 @@ export default function ImageComponent({
     } finally {
       setIsLoading(false);
     }
-  }, [completedCrop, filters, quality, format, maxWidth, maxHeight, editor, nodeKey, altText, alt, applyFilters, handleError]);
+  }, [completedCrop, quality, format, maxWidth, maxHeight, editor, nodeKey, altText, alt, applyFilters, handleError]);
 
   const resetFilters = useCallback(() => {
     setFilters(DEFAULT_FILTERS);

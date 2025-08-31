@@ -1,13 +1,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { unstable_noStore as noStore } from 'next/cache';
 
 
 export async function GET() {
   noStore();
   try {
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const services = await payload.find({
       collection: 'services',
       limit: 100, // Adjust limit as needed
@@ -21,7 +22,8 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const data = await req.json();
     const newService = await payload.create({
       collection: 'services',

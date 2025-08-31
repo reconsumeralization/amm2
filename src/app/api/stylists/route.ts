@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler'
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const specialization = searchParams.get('specialization')
     const sort = searchParams.get('sort') || 'displayOrder'
 
-    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
 
     // Build query filters
     const where: any = {}
@@ -90,16 +90,16 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or manager
-    if (session.user.role !== 'admin' && session.user.role !== 'manager') {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const body = await request.json()
 
     // Validate stylist data (you can add more validation here)
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       collection: 'stylists',
       data: {
         ...body,
-        createdBy: session.user.id,
+        createdBy: (session as any).user.id,
       },
       depth: 2,
     })

@@ -1,14 +1,15 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { Input } from './input'
 import { Button } from './button'
 import { Search, X, Filter, Loader2 } from '@/lib/icon-mapping'
 import { cn } from '@/lib/utils'
-import { useMonitoring } from '@/hooks/useMonitoring'
+import { useDebounce } from '@/hooks/use-debounce'
+import { SearchFilterPanel } from './search-filter-panel'
 
 interface SearchInputProps {
-  onSearch: (query: string, filters?: any) => void
   placeholder?: string
   className?: string
   showFilters?: boolean
@@ -17,13 +18,13 @@ interface SearchInputProps {
 }
 
 export function SearchInput({
-  onSearch,
   placeholder = 'search documentation...',
   className,
   showFilters = true,
   isLoading = false,
   initialQuery = ''
 }: SearchInputProps) {
+  const router = useRouter();
   const [query, setQuery] = useState(initialQuery)
   const [showFilterPanel, setShowFilterPanel] = useState(false)
   const [filters, setFilters] = useState({
@@ -33,36 +34,50 @@ export function SearchInput({
     tags: [] as string[]
   })
 
+  const debouncedQuery = useDebounce(query, 300);
+  const debouncedFilters = useDebounce(filters, 300);
+
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Debounce search
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query.trim()) {
-        onSearch(query, filters)
-        // Will be updated with actual results count
-      }
-    }, 300)
+    const params = new URLSearchParams();
+    params.set('q', debouncedQuery);
 
-    return () => clearTimeout(timer)
-  }, [query, filters, onSearch])
+    Object.entries(debouncedFilters).forEach(([key, values]) => {
+      if (values.length > 0) {
+        params.set(key, values.join(','));
+      }
+    });
+
+    router.push(`/documentation/search?${params.toString()}`);
+
+  }, [debouncedQuery, debouncedFilters, router])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (query.trim()) {
-      onSearch(query, filters)
-    }
+    const params = new URLSearchParams();
+    params.set('q', query);
+    Object.entries(filters).forEach(([key, values]) => {
+      if (values.length > 0) {
+        params.set(key, values.join(','));
+      }
+    });
+    router.push(`/documentation/search?${params.toString()}`);
   }
 
   const clearSearch = () => {
     setQuery('')
+    clearFilters()
+    inputRef.current?.focus()
+  }
+
+  const clearFilters = () => {
     setFilters({
       category: [],
       type: [],
       difficulty: [],
       tags: []
     })
-    inputRef.current?.focus()
   }
 
   const toggleFilter = (filterType: string, value: string) => {
@@ -87,7 +102,7 @@ export function SearchInput({
     <div className={cn('relative w-full', className)}>
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative flex items-center">
-          <rch className="absolute left-3 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
           <Input
             ref={inputRef}
             type="text"
@@ -135,101 +150,13 @@ export function SearchInput({
         </div>
       </form>
 
-      {/* Filter Panel */}
       {showFilterPanel && showFilters && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-lg shadow-lg z-50 p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Category Filter */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Category</label>
-              <div className="space-y-1">
-                {['ui', 'layout', 'charts', 'admin', 'documentation'].map(category => (
-                  <label key={category} className="flex items-center space-x-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={filters.category.includes(category)}
-                      onChange={() => toggleFilter('category', category)}
-                      className="rounded"
-                    />
-                    <span className="capitalize">{category}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Type Filter */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Type</label>
-              <div className="space-y-1">
-                {['component', 'guide', 'api', 'reference'].map(type => (
-                  <label key={type} className="flex items-center space-x-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={filters.type.includes(type)}
-                      onChange={() => toggleFilter('type', type)}
-                      className="rounded"
-                    />
-                    <span className="capitalize">{type}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Difficulty Filter */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Difficulty</label>
-              <div className="space-y-1">
-                {['beginner', 'intermediate', 'advanced'].map(difficulty => (
-                  <label key={difficulty} className="flex items-center space-x-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={filters.difficulty.includes(difficulty)}
-                      onChange={() => toggleFilter('difficulty', difficulty)}
-                      className="rounded"
-                    />
-                    <span className="capitalize">{difficulty}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Tags Filter */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Tags</label>
-              <div className="space-y-1">
-                {['accessibility', 'example', 'required', 'interactive'].map(tag => (
-                  <label key={tag} className="flex items-center space-x-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={filters.tags.includes(tag)}
-                      onChange={() => toggleFilter('tags', tag)}
-                      className="rounded"
-                    />
-                    <span>{tag}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center mt-4 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={clearSearch}
-            >
-              Clear All Filters
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => setShowFilterPanel(false)}
-            >
-              Apply Filters
-            </Button>
-          </div>
-        </div>
+        <SearchFilterPanel 
+          filters={filters} 
+          toggleFilter={toggleFilter} 
+          clearFilters={clearFilters}
+          onApply={() => setShowFilterPanel(false)}
+        />
       )}
     </div>
   )

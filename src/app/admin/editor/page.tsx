@@ -37,7 +37,7 @@ export default function AdminEditorPage() {
       return
     }
 
-    if (session.user?.role !== 'admin' && session.user?.role !== 'manager') {
+    if ((session as any).user?.role !== 'admin' && (session as any).user?.role !== 'manager') {
       router.push('/portal')
       return
     }
@@ -54,7 +54,7 @@ export default function AdminEditorPage() {
     )
   }
 
-  if (!session || (session.user?.role !== 'admin' && session.user?.role !== 'manager')) {
+  if (!session || ((session as any).user?.role !== 'admin' && (session as any).user?.role !== 'manager')) {
     return null // Will redirect in useEffect
   }
 

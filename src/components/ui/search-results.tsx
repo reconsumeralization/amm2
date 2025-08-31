@@ -45,7 +45,7 @@ const getTypeIcon = (type: SearchResult['type']) => {
     case 'reference':
       return <FileText className="h-4 w-4" />
     default:
-      return <rch className="h-4 w-4" />
+      return <Search className="h-4 w-4" />
   }
 }
 

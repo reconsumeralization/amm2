@@ -1,19 +1,19 @@
 // src/app/crm/calendar/page.tsx
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import AppointmentCalendar from '@/components/crm/AppointmentCalendar';
 
 async function getAppointments() {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || (((session as any).user)?.role !== 'admin' && ((session as any).user)?.role !== 'manager')) {
         throw new Error('Unauthorized');
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+    const payload = await getPayloadClient();
 
     const appointments = await payload.find({
         collection: 'appointments',

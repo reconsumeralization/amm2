@@ -21,7 +21,7 @@ import { Documentation } from './payload/collections/Documentation'
 import { DocumentationTemplates } from './payload/collections/DocumentationTemplates'
 import { DocumentationWorkflows } from './payload/collections/DocumentationWorkflows'
 
-import getPayloadClient from './payload'
+import { getPayloadClient } from '@/payload'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

@@ -1,11 +1,12 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 // import { uploadToBunny } from '../../../../utils/bunny';
 
 export async function POST(req: Request) {
   const { imageId, style, width, formats, quality, tenantId } = await req.json();
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // 1. Authentication Check: Get user from request headers
   const authHeader = req.headers.get('authorization');

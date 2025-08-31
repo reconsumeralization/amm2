@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,38 +14,18 @@ import { cn } from '@/lib/utils'
 interface CodeGeneratorProps {
   endpoint: APIEndpoint
   sdkConfig?: SDKGenerationConfig
-  onClose: () => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorProps) {
+export function CodeGenerator({ endpoint, sdkConfig, open, onOpenChange }: CodeGeneratorProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<string>('typescript')
   const [generatedCode, setGeneratedCode] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
-  const availableLanguages = sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl']
+  const availableLanguages = useMemo(() => sdkConfig?.languages || ['typescript', 'javascript', 'python', 'curl'], [sdkConfig?.languages])
 
-  useEffect(() => {
-    generateCodeForAllLanguages()
-  }, [endpoint])
-
-  const generateCodeForAllLanguages = async () => {
-    setLoading(true)
-    const codeMap: Record<string, string> = {}
-
-    for (const language of availableLanguages) {
-      try {
-        codeMap[language] = await generateCodeForLanguage(language)
-      } catch (error) {
-        console.error(`Failed to generate ${language} code:`, error)
-        codeMap[language] = `// Error generating ${language} code`
-      }
-    }
-
-    setGeneratedCode(codeMap)
-    setLoading(false)
-  }
-
-  const generateCodeForLanguage = async (language: string): Promise<string> => {
+  const generateCodeForLanguage = useCallback(async (language: string): Promise<string> => {
     const baseUrl = sdkConfig?.baseUrl || 'https://api.modernmen.com'
     const includeAuth = sdkConfig?.includeAuth !== false
 
@@ -65,7 +45,28 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
       default:
         return `// ${language} code generation not implemented`
     }
-  }
+  }, [endpoint, sdkConfig])
+
+  const generateCodeForAllLanguages = useCallback(async () => {
+    setLoading(true)
+    const codeMap: Record<string, string> = {}
+
+    for (const language of availableLanguages) {
+      try {
+        codeMap[language] = await generateCodeForLanguage(language)
+      } catch (error) {
+        console.error(`Failed to generate ${language} code:`, error)
+        codeMap[language] = `// Error generating ${language} code`
+      }
+    }
+
+    setGeneratedCode(codeMap)
+    setLoading(false)
+  }, [availableLanguages, generateCodeForLanguage])
+
+  useEffect(() => {
+    generateCodeForAllLanguages()
+  }, [endpoint, generateCodeForAllLanguages])
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code)
@@ -106,7 +107,7 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
   }
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -200,21 +201,21 @@ export function CodeGenerator({ endpoint, sdkConfig, onClose }: CodeGeneratorPro
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium">Base URL:</span>
-                    <code className="ml-2 bg-muted px-2 py-1 rounded">{sdkConfig.baseUrl}</code>
+                    <code className="ml-2 bg-muted px-2 py-1 rounded">{sdkConfig?.baseUrl || 'Not specified'}</code>
                   </div>
                   <div>
                     <span className="font-medium">Authentication:</span>
-                    <Badge variant={sdkConfig.includeAuth ? 'default' : 'secondary'} className="ml-2">
-                      {sdkConfig.includeAuth ? 'Included' : 'Not included'}
+                    <Badge variant={sdkConfig?.includeAuth ? 'default' : 'secondary'} className="ml-2">
+                      {sdkConfig?.includeAuth ? 'Included' : 'Not included'}
                     </Badge>
                   </div>
-                  {sdkConfig.packageName && (
+                  {sdkConfig?.packageName && (
                     <div>
                       <span className="font-medium">Package Name:</span>
                       <code className="ml-2 bg-muted px-2 py-1 rounded">{sdkConfig.packageName}</code>
                     </div>
                   )}
-                  {sdkConfig.version && (
+                  {sdkConfig?.version && (
                     <div>
                       <span className="font-medium">Version:</span>
                       <code className="ml-2 bg-muted px-2 py-1 rounded">{sdkConfig.version}</code>
@@ -270,7 +271,7 @@ interface ${endpoint.operationId}Request {
   })
 
   const queryStringCode = endpoint.parameters.query.length > 0 ? `
-  const queryParams = new URLrchParams()
+  const queryParams = new URLSearchParams()
   ${endpoint.parameters.query.map(p => `
   if (params.${p.name} !== undefined) {
     queryParams.append('${p.name}', String(params.${p.name}))
@@ -313,7 +314,7 @@ function generateJavaScriptCode(endpoint: APIEndpoint, baseUrl: string, includeA
 
   const pathParams = endpoint.parameters.path.map(p => p.name).join(', ')
   const queryParams = endpoint.parameters.query.length > 0 ? `
-  const queryParams = new URLrchParams()
+  const queryParams = new URLSearchParams()
   ${endpoint.parameters.query.map(p => `
   if (${p.name} !== undefined) {
     queryParams.append('${p.name}', String(${p.name}))

@@ -1,6 +1,6 @@
 import { CollectionConfig } from 'payload'
-import { customerSchemas } from '../lib/validation'
-import { yoloMonitoring } from '../lib/monitoring'
+import { customerSchemas } from '../../../lib/validation'
+import { yoloMonitoring } from '../../../lib/monitoring'
 
 export const Customers: CollectionConfig = {
   slug: 'customers',

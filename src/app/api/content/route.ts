@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,13 +9,13 @@ export async function GET(request: NextRequest) {
 
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user has content access
     const allowedRoles = ['admin', 'manager', 'barber', 'stylist']
-    if (!allowedRoles.includes(session.user.role || '')) {
+    if (!allowedRoles.includes(((session as any).user)?.role || '')) {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Tenant ID is required', 'VALIDATION_ERROR', 400)
     }
 
-    const payload = await getPayload({ config: (await import('@/payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Build query filters
     const where: any = {
@@ -230,17 +231,18 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user can create content
     const allowedRoles = ['admin', 'manager', 'barber', 'stylist']
-    if (!allowedRoles.includes(session.user.role || '')) {
+    if (!allowedRoles.includes(((session as any).user)?.role || '')) {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload({ config: (await import('@/payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
     const body = await request.json()
     const tenantId = request.headers.get('X-Tenant-ID') || body.tenantId
 
@@ -278,7 +280,7 @@ export async function POST(request: NextRequest) {
       data: {
         ...body,
         tenant: tenantId,
-        createdBy: session.user.id,
+        createdBy: ((session as any).user)?.id,
         version: 1,
         seo: {
           title: body.seo?.title || body.title,
@@ -309,7 +311,7 @@ export async function POST(request: NextRequest) {
     await logContentActivity(payload, {
       action: 'created',
       contentId: result.id,
-      userId: session.user.id,
+      userId: ((session as any).user)?.id,
       tenantId,
       metadata: {
         title: result.title,
@@ -337,11 +339,12 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
-    const payload = await getPayload({ config: (await import('@/payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
     const body = await request.json()
     const tenantId = request.headers.get('X-Tenant-ID') || body.tenantId
     const { id, ...updateData } = body
@@ -373,7 +376,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Check permissions - enhanced role-based access
-    const canEdit = checkContentEditPermissions(session.user, existingContent)
+    const canEdit = checkContentEditPermissions((session as any).user, existingContent)
     if (!canEdit) {
       return createErrorResponse('Insufficient permissions to edit this content', 'FORBIDDEN', 403)
     }
@@ -400,12 +403,12 @@ export async function PUT(request: NextRequest) {
 
     // Increment version and set update metadata
     updateData.version = (existingContent.version || 1) + 1
-    updateData.updatedBy = session.user.id
+    updateData.updatedBy = ((session as any).user)?.id
 
     // Handle publishing workflow
     if (updateData.status === 'published' && existingContent.status !== 'published') {
       updateData.publishedAt = new Date()
-      updateData.publishedBy = session.user.id
+      updateData.publishedBy = ((session as any).user)?.id
     }
 
     // Update SEO data if content changed
@@ -434,7 +437,7 @@ export async function PUT(request: NextRequest) {
     await logContentActivity(payload, {
       action: 'updated',
       contentId: id,
-      userId: session.user.id,
+      userId: ((session as any).user)?.id,
       tenantId,
       metadata: {
         title: content.title,
@@ -464,7 +467,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
@@ -477,7 +480,8 @@ export async function DELETE(request: NextRequest) {
       return createErrorResponse('Content ID and Tenant ID are required', 'VALIDATION_ERROR', 400)
     }
 
-    const payload = await getPayload({ config: (await import('@/payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Check if content exists
     const content = await payload.findByID({
@@ -491,7 +495,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Enhanced permission check
-    const canDelete = checkContentDeletePermissions(session.user, content)
+    const canDelete = checkContentDeletePermissions((session as any).user, content)
     if (!canDelete) {
       return createErrorResponse('Insufficient permissions to delete this content', 'FORBIDDEN', 403)
     }
@@ -518,14 +522,14 @@ export async function DELETE(request: NextRequest) {
         data: {
           status: 'trash',
           trashedAt: new Date(),
-          trashedBy: session.user.id
+          trashedBy: ((session as any).user)?.id
         }
       })
 
       await logContentActivity(payload, {
         action: 'trashed',
         contentId: id,
-        userId: session.user.id,
+        userId: ((session as any).user)?.id,
         tenantId,
         metadata: {
           title: content.title,
@@ -549,7 +553,7 @@ export async function DELETE(request: NextRequest) {
     await logContentActivity(payload, {
       action: 'deleted',
       contentId: id,
-      userId: session.user.id,
+      userId: ((session as any).user)?.id,
       tenantId,
       metadata: {
         title: content.title,

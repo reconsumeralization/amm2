@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
 export async function GET(request: NextRequest) {
@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Search query must be at least 2 characters', 'VALIDATION_ERROR')
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Build search query
     const where: any = {

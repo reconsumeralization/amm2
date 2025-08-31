@@ -1,15 +1,16 @@
 // src/app/api/reviews/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Dynamic import for payload config
 import config from '../../../../payload.config';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const reviews = await payload.find({
       collection: 'reviews',
       limit: 100, // Add pagination later
@@ -24,15 +25,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED');
     }
 
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const data = await req.json();
     
     // Add user to review data
-    data.user = session.user.id;
+    data.user = (session as any).user.id;
 
     const newReview = await payload.create({
       collection: 'reviews',

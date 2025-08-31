@@ -22,17 +22,17 @@ export interface DocumentationUser {
 /**
  * Extract and validate user role from NextAuth session
  */
-export function getUserFromSession(session: Session | null): DocumentationUser | null {
-  if (!session?.user) {
+export function getUserFromSession(session: any | null): DocumentationUser | null {
+  if (!(session as any)?.user) {
     return null
   }
 
-  const userRole = mapSessionRoleToUserRole(session.user.role)
+  const userRole = mapSessionRoleToUserRole(((session as any).user as any).role)
   
   return {
-    id: session.user.id || session.user.email || 'unknown',
-    email: session.user.email || '',
-    name: session.user.name || 'Unknown User',
+    id: ((session as any).user as any).id || ((session as any).user as any).email || 'unknown',
+    email: ((session as any).user as any).email || '',
+    name: ((session as any).user as any).name || 'Unknown User',
     role: userRole,
     permissions: getRolePermissions(userRole),
     preferences: {
@@ -212,10 +212,10 @@ export function getAccessDeniedMessage(user: DocumentationUser | null, path: str
  * Middleware function to check route access
  */
 export function checkRouteAccess(
-  session: Session | null,
+  session: any | null,
   path: string
 ): { allowed: boolean; message?: string; redirectTo?: string } {
-  const user = getUserFromSession(session)
+  const user = getUserFromSession(session as any)
   
   if (!canAccessPath(user, path)) {
     return {

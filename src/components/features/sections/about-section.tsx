@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -177,9 +178,11 @@ export function AboutSection() {
                 className="relative"
               >
                 <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
-                  <img
+                  <Image
                     src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
                     alt="Modern Men barber shop Interior"
+                    width={400}
+                    height={400}
                     className="w-full h-full object-cover"
                   />
                 </div>

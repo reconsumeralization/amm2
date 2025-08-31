@@ -56,8 +56,8 @@ export default function ProfilePage() {
     } else {
       // Load user profile data
       setFormData({
-        name: session.user?.name || '',
-        email: session.user?.email || '',
+        name: (session as any).user?.name || '',
+        email: (session as any).user?.email || '',
         phone: '',
         dateOfBirth: '',
         address: '',
@@ -153,14 +153,14 @@ export default function ProfilePage() {
                 <div className="text-center">
                   <div className="w-24 h-24 bg-gradient-to-br from-blue-600 via-amber-600 to-blue-800 rounded-full flex items-center justify-center shadow-lg mx-auto mb-4">
                     <span className="text-3xl text-white font-bold">
-                      {session.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      {(session as any).user?.name?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                    {session.user?.name || 'User'}
+                    {(session as any).user?.name || 'User'}
                   </h3>
                   <p className="text-sm text-gray-600 mb-4">
-                    {session.user?.email}
+                    {(session as any).user?.email}
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">

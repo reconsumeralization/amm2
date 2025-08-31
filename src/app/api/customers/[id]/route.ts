@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import { getServerSession } from 'next-auth/next'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -15,17 +15,18 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or has customer access
-    if (session.user.role !== 'admin' && session.user.role !== 'employee') {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'employee') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
     const { id } = await params
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Fetch customer
     const customer = await payload.findByID({
@@ -39,7 +40,7 @@ export async function GET(
     }
 
     // Check if user can access this customer
-    if (session.user.role !== 'admin' && customer.createdBy !== session.user.id) {
+    if ((session as any).user.role !== 'admin' && customer.createdBy !== (session as any).user.id) {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
@@ -58,23 +59,24 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
     const { id } = await params
     const body = await request.json()
 
     // Check if user is admin or owns this customer
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       // For non-admin users, verify they own the customer
       const existingCustomer = await payload.findByID({
         collection: 'customers',
         id,
       })
 
-      if (!existingCustomer || existingCustomer.createdBy !== session.user.id) {
+      if (!existingCustomer || existingCustomer.createdBy !== (session as any).user.id) {
         return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
       }
     }
@@ -85,7 +87,7 @@ export async function PUT(
       id,
       data: {
         ...body,
-        updatedBy: session.user.id,
+        updatedBy: (session as any).user.id,
       },
       depth: 2,
     })
@@ -108,16 +110,17 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Only admins can delete customers
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
     const { id } = await params
 
     // Check if customer exists

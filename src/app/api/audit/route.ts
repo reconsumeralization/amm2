@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '../../../payload'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 interface AuditLog {
@@ -40,9 +40,9 @@ export async function GET(request: NextRequest) {
     const sampleLogs: AuditLog[] = [
       {
         id: '1',
-        userId: session.user?.id || 'user-1',
-        userName: session.user?.name || 'Current User',
-        userRole: session.user?.role || 'admin',
+        userId: (session as any).user?.id || 'user-1',
+        userName: (session as any).user?.name || 'Current User',
+        userRole: (session as any).user?.role || 'admin',
         action: 'USER_UPDATED',
         resource: 'users',
         resourceId: 'user-123',
@@ -147,9 +147,9 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
     const auditLog = {
-      userId: session.user?.id,
-      userName: session.user?.name,
-      userRole: session.user?.role,
+      userId: (session as any).user?.id,
+      userName: (session as any).user?.name,
+      userRole: (session as any).user?.role,
       action,
       resource,
       resourceId,

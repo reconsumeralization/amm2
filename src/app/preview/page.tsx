@@ -1,8 +1,9 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
+import config from '@/payload.config'
 // import { notFound } from 'next/navigation';
 
 export default async function PreviewPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  const payload = await getPayloadClient();
   const { id } = await searchParams;
 
   if (!id) {

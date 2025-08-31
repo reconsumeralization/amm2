@@ -1,14 +1,12 @@
 // src/middleware/redirects.ts
 import { NextRequest, NextResponse } from 'next/server'
-import getPayload from '../payload'
+import { getPayloadClient } from '@/payload'
 
 export async function handleRedirects(request: NextRequest) {
   const { pathname } = new URL(request.url)
 
   try {
-    const payload = await getPayload({
-      config: () => import('../payload.config').then(m => m.default),
-    })
+    const payload = await getPayloadClient()
 
     // Find active redirect for this path
     const redirects = await payload.find({

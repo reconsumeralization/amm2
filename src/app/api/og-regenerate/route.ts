@@ -1,7 +1,7 @@
 // src/app/api/og-regenerate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { universalOGHook } from '../../../payload/hooks/universalOGHook';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../payload.config';
 
 export async function POST(req: NextRequest) {
@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Get the document
-    const payloadClient = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payloadClient = await getPayloadClient();
     const findResult = await payloadClient.find({
       collection,
       where: { id: { equals: id } },
@@ -81,7 +82,8 @@ export async function GET(req: NextRequest) {
 
   try {
     // Generate a preview OG image
-    const payloadClient = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payloadClient = await getPayloadClient();
     const previewDoc = await universalOGHook({
       data: {
         title,

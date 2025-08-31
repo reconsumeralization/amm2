@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import getPayload from '@/payload'
+import { getServerSession } from 'next-auth/next'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -8,12 +8,12 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user has content access
-    if (session.user.role !== 'admin' && session.user.role !== 'barber' && session.user.role !== 'manager') {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'barber' && (session as any).user.role !== 'manager') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Content ID and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
-    const payload = await getPayload()
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Fetch content versions (revisions)
     const content = await payload.findByID({
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user can access this content
-    if (session.user.role !== 'admin' && session.user.role !== 'manager' && content.createdBy !== session.user.id) {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager' && content.createdBy !== (session as any).user.id) {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
@@ -73,11 +74,12 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
-    const payload = await getPayload()
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
     const body = await request.json()
     const { contentId, versionId, action = 'restore' } = body
     const tenantId = request.headers.get('X-Tenant-ID')
@@ -97,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check permissions
-    if (session.user.role !== 'admin' && session.user.role !== 'manager' && currentContent.createdBy !== session.user.id) {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager' && currentContent.createdBy !== (session as any).user.id) {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
           content: revision.content,
           lexicalContent: revision.lexicalContent,
           version: (currentContent.version || 1) + 1,
-          updatedBy: session.user.id,
+          updatedBy: (session as any).user.id,
           revisions: [...(currentContent.revisions || []), newRevision],
         },
         depth: 2,
@@ -147,7 +149,7 @@ export async function POST(request: NextRequest) {
         id: contentId,
         data: {
           revisions: filteredRevisions,
-          updatedBy: session.user.id,
+          updatedBy: (session as any).user.id,
         },
       })
 
@@ -168,7 +170,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
@@ -181,11 +183,12 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Only admins can clear all revisions
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Clear all revisions for this content
     await payload.update({
@@ -193,7 +196,7 @@ export async function DELETE(request: NextRequest) {
       id: contentId,
       data: {
         revisions: [],
-        updatedBy: session.user.id,
+        updatedBy: (session as any).user.id,
       },
     })
 

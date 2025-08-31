@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
 
 export async function POST(request: NextRequest) {
@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize Payload
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Find the coupon
     const result = await payload.find({

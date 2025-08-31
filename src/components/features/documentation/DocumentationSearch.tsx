@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, Filter } from '@/lib/icon-mapping';
+import { SearchInput } from '@/components/ui/search-input';
 import * as SearchModule from '@/lib/search-service';
 
 interface SearchResult {
@@ -20,37 +18,39 @@ interface SearchResult {
 }
 
 interface DocumentationSearchProps {
-  initialQuery?: string;
-  showFilters?: boolean;
   compact?: boolean;
   onResultClick?: (result: SearchResult) => void;
   className?: string;
 }
 
 export function DocumentationSearch({
-  initialQuery = '',
-  showFilters = true,
   compact = false,
   onResultClick,
   className = ''
 }: DocumentationSearchProps) {
   const router = useRouter();
-  const [query, setQuery] = useState(initialQuery);
+  const searchParams = useSearchParams();
   const [results, setResults] = useState<SearchResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Array<{ text: string }>>([]);
-  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Lazy-instantiate service to allow jest module mocks to control behavior
+  const query = searchParams.get('q') || '';
+  const filters = {
+    category: searchParams.get('category')?.split(',') || [],
+    type: searchParams.get('type')?.split(',') || [],
+    difficulty: searchParams.get('difficulty')?.split(',') || [],
+    tags: searchParams.get('tags')?.split(',') || [],
+  };
+
   const serviceRef = React.useRef<any>(null);
   if (!serviceRef.current) {
     const { DocumentationSearchService } = SearchModule as any;
     serviceRef.current = new DocumentationSearchService({ rankingConfig: { titleBoost: 1, descriptionBoost: 1, contentBoost: 1, tagsBoost: 1, roleBasedBoost: { guest: 1 }, recencyBoost: 0, popularityBoost: 0 } });
   }
 
-  const handleSearch = useCallback(async () => {
-    if (!query.trim()) {
+  const handleSearch = useCallback(async (searchQuery: string, searchFilters: any) => {
+    if (!searchQuery.trim()) {
       setResults([]);
       setTotalCount(0);
       setSuggestions([]);
@@ -59,11 +59,10 @@ export function DocumentationSearch({
 
     setLoading(true);
     try {
-      const data: any = await serviceRef.current.search({ query, filters: {}, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
+      const data: any = await serviceRef.current.search({ query: searchQuery, filters: searchFilters, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
       const nextResults = (data.results || []) as any[];
       const nextSuggestions = (data.suggestions || []) as Array<{ text: string }>;
 
-      // Prefer correction suggestions over showing potentially stale results
       const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().includes('did you mean'));
 
       setSuggestions(nextSuggestions);
@@ -71,7 +70,6 @@ export function DocumentationSearch({
         setResults([]);
         setTotalCount(0);
       } else {
-        // Honor mocked "no results" scenarios: if suggestions exist and results don't include this query, hide results
         const hasAnySuggestions = nextSuggestions && nextSuggestions.length > 0;
         const hasResults = Array.isArray(nextResults) && nextResults.length > 0;
         if (hasAnySuggestions && !hasResults) {
@@ -88,20 +86,7 @@ export function DocumentationSearch({
     } finally {
       setLoading(false);
     }
-  }, [query]);
-
-  const handleAutocomplete = useCallback(async () => {
-    if (!query.trim()) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const data: any = await serviceRef.current.autocomplete(query, 'developer' as any);
-      setSuggestions(data.suggestions || []);
-    } catch {
-      setSuggestions([]);
-    }
-  }, [query]);
+  }, []);
 
   const handleResultClick = (result: SearchResult) => {
     if (onResultClick) {
@@ -113,57 +98,15 @@ export function DocumentationSearch({
   };
 
   useEffect(() => {
-    if (initialQuery && initialQuery !== query) {
-      setQuery(initialQuery);
-    }
-  }, [initialQuery, query]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (query.trim()) {
-        handleSearch();
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [query, handleSearch]);
+    handleSearch(query, filters);
+  }, [query, filters, handleSearch]);
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Search Input */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          type="text"
-          placeholder="Search documentation..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={handleAutocomplete}
-          className="pl-10"
-        />
-        {loading && (
-          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin" />
-        )}
-      </div>
-
-      {showFilters && (
-        <div>
-          <Button type="button" onClick={() => setFiltersOpen(v => !v)}>
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
-          {filtersOpen && (
-            <Card className="mt-2">
-              <CardHeader>
-                <CardTitle>Filter Options</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Filter controls would go here */}
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
+      <SearchInput 
+        initialQuery={query}
+        isLoading={loading}
+      />
 
       {/* Results */}
       {results.length > 0 && (

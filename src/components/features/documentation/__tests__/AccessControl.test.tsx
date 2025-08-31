@@ -15,8 +15,8 @@ jest.mock('@/lib/documentation-auth', () => ({
       id: 'test-user',
       email: 'test@example.com',
       name: 'Test User',
-      role: session.user.role || 'guest',
-      permissions: session.user.permissions || [],
+      role: ((session as any).user)?.role || 'guest',
+      permissions: ((session as any).user)?.permissions || [],
       preferences: {
         theme: 'system',
         language: 'en',
@@ -57,7 +57,7 @@ describe('AccessControl', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -80,7 +80,7 @@ describe('AccessControl', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -104,7 +104,7 @@ describe('AccessControl', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -127,7 +127,7 @@ describe('AccessControl', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -151,7 +151,7 @@ describe('AccessControl', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -178,7 +178,7 @@ describe('AccessControl', () => {
           email: 'guest@example.com',
           name: 'Guest User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -204,7 +204,7 @@ describe('PermissionGate', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -227,7 +227,7 @@ describe('PermissionGate', () => {
           email: 'guest@example.com',
           name: 'Guest User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -252,7 +252,7 @@ describe('RoleGuard', () => {
           email: 'developer@example.com',
           name: 'Developer User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -275,7 +275,7 @@ describe('RoleGuard', () => {
           email: 'owner@example.com',
           name: 'Salon Owner',
           role: 'salon_owner'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -298,7 +298,7 @@ describe('RoleGuard', () => {
           email: 'guest@example.com',
           name: 'Guest User',
           role: 'guest'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -323,7 +323,7 @@ describe('AdminOnly', () => {
           email: 'admin@example.com',
           name: 'System Admin',
           role: 'system_admin'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -346,7 +346,7 @@ describe('AdminOnly', () => {
           email: 'developer@example.com',
           name: 'Developer User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -371,7 +371,7 @@ describe('DeveloperOnly', () => {
           email: 'developer@example.com',
           name: 'Developer User',
           role: 'developer'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -394,7 +394,7 @@ describe('DeveloperOnly', () => {
           email: 'admin@example.com',
           name: 'System Admin',
           role: 'system_admin'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'
@@ -417,7 +417,7 @@ describe('DeveloperOnly', () => {
           email: 'owner@example.com',
           name: 'Salon Owner',
           role: 'salon_owner'
-        },
+        , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
       status: 'authenticated'

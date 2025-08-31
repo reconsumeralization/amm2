@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { BusinessDocumentationService } from '@/lib/business-documentation-service'
 import { getUserFromSession } from '@/lib/documentation-auth'
+import { authOptions } from '@/lib/auth'
 
 const docService = new BusinessDocumentationService({
   payloadApiUrl: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000/api',
@@ -13,7 +14,7 @@ const docService = new BusinessDocumentationService({
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const user = getUserFromSession(session)
     
     if (!user) {

@@ -63,7 +63,7 @@ describe('Payload Integration', () => {
           email: 'test@example.com',
           name: 'Test User',
           role: 'BarberShop_customer'
-        })
+        , permissions: []})
       }
 
       // Mock the payload instance

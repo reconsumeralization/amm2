@@ -1,7 +1,8 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
   const data = await req.json();
 
   try {

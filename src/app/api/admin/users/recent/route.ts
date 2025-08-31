@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { createClient } from '@supabase/supabase-js'
 
@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || (session as any).user?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
     // Create a map of user ID to last login
     const lastLoginMap: Record<string, string> = {}
     sessions?.forEach(session => {
-      if (!lastLoginMap[session.userId]) {
-        lastLoginMap[session.userId] = session.expires
+      if (!lastLoginMap[(session as any).userId]) {
+        lastLoginMap[(session as any).userId] = session.expires
       }
     })
 

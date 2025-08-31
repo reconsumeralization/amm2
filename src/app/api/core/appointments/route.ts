@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 
 
 export async function GET(req: Request) {
   try {
-    const payload = await getPayload({
-      config: (await import('@/payload.config')).default,
-    });
+    // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
@@ -25,7 +24,7 @@ export async function GET(req: Request) {
     const appointments = await payload.find({
       collection: 'appointments',
       where,
-      sort: '-date',
+      sort: '-dateTime',
       limit: 50,
     });
 
@@ -40,7 +39,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
   const data = await req.json();
 
   try {
@@ -71,9 +71,8 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const payload = await getPayload({
-      config: (await import('@/payload.config')).default,
-    });
+    // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     const data = await req.json();
     const { id, ...updateData } = data;
@@ -103,9 +102,8 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const payload = await getPayload({
-      config: (await import('@/payload.config')).default,
-    });
+    // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

@@ -220,7 +220,7 @@ export function AdminNavigation() {
     console.log('Selected search result:', result)
   }
 
-  if (!session?.user || session.user.role !== 'admin') {
+  if (!(session as any)?.user || ((session as any).user)?.role !== 'admin') {
     return null
   }
 

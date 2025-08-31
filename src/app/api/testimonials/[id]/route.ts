@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -11,7 +11,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
 
   try {
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     if (action === 'like') {
       const testimonial = await payload.update({
         collection: 'testimonials',

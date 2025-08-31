@@ -1,19 +1,20 @@
+import config from '@/payload.config'
 // src/app/crm/dashboard/page.tsx
 import React, { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Calendar, DollarSign, Activity } from '@/lib/icon-mapping';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Dynamic import for payload config
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 async function getDashboardData() {
   const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+  if (!(session as any)?.user || (((session as any).user)?.role !== 'admin' && ((session as any).user)?.role !== 'manager')) {
     throw new Error('Unauthorized'); 
   }
 
-      const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+      const payload = await getPayloadClient();
 
   // ... (data fetching logic is the same)
 
@@ -59,7 +60,7 @@ async function getDashboardData() {
       limit: 1000,
   });
 
-  const totalRevenueThisMonth = completedAppointmentsThisMonth.docs.reduce((total, app: any) => total + (app.price || 0), 0);
+  const totalRevenueThisMonth = completedAppointmentsThisMonth.docs.reduce((total: number, app: any) => total + (app.price || 0), 0);
 
   const recentActivity = await payload.find({
       collection: 'appointments',

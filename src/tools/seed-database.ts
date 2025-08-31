@@ -12,7 +12,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import getPayloadClient from '../payload';
+import { getPayloadClient } from '@/payload';
 
 // Resolve script directory
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +34,7 @@ function loadSeed<T>(fileName: string): T[] {
 
 // Main seeding function
 async function seed() {
-  const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) });
+  const payload = await getPayloadClient();
 
   // Define which collections to seed and their corresponding files
   const collections = [

@@ -1,10 +1,11 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../../utils/email';
 
 export async function POST(req: Request) {
   const { firstName, lastName, email, phone, subject, message } = await req.json();
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // Input validation
   if (!firstName || !lastName || !email || !subject || !message) {

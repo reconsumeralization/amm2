@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createContentLoader, LoadedContent } from '@/lib/content-loader'
 import { createContentValidator } from '@/lib/content-validator'
 import { getUserRoleFromSession, hasDocumentationPermission } from '@/lib/documentation-permissions'
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user session and check permissions
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const userRole = getUserRoleFromSession(session)
 
     // Check if user can read documentation content
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const userRole = getUserRoleFromSession(session)
 
     // Check if user can create/edit documentation content
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
           id: frontmatter?.id || 'temp-id',
           title: frontmatter?.title || 'Untitled',
           description: frontmatter?.description || '',
-          author: frontmatter?.author || session?.user?.name || 'Unknown',
+          author: frontmatter?.author || (session as any)?.user?.name || 'Unknown',
           lastUpdated: new Date(),
           version: frontmatter?.version || { major: 1, minor: 0, patch: 0 },
           targetAudience: frontmatter?.targetAudience || ['developer'],
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         processedAt: new Date().toISOString(),
         userRole,
-        author: session?.user?.name || 'Unknown'
+        author: (session as any)?.user?.name || 'Unknown'
       }
     })
 
@@ -169,7 +170,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const userRole = getUserRoleFromSession(session)
 
     // Check if user can edit documentation content
@@ -215,7 +216,7 @@ export async function PUT(request: NextRequest) {
           id: frontmatter?.id || existingContent?.frontmatter?.id || 'temp-id',
           title: frontmatter?.title || existingContent?.frontmatter?.title || 'Untitled',
           description: frontmatter?.description || existingContent?.frontmatter?.description || '',
-          author: frontmatter?.author || existingContent?.frontmatter?.author || session?.user?.name || 'Unknown',
+          author: frontmatter?.author || existingContent?.frontmatter?.author || (session as any)?.user?.name || 'Unknown',
           lastUpdated: new Date(),
           version: frontmatter?.version || existingContent?.frontmatter?.version || { major: 1, minor: 0, patch: 0 },
           targetAudience: frontmatter?.targetAudience || existingContent?.frontmatter?.targetAudience || ['developer'],
@@ -270,7 +271,7 @@ export async function PUT(request: NextRequest) {
       metadata: {
         updatedAt: new Date().toISOString(),
         userRole,
-        updatedBy: session?.user?.name || 'Unknown'
+        updatedBy: (session as any)?.user?.name || 'Unknown'
       }
     })
 
@@ -288,7 +289,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const userRole = getUserRoleFromSession(session)
 
     // Check if user can delete documentation content
@@ -318,7 +319,7 @@ export async function DELETE(request: NextRequest) {
       metadata: {
         deletedAt: new Date().toISOString(),
         userRole,
-        deletedBy: session?.user?.name || 'Unknown',
+        deletedBy: (session as any)?.user?.name || 'Unknown',
         filePath
       }
     })

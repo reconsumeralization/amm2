@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import getPayloadClient from '../../../payload'
-import { getServerSession } from 'next-auth'
+import { getPayloadClient } from '@/payload'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { sendAdminNotification, sendUserNotification } from '@/lib/notificationService'
 import { validateRequestBody, createValidationErrorResponse } from '@/lib/validation-utils'
@@ -25,6 +25,30 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Mock employees data
+    const mockEmployees = [
+      {
+        id: '1',
+        name: 'John Smith',
+        email: 'stylist1@modernmen.com',
+        role: 'stylist',
+        specialization: 'Hair Cutting',
+        rating: 4.8,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: '2',
+        name: 'Sarah Johnson',
+        email: 'stylist2@modernmen.com',
+        role: 'stylist',
+        specialization: 'Beard Styling',
+        rating: 4.9,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      }
+    ]
 
     const { searchParams } = new URL(request.url)
     const filters: EmployeeFilters = {
@@ -137,7 +161,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session || (session.user?.role !== 'admin' && session.user?.role !== 'manager')) {
+    if (!session || ((session as any).user?.role !== 'admin' && (session as any).user?.role !== 'manager')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

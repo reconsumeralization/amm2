@@ -1,14 +1,15 @@
 // src/app/api/promotions/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getPayloadClient } from '@/payload';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const promotion = await payload.findByID({
       collection: 'promotions',
       id: id,
@@ -27,11 +28,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager')) {
       return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401);
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const data = await req.json();
     const updatedPromotion = await payload.update({
       collection: 'promotions',
@@ -49,11 +51,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager')) {
       return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401);
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     await payload.delete({
       collection: 'promotions',
       id: id,

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
 import config from '../payload.config'
 
 export interface TestUser {
@@ -15,7 +15,8 @@ let payload: any = null
 
 async function getPayloadInstance() {
   if (!payload) {
-    payload = await getPayload({ config })
+    payload = await // @ts-ignore
+  getPayloadClient()
   }
   return payload
 }

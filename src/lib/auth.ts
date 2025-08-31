@@ -1,9 +1,12 @@
 import type { NextAuthOptions, Session } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 import { z } from 'zod'
 import { logger } from './logger'
-import { getPayload } from 'payload'
-import { ROLES, ROLE_PERMISSIONS, logAuthEvent } from './auth-utils'
+import { getPayloadClient } from '@/payload'
+import { ROLES, ROLE_PERMISSIONS } from './auth-constants'
+import { logAuthEvent } from './auth-utils'
+import bcrypt from 'bcryptjs'
 
 // Dynamic import for payload config to avoid client-side bundling
 let payloadConfig: any = null
@@ -45,15 +48,22 @@ interface RedirectParams {
 
 // Validate required environment variables
 const requiredEnvVars = [
-  'NEXTAUTH_SECRET'
+  'NEXTAUTH_SECRET',
+  'NEXTAUTH_URL'
 ]
 
-// Only validate environment variables in production
+// Additional required env vars for production
 if (process.env.NODE_ENV === 'production') {
-  for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar] || process.env[envVar]?.includes('your-') || process.env[envVar]?.includes('https://your-project')) {
-      throw new Error(`Missing or placeholder value for required environment variable: ${envVar}. Please update your .env.local file with actual values.`)
-    }
+  requiredEnvVars.push('DATABASE_URL')
+}
+
+// Validate environment variables
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`)
+  }
+  if (process.env[envVar]?.includes('your-') || process.env[envVar]?.includes('example')) {
+    throw new Error(`Placeholder value detected for ${envVar}. Please set a real value.`)
   }
 }
 
@@ -102,46 +112,8 @@ function getPermissionsForRole(role: string): string[] {
   return ROLE_PERMISSIONS[roleKey] || ROLE_PERMISSIONS[ROLES.CUSTOMER] || []
 }
 
-// Demo users for development (will be replaced with Payload CMS integration)
-const DEMO_USERS: Record<string, DemoUser> = {
-  admin: {
-    id: '1',
-    email: 'admin@modernmen.ca',
-    password: 'admin123',
-    name: 'Admin User',
-    role: ROLES.ADMIN,
-    permissions: getPermissionsForRole(ROLES.ADMIN)
-  },
-  manager: {
-    id: '2',
-    email: 'manager@modernmen.ca',
-    password: 'manager123',
-    name: 'Manager User',
-    role: ROLES.MANAGER,
-    permissions: getPermissionsForRole(ROLES.MANAGER)
-  },
-  barber: {
-    id: '3',
-    email: 'barber@modernmen.ca',
-    password: 'barber123',
-    name: 'Michael Chen',
-    role: ROLES.BARBER,
-    permissions: getPermissionsForRole(ROLES.BARBER),
-    stylistId: 'STYL001',
-    specialties: ['Fades', 'Pompadours', 'Beard Grooming']
-  },
-  customer: {
-    id: '4',
-    email: 'customer@modernmen.ca',
-    password: 'customer123',
-    name: 'John Smith',
-    role: ROLES.CUSTOMER,
-    permissions: getPermissionsForRole(ROLES.CUSTOMER),
-    customerId: 'CUST001',
-    phone: '(306) 555-0123',
-    address: '123 Main St, Regina, SK'
-  }
-}
+// Production-ready user authentication via Payload CMS only
+// No hardcoded demo users for security
 
 // Define the user type for NextAuth
 interface AuthUser {
@@ -159,6 +131,21 @@ interface AuthUser {
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        profile(profile) {
+          return {
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+            role: 'customer', // Default role for OAuth users
+          }
+        },
+      })
+    ] : []),
     CredentialsProvider({
       name: 'credentials',
       credentials: {
@@ -186,50 +173,10 @@ export const authOptions: NextAuthOptions = {
             email: email.toLowerCase()
           })
 
-          // First check demo users for development
-          const demoUser = Object.values(DEMO_USERS).find(
-            user => user.email.toLowerCase() === email.toLowerCase() && user.password === password
-          )
-
-          if (demoUser) {
-            logAuthEvent('signin_success_demo', {
-              userId: demoUser.id,
-              email: demoUser.email,
-              role: demoUser.role
-            })
-
-            const authUser: AuthUser = {
-              id: demoUser.id,
-              email: demoUser.email,
-              name: demoUser.name,
-              role: demoUser.role,
-              permissions: demoUser.permissions
-            }
-
-            // Add optional properties based on user type
-            if ('customerId' in demoUser) {
-              authUser.customerId = demoUser.customerId
-            }
-            if ('stylistId' in demoUser) {
-              authUser.stylistId = demoUser.stylistId
-            }
-            if ('phone' in demoUser) {
-              authUser.phone = demoUser.phone
-            }
-            if ('address' in demoUser) {
-              authUser.address = demoUser.address
-            }
-            if ('specialties' in demoUser) {
-              authUser.specialties = demoUser.specialties
-            }
-
-            return authUser
-          }
-
-          // Check Payload CMS users
+          // Authenticate via Payload CMS only
           try {
             const config = await getPayloadConfig()
-            const payload = await getPayload({ config })
+            const payload = await getPayloadClient()
 
             // Find user by email
             const users = await payload.find({
@@ -240,34 +187,80 @@ export const authOptions: NextAuthOptions = {
               limit: 1,
             })
 
-            if (users.docs.length > 0) {
-              const user = users.docs[0]
+            if (users.docs.length === 0) {
+              logAuthEvent('signin_failed_user_not_found', {
+                email: email.toLowerCase()
+              })
+              throw new Error('Invalid credentials')
+            }
 
-              // For demo purposes, we'll accept any password for Payload users
-              // In production, you'd implement proper password hashing and verification
-              logAuthEvent('signin_success_payload', {
+            const user = users.docs[0]
+
+            // Verify password using bcrypt
+            if (!user.password) {
+              logAuthEvent('signin_failed_no_password', {
+                userId: String(user.id),
+                email: user.email
+              })
+              throw new Error('Account setup incomplete')
+            }
+
+            const isValidPassword = await bcrypt.compare(password, user.password)
+            if (!isValidPassword) {
+              logAuthEvent('signin_failed_invalid_password', {
+                userId: String(user.id),
+                email: user.email
+              })
+              throw new Error('Invalid credentials')
+            }
+
+            // Check if account is active
+            if (user.status !== 'active') {
+              logAuthEvent('signin_failed_inactive_account', {
                 userId: String(user.id),
                 email: user.email,
-                role: user.role
+                status: user.status
               })
-
-              const authUser: AuthUser = {
-                id: String(user.id),
-                email: user.email,
-                name: user.name || user.email,
-                role: user.role || 'customer',
-                permissions: getPermissionsForRole(user.role || 'customer')
-              }
-
-              // Add additional user data if available
-              if (user.profile?.phone) {
-                authUser.phone = user.profile.phone
-              }
-
-              return authUser
+              throw new Error('Account is not active')
             }
+
+            logAuthEvent('signin_success', {
+              userId: String(user.id),
+              email: user.email,
+              role: user.role
+            })
+
+            const authUser: AuthUser = {
+              id: String(user.id),
+              email: user.email,
+              name: user.name || user.email,
+              role: user.role || 'customer',
+              permissions: getPermissionsForRole(user.role || 'customer')
+            }
+
+            // Add additional user data if available
+            if (user.profile?.phone) {
+              authUser.phone = user.profile.phone
+            }
+            if (user.profile?.address) {
+              authUser.address = user.profile.address
+            }
+            if (user.stylistId) {
+              authUser.stylistId = user.stylistId
+            }
+            if (user.customerId) {
+              authUser.customerId = user.customerId
+            }
+            if (user.specialties) {
+              authUser.specialties = user.specialties
+            }
+
+            return authUser
           } catch (payloadError) {
-            console.warn('Payload CMS authentication failed, falling back to demo users:', payloadError)
+            logger.authError('payload_authentication_error', {
+              email: email.toLowerCase()
+            }, payloadError instanceof Error ? payloadError : new Error('Unknown Payload error'))
+            throw new Error('Authentication service unavailable')
           }
 
           logAuthEvent('signin_failed_invalid_credentials', {
@@ -306,15 +299,15 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }: SessionParams) {
-      if (token && session.user) {
-        session.user.id = token.sub!
-        ;(session.user as any).role = token.role as string
-        ;(session.user as any).permissions = token.permissions as string[]
-        ;(session.user as any).customerId = token.customerId as string | null
-        ;(session.user as any).stylistId = token.stylistId as string | null
-        ;(session.user as any).phone = token.phone as string | null
-        ;(session.user as any).address = token.address as string | null
-        ;(session.user as any).specialties = token.specialties as string[] | null
+      if (token && (session as any).user) {
+        ((session as any).user as any).id = token.sub!
+        ;((session as any).user as any).role = token.role as string
+        ;((session as any).user as any).permissions = token.permissions as string[]
+        ;((session as any).user as any).customerId = token.customerId as string | null
+        ;((session as any).user as any).stylistId = token.stylistId as string | null
+        ;((session as any).user as any).phone = token.phone as string | null
+        ;((session as any).user as any).address = token.address as string | null
+        ;((session as any).user as any).specialties = token.specialties as string[] | null
         ;(session as any).accessToken = token.accessToken as string
       }
       return session
@@ -338,4 +331,11 @@ export const authOptions: NextAuthOptions = {
     maxAge: parseInt(process.env.SESSION_MAX_AGE || '2592000'), // 30 days default
   },
   secret: process.env.NEXTAUTH_SECRET,
+}
+
+// Typed wrapper for server-side session
+import { getServerSession as nextGetServerSession } from 'next-auth'
+
+export async function getServerSession(options?: NextAuthOptions): Promise<Session | null> {
+  return nextGetServerSession(options || authOptions) as Promise<Session | null>
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
@@ -32,16 +32,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 // LogOut icon will use a simple text fallback
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home, description: 'Return to homepage' },
   { name: 'Services', href: '/services', icon: Scissors, description: 'Our salon services' },
-  { name: 'About', href: '/about', icon: Star, description: 'Learn about us' },
   { name: 'Our Team', href: '/team', icon: User, description: 'Meet our stylists' },
-  { name: 'Gallery', href: '/gallery', icon: Camera, description: 'View our work' },
   { name: 'Contact', href: '/contact', icon: Phone, description: 'Get in touch' },
-  { name: 'Privacy Policy', href: '/privacy-policy', icon: BookOpen, description: 'Our privacy policy' },
 ]
 
 const quickActions = [
@@ -159,6 +157,7 @@ export function Navbar() {
 
           {/* Enhanced Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
+            <ThemeToggle />
             {/* Search Button */}
             <Button 
               variant="ghost" 
@@ -205,14 +204,14 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="hover:bg-gray-50">
                     <User className="h-4 w-4 mr-2" />
-                    {session.user?.name?.split(' ')[0] || 'Account'}
+                    {(session as any).user?.name?.split(' ')[0] || 'Account'}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium">{session.user?.name}</p>
-                      <p className="text-xs text-muted-foreground">{session.user?.email}</p>
+                      <p className="text-sm font-medium">{(session as any).user?.name}</p>
+                      <p className="text-xs text-muted-foreground">{(session as any).user?.email}</p>
                       <div className="flex items-center space-x-1 mt-1">
                         <Star className="h-3 w-3 text-black" />
                         <span className="text-xs text-black font-medium">{loyaltyPoints} points</span>
@@ -220,14 +219,17 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {userNavigation.map((item) => (
-                    <DropdownMenuItem key={item.name} asChild>
-                      <Link href={item.href}>
-                        {React.createElement(item.icon, { className: "mr-2 h-4 w-4" })}
-                        {item.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
+                  {userNavigation.map((item) => {
+                    const IconComponent = item.icon
+                    return (
+                      <DropdownMenuItem key={item.name} asChild>
+                        <Link href={item.href}>
+                          <IconComponent className="mr-2 h-4 w-4" />
+                          {item.name}
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  })}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -285,6 +287,7 @@ export function Navbar() {
 
           {/* Enhanced Mobile menu button */}
           <div className="flex items-center space-x-2 md:hidden">
+            <ThemeToggle />
             {/* Mobile Search */}
             <Button variant="ghost" size="sm" asChild>
               <Link href="/search">
@@ -361,7 +364,10 @@ export function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <div className="flex items-center justify-center w-8 h-8 rounded-md bg-gray-100">
-                        {React.createElement(item.icon, { className: "h-4 w-4 text-black" })}
+                        {(() => {
+                          const IconComponent = item.icon
+                          return <IconComponent className="h-4 w-4 text-black" />
+                        })()}
                       </div>
                       <div className="flex flex-col">
                         <span>{item.name}</span>
@@ -385,8 +391,8 @@ export function Navbar() {
                       <User className="h-5 w-5 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900">{session.user?.name}</p>
-                      <p className="text-xs text-slate-500">{session.user?.email}</p>
+                      <p className="text-sm font-medium text-slate-900">{(session as any).user?.name}</p>
+                      <p className="text-xs text-slate-500">{(session as any).user?.email}</p>
                     </div>
                     {notifications > 0 && (
                       <Badge variant="destructive" className="h-6 w-6 p-0 text-xs">

@@ -1,20 +1,21 @@
 // src/app/api/customers/[id]/dashboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../../payload.config';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager')) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401);
     }
 
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const customerId = id;
 
     // 1. Fetch Customer Details

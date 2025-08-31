@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { SessionProvider } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Session, User } from 'next-auth';
+import { ROLES, getRolePermissions } from '@/lib/auth-constants';
 
 // Create a mock session with proper typing
 const createMockSession = (overrides?: Partial<Session>): Session => ({
@@ -12,6 +13,12 @@ const createMockSession = (overrides?: Partial<Session>): Session => ({
     name: 'Test User',
     image: undefined,
     role: 'customer',
+    permissions: getRolePermissions('customer'),
+    customerId: null,
+    stylistId: null,
+    phone: null,
+    address: null,
+    specialties: null,
     ...overrides?.user,
   },
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -77,6 +84,12 @@ export const createTestUser = (role: 'admin' | 'manager' | 'barber' | 'customer'
   name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
   image: undefined,
   role,
+  permissions: getRolePermissions(role),
+  customerId: role === 'customer' ? `cust-${Date.now()}` : null,
+  stylistId: role === 'barber' ? `stylist-${Date.now()}` : null,
+  phone: null,
+  address: null,
+  specialties: role === 'barber' ? ['haircut', 'styling'] : null,
 });
 
 // Helper function to create sessions for different user types

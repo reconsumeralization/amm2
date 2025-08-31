@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
 import ContentRenderer from '@/components/ContentRenderer'
 
-type Params = {
+type Params = Promise<{
   slug?: string[]
-}
+}>
 
 async function getPageBySlug(slugPath: string) {
-  const payload = await getPayload({ config: (await import('../../payload.config')).default })
+  const { getPayloadClient } = await import('@/payload')
+  const payload = await getPayloadClient()
   const pages = await payload.find({
     collection: 'pages',
     where: {
@@ -21,7 +21,8 @@ async function getPageBySlug(slugPath: string) {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const slugPath = (params.slug || []).join('/') || 'home'
+  const resolvedParams = await params
+  const slugPath = (resolvedParams.slug || []).join('/') || 'home'
   const page = await getPageBySlug(slugPath)
 
   if (!page) {
@@ -56,7 +57,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function CatchAllPage({ params }: { params: Params }) {
-  const slugPath = (params.slug || []).join('/') || 'home'
+  const resolvedParams = await params
+  const slugPath = (resolvedParams.slug || []).join('/') || 'home'
   const page = await getPageBySlug(slugPath)
 
   if (!page) {

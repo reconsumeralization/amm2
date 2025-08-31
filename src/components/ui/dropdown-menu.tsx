@@ -51,7 +51,7 @@ const DropdownMenuTrigger = React.forwardRef<
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
-      ...children.props,
+      ...(children.props as any),
       onClick: handleClick,
       ref,
     })
@@ -107,11 +107,11 @@ const DropdownMenuItem = React.forwardRef<
 
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children, {
-      ...children.props,
+      ...(children.props as any),
       onClick: handleClick,
       className: cn(
         "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900",
-        children.props.className
+        (children.props as any).className
       ),
     })
   }

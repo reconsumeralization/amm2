@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import { OpenAIApi, Configuration } from 'openai';
+import { getPayloadClient } from '@/payload';
+import OpenAI from 'openai';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,7 +20,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Get user data
     const user = await payload.findByID({
@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
 
     try {
       // Get AI recommendations
-      const completion = await openai.createChatCompletion({
+      const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
           {
@@ -118,7 +118,7 @@ export async function GET(req: NextRequest) {
         max_tokens: 500,
       });
 
-      const responseText = completion.data.choices[0]?.message?.content || '';
+      const responseText = completion.choices[0]?.message?.content || '';
       
       // Parse AI response
       let recommendedProductIds: string[] = [];

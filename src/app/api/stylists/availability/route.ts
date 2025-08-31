@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Stylist ID and date are required', ERROR_CODES.VALIDATION_ERROR, 400)
     }
 
-    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
 
     // Get stylist with schedule information
     const stylist = await payload.findByID({

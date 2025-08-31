@@ -1,23 +1,24 @@
 // src/app/api/customer-notes/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../payload.config';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401);
     }
 
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const data = await req.json();
 
     // Add author to the note data
-    data.author = session.user.id;
+    data.author = (session as any).user.id;
 
     const newNote = await payload.create({
       collection: 'customer-notes',

@@ -1,10 +1,11 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, pathname, aiTriggers } = await req.json(); // userId will come from req.user
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // 1. Authentication Check: Get user from request headers
   const authHeader = req.headers.get('authorization');

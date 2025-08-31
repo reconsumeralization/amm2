@@ -1,8 +1,4 @@
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -12,8 +8,10 @@ const nextConfig = {
     'payload',
     '@payloadcms/db-postgres',
     '@payloadcms/db-sqlite',
+    '@payloadcms/richtext-lexical',
     '@libsql/client',
     'sqlite3',
+    'better-sqlite3',
     'pg',
     'undici',
     'next-auth',
@@ -99,6 +97,59 @@ const nextConfig = {
       test: /node:.*/,
       use: 'ignore-loader'
     });
+    
+    // Specifically handle undici and its node: imports
+    config.module.rules.push({
+      test: /undici/,
+      use: 'ignore-loader'
+    });
+
+    // More aggressive handling for problematic modules
+    if (!isServer) {
+      // Client-side: ignore server-only modules completely
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'undici': false,
+        '@payloadcms/db-postgres': false,
+        '@payloadcms/richtext-lexical': false,
+        'payload': false,
+        // Add more specific node: protocol handling
+        'node:console': false,
+        'node:crypto': false,
+        'node:fs': false,
+        'node:path': false,
+        'node:url': false,
+        'node:util': false,
+        'node:stream': false,
+        'node:buffer': false,
+        'node:events': false,
+        'node:os': false,
+        'node:http': false,
+        'node:https': false,
+        'node:net': false,
+        'node:tls': false,
+        'node:dns': false,
+        'node:child_process': false,
+        'node:cluster': false,
+        'node:dgram': false,
+        'node:readline': false,
+        'node:repl': false,
+        'node:tty': false,
+        'node:v8': false,
+        'node:vm': false,
+        'node:worker_threads': false,
+        'node:zlib': false,
+        'node:querystring': false,
+        'node:timers': false,
+        'node:assert': false,
+      };
+    }
+
+    // Add more comprehensive node: protocol handling
+    config.module.rules.push({
+      test: /node:.*/,
+      use: 'ignore-loader'
+    });
 
     // Add plugins to handle problematic imports
     config.plugins.push(
@@ -132,4 +183,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+module.exports = nextConfig

@@ -1,11 +1,12 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 // import { uploadToBunny } from '../../../utils/bunny';
 
 export async function POST(req: Request) {
   const { mediaId, width, formats, quality, tenantId } = await req.json();
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // 1. Authentication Check: Ensure user is logged in
   // if (!req.user) { // Assuming req.user is populated by Payload's auth middleware

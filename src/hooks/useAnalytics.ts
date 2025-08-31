@@ -26,7 +26,7 @@ export function useAnalytics(options: AnalyticsOptions = {}) {
   const analyticsService = AnalyticsService.getInstance();
   const startTimeRef = useRef<number>(Date.now());
   const maxScrollDepthRef = useRef<number>(0);
-  const sessionIdRef = useRef<string>();
+  const sessionIdRef = useRef<string>('');
 
   // Initialize session ID
   useEffect(() => {

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Dynamic import for payload config
 
 export async function GET() {
   try {
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const galleryItems = await payload.find({
       collection: 'gallery',
       limit: 100,
@@ -18,7 +19,8 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const data = await req.json();
     const newGalleryItem = await payload.create({
       collection: 'gallery',

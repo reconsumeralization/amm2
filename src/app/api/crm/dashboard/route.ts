@@ -1,20 +1,21 @@
 // src/app/api/crm/dashboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager')) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401);
     }
 
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // 1. Get today's appointments
     const today = new Date();
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
         limit: 1000, // Adjust as needed
     });
 
-    const totalRevenueThisMonth = completedAppointmentsThisMonth.docs.reduce((total, app) => total + (app.price || 0), 0);
+    const totalRevenueThisMonth = completedAppointmentsThisMonth.docs.reduce((total: number, app: any) => total + (app.price || 0), 0);
 
     // 4. Get recent activity (e.g., last 5 created appointments)
     const recentActivity = await payload.find({

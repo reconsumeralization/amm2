@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '../../../../payload'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 export async function GET(
@@ -18,13 +18,13 @@ export async function GET(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const userId = id
 
     // Check permissions
-    const canViewUser = session.user?.role === 'admin' ||
-                       session.user?.role === 'manager' ||
-                       session.user?.id === userId
+    const canViewUser = (session as any).user?.role === 'admin' ||
+                       (session as any).user?.role === 'manager' ||
+                       (session as any).user?.id === userId
 
     if (!canViewUser) {
       return NextResponse.json(
@@ -72,14 +72,14 @@ export async function PUT(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const userId = id
     const body = await request.json()
 
     // Check permissions
-    const canUpdateUser = session.user?.role === 'admin' ||
-                         session.user?.role === 'manager' ||
-                         session.user?.id === userId
+    const canUpdateUser = (session as any).user?.role === 'admin' ||
+                         (session as any).user?.role === 'manager' ||
+                         (session as any).user?.id === userId
 
     if (!canUpdateUser) {
       return NextResponse.json(
@@ -89,7 +89,7 @@ export async function PUT(
     }
 
     // Prevent non-admins from changing certain fields
-    if (session.user?.role !== 'admin' && session.user?.id === userId) {
+    if ((session as any).user?.role !== 'admin' && (session as any).user?.id === userId) {
       // Users can only update their own non-sensitive info
       delete body.role
       delete body.permissions
@@ -103,7 +103,7 @@ export async function PUT(
     })
 
     // Log the update
-    console.log(`User updated: ${updatedUser.name} (${updatedUser.id}) by ${session.user?.name}`)
+    console.log(`User updated: ${updatedUser.name} (${updatedUser.id}) by ${(session as any).user?.name}`)
 
     return NextResponse.json({
       user: updatedUser,
@@ -126,7 +126,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || (session as any).user?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
         { status: 401 }
@@ -134,11 +134,11 @@ export async function DELETE(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
+    const payload = await getPayloadClient()
     const userId = id
 
     // Prevent deleting own account
-    if (session.user?.id === userId) {
+    if ((session as any).user?.id === userId) {
       return NextResponse.json(
         { error: 'Cannot delete your own account' },
         { status: 400 }
@@ -164,7 +164,7 @@ export async function DELETE(
     })
 
     // Log the deletion
-    console.log(`User deleted: ${user.name} (${userId}) by ${session.user?.name}`)
+    console.log(`User deleted: ${user.name} (${userId}) by ${(session as any).user?.name}`)
 
     return NextResponse.json({
       message: 'User deleted successfully'

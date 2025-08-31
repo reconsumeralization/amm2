@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { DocumentationSearchService } from '@/lib/search-service'
 import { SearchConfig } from '@/lib/search-service'
 import { getUserRoleFromSession } from '@/lib/documentation-permissions'
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get('q') || ''
 
     // Get user session and role
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const userRole = getUserRoleFromSession(session)
 
     // Get autocomplete suggestions

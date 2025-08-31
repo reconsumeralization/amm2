@@ -130,12 +130,12 @@ export function getAccessibleSections(userRole: UserRole, action: 'read' | 'edit
 
 // Helper function to determine user role from session or context
 export function getUserRoleFromSession(session: any): UserRole {
-  if (!session?.user) {
+  if (!(session as any)?.user) {
     return 'guest'
   }
 
   // Map session role to documentation user role
-  const sessionRole = session.user.role?.toLowerCase()
+  const sessionRole = ((session as any).user as any).role?.toLowerCase()
   
   switch (sessionRole) {
     case 'admin':

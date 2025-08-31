@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -42,11 +42,7 @@ export function AuditLogs() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  useEffect(() => {
-    fetchAuditLogs()
-  }, [searchTerm, actionFilter, resourceFilter, userFilter, currentPage])
-
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -93,7 +89,11 @@ export function AuditLogs() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchTerm, actionFilter, resourceFilter, userFilter, currentPage])
+
+  useEffect(() => {
+    fetchAuditLogs()
+  }, [searchTerm, actionFilter, resourceFilter, userFilter, currentPage, fetchAuditLogs])
 
   const getActionColor = (action: string) => {
     if (action.includes('CREATE') || action.includes('ADD')) {

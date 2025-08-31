@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '@/payload.config';
 
 /**
@@ -120,7 +120,8 @@ const DEFAULT_SETTINGS = {
  */
 export async function initializeSettings() {
   try {
-    const payload = await getPayload({ config });
+    const payload = await // @ts-ignore
+  getPayloadClient();
     
     // Check if any settings exist
     const existingSettings = await payload.find({
@@ -153,7 +154,8 @@ export async function initializeSettings() {
  */
 export async function getSettingsWithFallback(tenantId?: string) {
   try {
-    const payload = await getPayload({ config });
+    const payload = await // @ts-ignore
+  getPayloadClient();
     
     const settings = await payload.find({
       collection: 'settings',

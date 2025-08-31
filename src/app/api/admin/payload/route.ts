@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import getPayloadClient from '../../../../payload'
+import { getPayloadClient } from '@/payload'
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
     // Check authentication
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!(session as any)?.user || (session as any).user.role !== 'admin') {
       return NextResponse.redirect(new URL('/auth/signin?callbackUrl=/admin', request.url))
     }
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     // Check authentication
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!(session as any)?.user || (session as any).user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     // Check authentication
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!(session as any)?.user || (session as any).user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -100,7 +100,7 @@ export async function DELETE(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     // Check authentication
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!(session as any)?.user || (session as any).user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

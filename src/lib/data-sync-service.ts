@@ -3,7 +3,7 @@
  * Ensures consistency and synchronization across all ModernMen services
  */
 
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../payload.config';
 import { getSettingsWithFallback } from './settings-initializer';
 
@@ -20,7 +20,8 @@ export class DataSyncService {
 
   async initialize(): Promise<void> {
     if (!this.payload) {
-      this.payload = await getPayload({ config });
+      this.payload = await // @ts-ignore
+  getPayloadClient();
     }
   }
 

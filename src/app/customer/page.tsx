@@ -15,7 +15,7 @@ export default function CustomerPage() {
     if (status === 'loading') return
     if (!session) {
       router.push('/auth/signin?callbackUrl=/customer')
-    } else if (session.user?.role !== 'customer') {
+    } else if ((session as any).user?.role !== 'customer') {
       router.push('/auth/signin?callbackUrl=/customer')
     }
   }, [session, status, router])
@@ -31,7 +31,7 @@ export default function CustomerPage() {
     )
   }
 
-  if (!session || session.user?.role !== 'customer') {
+  if (!session || (session as any).user?.role !== 'customer') {
     return null
   }
 
@@ -40,7 +40,7 @@ export default function CustomerPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Customer Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {session.user?.name}</p>
+          <p className="text-gray-600">Welcome back, {(session as any).user?.name}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -54,23 +54,23 @@ export default function CustomerPage() {
               <CardContent className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500">Name</label>
-                  <p className="text-lg">{session.user?.name}</p>
+                  <p className="text-lg">{(session as any).user?.name}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">Email</label>
-                  <p className="text-lg">{session.user?.email}</p>
+                  <p className="text-lg">{(session as any).user?.email}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">Phone</label>
-                  <p className="text-lg">{(session.user as any)?.phone || 'Not provided'}</p>
+                  <p className="text-lg">{((session as any).user as any)?.phone || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">Address</label>
-                  <p className="text-lg">{(session.user as any)?.address || 'Not provided'}</p>
+                  <p className="text-lg">{((session as any).user as any)?.address || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">Customer ID</label>
-                  <p className="text-lg font-mono">{(session.user as any)?.customerId || 'N/A'}</p>
+                  <p className="text-lg font-mono">{((session as any).user as any)?.customerId || 'N/A'}</p>
                 </div>
                 <Button className="w-full" variant="outline">
                   Edit Profile

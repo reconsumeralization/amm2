@@ -18,7 +18,7 @@ import { Switch } from '@/components/ui/switch'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { debounce } from 'lodash'
+import { debounce } from '@/lib/utils'
 // Using emoji alternatives for icons due to package compatibility issues
 
 interface Employee {
@@ -131,26 +131,7 @@ export function EmployeeManagement() {
   const [editingEmployee, setEditingEmployee] = useState<Partial<Employee> | null>(null)
   const [bulkActionLoading, setBulkActionLoading] = useState(false)
 
-  // Enhanced debounced search
-  const debouncedSearch = useCallback(
-    debounce((term: string) => {
-      fetchEmployees()
-    }, 300),
-    [statusFilter, ratingFilter, departmentFilter, sortBy, sortOrder]
-  )
-
-  useEffect(() => {
-    debouncedSearch(searchTerm)
-    return () => {
-      debouncedSearch.cancel()
-    }
-  }, [searchTerm, debouncedSearch])
-
-  useEffect(() => {
-    fetchEmployees()
-  }, [statusFilter, ratingFilter, departmentFilter, sortBy, sortOrder])
-
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -228,7 +209,80 @@ export function EmployeeManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchTerm, statusFilter, ratingFilter, departmentFilter, sortBy, sortOrder])
+
+  // Enhanced debounced search
+  const debouncedSearch = useMemo(() =>
+    debounce(async (term: string) => {
+      try {
+        setLoading(true)
+        const params = new URLSearchParams()
+        if (term) params.set('search', term)
+        if (statusFilter !== 'all') {
+          params.set('isActive', statusFilter === 'active' ? 'true' : 'false')
+        }
+        if (departmentFilter !== 'all') params.set('department', departmentFilter)
+        if (ratingFilter !== 'all') params.set('minRating', ratingFilter)
+        params.set('sortBy', sortBy)
+        params.set('sortOrder', sortOrder)
+
+        const response = await fetch(`/api/employees?${params.toString()}`)
+        if (!response.ok) throw new Error('Failed to fetch employees')
+
+        const data = await response.json()
+        setEmployees(data.employees)
+
+        // Calculate enhanced stats
+        const totalEmployees = data.total || data.employees.length
+        const activeEmployees = data.employees.filter((e: Employee) => e.isActive).length
+        const featuredEmployees = data.employees.filter((e: Employee) => e.featured).length
+        const totalAppointments = data.employees.reduce((sum: number, e: Employee) =>
+          sum + (e.recentAppointmentsCount || 0), 0
+        )
+        const avgRating = data.employees.length > 0 ?
+          data.employees.reduce((sum: number, e: Employee) => sum + (e.performance?.rating || 0), 0) / data.employees.length : 0
+        const avgCompletionRate = data.employees.length > 0 ?
+          data.employees.reduce((sum: number, e: Employee) => sum + (e.performance?.completionRate || 0), 0) / data.employees.length : 0
+        const topPerformer = data.employees.find((e: Employee) => e.performance?.rating === Math.max(...data.employees.map((emp: Employee) => emp.performance?.rating || 0)))
+        const totalRevenue = data.employees.reduce((sum: number, e: Employee) => sum + (e.performance?.revenueGenerated || 0), 0)
+        const avgSalary = data.employees.length > 0 ?
+          data.employees.reduce((sum: number, e: Employee) => sum + (e.salary || 0), 0) / data.employees.length : 0
+        const newHiresThisMonth = data.employees.filter((e: Employee) => {
+          if (!e.userInfo?.joinDate) return false
+          const hireDate = new Date(e.userInfo.joinDate)
+          const now = new Date()
+          return hireDate.getMonth() === now.getMonth() && hireDate.getFullYear() === now.getFullYear()
+        }).length
+
+        setStats({
+          total: totalEmployees,
+          active: activeEmployees,
+          featured: featuredEmployees,
+          totalAppointments,
+          avgRating: parseFloat(avgRating.toFixed(1)),
+          avgCompletionRate: parseFloat(avgCompletionRate.toFixed(1)),
+          topPerformer,
+          totalRevenue: parseFloat(totalRevenue.toFixed(0)),
+          avgSalary: parseFloat(avgSalary.toFixed(0)),
+          newHiresThisMonth
+        })
+      } catch (error) {
+        console.error('Error fetching employees:', error)
+        toast.error('Failed to load employees')
+      } finally {
+        setLoading(false)
+      }
+    }, 300),
+    [statusFilter, ratingFilter, departmentFilter, sortBy, sortOrder, setLoading, setEmployees, setStats]
+  )
+
+  useEffect(() => {
+    debouncedSearch(searchTerm)
+  }, [searchTerm, debouncedSearch])
+
+  useEffect(() => {
+    fetchEmployees()
+  }, [statusFilter, ratingFilter, departmentFilter, sortBy, sortOrder, fetchEmployees])
 
   const fetchEmployeeAnalytics = async (employeeId: string) => {
     try {

@@ -15,7 +15,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import getPayloadClient from '../payload';
+import { getPayloadClient } from '@/payload';
 
 // Resolve script directory
 const __filename = fileURLToPath(import.meta.url);
@@ -41,7 +41,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 async function exportDocs() {
-  const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) });
+  const payload = await getPayloadClient();
 
   // Fetch all documentation entries (no pagination for simplicity)
   const { docs } = await payload.find({

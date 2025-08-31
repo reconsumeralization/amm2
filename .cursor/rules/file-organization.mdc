@@ -1,0 +1,405 @@
+---
+alwaysApply: true
+description: File organization and directory structure patterns
+---
+
+# File Organization Patterns
+
+This project follows a comprehensive file organization structure optimized for scalability:
+
+## 📁 Root Directory Structure
+
+### **Core Directories:**
+```
+src/
+├── app/           # Next.js App Router pages and API routes
+├── components/    # React components organized by feature
+├── lib/           # Utility functions and shared logic
+├── hooks/         # Custom React hooks
+├── types/         # TypeScript type definitions
+├── utils/         # Helper functions and utilities
+├── config/        # Configuration files
+├── constants/     # Application constants
+├── styles/        # Global styles and CSS modules
+└── payload/       # PayloadCMS configuration and collections
+```
+
+### **Supporting Directories:**
+```
+├── __tests__/     # Unit and integration tests
+├── __mocks__/     # Test mocks and fixtures
+├── stories/       # Storybook stories
+├── test-utils/    # Testing utilities
+└── tools/         # Development tools and scripts
+```
+
+## 🎯 Directory-Specific Patterns
+
+### **App Router Structure:**
+```
+src/app/
+├── (auth)/        # Route groups for auth pages
+├── (dashboard)/   # Route groups for dashboard pages
+├── api/           # API routes organized by domain
+│   ├── auth/      # Authentication endpoints
+│   ├── content/   # Content management APIs
+│   ├── crm/       # CRM-related APIs
+│   └── commerce/  # E-commerce APIs
+├── admin/         # Admin interface pages
+├── blog/          # Blog pages and routes
+└── globals.css    # Global styles
+```
+
+### **Component Organization:**
+```
+src/components/
+├── ui/            # Base UI components (shadcn/ui)
+├── features/      # Feature-specific components
+│   ├── auth/      # Authentication components
+│   ├── products/  # Product-related components
+│   └── dashboard/ # Dashboard widgets
+├── layout/        # Layout components
+├── forms/         # Form components
+└── shared/        # Shared/reusable components
+```
+
+### **PayloadCMS Structure:**
+```
+src/payload/
+├── collections/   # Database collections
+│   ├── builder/   # Visual page builder collections
+│   ├── commerce/  # E-commerce collections
+│   ├── crm/       # Customer management collections
+│   ├── content/   # Content management collections
+│   └── staff/     # Staff management collections
+├── components/    # Admin interface components
+├── hooks/         # Payload-specific hooks
+├── endpoints/     # Custom API endpoints
+└── utils/         # Payload utilities
+```
+
+## 📋 File Naming Conventions
+
+### **Component Files:**
+```typescript
+// Main component
+ComponentName.tsx
+
+// Component with multiple parts
+ComponentName/
+├── index.tsx      # Main export
+├── ComponentName.tsx
+├── SubComponent.tsx
+└── types.ts       # Component-specific types
+```
+
+### **API Routes:**
+```typescript
+// Standard CRUD
+route.ts           # GET, POST
+[id]/route.ts      # GET, PUT, DELETE by ID
+
+// Special operations
+search/route.ts    # Search functionality
+analytics/route.ts # Analytics endpoints
+bulk/route.ts      # Bulk operations
+```
+
+### **Utility Files:**
+```typescript
+// Functions
+utils.ts
+helpers.ts
+formatters.ts
+
+// Constants
+constants.ts
+config.ts
+
+// Types
+types.ts
+interfaces.ts
+enums.ts
+```
+
+## 🔧 Import Patterns
+
+### **Relative Imports:**
+```typescript
+// Same directory
+import { utils } from './utils'
+import { types } from './types'
+
+// Parent directory
+import { config } from '../config'
+import { Component } from '../components'
+
+// Sibling directories
+import { api } from '../../lib/api'
+import { useAuth } from '../../hooks/useAuth'
+```
+
+### **Absolute Imports (Recommended):**
+```typescript
+// Using @ alias (configured in tsconfig.json)
+import { Button } from '@/components/ui/button'
+import { api } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
+import { User } from '@/types/user'
+
+// Direct imports
+import { createClient } from '@/lib/supabase'
+import { formatDate } from '@/utils/date'
+```
+
+### **Index Files:**
+```typescript
+// src/components/ui/index.ts
+export { Button } from './button'
+export { Input } from './input'
+export { Card } from './card'
+
+// Usage
+import { Button, Input, Card } from '@/components/ui'
+```
+
+## 🎯 File Organization Best Practices
+
+### **Single Responsibility:**
+```typescript
+// ✅ Good: One component per file
+Button.tsx
+Input.tsx
+Card.tsx
+
+// ❌ Bad: Multiple components in one file
+components.tsx // Contains Button, Input, Card
+```
+
+### **Cohesion:**
+```typescript
+// ✅ Good: Related files together
+components/
+├── Button/
+│   ├── Button.tsx
+│   ├── Button.stories.tsx
+│   └── Button.test.tsx
+
+// ❌ Bad: Scattered related files
+Button.tsx
+Button.stories.tsx (in stories/)
+Button.test.tsx (in __tests__/)
+```
+
+### **Size Limits:**
+```typescript
+// Keep files under 300 lines
+// Split large components into smaller pieces
+// Extract utilities into separate files
+// Use index files for clean imports
+```
+
+## 🔍 File Discovery Patterns
+
+### **Finding Components:**
+```bash
+# Find all button components
+find src -name "*button*" -type f
+
+# Find components by feature
+find src/components -path "*/auth/*" -name "*.tsx"
+
+# Find API routes
+find src/app/api -name "route.ts"
+```
+
+### **Import Resolution:**
+```typescript
+// Quick file location
+// Ctrl+Click (VS Code) or Cmd+Click (Cursor)
+// Go to Definition (F12)
+// Find All References (Shift+F12)
+```
+
+## 🚀 Development Workflow
+
+### **New Feature Structure:**
+```typescript
+# 1. Create feature directory
+mkdir src/components/features/new-feature
+
+# 2. Add component files
+touch src/components/features/new-feature/
+  NewFeature.tsx
+  NewFeature.test.tsx
+  NewFeature.stories.tsx
+  index.ts
+
+# 3. Add types
+touch src/types/new-feature.ts
+
+# 4. Add API routes
+mkdir src/app/api/new-feature
+touch src/app/api/new-feature/route.ts
+
+# 5. Add hooks
+touch src/hooks/useNewFeature.ts
+
+# 6. Add utilities
+touch src/utils/new-feature-utils.ts
+```
+
+### **File Templates:**
+
+#### **Component Template:**
+```typescript
+// src/components/ComponentName.tsx
+import React from 'react'
+import { cn } from '@/lib/utils'
+
+interface ComponentNameProps {
+  children?: React.ReactNode
+  className?: string
+}
+
+export function ComponentName({ children, className }: ComponentNameProps) {
+  return (
+    <div className={cn('component-classes', className)}>
+      {children}
+    </div>
+  )
+}
+```
+
+#### **Hook Template:**
+```typescript
+// src/hooks/useCustomHook.ts
+import { useState, useEffect } from 'react'
+
+export function useCustomHook(initialValue: any) {
+  const [value, setValue] = useState(initialValue)
+
+  useEffect(() => {
+    // Side effects
+  }, [])
+
+  return { value, setValue }
+}
+```
+
+#### **API Route Template:**
+```typescript
+// src/app/api/resource/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { createSuccessResponse, createErrorResponse } from '@/lib/api-error-handler'
+
+export async function GET(request: NextRequest) {
+  try {
+    // Implementation
+    return createSuccessResponse(data, 'Success')
+  } catch (error) {
+    return createErrorResponse('Error', 'ERROR_CODE', 500)
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    // Implementation
+    return createSuccessResponse(data, 'Created', 201)
+  } catch (error) {
+    return createErrorResponse('Error', 'ERROR_CODE', 500)
+  }
+}
+```
+
+## 🔧 Configuration Files
+
+### **TypeScript Config:**
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+### **Next.js Config:**
+```javascript
+// next.config.js
+module.exports = {
+  experimental: {
+    appDir: true,
+  },
+  images: {
+    domains: ['localhost'],
+  },
+}
+```
+
+### **Tailwind Config:**
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+}
+```
+
+## 🎯 Quick Reference
+
+### **Common File Locations:**
+```typescript
+// Main app component
+src/app/page.tsx
+
+// Layout components
+src/components/layout/
+
+// API routes
+src/app/api/
+
+// Custom hooks
+src/hooks/
+
+// Utility functions
+src/lib/utils.ts
+
+// Type definitions
+src/types/
+
+// Configuration
+src/config/
+```
+
+### **Import Shortcuts:**
+```typescript
+// @/ alias points to src/
+import { Component } from '@/components/Component'
+import { api } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
+import { User } from '@/types/user'
+```
+
+### **File Extensions:**
+```typescript
+// React components
+.tsx
+
+// TypeScript files
+.ts
+
+// JavaScript files
+.js
+
+// CSS modules
+.module.css
+
+// Global styles
+.css
+```

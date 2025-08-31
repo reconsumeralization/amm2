@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Config will be imported dynamically to avoid issues
 
 export async function POST(req: NextRequest) {
@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Get customer
     const customer = await payload.findByID({
@@ -177,7 +178,8 @@ async function sendPointsEarnedEmail(customer: any, points: number, reason: stri
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     
     let settings;
     if (tenantId) {

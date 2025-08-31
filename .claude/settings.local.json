@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run type-check:*)",
+      "Bash(find:*)",
+      "Bash(node fix-auth-imports.js)",
+      "Bash(node:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

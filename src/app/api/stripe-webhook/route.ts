@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 // Config will be imported dynamically to avoid issues
 import { handleAPIError, createErrorResponse, validateEnvironmentVariables } from '@/lib/api-error-handler';
 import { getSettingsWithFallback } from '@/lib/settings-initializer';
@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
       return createErrorResponse('Invalid Stripe signature', 'VALIDATION_ERROR', 400);
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     switch (event.type) {
       case 'payment_intent.succeeded':
@@ -313,7 +314,8 @@ async function updateLoyaltyPoints(appointment: any, tenantId?: string) {
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     
     let settings;
     if (tenantId) {

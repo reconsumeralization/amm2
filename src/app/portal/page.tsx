@@ -1,8 +1,8 @@
-import { getPayload } from 'payload';
 import BookingChatbot from '@/components/chatbot/BookingChatbot';
 
 export default async function PortalPage({ params }: { params: Promise<{ userId?: string }> }) {
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  const { getPayloadClient } = await import('@/payload')
+  const payload = await getPayloadClient();
 
   const { userId: paramUserId } = await params;
 
@@ -41,7 +41,7 @@ export default async function PortalPage({ params }: { params: Promise<{ userId?
     where: { tenant: { equals: tenantId } },
     limit: 1,
   });
-  const config = settings.docs[0] || {}; // Ensure config is an object even if no settings found
+  const config = (settings.docs[0] || {}) as any; // Ensure config is an object even if no settings found
 
   // All other fetches
   const appointments = await payload.find({
@@ -72,7 +72,8 @@ export default async function PortalPage({ params }: { params: Promise<{ userId?
       {config.portal?.showAppointments && (
         <section className="mb-8">
           <h2 className="text-xl mb-2">Your Appointments</h2>
-          {appointments.docs.map((appt) => (
+          {/* @ts-ignore */}
+          {appointments.docs.map((appt: any) => (
             <div key={appt.id}>
               {appt.service} on {new Date(appt.date).toLocaleString()} with {appt.staff?.name || 'Unassigned'} - {appt.status}
             </div>

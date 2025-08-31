@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '../../../payload'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
       and: []
     }
 
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       where.and.push({
         or: [
-          { user: { equals: session.user.id } },
+          { user: { equals: (session as any).user.id } },
           { broadcast: { equals: true } }
         ]
       })
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
           { read: { equals: false } },
           {
             or: [
-              { user: { equals: session.user.id } },
+              { user: { equals: (session as any).user.id } },
               { broadcast: { equals: true } }
             ]
           }
@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
         })
 
         if (notification && (
-          notification.user?.id === session.user.id ||
+          notification.user?.id === (session as any).user.id ||
           notification.broadcast ||
-          session.user.role === 'admin'
+          (session as any).user.role === 'admin'
         )) {
           await payload.delete({
             collection: 'notifications',

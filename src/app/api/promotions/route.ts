@@ -1,13 +1,13 @@
 // src/app/api/promotions/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/payload';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) });
+    const payload = await getPayloadClient();
     const promotions = await payload.find({
       collection: 'promotions',
       limit: 100, // Add pagination later
@@ -22,11 +22,11 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+    if (!(session as any)?.user || ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager')) {
       return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401);
     }
 
-    const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) });
+    const payload = await getPayloadClient();
     const data = await req.json();
     const newPromotion = await payload.create({
       collection: 'promotions',

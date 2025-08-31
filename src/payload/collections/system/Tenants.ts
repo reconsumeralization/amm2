@@ -7,7 +7,14 @@ export const Tenants: CollectionConfig = {
     group: 'Admin',
   },
   access: {
-    read: () => true,
+    read: ({ req }) => {
+      if (!req.user) return false;
+      // Only authenticated users with proper tenant access
+      if (req.user.role === 'admin' || req.user.role === 'manager') {
+        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      }
+      return false;
+    },
     create: ({ req: { user } }) => {
       return user?.role === 'admin' || user?.role === 'owner';
     },

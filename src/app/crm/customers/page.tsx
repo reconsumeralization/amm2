@@ -12,18 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import PaginationControls from '@/components/crm/PaginationControls';
-import { getPayload } from 'payload';
-import config from '../../../../payload.config';
-import { getServerSession } from 'next-auth';
+import { getPayloadClient } from '@/payload';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 async function getCustomers({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
+  if (!(session as any)?.user || (((session as any).user)?.role !== 'admin' && ((session as any).user)?.role !== 'manager')) {
     throw new Error('Unauthorized');
   }
 
-  const payload = await getPayload({ config });
+  const payload = await getPayloadClient();
 
   const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
   const limit = typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10;

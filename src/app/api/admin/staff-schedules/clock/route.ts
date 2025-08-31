@@ -1,11 +1,12 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../../../../utils/email';
 import { google } from 'googleapis';
 
 export async function POST(req: Request) {
   const { action, tenantId } = await req.json(); // userId will come from req.user
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // 1. Authentication Check: Get user from request headers or payload auth
   const authHeader = req.headers.get('authorization');

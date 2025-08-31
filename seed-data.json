@@ -1,0 +1,61 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "admin@modernmen.com",
+      "name": "Master Administrator",
+      "role": "super-admin",
+      "isActive": true,
+      "createdAt": "2025-08-31T17:37:42.859Z"
+    },
+    {
+      "id": "2",
+      "email": "manager@modernmen.com",
+      "name": "Store Manager",
+      "role": "manager",
+      "isActive": true,
+      "createdAt": "2025-08-31T17:37:42.860Z"
+    },
+    {
+      "id": "3",
+      "email": "stylist1@modernmen.com",
+      "name": "John Smith",
+      "role": "stylist",
+      "isActive": true,
+      "createdAt": "2025-08-31T17:37:42.860Z"
+    }
+  ],
+  "employees": [
+    {
+      "id": "1",
+      "userId": "3",
+      "name": "John Smith",
+      "email": "stylist1@modernmen.com",
+      "role": "stylist",
+      "specialization": "Hair Cutting",
+      "rating": 4.8,
+      "isActive": true,
+      "createdAt": "2025-08-31T17:37:42.860Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "1",
+      "name": "Classic Haircut",
+      "description": "Professional haircut with styling",
+      "price": 35,
+      "duration": 45,
+      "category": "haircut",
+      "isActive": true
+    },
+    {
+      "id": "2",
+      "name": "Beard Trim",
+      "description": "Precision beard trimming and shaping",
+      "price": 25,
+      "duration": 30,
+      "category": "beard",
+      "isActive": true
+    }
+  ]
+}

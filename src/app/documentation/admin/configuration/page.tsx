@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { getIcon } from '@/lib/icon-mapping'
 
 export const metadata: Metadata = {
   title: 'System Configuration - Admin Documentation',
@@ -12,7 +13,7 @@ function ConfigurationPage() {
   const configurationSections = [
     {
       title: 'Environment Configuration',
-      icon: <database className="h-6 w-6 text-blue-400" />,
+      icon: React.createElement(getIcon('database'), { className: "h-6 w-6 text-blue-400" }),
       description: 'Set up and configure different environments (development, staging, production)',
       items: [
         {
@@ -47,7 +48,7 @@ function ConfigurationPage() {
     },
     {
       title: 'Authentication & Security',
-      icon: <lock className="h-6 w-6 text-red-400" />,
+      icon: React.createElement(getIcon('lock'), { className: "h-6 w-6 text-red-400" }),
       description: 'Configure authentication providers and security settings',
       items: [
         {
@@ -82,7 +83,7 @@ function ConfigurationPage() {
     },
     {
       title: 'Email & Notifications',
-      icon: <bell className="h-6 w-6 text-green-400" />,
+      icon: React.createElement(getIcon('bell'), { className: "h-6 w-6 text-green-400" }),
       description: 'Configure email services and notification systems',
       items: [
         {
@@ -117,7 +118,7 @@ function ConfigurationPage() {
     },
     {
       title: 'API & Integrations',
-      icon: <database className="h-6 w-6 text-purple-400" />,
+      icon: React.createElement(getIcon('database'), { className: "h-6 w-6 text-purple-400" }),
       description: 'Configure external API integrations and webhooks',
       items: [
         {
@@ -168,13 +169,13 @@ function ConfigurationPage() {
   const getImportanceIcon = (importance: string) => {
     switch (importance) {
       case 'critical':
-        return <alertTriangle className="h-4 w-4" />
+        return React.createElement(getIcon('alertTriangle'), { className: "h-4 w-4" })
       case 'high':
-        return <alertTriangle className="h-4 w-4" />
+        return React.createElement(getIcon('alertTriangle'), { className: "h-4 w-4" })
       case 'medium':
-        return <checkCircle className="h-4 w-4" />
+        return React.createElement(getIcon('checkCircle'), { className: "h-4 w-4" })
       default:
-        return <checkCircle className="h-4 w-4" />
+        return React.createElement(getIcon('checkCircle'), { className: "h-4 w-4" })
     }
   }
 
@@ -182,7 +183,7 @@ function ConfigurationPage() {
     <div className="max-w-5xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <cog className="h-8 w-8 text-blue-500" />
+          {React.createElement(getIcon('cog'), { className: "h-8 w-8 text-blue-500" })}
           <h1 className="text-3xl font-bold text-slate-100">
             System Configuration
           </h1>
@@ -194,7 +195,7 @@ function ConfigurationPage() {
 
       {/* Security Warning */}
       <Alert className="mb-8 border-red-700/50 bg-red-900/20">
-        <alertTriangle className="h-4 w-4" />
+        {React.createElement(getIcon('alertTriangle'), { className: "h-4 w-4" })}
         <AlertTitle>Security Notice</AlertTitle>
         <AlertDescription>
           Always use secure, randomly generated secrets for production environments. 
@@ -262,7 +263,7 @@ function ConfigurationPage() {
       {/* Configuration Checklist */}
       <div className="mt-12 p-6 bg-gradient-to-r from-green-900/20 to-blue-900/20 border border-green-700/30 rounded-lg">
         <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-          <checkCircle className="h-5 w-5 text-green-400" />
+          {React.createElement(getIcon('checkCircle'), { className: "h-5 w-5 text-green-400" })}
           Pre-deployment Checklist
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

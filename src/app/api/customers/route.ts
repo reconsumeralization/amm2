@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import getPayload from '@/payload'
+import { getServerSession } from 'next-auth/next'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { validateRequestBody } from '@/lib/validation-utils'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
@@ -10,16 +10,17 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin or has customer access
-    if (session.user.role !== 'admin' && session.user.role !== 'employee') {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'employee') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Parse search parameters
     const url = new URL(request.url)
@@ -81,16 +82,17 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin
-    if (session.user.role !== 'admin') {
+    if ((session as any).user.role !== 'admin') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Define customer creation schema
     const customerSchema = z.object({
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
       collection: 'customers',
       data: {
         ...validation.data,
-        createdBy: session.user.id,
+        createdBy: (session as any).user.id,
       },
       depth: 2,
     })

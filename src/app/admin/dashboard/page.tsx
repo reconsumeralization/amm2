@@ -26,7 +26,7 @@ export default function AdminDashboard() {
       return
     }
 
-    if (session.user?.role !== 'admin' && session.user?.role !== 'manager') {
+    if ((session as any).user?.role !== 'admin' && (session as any).user?.role !== 'manager') {
       router.push('/portal')
       return
     }
@@ -43,11 +43,11 @@ export default function AdminDashboard() {
     )
   }
 
-  if (!session || (session.user?.role !== 'admin' && session.user?.role !== 'manager')) {
+  if (!session || ((session as any).user?.role !== 'admin' && (session as any).user?.role !== 'manager')) {
     return null // Will redirect in useEffect
   }
 
-  const isAdmin = session.user?.role === 'admin'
+  const isAdmin = (session as any).user?.role === 'admin'
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-blue-50">
@@ -64,8 +64,8 @@ export default function AdminDashboard() {
               <span className="text-blue-100">Management Console</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-blue-100">Welcome, {session.user?.name}</span>
-              <NotificationCenter userId={session.user?.id || ''} />
+              <span className="text-blue-100">Welcome, {(session as any).user?.name}</span>
+              <NotificationCenter userId={(session as any).user?.id || ''} />
               <Button
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-blue-600"
@@ -193,7 +193,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="flex items-center space-x-2">
                 <Badge className="bg-blue-100 text-blue-800">
-                  {session.user?.role?.toUpperCase()}
+                  {(session as any).user?.role?.toUpperCase()}
                 </Badge>
                 {isAdmin && (
                   <Badge className="bg-red-100 text-red-800">FULL ACCESS</Badge>

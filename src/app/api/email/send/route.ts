@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
 import nodemailer from 'nodemailer';
 
@@ -14,7 +14,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const settings = await getSettings(tenantId);
 
     if (!settings.notifications?.email?.enabled) {
@@ -180,7 +181,8 @@ function createEmailContent(template: string, settings: any): string {
 
 async function logEmailSent(emailData: any) {
   try {
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     
     await payload.create({
       collection: 'email-logs',
@@ -202,7 +204,8 @@ async function logEmailSent(emailData: any) {
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     
     let settings;
     if (tenantId) {

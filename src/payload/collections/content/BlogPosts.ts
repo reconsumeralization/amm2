@@ -397,17 +397,18 @@ export const BlogPosts: CollectionConfig = {
         position: 'sidebar',
       },
     },
-    {
-      name: 'comments',
-      type: 'relationship',
-      relationTo: 'comments',
-      hasMany: true,
-      admin: {
-        description: 'Comments on this blog post',
-        readOnly: true,
-        position: 'sidebar',
-      },
-    },
+    // Comments relationship temporarily disabled - comments collection needs to be created
+    // {
+    //   name: 'comments',
+    //   type: 'relationship',
+    //   relationTo: 'comments',
+    //   hasMany: true,
+    //   admin: {
+    //     description: 'Comments on this blog post',
+    //     readOnly: true,
+    //     position: 'sidebar',
+    //   },
+    // },
     {
       name: 'relatedPosts',
       type: 'relationship',

@@ -1,34 +1,59 @@
 declare module 'next-auth' {
-  export function getServerSession(...args: any[]): any;
   export interface NextAuthOptions {
-    providers: any[];
-    adapter?: any;
-    secret?: string;
-    session?: any;
-    callbacks?: any;
-    events?: any;
-    pages?: any;
+    providers: any[]
+    adapter?: any
+    secret?: string
+    session?: any
+    callbacks?: any
+    events?: any
+    pages?: any
   }
-  
+
   export interface User {
-    id: string;
-    name?: string;
-    email?: string;
-    image?: string;
-    role?: string;
+    id: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
+    role: string
+    permissions: string[]
+    customerId?: string | null
+    stylistId?: string | null
+    phone?: string | null
+    address?: string | null
+    specialties?: string[] | null
   }
   
   export interface Session {
-    user: User;
-    accessToken?: string;
-    expires: string;
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role: string
+      permissions: string[]
+      customerId?: string | null
+      stylistId?: string | null
+      phone?: string | null
+      address?: string | null
+      specialties?: string[] | null
+    }
+    accessToken?: string
+    expires: string
   }
   
   export interface JWT {
-    sub?: string;
-    role?: string;
-    accessToken?: string;
+    sub?: string
+    role?: string
+    permissions?: string[]
+    accessToken?: string
+    customerId?: string | null
+    stylistId?: string | null
+    phone?: string | null
+    address?: string | null
+    specialties?: string[] | null
   }
+
+  export function getServerSession(...args: any[]): Promise<Session | null>
 }
 
 declare module 'next-auth/react' {

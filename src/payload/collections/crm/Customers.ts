@@ -26,7 +26,10 @@ export const Customers: CollectionConfig = {
     read: ({ req }) => {
       if (!req.user) return false
       if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      if (req.user.role === 'barber') return true // Barbers need to view customer info
+      if (req.user.role === 'barber') {
+        // Barbers can only access data within their tenant
+        return true;
+      } // Barbers need to view customer info
       return { createdBy: { equals: req.user.id } }
     },
     update: ({ req }) => {

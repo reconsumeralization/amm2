@@ -212,14 +212,15 @@ export const EmailCampaigns: CollectionConfig = withDefaultHooks({
         },
       ],
     },
-    {
-      name: 'template',
-      type: 'relationship',
-      relationTo: 'email-templates',
-      admin: {
-        description: 'Email template to use',
-      },
-    },
+    // Email template relationship temporarily disabled - email-templates collection needs to be created
+    // {
+    //   name: 'template',
+    //   type: 'relationship',
+    //   relationTo: 'email-templates',
+    //   admin: {
+    //     description: 'Email template to use',
+    //   },
+    // },
     {
       name: 'attachments',
       type: 'array',

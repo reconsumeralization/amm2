@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { useCookies } from 'react-cookie';
 // Stripe integration temporarily disabled due to module resolution issues
@@ -15,47 +15,37 @@ interface Message {
   timestamp: Date;
 }
 
-interface Settings {
-  chatbot?: {
-    enabled?: boolean;
-    displayPaths?: Array<{ path: string }>;
-    roles?: string[];
-    aiTriggers?: {
-      pendingAppointments?: boolean;
-      staffAvailability?: boolean;
-      newServices?: boolean;
+interface ChatbotSettings {
+  id: string;
+  name: string;
+  isActive: boolean;
+  tenant: string;
+  settings: {
+    welcomeMessage: string;
+    displayPaths: Array<{ path: string }>;
+    allowedRoles: string[];
+    aiTriggers: {
+      pendingAppointments: boolean;
+      staffAvailability: boolean;
+      newServices: boolean;
     };
-    styles?: {
-      position?: string;
-      backgroundColor?: string;
-      borderRadius?: string;
-      maxWidth?: string;
+    behavior: {
+      autoOpen: boolean;
+      typingIndicator: boolean;
+      maxRetries: number;
     };
-    behavior?: {
-      autoOpen?: boolean;
-      welcomeMessage?: string;
-      typingIndicator?: boolean;
+    styles: {
+      position: string;
+      backgroundColor: string;
+      borderRadius: string;
+      maxWidth: string;
     };
   };
-  barbershop?: {
-    services?: Array<{
-      name: string;
-      description: string;
-      price: number;
-      duration: number;
-      category: string;
-    }>;
-    loyalty?: {
-      pointsPerBooking?: number;
-      pointsPerReferral?: number;
-      pointsPerDollar?: number;
-      tiers?: Array<{
-        name: string;
-        minPoints: number;
-        multiplier: number;
-        benefits: string;
-      }>;
-    };
+  integration: {
+    openaiApiKey?: string;
+    model: string;
+    temperature: number;
+    maxTokens: number;
   };
 }
 
@@ -77,59 +67,16 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [settings, setSettings] = useState<Settings>({});
+  const [chatbotSettings, setChatbotSettings] = useState<ChatbotSettings | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [cookies, setCookie] = useCookies(['chatbot_display']);
   const pathname = usePathname();
 
-  // Load settings and initialize chatbot
-  useEffect(() => {
-    const initializeChatbot = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // Fetch settings
-        const settingsRes = await fetch(`/api/settings?tenantId=${tenantId}`);
-        if (!settingsRes.ok) throw new Error('Failed to load settings');
-        const settingsData = await settingsRes.json();
-        setSettings(settingsData);
-
-        // Check if chatbot is enabled
-        if (!settingsData.chatbot?.enabled) {
-          setIsVisible(false);
-          return;
-        }
-
-        // Set welcome message
-        const welcomeMessage = settingsData.chatbot?.behavior?.welcomeMessage || 
-          'Hello! How can I help you today? (book, reschedule, cancel, suggest times, assign staff, clock in/out)';
-        
-        setMessages([{ 
-          text: welcomeMessage, 
-          sender: 'bot', 
-          timestamp: new Date() 
-        }]);
-
-        // Check visibility based on settings
-        await checkVisibility(settingsData);
-
-      } catch (err) {
-        console.error('Error initializing chatbot:', err);
-        setError('Failed to initialize chatbot');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeChatbot();
-  }, [tenantId, pathname]);
-
-  // Check visibility based on settings
-  const checkVisibility = async (settingsData: Settings) => {
+    const checkVisibility = useCallback(async (settingsData: ChatbotSettings['settings']) => {
     try {
       // Check path restrictions
-      const displayPaths = settingsData.chatbot?.displayPaths || [];
-      const isAllowedPath = displayPaths.some(({ path }) => 
+      const displayPaths = settingsData.displayPaths || [];
+      const isAllowedPath = displayPaths.some(({ path }: { path: string }) =>
         pathname ? pathname.startsWith(path) : false
       );
 
@@ -139,7 +86,7 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       }
 
       // Check role restrictions
-      const allowedRoles = settingsData.chatbot?.roles || ['customer', 'staff'];
+      const allowedRoles = settingsData.allowedRoles || ['customer', 'staff'];
       const userRes = await fetch(`/api/users/${userId}`);
       if (!userRes.ok) throw new Error('Failed to fetch user');
       const user = await userRes.json();
@@ -151,7 +98,7 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       }
 
       // AI-driven triggers
-      const aiTriggers = settingsData.chatbot?.aiTriggers;
+      const aiTriggers = settingsData.aiTriggers;
       if (aiTriggers) {
         let shouldShow = true;
 
@@ -171,14 +118,14 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
           const aiRes = await fetch('/api/ai/chatbot-visibility', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              userId, 
-              tenantId, 
+            body: JSON.stringify({
+              userId,
+              tenantId,
               pathname: pathname || '',
               context: { appointments: appointments.length, staff: staff.length }
             }),
           });
-          
+
           if (aiRes.ok) {
             const { show } = await aiRes.json();
             shouldShow = shouldShow && show;
@@ -199,18 +146,80 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       console.error('Error checking visibility:', err);
       setIsVisible(false);
     }
-  };
+  }, [pathname, userId, tenantId, cookies, setCookie, setIsVisible, appointments.length, staff.length]);
 
-  // Fetch data
+  // Load chatbot settings and initialize
   useEffect(() => {
-    if (isVisible) {
-      fetchAppointments();
-      fetchStaff();
-      fetchServices();
-    }
-  }, [isVisible, tenantId, userId]);
+    const initializeChatbot = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  const fetchAppointments = async () => {
+        // Fetch chatbot settings from collection
+        const chatbotRes = await fetch(`/api/chatbots?tenantId=${tenantId}&isActive=true`);
+        if (!chatbotRes.ok) throw new Error('Failed to load chatbot settings');
+        const chatbotData = await chatbotRes.json();
+
+        if (!chatbotData.success || !chatbotData.data.docs.length) {
+          setIsVisible(false);
+          return;
+        }
+
+        const chatbot = chatbotData.data.docs[0];
+        setChatbotSettings(chatbot);
+
+        // Check if chatbot is active
+        if (!chatbot.isActive) {
+          setIsVisible(false);
+          return;
+        }
+
+        // Create or find existing conversation
+        const conversationRes = await fetch('/api/chat-conversations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user: userId,
+            chatbot: chatbot.id,
+            tenant: tenantId,
+            channel: 'web_chat',
+          }),
+        });
+
+        if (conversationRes.ok) {
+          const conversationData = await conversationRes.json();
+          if (conversationData.success) {
+            setConversationId(conversationData.data.conversationId);
+          }
+        }
+
+        // Set welcome message
+        const welcomeMessage = chatbot.settings?.welcomeMessage ||
+          'Hello! How can I help you today? (book, reschedule, cancel, suggest times, assign staff, clock in/out)';
+
+        setMessages([{
+          text: welcomeMessage,
+          sender: 'bot',
+          timestamp: new Date()
+        }]);
+
+        // Check visibility based on settings
+        await checkVisibility(chatbot.settings);
+
+      } catch (err) {
+        console.error('Error initializing chatbot:', err);
+        setError('Failed to initialize chatbot');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeChatbot();
+  }, [tenantId, pathname, userId, checkVisibility]);
+
+
+
+  const fetchAppointments = useCallback(async () => {
     try {
       const res = await fetch(`/api/appointments?where[tenant][equals]=${tenantId}&where[user][equals]=${userId}`);
       if (!res.ok) throw new Error('Failed to fetch appointments');
@@ -220,9 +229,9 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       console.error('Error fetching appointments:', error);
       setError('Failed to load appointments');
     }
-  };
+  }, [tenantId, userId]);
 
-  const fetchStaff = async () => {
+  const fetchStaff = useCallback(async () => {
     try {
       const res = await fetch(`/api/users?where[role][equals]=staff&where[tenant][equals]=${tenantId}`);
       if (!res.ok) throw new Error('Failed to fetch staff');
@@ -232,24 +241,29 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       console.error('Error fetching staff:', error);
       setError('Failed to load staff');
     }
-  };
+  }, [tenantId]);
 
-  const fetchServices = async () => {
+  const fetchServices = useCallback(async () => {
     try {
-      // Use settings services if available, otherwise fetch from API
-      if (settings.barbershop?.services) {
-        setServices(settings.barbershop.services);
-      } else {
-        const res = await fetch('/api/business-documentation');
-        if (!res.ok) throw new Error('Failed to fetch services');
-        const data = await res.json();
-        setServices(data.docs.map((doc: any) => ({ name: doc.title, description: doc.description || '' })));
-      }
+      // Fetch services from API
+      const res = await fetch('/api/business-documentation');
+      if (!res.ok) throw new Error('Failed to fetch services');
+      const data = await res.json();
+      setServices(data.docs.map((doc: any) => ({ name: doc.title, description: doc.description || '' })));
     } catch (error) {
       console.error('Error fetching services:', error);
       setError('Failed to load services');
     }
-  };
+  }, []);
+
+  // Fetch data
+  useEffect(() => {
+    if (isVisible) {
+      fetchAppointments();
+      fetchStaff();
+      fetchServices();
+    }
+  }, [isVisible, tenantId, userId, fetchAppointments, fetchServices, fetchStaff]);
 
   const addMessage = (text: string, sender: 'bot' | 'user') => {
     setMessages(prev => [...prev, { text, sender, timestamp: new Date() }]);
@@ -265,6 +279,23 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
     setIsLoading(true);
     setError(null);
 
+    // Save user message to collection
+    if (chatbotSettings && conversationId) {
+      await fetch('/api/chat-messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: userMessage,
+          sender: userId,
+          senderType: 'user',
+          chatbot: chatbotSettings.id,
+          tenant: tenantId,
+          conversationId,
+          messageType: 'text',
+        }),
+      });
+    }
+
     try {
       const response = await fetch('/api/ai/chatbot', {
         method: 'POST',
@@ -278,19 +309,58 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
           services,
           userId,
           tenantId,
-          settings,
+          chatbotSettings: chatbotSettings?.settings,
+          conversationId,
         }),
       });
 
       if (!response.ok) throw new Error('Failed to get response');
 
       const data = await response.json();
-      
+
       if (data.error) {
         addMessage(`Sorry, I encountered an error: ${data.error}`, 'bot');
+
+        // Save bot error message to collection
+        if (chatbotSettings && conversationId) {
+          await fetch('/api/chat-messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: `Sorry, I encountered an error: ${data.error}`,
+              sender: chatbotSettings.id,
+              senderType: 'bot',
+              chatbot: chatbotSettings.id,
+              tenant: tenantId,
+              conversationId,
+              messageType: 'text',
+            }),
+          });
+        }
       } else {
         addMessage(data.response, 'bot');
-        
+
+        // Save bot response to collection
+        if (chatbotSettings && conversationId) {
+          await fetch('/api/chat-messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: data.response,
+              sender: chatbotSettings.id,
+              senderType: 'bot',
+              chatbot: chatbotSettings.id,
+              tenant: tenantId,
+              conversationId,
+              messageType: 'text',
+              responseTime: data.responseTime,
+              confidence: data.confidence,
+              intent: data.intent,
+              tags: data.tags || [],
+            }),
+          });
+        }
+
         if (data.action) {
           await handleAction(data.action, data.actionData);
         }
@@ -366,18 +436,7 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
       await fetchAppointments();
       
       // Add loyalty points if applicable
-      if (settings.barbershop?.loyalty?.pointsPerBooking) {
-        await fetch('/api/loyalty/add-points', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customerId: userId,
-            points: settings.barbershop.loyalty.pointsPerBooking,
-            reason: 'Appointment booking',
-            tenantId,
-          }),
-        });
-      }
+      // Loyalty points integration can be added later if needed
     } catch (error) {
       throw error;
     }
@@ -507,7 +566,7 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
 
   if (!isVisible) return null;
 
-  const chatbotStyles = settings.chatbot?.styles || {};
+  const chatbotStyles: any = chatbotSettings?.settings?.styles || {};
   const position = chatbotStyles.position || 'bottom-right';
   const backgroundColor = chatbotStyles.backgroundColor || '#ffffff';
   const borderRadius = chatbotStyles.borderRadius || '8px';

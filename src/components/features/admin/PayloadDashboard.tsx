@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 // Icons replaced with placeholder divs to avoid import issues
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -33,31 +33,31 @@ export function PayloadDashboard() {
   const [documentation, setDocumentation] = useState<any>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle')
 
-  // Load initial data
-  useEffect(() => {
-    if (user && (isAdmin || isOwner)) {
-      loadAnalytics()
-      loadDocumentation()
-    }
-  }, [user, isAdmin, isOwner])
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       const result = await getBarberShopAnalytics()
       setAnalytics(result)
     } catch (error) {
       console.error('Error loading analytics:', error)
     }
-  }
+  }, [getBarberShopAnalytics])
 
-  const loadDocumentation = async () => {
+  const loadDocumentation = useCallback(async () => {
     try {
       const result = await getBusinessDocumentation({ limit: 10 })
       setDocumentation(result)
     } catch (error) {
       console.error('Error loading documentation:', error)
     }
-  }
+  }, [getBusinessDocumentation])
+
+  // Load initial data
+  useEffect(() => {
+    if (user && (isAdmin || isOwner)) {
+      loadAnalytics()
+      loadDocumentation()
+    }
+  }, [user, isAdmin, isOwner, loadAnalytics, loadDocumentation])
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return

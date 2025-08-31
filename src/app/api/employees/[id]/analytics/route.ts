@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '../../../../../payload'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 export async function GET(
@@ -38,9 +38,9 @@ export async function GET(
     }
 
     // Check permissions
-    const canViewAnalytics = session.user?.role === 'admin' ||
-                           session.user?.role === 'manager' ||
-                           (session.user?.role === 'stylist' && stylist.user === session.user?.id)
+    const canViewAnalytics = (session as any).user?.role === 'admin' ||
+                           (session as any).user?.role === 'manager' ||
+                           ((session as any).user?.role === 'stylist' && stylist.user === (session as any).user?.id)
 
     if (!canViewAnalytics) {
       return NextResponse.json(

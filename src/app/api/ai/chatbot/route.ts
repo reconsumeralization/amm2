@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
-import { OpenAIApi, Configuration } from 'openai';
+import OpenAI from 'openai';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,7 +40,8 @@ export async function POST(req: NextRequest) {
     const rateLimitKey = `chatbot:${userId}:${Date.now()}`;
     
     try {
-      const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+      const payload = await getPayloadClient();
 
       // Verify user exists and is active
       const user = await payload.findByID({
@@ -165,7 +165,7 @@ Services: ${JSON.stringify(context.services.slice(0, 5))}
 
 Respond with the JSON format specified above.`;
 
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -175,7 +175,7 @@ Respond with the JSON format specified above.`;
       max_tokens: 1000,
     });
 
-    const responseText = completion.data.choices[0]?.message?.content || '';
+    const responseText = completion.choices[0]?.message?.content || '';
     
     try {
       // Try to parse JSON response
@@ -224,7 +224,8 @@ async function logConversation(data: {
     });
 
     // Optionally store in analytics collection
-    // const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    // const payload = await getPayloadClient();
     // await payload.create({
     //   collection: 'chatbot-logs',
     //   data: data

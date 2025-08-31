@@ -1,10 +1,11 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 
 export async function POST(req: Request) {
   const { date, title, userId, appointmentId, recurrence, action = 'create' } = await req.json();
-  const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
   const user = await payload.findByID({ collection: 'users', id: userId });
 
   const oauth2Client = new google.auth.OAuth2(

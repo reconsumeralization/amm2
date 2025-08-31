@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '../../../payload'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     // Get user profile
     const user = await payload.findByID({
       collection: 'users',
-      id: session.user.id,
+      id: (session as any).user.id,
       depth: 2
     })
 
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -141,15 +141,15 @@ export async function PUT(request: NextRequest) {
 
     const updatedUser = await payload.update({
       collection: 'users',
-      id: session.user.id,
+      id: (session as any).user.id,
       data: updateData
     })
 
     // If user is a stylist, update their stylist profile too
-    if (session.user.role === 'stylist' && body.stylistProfile) {
+    if ((session as any).user.role === 'stylist' && body.stylistProfile) {
       const stylistProfile = await payload.find({
         collection: 'stylists',
-        where: { user: { equals: session.user.id } }
+        where: { user: { equals: (session as any).user.id } }
       })
 
       if (stylistProfile.docs.length > 0) {
@@ -175,7 +175,7 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    console.log(`Profile updated: ${session.user.name} (${session.user.id})`)
+    console.log(`Profile updated: ${(session as any).user.name} (${(session as any).user.id})`)
 
     return NextResponse.json({
       message: 'Profile updated successfully',
@@ -204,7 +204,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -242,13 +242,13 @@ export async function PATCH(request: NextRequest) {
     // Note: Password verification would need to be implemented with proper hashing
     const updatedUser = await payload.update({
       collection: 'users',
-      id: session.user.id,
+      id: (session as any).user.id,
       data: {
         password: newPassword
       }
     })
 
-    console.log(`Password changed for user: ${session.user.id}`)
+    console.log(`Password changed for user: ${(session as any).user.id}`)
 
     return NextResponse.json({
       message: 'Password updated successfully'

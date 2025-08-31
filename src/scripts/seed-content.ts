@@ -1,8 +1,8 @@
-import getPayloadClient from '../payload';
+import { getPayloadClient } from '@/payload';
 
 async function seedCoupons() {
   try {
-    const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) });
+    const payload = await getPayloadClient();
 
     console.log('🌱 Seeding coupons...');
 

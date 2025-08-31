@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -12,7 +12,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // For simplicity, assuming 'followers' is an array of user IDs on the barber's user document
     // In a real app, you might have a separate Engagements collection or a more robust follow system

@@ -1,20 +1,21 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 import { sendEmail } from '../../../../utils/email';
 import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 
 export async function POST(req: Request) {
   const { action, tenantId } = await req.json();
   
   // Get authenticated user from session
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
+  if (!(session as any)?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized: User not authenticated' }, { status: 401 });
   }
   
-  const userId = session.user.id;
-  const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
+  const userId = (session as any).user.id;
+  // @ts-ignore - Payload config type issue
+  const payload = await getPayloadClient();
 
   // Input validation
   if (!action || !tenantId) {

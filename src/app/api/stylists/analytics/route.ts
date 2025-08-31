@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import { getServerSession } from 'next-auth/next'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -8,16 +8,17 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user) {
+    if (!(session as any)?.user) {
       return createErrorResponse('Unauthorized', 'UNAUTHORIZED')
     }
 
     // Check if user is admin or manager
-    if (session.user.role !== 'admin' && session.user.role !== 'manager' && session.user.role !== 'owner') {
+    if ((session as any).user.role !== 'admin' && (session as any).user.role !== 'manager' && (session as any).user.role !== 'owner') {
       return createErrorResponse('Insufficient permissions', 'FORBIDDEN')
     }
 
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default })
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     // Get URL parameters for date range filtering
     const url = new URL(request.url)

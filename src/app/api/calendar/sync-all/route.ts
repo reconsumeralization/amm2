@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Get all appointments that don't have Google Calendar events
     const appointments = await payload.find({

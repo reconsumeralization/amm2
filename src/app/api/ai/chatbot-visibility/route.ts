@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import config from '../../../../payload.config';
 import OpenAI from 'openai';
 
@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
 
     // Get user and settings
     const [user, settings] = await Promise.all([
@@ -223,7 +224,8 @@ function getFallbackVisibilityDecision(data: any) {
 
 async function getSettings(tenantId?: string): Promise<any> {
   try {
-    const payload = await getPayload({ config });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     
     let settings;
     if (tenantId) {

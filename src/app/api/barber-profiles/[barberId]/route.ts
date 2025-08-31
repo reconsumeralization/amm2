@@ -1,4 +1,4 @@
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: Promise<{ barberId: string }> }) {
@@ -9,7 +9,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ barberId
   }
 
   try {
-    const payload = await getPayload({ config: (await import('@/payload.config')).default });
+  // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient();
     const profile = await payload.findByID({
       collection: 'users',
       id: barberId,

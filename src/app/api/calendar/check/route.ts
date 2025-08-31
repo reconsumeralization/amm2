@@ -1,15 +1,13 @@
 
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
 
 export async function POST(req: Request) {
   try {
     const { date, duration = 60 } = await req.json();
     
     // Initialize Payload
-    const payload = await getPayload({
-      config: await import('../../../../payload.config').then(m => m.default),
-    });
+    const payload = await getPayloadClient();
 
     // Check for existing appointments at the requested time
     const appointmentTime = new Date(date);
@@ -95,9 +93,7 @@ export async function GET(req: Request) {
     }
 
     // Initialize Payload
-    const payload = await getPayload({
-      config: await import('../../../../payload.config').then(m => m.default),
-    });
+    const payload = await getPayloadClient();
 
     // Get available time slots for the specified date
     const targetDate = new Date(date);

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { getPayloadClient } from '../../../../payload'
 import { notificationEmitter, activeConnections } from '@/lib/notificationEmitter'
@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return new Response('Unauthorized', { status: 401 })
     }
 
-    const userId = session.user.id
+    const userId = (session as any).user.id
     const { searchParams } = new URL(request.url)
     const includeHistory = searchParams.get('history') === 'true'
 

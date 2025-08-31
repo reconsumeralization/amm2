@@ -7,14 +7,14 @@ if (!cached) {
   cached = global.payload = { client: null, promise: null }
 }
 
-const getPayloadClient = async (_opts?: { config: () => Promise<any> }) => {
+const getPayloadClient = async () => {
   if (cached.client) {
     return cached.client
   }
 
   if (!cached.promise) {
     cached.promise = getPayload({
-      config,
+      config: config,
     })
   }
 
@@ -33,8 +33,8 @@ if (typeof globalThis !== 'undefined') {
   globalThis.payload = cached
 }
 
-export default getPayloadClient
 export { getPayloadClient }
+export default getPayloadClient
 
 // Add type declaration for global
 declare global {

@@ -20,7 +20,7 @@ export default function PageBuilderAdmin() {
     { slug: 'booking', title: 'Booking', description: 'Appointment booking page' },
   ];
 
-  if (!session?.user || session.user.role !== 'admin') {
+  if (!(session as any)?.user || ((session as any).user)?.role !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

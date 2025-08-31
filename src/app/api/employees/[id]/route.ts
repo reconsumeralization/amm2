@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import getPayloadClient from '../../../../payload'
-import { getServerSession } from 'next-auth'
+import { getPayloadClient } from '@/payload'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
 export async function GET(
@@ -84,8 +84,8 @@ export async function PUT(
       )
     }
 
-    const userRole = session.user?.role
-    const isStylistOwner = userRole === 'stylist' && currentStylist.user === session.user.id
+    const userRole = (session as any).user?.role
+    const isStylistOwner = userRole === 'stylist' && currentStylist.user === (session as any).user.id
     const isManagerOrAdmin = userRole === 'admin' || userRole === 'manager'
 
     if (!isStylistOwner && !isManagerOrAdmin) {
@@ -119,7 +119,7 @@ export async function PUT(
       data: body
     })
 
-    console.log(`Employee updated: ${updatedStylist.name} (${stylistId}) by ${session.user.name}`)
+    console.log(`Employee updated: ${updatedStylist.name} (${stylistId}) by ${(session as any).user.name}`)
 
     return NextResponse.json({
       employee: updatedStylist,
@@ -142,7 +142,7 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session || session.user?.role !== 'admin') {
+    if (!session || (session as any).user?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
         { status: 401 }
@@ -171,7 +171,7 @@ export async function DELETE(
       id: stylistId
     })
 
-    console.log(`Employee deleted: ${stylist.name} (${stylistId}) by ${session.user.name}`)
+    console.log(`Employee deleted: ${stylist.name} (${stylistId}) by ${(session as any).user.name}`)
 
     return NextResponse.json({
       message: 'Employee deleted successfully'

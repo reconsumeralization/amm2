@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { createContentValidator, ValidationConfig } from '@/lib/content-validator'
 import { getUserRoleFromSession, hasDocumentationPermission } from '@/lib/documentation-permissions'
 import { GuideContent } from '@/types/documentation'
 
 export async function POST(request: NextRequest) {
     try {
-        const session = await getServerSession()
+        const session = await getServerSession(authOptions)
         const userRole = getUserRoleFromSession(session)
 
         // Check if user can validate documentation content
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
                     id: content.id || 'temp-validation-id',
                     title: content.title || 'Validation Content',
                     description: content.description || '',
-                    author: content.author || session?.user?.name || 'Unknown',
+                    author: content.author || (session as any)?.user?.name || 'Unknown',
                     lastUpdated: new Date(),
                     version: content.version || { major: 1, minor: 0, patch: 0 },
                     targetAudience: content.targetAudience || ['developer'],
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
             metadata: {
                 validatedAt: new Date().toISOString(),
                 userRole,
-                validatedBy: session?.user?.name || 'Unknown',
+                validatedBy: (session as any)?.user?.name || 'Unknown',
                 configUsed: validationConfig
             }
         })
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
     try {
-        const session = await getServerSession()
+        const session = await getServerSession(authOptions)
         const userRole = getUserRoleFromSession(session)
 
         // Check permissions
