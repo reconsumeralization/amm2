@@ -6,6 +6,8 @@ import path from 'path'
 import collections from '@/payload/collections'
 
 export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET || 'dev-secret',
+  serverURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   admin: {
     user: 'users',
     meta: {
