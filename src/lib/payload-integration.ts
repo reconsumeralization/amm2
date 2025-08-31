@@ -130,9 +130,9 @@ export class PayloadIntegrationService {
     // Build role-based access query
     // Define role hierarchy with explicit typing to satisfy TypeScript
     const roleHierarchy: Record<UserRole, UserRole[]> = {
-      salon_customer: ['guest', 'salon_customer'],
-      salon_employee: ['guest', 'salon_customer', 'salon_employee'],
-      salon_owner: ['guest', 'salon_customer', 'salon_employee', 'salon_owner'],
+      barber_customer: ['guest', 'barber_customer'],
+      barber_employee: ['guest', 'barber_customer', 'barber_employee'],
+      barber_owner: ['guest', 'barber_customer', 'barber_employee', 'barber_owner'],
       BarberShop_customer: ['guest', 'BarberShop_customer'],
       BarberShop_employee: ['guest', 'BarberShop_customer', 'BarberShop_employee'],
       BarberShop_owner: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner'],
@@ -414,9 +414,9 @@ export class PayloadIntegrationService {
   }
 
   /**
-   * Get salon analytics from Payload
+   * Get barber analytics from Payload
    */
-  async getSalonAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
+  async getbarberAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
     appointments: number
     customers: number
     services: number
@@ -424,7 +424,7 @@ export class PayloadIntegrationService {
     topServices: any[]
     topStylists: any[]
   }> {
-    const cacheKey = `salon-analytics-${dateRange?.start?.toISOString()}-${dateRange?.end?.toISOString()}`
+    const cacheKey = `barber-analytics-${dateRange?.start?.toISOString()}-${dateRange?.end?.toISOString()}`
     
     if (this.config.enableCaching && this.isValidCache(cacheKey)) {
       return this.getFromCache(cacheKey)
@@ -477,13 +477,13 @@ export class PayloadIntegrationService {
 
       return analytics
     } catch (error) {
-      console.error('Error fetching salon analytics:', error)
+      console.error('Error fetching barber analytics:', error)
       throw new Error('Failed to fetch analytics')
     }
   }
 
   /**
-   * Alias for getSalonAnalytics - get barber shop analytics
+   * Alias for getbarberAnalytics - get barber shop analytics
    */
   async getBarberShopAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
     appointments: number
@@ -493,7 +493,7 @@ export class PayloadIntegrationService {
     topServices: any[]
     topStylists: any[]
   }> {
-    return this.getSalonAnalytics(dateRange)
+    return this.getbarberAnalytics(dateRange)
   }
 
   /**

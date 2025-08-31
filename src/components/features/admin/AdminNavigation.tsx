@@ -524,7 +524,7 @@ export function AdminNavigation() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900 flex items-center">
                   <TrendingUp className="h-6 w-6 mr-3 text-blue-600" />
-                  Salon Management Hub
+                  barber Management Hub
                 </h2>
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                   All Systems Operational
@@ -532,7 +532,7 @@ export function AdminNavigation() {
               </div>
               
               <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-                Welcome to your comprehensive salon management dashboard. Monitor operations, 
+                Welcome to your comprehensive barber management dashboard. Monitor operations, 
                 manage appointments, track customer relationships, and optimize your business 
                 performance from this centralized control center.
               </p>

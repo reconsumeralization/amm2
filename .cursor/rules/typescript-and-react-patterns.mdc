@@ -17,7 +17,7 @@ import { Metadata } from 'next';
 import { Icon1, Icon2 } from '@/lib/icon-mapping';
 
 export const metadata: Metadata = {
-  title: 'Page Title - Modern Men Salon',
+  title: 'Page Title - Modern Men barber',
   description: 'Page description for SEO',
   keywords: ['keyword1', 'keyword2']
 };

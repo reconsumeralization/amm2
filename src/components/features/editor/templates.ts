@@ -10,7 +10,7 @@ export const templates = [
       {
         id: '2',
         type: 'text',
-        content: 'We are a modern men hair salon that offers a variety of services.',
+        content: 'We are a modern men hair barber that offers a variety of services.',
       },
     ],
   },

@@ -5,18 +5,18 @@ import { UserRole } from '@/types/documentation'
 
 export const metadata: Metadata = {
   title: 'Booking Appointments Guide - Customer Help',
-  description: 'Complete guide to booking, modifying, and managing your salon appointments',
+  description: 'Complete guide to booking, modifying, and managing your barber appointments',
 }
 
 const bookingGuide = {
   metadata: {
     id: 'customer-booking-guide',
     title: 'Booking Appointments Guide',
-    description: 'Learn how to book, modify, and manage your salon appointments online',
+    description: 'Learn how to book, modify, and manage your barber appointments online',
     author: 'Customer Experience Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_customer' as UserRole],
+    targetAudience: ['barber_customer' as UserRole],
     difficulty: 'beginner' as const,
     estimatedTime: 15,
     tags: ['booking', 'appointments', 'scheduling'],
@@ -124,7 +124,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'BookingSimulator',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'barber_customer' }
             }
           }
         ]
@@ -211,7 +211,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'ServiceSelector',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'barber_customer' }
             }
           }
         ]
@@ -233,7 +233,7 @@ const bookingConfirmation = {
 - **24+ Hours Notice**: Free rescheduling with no penalties
 - **12-24 Hours Notice**: $10 rescheduling fee may apply
 - **Less than 12 Hours**: Subject to availability and fees
-- **Same Day**: Call the salon directly for assistance
+- **Same Day**: Call the barber directly for assistance
 
 **Cancellation Process**
 1. **Online Cancellation**: Use your customer portal for cancellations
@@ -291,7 +291,7 @@ const bookingConfirmation = {
 - Appointment date, time, and duration
 - Services booked and total estimated cost
 - Stylist name and any special instructions
-- Salon address and parking information
+- barber address and parking information
 - Links to reschedule or cancel if needed
 
 **Managing Your Notification Preferences**
@@ -325,7 +325,7 @@ const bookingConfirmation = {
 - Unsubscribe links in all emails
 - Reply STOP to text messages
 - Disable push notifications in app settings
-- Call salon to update preferences by phone
+- Call barber to update preferences by phone
 
 **Special Notifications**
 
@@ -336,7 +336,7 @@ const bookingConfirmation = {
 
 **Schedule Changes**
 - Stylist illness or emergency changes
-- Salon closure notifications
+- barber closure notifications
 - Alternative appointment options
 
 **Promotional Notifications**
@@ -353,7 +353,7 @@ const bookingConfirmation = {
             type: 'component-playground' as const,
             configuration: {
               component: 'NotificationPreferences',
-              props: { userRole: 'salon_customer' }
+              props: { userRole: 'barber_customer' }
             }
           }
         ]
@@ -414,13 +414,13 @@ const bookingConfirmation = {
 - Try different stylists or service combinations
 - Consider off-peak hours or days
 - Join waiting lists for preferred times
-- Call the salon for additional options
+- Call the barber for additional options
 
 **Booking System Problems**
 - Clear your browser cache and cookies
 - Try a different browser or device
 - Disable ad blockers that might interfere
-- Call the salon for phone booking assistance
+- Call the barber for phone booking assistance
 
 **Special Requests**
 - Add detailed notes during booking

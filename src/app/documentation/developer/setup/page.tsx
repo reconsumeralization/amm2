@@ -34,8 +34,8 @@ export default function DeveloperSetupPage() {
             <div>
               <h3 className="text-lg font-medium mb-2 text-slate-200">1. Clone the Repository</h3>
               <pre className="bg-slate-900 p-3 rounded text-sm text-slate-300 overflow-x-auto">
-                <code>git clone https://github.com/your-org/modern-men-salon.git
-cd modern-men-salon</code>
+                <code>git clone https://github.com/your-org/modern-men-barber.git
+cd modern-men-barber</code>
               </pre>
             </div>
             

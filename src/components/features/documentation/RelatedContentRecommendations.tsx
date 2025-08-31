@@ -46,9 +46,9 @@ export function RelatedContentRecommendations({
         },
         {
           id: 'personalized-2',
-          title: `${userRole === 'salon_owner' ? 'Staff Management Best Practices' : 'Component Testing Strategies'}`,
+          title: `${userRole === 'barber_owner' ? 'Staff Management Best Practices' : 'Component Testing Strategies'}`,
           type: 'guide',
-          url: `/documentation/${userRole === 'salon_owner' ? 'business/staff' : 'developer/testing'}`,
+          url: `/documentation/${userRole === 'barber_owner' ? 'business/staff' : 'developer/testing'}`,
           relevanceScore: 0.88
         }
       ]

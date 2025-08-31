@@ -9,27 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import {
-  Plus,
-  Search,
-  Edit,
-  Trash2,
-  Eye,
-  Save,
-  FileText,
-  Image,
-  Video,
-  Link,
-  Calendar,
-  Users,
-  Tag,
-  Filter,
-  SortAsc,
-  SortDesc,
-  Grid,
-  List,
-  MoreHorizontal
-} from '@/lib/icon-mapping';
 import { toast } from 'sonner';
 
 interface ContentItem {
@@ -96,7 +75,7 @@ export default function ContentManager() {
       metadata: {
         seoTitle: 'Welcome to Modern Men | Premium Barber Shop',
         seoDescription: 'Experience premium grooming services at Modern Men',
-        keywords: ['barber', 'grooming', 'salon']
+        keywords: ['barber', 'grooming', 'barber']
       }
     },
     {
@@ -263,13 +242,13 @@ export default function ContentManager() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'page': return <FileText className="h-4 w-4" />;
-      case 'post': return <FileText className="h-4 w-4" />;
-      case 'service': return <Tag className="h-4 w-4" />;
-      case 'testimonial': return <User className="h-4 w-4" />;
-      case 'faq': return <FileText className="h-4 w-4" />;
-      case 'announcement': return <Calendar className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case 'page': return <span className="text-sm">📄</span>;
+      case 'post': return <span className="text-sm">📝</span>;
+      case 'service': return <span className="text-sm">🏷️</span>;
+      case 'testimonial': return <span className="text-sm">👥</span>;
+      case 'faq': return <span className="text-sm">❓</span>;
+      case 'announcement': return <span className="text-sm">📅</span>;
+      default: return <span className="text-sm">📄</span>;
     }
   };
 
@@ -302,16 +281,14 @@ export default function ContentManager() {
         <div className="flex items-center justify-between">
           <div className="flex space-x-2">
             <Button size="sm" variant="outline" onClick={() => handleEdit(item)}>
-              <Edit className="h-4 w-4 mr-1" />
-              Edit
+              ✏️ Edit
             </Button>
             <Button size="sm" variant="outline" onClick={() => handleDuplicate(item)}>
-              <FileText className="h-4 w-4 mr-1" />
-              Duplicate
+              📄 Duplicate
             </Button>
           </div>
           <Button size="sm" variant="outline" onClick={() => handleDelete(item.id)}>
-            <Trash2 className="h-4 w-4" />
+            🗑️
           </Button>
         </div>
       </CardContent>
@@ -340,8 +317,7 @@ export default function ContentManager() {
           </p>
         </div>
         <Button onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create Content
+          ➕ Create Content
         </Button>
       </div>
 
@@ -351,7 +327,7 @@ export default function ContentManager() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
                 <Input
                   placeholder="Search content..."
                   value={searchQuery}
@@ -391,7 +367,7 @@ export default function ContentManager() {
                 size="sm"
                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
               >
-                {viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid className="h-4 w-4" />}
+                {viewMode === 'grid' ? '📋' : '⊞'}
               </Button>
 
               <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
@@ -411,7 +387,7 @@ export default function ContentManager() {
                 size="sm"
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
               >
-                {sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
+                {sortOrder === 'asc' ? '↑' : '↓'}
               </Button>
             </div>
           </div>
@@ -427,7 +403,7 @@ export default function ContentManager() {
 
       {filteredItems.length === 0 && (
         <div className="text-center py-12">
-          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <span className="text-6xl mb-4 block">📄</span>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
           <p className="text-gray-600 mb-4">
             {searchQuery || Object.values(filters).some(v => v !== 'all' && v.length > 0)
@@ -435,8 +411,7 @@ export default function ContentManager() {
               : 'Get started by creating your first piece of content'}
           </p>
           <Button onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Content
+            ➕ Create Content
           </Button>
         </div>
       )}
@@ -619,8 +594,7 @@ function ContentEditor({
           Cancel
         </Button>
         <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" />
-          Save Content
+          💾 Save Content
         </Button>
       </div>
     </div>

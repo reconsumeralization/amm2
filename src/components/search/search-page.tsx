@@ -429,7 +429,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                     </div>
                     <div className="space-y-3">
                       {[
-                        { type: 'service', description: 'Find salon services', icon: Star },
+                        { type: 'service', description: 'Find barber services', icon: Star },
                         { type: 'stylist', description: 'Find team members', icon: Users },
                         { type: 'page', description: 'Find general pages', icon: BookOpen }
                       ].map((item) => (

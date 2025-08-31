@@ -8,15 +8,15 @@ import { Icons } from '@/components/ui/icons'
 // Using text alternatives for now
 
 export const metadata: Metadata = {
-  title: 'Salon Owner Guide - Modern Men barber shop',
-  description: 'Complete business management guide for salon owners',
+  title: 'barber Owner Guide - Modern Men barber shop',
+  description: 'Complete business management guide for barber owners',
 }
 
 const guideCategories = [
   {
     id: 'setup',
     title: 'Initial Setup',
-    description: 'Get your salon up and running with proper configuration',
+    description: 'Get your barber up and running with proper configuration',
     icon: '🏢',
     href: '/documentation/business/owner/setup',
     difficulty: 'Beginner',
@@ -121,7 +121,7 @@ const quickStartSteps = [
   {
     step: 1,
     title: 'Complete Business Setup',
-    description: 'Configure your salon profile and basic settings',
+    description: 'Configure your barber profile and basic settings',
     href: '/documentation/business/owner/setup'
   },
   {
@@ -144,7 +144,7 @@ const quickStartSteps = [
   }
 ]
 
-export default function SalonOwnerPage() {
+export default function barberOwnerPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header Section */}
@@ -154,11 +154,11 @@ export default function SalonOwnerPage() {
             <span className="text-white text-lg">📚</span>
           </div>
           <h1 className="text-4xl font-bold text-gradient bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Salon Owner Guide
+            barber Owner Guide
           </h1>
         </div>
         <p className="text-lg text-slate-300 max-w-3xl">
-          Master every aspect of salon management with our comprehensive business guide. From initial setup to advanced analytics, 
+          Master every aspect of barber management with our comprehensive business guide. From initial setup to advanced analytics, 
           learn how to operate and grow your barber shop business effectively.
         </p>
       </div>
@@ -171,7 +171,7 @@ export default function SalonOwnerPage() {
             Quick Start Guide
           </CardTitle>
           <CardDescription className="text-slate-300">
-            Follow these steps to get your salon operational quickly
+            Follow these steps to get your barber operational quickly
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -260,7 +260,7 @@ export default function SalonOwnerPage() {
             <div className="text-center p-4">
               <span className="text-green-400 text-2xl">👥</span>
               <h3 className="font-semibold text-slate-100 mb-1">Community</h3>
-              <p className="text-sm text-slate-400">Connect with other salon owners</p>
+              <p className="text-sm text-slate-400">Connect with other barber owners</p>
             </div>
             <div className="text-center p-4">
               <span className="text-pink-400 text-2xl">❤️</span>

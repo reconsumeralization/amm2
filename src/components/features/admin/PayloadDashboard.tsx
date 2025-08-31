@@ -107,7 +107,7 @@ export function PayloadDashboard() {
             Payload CMS Dashboard
           </h1>
           <p className="text-slate-400 mt-1">
-            Manage your salon data and content through Payload CMS integration
+            Manage your barber data and content through Payload CMS integration
           </p>
         </div>
         

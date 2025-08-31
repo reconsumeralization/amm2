@@ -13,8 +13,8 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'your-secret-here',
   admin: {
     meta: {
-      title: 'Modern Men Salon - Simple',
-      description: 'Simple test salon management system',
+      title: 'Modern Men barber - Simple',
+      description: 'Simple test barber management system',
     },
   },
   collections: [

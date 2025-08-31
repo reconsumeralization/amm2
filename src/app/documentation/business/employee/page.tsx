@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Employee Operations Guide - Modern Men barber shop',
-  description: 'Operational guides for salon employees including daily workflows and customer service',
+  description: 'Operational guides for barber employees including daily workflows and customer service',
 }
 
 export default function EmployeeDocumentationPage() {
@@ -14,7 +14,7 @@ export default function EmployeeDocumentationPage() {
           Employee Operations Guide
         </h1>
         <p className="text-slate-300">
-          Comprehensive operational guides for salon employees to excel in daily tasks, 
+          Comprehensive operational guides for barber employees to excel in daily tasks, 
           customer service, and professional development within the Modern Men barber shop system.
         </p>
       </div>
@@ -68,7 +68,7 @@ export default function EmployeeDocumentationPage() {
               className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 hover:border-cyan-600 transition-colors block">
           <h2 className="text-xl font-semibold mb-2 text-slate-100">System Usage Guide</h2>
           <p className="text-slate-400 text-sm mb-4">
-            Complete guide to using the salon management system effectively
+            Complete guide to using the barber management system effectively
           </p>
           <ul className="space-y-1">
             <li className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors flex items-center">

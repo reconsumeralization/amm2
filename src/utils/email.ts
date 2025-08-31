@@ -12,7 +12,7 @@ export async function sendEmail({ to, subject, html, from }: { to: string; subje
 
   try {
     await transporter.sendMail({
-      from: from || '"ModernMen Salon" <no-reply@modernmen.com>',
+      from: from || '"ModernMen barber" <no-reply@modernmen.com>',
       to,
       subject,
       html,

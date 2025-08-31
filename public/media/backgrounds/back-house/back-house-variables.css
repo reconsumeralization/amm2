@@ -1,0 +1,46 @@
+:root {
+  --bg-back-house-hero: url('/media/backgrounds/back-house/back-house-hero-1920x1080.webp');
+  --bg-back-house-hero-fallback: url('/media/backgrounds/back-house/back-house-hero-1920x1080.jpeg');
+  --bg-back-house-large: url('/media/backgrounds/back-house/back-house-large-1200x675.webp');
+  --bg-back-house-large-fallback: url('/media/backgrounds/back-house/back-house-large-1200x675.jpeg');
+  --bg-back-house-medium: url('/media/backgrounds/back-house/back-house-medium-800x450.webp');
+  --bg-back-house-medium-fallback: url('/media/backgrounds/back-house/back-house-medium-800x450.jpeg');
+  --bg-back-house-small: url('/media/backgrounds/back-house/back-house-small-400x225.webp');
+  --bg-back-house-small-fallback: url('/media/backgrounds/back-house/back-house-small-400x225.jpeg');
+  --bg-back-house-blur: url('/media/backgrounds/back-house/back-house-blur-placeholder.webp');
+}
+
+/* Background utility classes for back-house */
+.bg-back-house-hero {
+  background-image: var(--bg-back-house-hero);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-back-house-large {
+  background-image: var(--bg-back-house-large);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-back-house-medium {
+  background-image: var(--bg-back-house-medium);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-back-house-small {
+  background-image: var(--bg-back-house-small);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-back-house-blur {
+  background-image: var(--bg-back-house-blur);
+  background-size: cover;
+  background-position: center;
+}

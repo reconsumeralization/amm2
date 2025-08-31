@@ -1,0 +1,46 @@
+:root {
+  --bg-front-entrance-hero: url('/media/backgrounds/front-entrance/front-entrance-hero-1920x1080.webp');
+  --bg-front-entrance-hero-fallback: url('/media/backgrounds/front-entrance/front-entrance-hero-1920x1080.jpeg');
+  --bg-front-entrance-large: url('/media/backgrounds/front-entrance/front-entrance-large-1200x675.webp');
+  --bg-front-entrance-large-fallback: url('/media/backgrounds/front-entrance/front-entrance-large-1200x675.jpeg');
+  --bg-front-entrance-medium: url('/media/backgrounds/front-entrance/front-entrance-medium-800x450.webp');
+  --bg-front-entrance-medium-fallback: url('/media/backgrounds/front-entrance/front-entrance-medium-800x450.jpeg');
+  --bg-front-entrance-small: url('/media/backgrounds/front-entrance/front-entrance-small-400x225.webp');
+  --bg-front-entrance-small-fallback: url('/media/backgrounds/front-entrance/front-entrance-small-400x225.jpeg');
+  --bg-front-entrance-blur: url('/media/backgrounds/front-entrance/front-entrance-blur-placeholder.webp');
+}
+
+/* Background utility classes for front-entrance */
+.bg-front-entrance-hero {
+  background-image: var(--bg-front-entrance-hero);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-front-entrance-large {
+  background-image: var(--bg-front-entrance-large);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-front-entrance-medium {
+  background-image: var(--bg-front-entrance-medium);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-front-entrance-small {
+  background-image: var(--bg-front-entrance-small);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-front-entrance-blur {
+  background-image: var(--bg-front-entrance-blur);
+  background-size: cover;
+  background-position: center;
+}

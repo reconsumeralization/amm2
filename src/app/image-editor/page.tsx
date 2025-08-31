@@ -15,7 +15,7 @@ export default function ImageEditorPage() {
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-black mb-2">Image Editor</h1>
-        <p className="text-gray-600">Professional image editing tools for your Modern Men salon website</p>
+        <p className="text-gray-600">Professional image editing tools for your Modern Men barber website</p>
       </div>
 
       {editedImage && (

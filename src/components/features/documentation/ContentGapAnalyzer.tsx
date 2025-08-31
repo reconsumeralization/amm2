@@ -199,9 +199,9 @@ export function ContentGapAnalyzer({
             >
               <option value="all">All Roles</option>
               <option value="developer">Developer</option>
-              <option value="salon_owner">Salon Owner</option>
-              <option value="salon_employee">Salon Employee</option>
-              <option value="salon_customer">Salon Customer</option>
+              <option value="barber_owner">barber Owner</option>
+              <option value="barber_employee">barber Employee</option>
+              <option value="barber_customer">barber Customer</option>
               <option value="system_admin">System Admin</option>
             </select>
           </div>

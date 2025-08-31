@@ -5,18 +5,18 @@ import type { UserRole, GuideContent } from '@/types/documentation'
 
 export const metadata: Metadata = {
   title: 'Business Setup Guide - Modern Men barber shop',
-  description: 'Complete guide to setting up your salon business profile and initial configuration',
+  description: 'Complete guide to setting up your barber business profile and initial configuration',
 }
 
 const businessSetupGuide = {
   metadata: {
     id: 'business-setup-guide',
     title: 'Business Setup Guide',
-    description: 'Step-by-step guide to configure your salon business profile and get started',
+    description: 'Step-by-step guide to configure your barber business profile and get started',
     author: 'Documentation Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_owner' as UserRole],
+    targetAudience: ['barber_owner' as UserRole],
     difficulty: 'beginner' as const,
     estimatedTime: 45,
     tags: ['setup', 'configuration', 'business-profile'],
@@ -24,7 +24,7 @@ const businessSetupGuide = {
     deprecated: false,
   },
   content: {
-    introduction: `Setting up your salon business profile is the foundation for using the Modern Men barber shop management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
+    introduction: `Setting up your barber business profile is the foundation for using the Modern Men barber shop management system effectively. This guide will walk you through each step of the initial configuration process, from basic business information to advanced operational settings.`,
     prerequisites: [
       {
         id: 'admin-account',
@@ -49,11 +49,11 @@ const businessSetupGuide = {
       {
         id: 'business-profile',
         title: 'Business Profile Configuration',
-        description: 'Setting up your salon\'s basic business information',
+        description: 'Setting up your barber\'s basic business information',
         content: `**Business Information Setup**
 
 **Basic Details**
-1. **Salon Name**: Enter your official business name as it appears on legal documents
+1. **barber Name**: Enter your official business name as it appears on legal documents
 2. **Business Address**: Complete address including street, city, state, and ZIP code
 3. **Contact Information**: Primary phone number, email, and website URL
 4. **Business Hours**: Set your regular operating hours for each day of the week
@@ -66,9 +66,9 @@ const businessSetupGuide = {
 4. **Sales Tax Rate**: Local sales tax percentage for service calculations
 
 **Branding and Appearance**
-1. **Logo Upload**: Upload your salon logo (recommended: 300x300px PNG)
+1. **Logo Upload**: Upload your barber logo (recommended: 300x300px PNG)
 2. **Brand Colors**: Set primary and secondary colors for your booking interface
-3. **Business Description**: Write a brief description of your salon and services
+3. **Business Description**: Write a brief description of your barber and services
 4. **Social Media Links**: Add links to your Facebook, Instagram, and other profiles`,
         codeSnippets: [
           {
@@ -239,7 +239,7 @@ const serviceMenu = {
             type: 'component-playground' as const,
             configuration: {
               component: 'StaffSetupWizard',
-              props: { userRole: 'salon_owner' }
+              props: { userRole: 'barber_owner' }
             }
           }
         ]
@@ -339,7 +339,7 @@ const serviceMenu = {
     relatedContent: [
       {
         id: 'dashboard-guide',
-        title: 'Salon Owner Dashboard Guide',
+        title: 'barber Owner Dashboard Guide',
         description: 'Learn to use your business dashboard effectively',
         url: '/documentation/business/owner/dashboard',
         type: 'guide'

@@ -1,0 +1,46 @@
+:root {
+  --bg-barbers-working-hero: url('/media/backgrounds/barbers-working/barbers-working-hero-1920x1080.webp');
+  --bg-barbers-working-hero-fallback: url('/media/backgrounds/barbers-working/barbers-working-hero-1920x1080.jpeg');
+  --bg-barbers-working-large: url('/media/backgrounds/barbers-working/barbers-working-large-1200x675.webp');
+  --bg-barbers-working-large-fallback: url('/media/backgrounds/barbers-working/barbers-working-large-1200x675.jpeg');
+  --bg-barbers-working-medium: url('/media/backgrounds/barbers-working/barbers-working-medium-800x450.webp');
+  --bg-barbers-working-medium-fallback: url('/media/backgrounds/barbers-working/barbers-working-medium-800x450.jpeg');
+  --bg-barbers-working-small: url('/media/backgrounds/barbers-working/barbers-working-small-400x225.webp');
+  --bg-barbers-working-small-fallback: url('/media/backgrounds/barbers-working/barbers-working-small-400x225.jpeg');
+  --bg-barbers-working-blur: url('/media/backgrounds/barbers-working/barbers-working-blur-placeholder.webp');
+}
+
+/* Background utility classes for barbers-working */
+.bg-barbers-working-hero {
+  background-image: var(--bg-barbers-working-hero);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-barbers-working-large {
+  background-image: var(--bg-barbers-working-large);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-barbers-working-medium {
+  background-image: var(--bg-barbers-working-medium);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-barbers-working-small {
+  background-image: var(--bg-barbers-working-small);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-barbers-working-blur {
+  background-image: var(--bg-barbers-working-blur);
+  background-size: cover;
+  background-position: center;
+}

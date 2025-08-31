@@ -313,3 +313,4 @@ export const CheckCircleIcon = Icons.CheckCircle // Check circle icon
 export const Component = Icons.Settings // Component icon (using Settings as fallback)
 export const Moon = FallbackIcon // Moon icon
 export const Sun = FallbackIcon // Sun icon
+export const CheckCheck = Icons.CheckCircle // CheckCheck icon (using CheckCircle as fallback)

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Developer Documentation - Modern Men barber shop',
-  description: 'Developer documentation for building and extending the salon management system',
+  description: 'Developer documentation for building and extending the barber management system',
 }
 
 export default function DeveloperDocumentationPage() {

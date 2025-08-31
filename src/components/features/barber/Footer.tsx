@@ -251,7 +251,7 @@ export function Footer() {
         >
           <motion.div variants={staggerItem} className="mb-4 md:mb-0">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Modern Men Hair Salon. All rights reserved.
+              © {new Date().getFullYear()} Modern Men Hair barber. All rights reserved.
             </p>
           </motion.div>
           

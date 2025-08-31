@@ -15,7 +15,7 @@ export default function CustomerDocumentationPage() {
         </h1>
         <p className="text-slate-300">
           Welcome to the Modern Men barber shop customer help center. Find answers to common questions, 
-          learn how to book appointments, manage your account, and make the most of your salon experience.
+          learn how to book appointments, manage your account, and make the most of your barber experience.
         </p>
       </div>
 

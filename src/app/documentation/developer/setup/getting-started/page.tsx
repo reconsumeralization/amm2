@@ -73,10 +73,10 @@ const sampleGuide: GuideContent = {
             id: 'git-clone',
             language: 'bash',
             code: `# Clone the repository
-git clone https://github.com/your-org/modern-men-salon.git
+git clone https://github.com/your-org/modern-men-barber.git
 
 # Navigate to the project directory
-cd modern-men-salon
+cd modern-men-barber
 
 # Check the current branch
 git branch`,
@@ -140,7 +140,7 @@ openssl rand -base64 32`,
             id: 'env-example',
             language: 'bash',
             code: `# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/salon_db"
+DATABASE_URL="postgresql://user:password@localhost:5432/barber_db"
 
 # Authentication
 NEXTAUTH_SECRET="your-secret-key-here"
@@ -195,7 +195,7 @@ npm run db:seed`,
               endpoint: '/api/health/database',
               method: 'GET',
               headers: {},
-              expectedResponse: { status: 'connected', database: 'salon_db' }
+              expectedResponse: { status: 'connected', database: 'barber_db' }
             }
           }
         ]

@@ -1,0 +1,124 @@
+src/app/admin/layout.tsx(8,10): error TS2614: Module '"@/components/features/admin/NotificationCenter"' has no exported member 'NotificationCenter'. Did you mean to use 'import NotificationCenter from "@/components/features/admin/NotificationCenter"' instead?
+src/app/admin/page.tsx(27,3): error TS2305: Module '"@/lib/icon-mapping"' has no exported member 'UserCheck'.
+src/app/admin/page.tsx(28,3): error TS2724: '"@/lib/icon-mapping"' has no exported member named 'CalendarDays'. Did you mean 'Calendar'?
+src/app/api/customer-notes/[id]/route.ts(28,61): error TS2345: Argument of type '"NOT_FOUND"' is not assignable to parameter of type '"UNAUTHORIZED" | "FORBIDDEN" | "INVALID_TOKEN" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "VALIDATION_ERROR" | "MISSING_REQUIRED_FIELD" | "INVALID_FORMAT" | "INVALID_EMAIL" | ... 28 more ... | undefined'.
+src/app/api/customer-notes/[id]/route.ts(80,61): error TS2345: Argument of type '"NOT_FOUND"' is not assignable to parameter of type '"UNAUTHORIZED" | "FORBIDDEN" | "INVALID_TOKEN" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "VALIDATION_ERROR" | "MISSING_REQUIRED_FIELD" | "INVALID_FORMAT" | "INVALID_EMAIL" | ... 28 more ... | undefined'.
+src/app/api/loyalty-program/route.ts(50,16): error TS2488: Type 'string | number | boolean | unknown[] | { [k: string]: unknown; } | null | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/app/api/loyalty-program/route.ts(64,11): error TS2353: Object literal may only specify known properties, and 'customer' does not exist in type 'Omit<LoyaltyProgram, "sizes" | "createdAt" | "deletedAt" | "updatedAt" | "id"> & Partial<Pick<LoyaltyProgram, "sizes" | "createdAt" | "deletedAt" | "updatedAt" | "id">>'.
+src/app/api/payments/create-payment-intent/route.ts(5,3): error TS2322: Type '"2024-09-30.acacia"' is not assignable to type '"2025-08-27.basil"'.
+src/app/api/uploads/images/route.ts(64,39): error TS2339: Property 'user' does not exist on type '{}'.
+src/app/api/webhooks/stripe/route.ts(7,3): error TS2322: Type '"2024-09-30.acacia"' is not assignable to type '"2025-08-27.basil"'.
+src/app/documentation/developer/api/page.tsx(46,47): error TS2339: Property 'extractFromCodebase' does not exist on type 'APIDocumentationExtractor'.
+src/components/features/admin/AdminWrapper.tsx(7,10): error TS2305: Module '"lucide-react"' has no exported member 'RefreshCw'.
+src/components/features/admin/AdminWrapper.tsx(7,21): error TS2305: Module '"lucide-react"' has no exported member 'AlertTriangle'.
+src/components/features/admin/AdminWrapper.tsx(7,36): error TS2305: Module '"lucide-react"' has no exported member 'Wifi'.
+src/components/features/admin/AdminWrapper.tsx(7,42): error TS2305: Module '"lucide-react"' has no exported member 'WifiOff'.
+src/components/features/admin/AnalyticsDashboard.tsx(28,3): error TS2305: Module '"lucide-react"' has no exported member 'TrendingUp'.
+src/components/features/admin/AnalyticsDashboard.tsx(29,3): error TS2305: Module '"lucide-react"' has no exported member 'TrendingDown'.
+src/components/features/admin/AnalyticsDashboard.tsx(30,3): error TS2305: Module '"lucide-react"' has no exported member 'Users'.
+src/components/features/admin/AnalyticsDashboard.tsx(31,3): error TS2305: Module '"lucide-react"' has no exported member 'DollarSign'.
+src/components/features/admin/AnalyticsDashboard.tsx(32,3): error TS2305: Module '"lucide-react"' has no exported member 'Calendar'.
+src/components/features/admin/AnalyticsDashboard.tsx(33,3): error TS2305: Module '"lucide-react"' has no exported member 'Clock'.
+src/components/features/admin/AnalyticsDashboard.tsx(34,3): error TS2305: Module '"lucide-react"' has no exported member 'Star'.
+src/components/features/admin/AnalyticsDashboard.tsx(35,3): error TS2305: Module '"lucide-react"' has no exported member 'Target'.
+src/components/features/admin/AnalyticsDashboard.tsx(36,3): error TS2305: Module '"lucide-react"' has no exported member 'Activity'.
+src/components/features/admin/AnalyticsDashboard.tsx(37,3): error TS2305: Module '"lucide-react"' has no exported member 'BarChart3'.
+src/components/features/admin/AnalyticsDashboard.tsx(38,3): error TS2305: Module '"lucide-react"' has no exported member 'PieChart'.
+src/components/features/admin/AnalyticsDashboard.tsx(39,3): error TS2305: Module '"lucide-react"' has no exported member 'Download'.
+src/components/features/admin/AnalyticsDashboard.tsx(40,3): error TS2305: Module '"lucide-react"' has no exported member 'RefreshCw'.
+src/components/features/admin/AnalyticsDashboard.tsx(41,3): error TS2305: Module '"lucide-react"' has no exported member 'Filter'.
+src/components/features/admin/BackupRestore.tsx(13,3): error TS2305: Module '"lucide-react"' has no exported member 'Download'.
+src/components/features/admin/BackupRestore.tsx(14,3): error TS2305: Module '"lucide-react"' has no exported member 'Upload'.
+src/components/features/admin/BackupRestore.tsx(15,3): error TS2305: Module '"lucide-react"' has no exported member 'RefreshCw'.
+src/components/features/admin/BackupRestore.tsx(16,3): error TS2305: Module '"lucide-react"' has no exported member 'Database'.
+src/components/features/admin/BackupRestore.tsx(17,3): error TS2305: Module '"lucide-react"' has no exported member 'HardDrive'.
+src/components/features/admin/BackupRestore.tsx(18,3): error TS2305: Module '"lucide-react"' has no exported member 'Cloud'.
+src/components/features/admin/BackupRestore.tsx(19,3): error TS2305: Module '"lucide-react"' has no exported member 'Shield'.
+src/components/features/admin/BackupRestore.tsx(20,3): error TS2305: Module '"lucide-react"' has no exported member 'Clock'.
+src/components/features/admin/BackupRestore.tsx(21,3): error TS2305: Module '"lucide-react"' has no exported member 'CheckCircle'.
+src/components/features/admin/BackupRestore.tsx(22,3): error TS2305: Module '"lucide-react"' has no exported member 'XCircle'.
+src/components/features/admin/BackupRestore.tsx(23,3): error TS2305: Module '"lucide-react"' has no exported member 'AlertTriangle'.
+src/components/features/admin/BackupRestore.tsx(24,3): error TS2305: Module '"lucide-react"' has no exported member 'Trash2'.
+src/components/features/admin/BackupRestore.tsx(25,3): error TS2305: Module '"lucide-react"' has no exported member 'Eye'.
+src/components/features/admin/BackupRestore.tsx(26,3): error TS2305: Module '"lucide-react"' has no exported member 'Settings'.
+src/components/features/admin/BackupRestore.tsx(27,3): error TS2305: Module '"lucide-react"' has no exported member 'Play'.
+src/components/features/admin/BackupRestore.tsx(28,3): error TS2305: Module '"lucide-react"' has no exported member 'Pause'.
+src/components/features/admin/BackupRestore.tsx(29,3): error TS2305: Module '"lucide-react"' has no exported member 'RotateCcw'.
+src/components/features/admin/BackupRestore.tsx(167,7): error TS2322: Type '"both"' is not assignable to type '"local" | "external" | "cloud"'.
+src/components/features/admin/BackupRestore.tsx(199,9): error TS2322: Type '"local" | "both" | "cloud"' is not assignable to type '"local" | "external" | "cloud"'.
+  Type '"both"' is not assignable to type '"local" | "external" | "cloud"'.
+src/components/features/admin/ContentManager.tsx(21,3): error TS2305: Module '"@/lib/icon-mapping"' has no exported member 'Video'.
+src/components/features/admin/ContentManager.tsx(27,3): error TS2305: Module '"@/lib/icon-mapping"' has no exported member 'SortAsc'.
+src/components/features/admin/ContentManager.tsx(28,3): error TS2305: Module '"@/lib/icon-mapping"' has no exported member 'SortDesc'.
+src/components/features/admin/ContentManager.tsx(269,35): error TS2552: Cannot find name 'User'. Did you mean 'Users'?
+src/components/features/admin/NotificationCenter.tsx(11,3): error TS2305: Module '"@/lib/icon-mapping"' has no exported member 'CheckCheck'.
+src/components/features/admin/SettingsManagement.tsx(15,3): error TS2305: Module '"lucide-react"' has no exported member 'Settings'.
+src/components/features/admin/SettingsManagement.tsx(16,3): error TS2305: Module '"lucide-react"' has no exported member 'Save'.
+src/components/features/admin/SettingsManagement.tsx(17,3): error TS2305: Module '"lucide-react"' has no exported member 'RefreshCw'.
+src/components/features/admin/SettingsManagement.tsx(18,3): error TS2305: Module '"lucide-react"' has no exported member 'AlertTriangle'.
+src/components/features/admin/SettingsManagement.tsx(19,3): error TS2305: Module '"lucide-react"' has no exported member 'CheckCircle'.
+src/components/features/admin/SettingsManagement.tsx(20,3): error TS2305: Module '"lucide-react"' has no exported member 'Globe'.
+src/components/features/admin/SettingsManagement.tsx(21,3): error TS2305: Module '"lucide-react"' has no exported member 'Mail'.
+src/components/features/admin/SettingsManagement.tsx(22,3): error TS2305: Module '"lucide-react"' has no exported member 'CreditCard'.
+src/components/features/admin/SettingsManagement.tsx(23,3): error TS2305: Module '"lucide-react"' has no exported member 'Shield'.
+src/components/features/admin/SettingsManagement.tsx(24,3): error TS2305: Module '"lucide-react"' has no exported member 'Palette'.
+src/components/features/admin/SettingsManagement.tsx(25,3): error TS2305: Module '"lucide-react"' has no exported member 'Database'.
+src/components/features/admin/SettingsManagement.tsx(26,3): error TS2305: Module '"lucide-react"' has no exported member 'Clock'.
+src/components/features/admin/SettingsManagement.tsx(27,3): error TS2305: Module '"lucide-react"' has no exported member 'Users'.
+src/components/features/admin/SettingsManagement.tsx(28,3): error TS2305: Module '"lucide-react"' has no exported member 'Bell'.
+src/components/features/admin/SettingsManagement.tsx(29,3): error TS2305: Module '"lucide-react"' has no exported member 'Zap'.
+src/components/features/admin/SettingsManagement.tsx(30,3): error TS2305: Module '"lucide-react"' has no exported member 'Smartphone'.
+src/components/features/admin/SettingsManagement.tsx(31,3): error TS2305: Module '"lucide-react"' has no exported member 'Calendar'.
+src/components/features/admin/SettingsManagement.tsx(32,3): error TS2305: Module '"lucide-react"' has no exported member 'BarChart3'.
+src/components/features/admin/SettingsManagement.tsx(33,3): error TS2305: Module '"lucide-react"' has no exported member 'Lock'.
+src/components/features/admin/SettingsManagement.tsx(34,3): error TS2305: Module '"lucide-react"' has no exported member 'Eye'.
+src/components/features/admin/SettingsManagement.tsx(35,3): error TS2305: Module '"lucide-react"' has no exported member 'EyeOff'.
+src/components/features/booking/PaymentForm.tsx(89,13): error TS2353: Object literal may only specify known properties, and 'number' does not exist in type 'StripeCardElement | StripeCardNumberElement | { token: string; }'.
+src/components/features/editor/AccordionPlugin.tsx(4,10): error TS2305: Module '"lexical"' has no exported member 'INSERT_ACCORDION_COMMAND'.
+src/components/features/editor/AccordionPlugin.tsx(11,28): error TS2304: Cannot find name 'INSERT_COMMAND'.
+src/components/features/editor/ComponentTemplatesPlugin.tsx(4,10): error TS2724: '"lexical"' has no exported member named 'INSERT_COMPONENT_COMMAND'. Did you mean 'INDENT_CONTENT_COMMAND'?
+src/components/features/editor/ComponentTemplatesPlugin.tsx(11,28): error TS2304: Cannot find name 'INSERT_COMMAND'.
+src/components/features/editor/PageBuilder.tsx(403,9): error TS2304: Cannot find name 'toast'.
+src/components/features/editor/PageBuilder.tsx(410,51): error TS2339: Property 'toast' does not exist on type 'Window & typeof globalThis'.
+src/components/features/editor/PageBuilder.tsx(411,16): error TS2339: Property 'toast' does not exist on type 'Window & typeof globalThis'.
+src/components/features/editor/PageBuilder.tsx(571,5): error TS2304: Cannot find name 'handleSave'.
+src/components/features/editor/TabsPlugin.tsx(4,10): error TS2724: '"lexical"' has no exported member named 'INSERT_TABS_COMMAND'. Did you mean 'INSERT_TAB_COMMAND'?
+src/components/features/editor/TabsPlugin.tsx(11,28): error TS2304: Cannot find name 'INSERT_COMMAND'.
+src/components/features/editor/Toolbar.tsx(43,32): error TS2559: Type '"INSERT_IMAGE_COMMAND"' has no properties in common with type 'LexicalCommand<unknown>'.
+src/components/features/editor/VideoPlugin.tsx(4,10): error TS2724: '"lexical"' has no exported member named 'INSERT_VIDEO_COMMAND'. Did you mean 'INSERT_TAB_COMMAND'?
+src/components/features/editor/VideoPlugin.tsx(11,28): error TS2304: Cannot find name 'INSERT_COMMAND'.
+src/lib/admin-utils.ts(206,53): error TS2345: Argument of type 'string' is not assignable to parameter of type '"manage_appointments"'.
+src/lib/email-service.ts(59,37): error TS2551: Property 'createTransporter' does not exist on type 'typeof import("C:/Users/recon/Desktop/modernmen/node_modules/.pnpm/@types+nodemailer@7.0.1/node_modules/@types/nodemailer/index")'. Did you mean 'createTransport'?
+src/lib/email-service.ts(88,26): error TS18047: 'transporter' is possibly 'null'.
+src/lib/email-service.ts(302,13): error TS18047: 'transporter' is possibly 'null'.
+src/payload/collections/crm/Testimonials.ts(15,52): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/crm/Testimonials.ts(22,86): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/crm/Testimonials.ts(31,47): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/Providers.ts(3,18): error TS2709: Cannot use namespace 'CollectionConfig' as a type.
+src/payload/collections/staff/Commissions.ts(164,46): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/staff/StaffRoles.ts(235,55): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/staff/StaffSchedules.ts(177,47): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/staff/Stylists.ts(49,47): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/system/Locations.ts(111,51): error TS2339: Property 'id' does not exist on type 'number | Tenant'.
+  Property 'id' does not exist on type 'number'.
+src/payload/collections/Webhooks.ts(3,17): error TS2709: Cannot use namespace 'CollectionConfig' as a type.
+src/scripts/sync-payload-schema.ts(92,7): error TS2322: Type 'string' is not assignable to type 'CollectionSlug'.
+src/scripts/sync-payload-schema.ts(100,11): error TS2769: No overload matches this call.
+  Overload 2 of 2, '(options: ByIDOptions<CollectionSlug, SelectFromCollectionSlug<CollectionSlug>>): Promise<DataFromCollectionSlug<CollectionSlug>>', gave the following error.
+    Type 'string' is not assignable to type 'CollectionSlug'.
+src/types/payload-extensions.ts(5,18): error TS2430: Interface 'ExtendedUser' incorrectly extends interface 'User'.
+  Types of property 'role' are incompatible.
+    Type '"admin" | "customer" | "staff" | "manager" | "barber" | "client" | undefined' is not assignable to type '"admin" | "customer" | "staff" | "manager" | "barber" | "client"'.
+      Type 'undefined' is not assignable to type '"admin" | "customer" | "staff" | "manager" | "barber" | "client"'.
+src/types/payload-extensions.ts(15,20): error TS2300: Duplicate identifier 'User'.
+src/types/payload-overrides.ts(7,18): error TS2430: Interface 'ExtendedUser' incorrectly extends interface 'User'.
+  Types of property 'role' are incompatible.
+    Type '"admin" | "customer" | "manager" | "barber" | undefined' is not assignable to type '"admin" | "customer" | "staff" | "manager" | "barber" | "client"'.
+      Type 'undefined' is not assignable to type '"admin" | "customer" | "staff" | "manager" | "barber" | "client"'.

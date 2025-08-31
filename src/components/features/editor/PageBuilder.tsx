@@ -8,6 +8,7 @@ import Image from 'next/image';
 import ImageEditor from './ImageEditor';
 import BookingChatbot from '@/components/features/chatbot/BookingChatbot';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { toast } from 'sonner';
 
 interface ComponentProps {
   id: string;
@@ -119,7 +120,7 @@ const DraggableComponent = ({
       case ComponentTypes.HERO_SECTION:
         return (
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-12 rounded-lg">
-            <h1 className="text-4xl font-bold mb-4">{component.content || 'Welcome to Our Salon'}</h1>
+            <h1 className="text-4xl font-bold mb-4">{component.content || 'Welcome to Our barber'}</h1>
             <p className="text-xl mb-6">Experience premium grooming services with our expert stylists</p>
             <button className="bg-white text-blue-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
               Book Appointment
@@ -407,8 +408,8 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       setError('Failed to save page content. Please try again.');
       
       // Show error message
-      if (typeof window !== 'undefined' && window.toast) {
-        window.toast.error('Failed to save page. Please try again.');
+      if (typeof window !== 'undefined') {
+        toast.error('Failed to save page. Please try again.');
       }
     } finally {
       setIsSaving(false);
@@ -449,7 +450,7 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
         [ComponentTypes.BARBER_PROFILE]: 'View Barber Profile',
         [ComponentTypes.TESTIMONIAL]: 'Great service!',
         [ComponentTypes.BOOKING_CHATBOT]: 'Book your appointment',
-        [ComponentTypes.HERO_SECTION]: 'Welcome to Our Salon',
+        [ComponentTypes.HERO_SECTION]: 'Welcome to Our barber',
         [ComponentTypes.SERVICES_GRID]: 'Our Services',
         [ComponentTypes.GALLERY]: 'Gallery',
         [ComponentTypes.CONTACT_FORM]: 'Contact Us',
@@ -878,3 +879,7 @@ function ComponentEditor({
     </div>
   );
 }
+function handleSave(contentString: string) {
+  throw new Error('Function not implemented.');
+}
+

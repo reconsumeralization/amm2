@@ -29,8 +29,8 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     meta: {
-      title: 'Modern Men Salon - Management System',
-      description: 'Professional salon management system for Modern Men barber shop',
+      title: 'Modern Men barber - Management System',
+      description: 'Professional barber management system for Modern Men barber shop',
     },
     // components: {
     //   beforeDashboard: ['@/payload/components/ModernMenBranding'],

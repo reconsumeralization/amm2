@@ -32,7 +32,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const userId = (session as any).user.id;
     const userRole = (session as any).user.role;
     const isAuthor = existingNote.author === userId || existingNote.authorId === userId;
-    const isAdmin = ['admin', 'system_admin', 'salon_owner', 'BarberShop_owner'].includes(userRole);
+    const isAdmin = ['admin', 'system_admin', 'barber_owner', 'BarberShop_owner'].includes(userRole);
 
     if (!isAuthor && !isAdmin) {
       return createErrorResponse(
@@ -84,7 +84,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const userId = (session as any).user.id;
     const userRole = (session as any).user.role;
     const isAuthor = existingNote.author === userId || existingNote.authorId === userId;
-    const isAdmin = ['admin', 'system_admin', 'salon_owner', 'BarberShop_owner'].includes(userRole);
+    const isAdmin = ['admin', 'system_admin', 'barber_owner', 'BarberShop_owner'].includes(userRole);
 
     if (!isAuthor && !isAdmin) {
       return createErrorResponse(

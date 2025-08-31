@@ -36,23 +36,23 @@ export const documentationPermissions: DocumentationPermissions = {
 
   // Business documentation - role-specific access
   'business': {
-    read: ['salon_owner', 'salon_employee', 'salon_customer', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['barber_owner', 'barber_employee', 'barber_customer', 'system_admin'],
+    edit: ['barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.owner': {
-    read: ['salon_owner', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['barber_owner', 'system_admin'],
+    edit: ['barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.employee': {
-    read: ['salon_owner', 'salon_employee', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['barber_owner', 'barber_employee', 'system_admin'],
+    edit: ['barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.customer': {
-    read: ['salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['barber_owner', 'barber_employee', 'barber_customer', 'system_admin', 'guest'],
+    edit: ['barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
 
@@ -80,22 +80,22 @@ export const documentationPermissions: DocumentationPermissions = {
 
   // Shared resources - accessible to all authenticated users
   'shared': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'barber_owner', 'barber_employee', 'barber_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.glossary': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'barber_owner', 'barber_employee', 'barber_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.troubleshooting': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'barber_owner', 'barber_employee', 'barber_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'barber_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.changelog': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
+    read: ['developer', 'barber_owner', 'barber_employee', 'barber_customer', 'system_admin', 'guest'],
     edit: ['developer', 'system_admin'],
     admin: ['system_admin']
   }
@@ -143,18 +143,18 @@ export function getUserRoleFromSession(session: any): UserRole {
       return 'system_admin'
     case 'developer':
       return 'developer'
-    case 'salon_owner':
+    case 'barber_owner':
     case 'owner':
-      return 'salon_owner'
-    case 'salon_employee':
+      return 'barber_owner'
+    case 'barber_employee':
     case 'employee':
     case 'stylist':
     case 'receptionist':
-      return 'salon_employee'
+      return 'barber_employee'
     case 'customer':
-    case 'salon_customer':
+    case 'barber_customer':
     case 'client':
-      return 'salon_customer'
+      return 'barber_customer'
     default:
       return 'guest'
   }

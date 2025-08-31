@@ -115,7 +115,7 @@ export function AboutSection() {
                     A Legacy of Excellence
                   </h3>
                   <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                    At Modern Men Salon, we take men's grooming to the highest level of experience 
+                    At Modern Men barber, we take men's grooming to the highest level of experience 
                     and satisfaction. We are a group of highly skilled individuals who love what we 
                     do and genuinely care about your experience!
                   </p>

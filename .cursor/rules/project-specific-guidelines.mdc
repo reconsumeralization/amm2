@@ -1,7 +1,7 @@
-# Modern Men Salon Project Guidelines
+# Modern Men barber Project Guidelines
 
 ## Project Overview
-This is a Next.js application for a men's hair salon management system with Payload CMS integration.
+This is a Next.js application for a men's hair barber management system with Payload CMS integration.
 
 ## Architecture
 - **Frontend**: Next.js 15.5.2 with App Router
@@ -18,10 +18,10 @@ This is a Next.js application for a men's hair salon management system with Payl
 - `src/lib/icon-mapping.ts` - Custom icon mapping system
 
 ## Frontend Pages Created
-- `/services` - Salon services and pricing
+- `/services` - barber services and pricing
 - `/team` - Staff profiles and information
 - `/gallery` - Before/after photos and work showcase
-- `/about` - Salon story and mission
+- `/about` - barber story and mission
 - `/contact` - Contact information and form
 - `/testimonials` - Customer reviews and feedback
 - `/book` - Appointment booking with chatbot
@@ -45,7 +45,7 @@ This is a Next.js application for a men's hair salon management system with Payl
 
 ## Database Collections
 - Users - Staff and admin accounts
-- Services - Available salon services
+- Services - Available barber services
 - Customers - Client information
 - Appointments - Booking records
 - Stylists - Staff profiles

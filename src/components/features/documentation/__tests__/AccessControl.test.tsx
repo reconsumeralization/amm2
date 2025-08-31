@@ -271,10 +271,10 @@ describe('RoleGuard', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          id: 'test-salon-owner-id',
+          id: 'test-barber-owner-id',
           email: 'owner@example.com',
-          name: 'Salon Owner',
-          role: 'salon_owner'
+          name: 'barber Owner',
+          role: 'barber_owner'
         , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },
@@ -282,7 +282,7 @@ describe('RoleGuard', () => {
     })
 
     render(
-      <RoleGuard roles={['salon_owner', 'system_admin']}>
+      <RoleGuard roles={['barber_owner', 'system_admin']}>
         <div>Business content</div>
       </RoleGuard>
     )
@@ -413,10 +413,10 @@ describe('DeveloperOnly', () => {
     mockUseSession.mockReturnValue({
       data: {
         user: {
-          id: 'test-salon-owner-id',
+          id: 'test-barber-owner-id',
           email: 'owner@example.com',
-          name: 'Salon Owner',
-          role: 'salon_owner'
+          name: 'barber Owner',
+          role: 'barber_owner'
         , permissions: []},
         expires: '2024-12-31T23:59:59.999Z'
       },

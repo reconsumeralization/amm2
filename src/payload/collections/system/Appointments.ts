@@ -223,7 +223,7 @@ export const Appointments: CollectionConfig = {
                       date: new Date(doc.date).toLocaleDateString(),
                       time: doc.time || 'TBD',
                       stylist: doc.barber || 'Staff Member',
-                      location: 'ModernMen Hair Salon'
+                      location: 'ModernMen Hair barber'
                     }
                   )
                   console.log(`Appointment confirmation email sent to: ${(customer as any)?.email}`)

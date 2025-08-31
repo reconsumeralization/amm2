@@ -1,6 +1,6 @@
 // Start of Selection
 ---
-description: Payload CMS configuration rules and best practices for Modern Men Hair Salon
+description: Payload CMS configuration rules and best practices for Modern Men Hair barber
 globs:
   - src/collections/**/*.ts
   - src/globals/**/*.ts

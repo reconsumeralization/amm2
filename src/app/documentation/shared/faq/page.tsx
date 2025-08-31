@@ -15,12 +15,12 @@ export default function FAQPage() {
       questions: [
         {
           question: 'What is the Modern Men barber shop management system?',
-          answer: 'It is a comprehensive salon management platform that handles appointments, customer management, staff scheduling, inventory, and business analytics.',
+          answer: 'It is a comprehensive barber management platform that handles appointments, customer management, staff scheduling, inventory, and business analytics.',
           tags: ['overview', 'features']
         },
         {
           question: 'Who can use this system?',
-          answer: 'The system is designed for salon owners, employees (stylists, receptionists), customers, and system administrators. Each role has specific features and permissions.',
+          answer: 'The system is designed for barber owners, employees (stylists, receptionists), customers, and system administrators. Each role has specific features and permissions.',
           tags: ['roles', 'access']
         },
         {
@@ -40,7 +40,7 @@ export default function FAQPage() {
         },
         {
           question: 'Why can\'t I access certain features?',
-          answer: 'Access to features depends on your user role. Contact your salon administrator if you need additional permissions.',
+          answer: 'Access to features depends on your user role. Contact your barber administrator if you need additional permissions.',
           tags: ['permissions', 'roles', 'access']
         },
         {
@@ -55,12 +55,12 @@ export default function FAQPage() {
       questions: [
         {
           question: 'How do I book an appointment?',
-          answer: 'Customers can book appointments through the online booking system, mobile app, or by calling the salon. Staff can book appointments through the admin interface.',
+          answer: 'Customers can book appointments through the online booking system, mobile app, or by calling the barber. Staff can book appointments through the admin interface.',
           tags: ['booking', 'appointments', 'customers']
         },
         {
           question: 'Can I modify or cancel my appointment?',
-          answer: 'Yes, appointments can be modified or cancelled up to 24 hours before the scheduled time through your account or by contacting the salon.',
+          answer: 'Yes, appointments can be modified or cancelled up to 24 hours before the scheduled time through your account or by contacting the barber.',
           tags: ['appointments', 'cancellation', 'modification']
         },
         {
@@ -102,7 +102,7 @@ export default function FAQPage() {
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
-          Find quick answers to common questions about using the salon management system.
+          Find quick answers to common questions about using the barber management system.
         </p>
       </div>
 

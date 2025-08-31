@@ -199,7 +199,7 @@ export default function Home() {
             >
               <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
                 <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                  <span className="text-gray-500 font-body">Salon Image</span>
+                  <span className="text-gray-500 font-body">barber Image</span>
                 </div>
               </div>
             </motion.div>

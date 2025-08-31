@@ -1,0 +1,211 @@
+{
+  "barbers": {
+    "marcus-rodriguez": {
+      "name": "Marcus Rodriguez",
+      "originalFile": "malebarber.png",
+      "basePath": "/media/barbers/marcus-rodriguez",
+      "sizes": {
+        "thumbnail": {
+          "width": 150,
+          "height": 150
+        },
+        "small": {
+          "width": 300,
+          "height": 300
+        },
+        "medium": {
+          "width": 600,
+          "height": 600
+        },
+        "large": {
+          "width": 1200,
+          "height": 1200
+        },
+        "xl": {
+          "width": 1800,
+          "height": 1800
+        },
+        "profile": {
+          "width": 400,
+          "height": 500
+        },
+        "hero": {
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      "formats": [
+        "webp",
+        "avif",
+        "jpeg",
+        "png"
+      ],
+      "srcSet": {
+        "webp": "/media/barbers/marcus-rodriguez/thumbnail.webp 150w, /media/barbers/marcus-rodriguez/small.webp 300w, /media/barbers/marcus-rodriguez/medium.webp 600w, /media/barbers/marcus-rodriguez/large.webp 1200w, /media/barbers/marcus-rodriguez/xl.webp 1800w, /media/barbers/marcus-rodriguez/profile.webp 400w, /media/barbers/marcus-rodriguez/hero.webp 1920w",
+        "avif": "/media/barbers/marcus-rodriguez/thumbnail.avif 150w, /media/barbers/marcus-rodriguez/small.avif 300w, /media/barbers/marcus-rodriguez/medium.avif 600w, /media/barbers/marcus-rodriguez/large.avif 1200w, /media/barbers/marcus-rodriguez/xl.avif 1800w, /media/barbers/marcus-rodriguez/profile.avif 400w, /media/barbers/marcus-rodriguez/hero.avif 1920w",
+        "jpeg": "/media/barbers/marcus-rodriguez/thumbnail.jpeg 150w, /media/barbers/marcus-rodriguez/small.jpeg 300w, /media/barbers/marcus-rodriguez/medium.jpeg 600w, /media/barbers/marcus-rodriguez/large.jpeg 1200w, /media/barbers/marcus-rodriguez/xl.jpeg 1800w, /media/barbers/marcus-rodriguez/profile.jpeg 400w, /media/barbers/marcus-rodriguez/hero.jpeg 1920w"
+      },
+      "blurDataURL": "/media/barbers/marcus-rodriguez/blur.webp"
+    },
+    "sarah-mitchell": {
+      "name": "Sarah Mitchell",
+      "originalFile": "femalebarber.png",
+      "basePath": "/media/barbers/sarah-mitchell",
+      "sizes": {
+        "thumbnail": {
+          "width": 150,
+          "height": 150
+        },
+        "small": {
+          "width": 300,
+          "height": 300
+        },
+        "medium": {
+          "width": 600,
+          "height": 600
+        },
+        "large": {
+          "width": 1200,
+          "height": 1200
+        },
+        "xl": {
+          "width": 1800,
+          "height": 1800
+        },
+        "profile": {
+          "width": 400,
+          "height": 500
+        },
+        "hero": {
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      "formats": [
+        "webp",
+        "avif",
+        "jpeg",
+        "png"
+      ],
+      "srcSet": {
+        "webp": "/media/barbers/sarah-mitchell/thumbnail.webp 150w, /media/barbers/sarah-mitchell/small.webp 300w, /media/barbers/sarah-mitchell/medium.webp 600w, /media/barbers/sarah-mitchell/large.webp 1200w, /media/barbers/sarah-mitchell/xl.webp 1800w, /media/barbers/sarah-mitchell/profile.webp 400w, /media/barbers/sarah-mitchell/hero.webp 1920w",
+        "avif": "/media/barbers/sarah-mitchell/thumbnail.avif 150w, /media/barbers/sarah-mitchell/small.avif 300w, /media/barbers/sarah-mitchell/medium.avif 600w, /media/barbers/sarah-mitchell/large.avif 1200w, /media/barbers/sarah-mitchell/xl.avif 1800w, /media/barbers/sarah-mitchell/profile.avif 400w, /media/barbers/sarah-mitchell/hero.avif 1920w",
+        "jpeg": "/media/barbers/sarah-mitchell/thumbnail.jpeg 150w, /media/barbers/sarah-mitchell/small.jpeg 300w, /media/barbers/sarah-mitchell/medium.jpeg 600w, /media/barbers/sarah-mitchell/large.jpeg 1200w, /media/barbers/sarah-mitchell/xl.jpeg 1800w, /media/barbers/sarah-mitchell/profile.jpeg 400w, /media/barbers/sarah-mitchell/hero.jpeg 1920w"
+      },
+      "blurDataURL": "/media/barbers/sarah-mitchell/blur.webp"
+    },
+    "emma-thompson": {
+      "name": "Emma Thompson",
+      "originalFile": "femalebarber2.png",
+      "basePath": "/media/barbers/emma-thompson",
+      "sizes": {
+        "thumbnail": {
+          "width": 150,
+          "height": 150
+        },
+        "small": {
+          "width": 300,
+          "height": 300
+        },
+        "medium": {
+          "width": 600,
+          "height": 600
+        },
+        "large": {
+          "width": 1200,
+          "height": 1200
+        },
+        "xl": {
+          "width": 1800,
+          "height": 1800
+        },
+        "profile": {
+          "width": 400,
+          "height": 500
+        },
+        "hero": {
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      "formats": [
+        "webp",
+        "avif",
+        "jpeg",
+        "png"
+      ],
+      "srcSet": {
+        "webp": "/media/barbers/emma-thompson/thumbnail.webp 150w, /media/barbers/emma-thompson/small.webp 300w, /media/barbers/emma-thompson/medium.webp 600w, /media/barbers/emma-thompson/large.webp 1200w, /media/barbers/emma-thompson/xl.webp 1800w, /media/barbers/emma-thompson/profile.webp 400w, /media/barbers/emma-thompson/hero.webp 1920w",
+        "avif": "/media/barbers/emma-thompson/thumbnail.avif 150w, /media/barbers/emma-thompson/small.avif 300w, /media/barbers/emma-thompson/medium.avif 600w, /media/barbers/emma-thompson/large.avif 1200w, /media/barbers/emma-thompson/xl.avif 1800w, /media/barbers/emma-thompson/profile.avif 400w, /media/barbers/emma-thompson/hero.avif 1920w",
+        "jpeg": "/media/barbers/emma-thompson/thumbnail.jpeg 150w, /media/barbers/emma-thompson/small.jpeg 300w, /media/barbers/emma-thompson/medium.jpeg 600w, /media/barbers/emma-thompson/large.jpeg 1200w, /media/barbers/emma-thompson/xl.jpeg 1800w, /media/barbers/emma-thompson/profile.jpeg 400w, /media/barbers/emma-thompson/hero.jpeg 1920w"
+      },
+      "blurDataURL": "/media/barbers/emma-thompson/blur.webp"
+    },
+    "zoe-chen": {
+      "name": "Zoe Chen",
+      "originalFile": "femalebarber3.png",
+      "basePath": "/media/barbers/zoe-chen",
+      "sizes": {
+        "thumbnail": {
+          "width": 150,
+          "height": 150
+        },
+        "small": {
+          "width": 300,
+          "height": 300
+        },
+        "medium": {
+          "width": 600,
+          "height": 600
+        },
+        "large": {
+          "width": 1200,
+          "height": 1200
+        },
+        "xl": {
+          "width": 1800,
+          "height": 1800
+        },
+        "profile": {
+          "width": 400,
+          "height": 500
+        },
+        "hero": {
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      "formats": [
+        "webp",
+        "avif",
+        "jpeg",
+        "png"
+      ],
+      "srcSet": {
+        "webp": "/media/barbers/zoe-chen/thumbnail.webp 150w, /media/barbers/zoe-chen/small.webp 300w, /media/barbers/zoe-chen/medium.webp 600w, /media/barbers/zoe-chen/large.webp 1200w, /media/barbers/zoe-chen/xl.webp 1800w, /media/barbers/zoe-chen/profile.webp 400w, /media/barbers/zoe-chen/hero.webp 1920w",
+        "avif": "/media/barbers/zoe-chen/thumbnail.avif 150w, /media/barbers/zoe-chen/small.avif 300w, /media/barbers/zoe-chen/medium.avif 600w, /media/barbers/zoe-chen/large.avif 1200w, /media/barbers/zoe-chen/xl.avif 1800w, /media/barbers/zoe-chen/profile.avif 400w, /media/barbers/zoe-chen/hero.avif 1920w",
+        "jpeg": "/media/barbers/zoe-chen/thumbnail.jpeg 150w, /media/barbers/zoe-chen/small.jpeg 300w, /media/barbers/zoe-chen/medium.jpeg 600w, /media/barbers/zoe-chen/large.jpeg 1200w, /media/barbers/zoe-chen/xl.jpeg 1800w, /media/barbers/zoe-chen/profile.jpeg 400w, /media/barbers/zoe-chen/hero.jpeg 1920w"
+      },
+      "blurDataURL": "/media/barbers/zoe-chen/blur.webp"
+    }
+  },
+  "metadata": {
+    "generatedAt": "2025-08-31T23:12:07.366Z",
+    "totalImages": 4,
+    "formats": [
+      "webp",
+      "avif",
+      "jpeg",
+      "png"
+    ],
+    "sizes": [
+      "thumbnail",
+      "small",
+      "medium",
+      "large",
+      "xl",
+      "profile",
+      "hero"
+    ]
+  }
+}

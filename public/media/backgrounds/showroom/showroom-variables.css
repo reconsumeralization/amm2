@@ -1,0 +1,46 @@
+:root {
+  --bg-showroom-hero: url('/media/backgrounds/showroom/showroom-hero-1920x1080.webp');
+  --bg-showroom-hero-fallback: url('/media/backgrounds/showroom/showroom-hero-1920x1080.jpeg');
+  --bg-showroom-large: url('/media/backgrounds/showroom/showroom-large-1200x675.webp');
+  --bg-showroom-large-fallback: url('/media/backgrounds/showroom/showroom-large-1200x675.jpeg');
+  --bg-showroom-medium: url('/media/backgrounds/showroom/showroom-medium-800x450.webp');
+  --bg-showroom-medium-fallback: url('/media/backgrounds/showroom/showroom-medium-800x450.jpeg');
+  --bg-showroom-small: url('/media/backgrounds/showroom/showroom-small-400x225.webp');
+  --bg-showroom-small-fallback: url('/media/backgrounds/showroom/showroom-small-400x225.jpeg');
+  --bg-showroom-blur: url('/media/backgrounds/showroom/showroom-blur-placeholder.webp');
+}
+
+/* Background utility classes for showroom */
+.bg-showroom-hero {
+  background-image: var(--bg-showroom-hero);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-showroom-large {
+  background-image: var(--bg-showroom-large);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-showroom-medium {
+  background-image: var(--bg-showroom-medium);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-showroom-small {
+  background-image: var(--bg-showroom-small);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-showroom-blur {
+  background-image: var(--bg-showroom-blur);
+  background-size: cover;
+  background-position: center;
+}

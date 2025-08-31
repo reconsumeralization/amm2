@@ -5,9 +5,9 @@ import { Star, ThumbsUp, Heart } from '@/lib/icon-mapping';
 const Quote = ({ className }: { className?: string }) => <span className={className}>"</span>;
 
 export const metadata: Metadata = {
-  title: 'Testimonials - Modern Men Salon',
-  description: 'Read what our clients say about their experience at Modern Men Salon. Real reviews from satisfied customers.',
-  keywords: ['testimonials', 'reviews', 'customer feedback', 'modern men salon']
+  title: 'Testimonials - Modern Men barber',
+  description: 'Read what our clients say about their experience at Modern Men barber. Real reviews from satisfied customers.',
+  keywords: ['testimonials', 'reviews', 'customer feedback', 'modern men barber']
 };
 
 const testimonials = [
@@ -57,7 +57,7 @@ const testimonials = [
     service: 'Complete Grooming Package',
     rating: 5,
     date: '2024-01-05',
-    review: 'The complete package was worth every penny. Haircut, beard trim, and hot towel shave all done to perfection. The salon atmosphere is relaxed and professional. Will definitely return!',
+    review: 'The complete package was worth every penny. Haircut, beard trim, and hot towel shave all done to perfection. The barber atmosphere is relaxed and professional. Will definitely return!',
     stylist: 'Mike Johnson',
     verified: true
   },
@@ -121,7 +121,7 @@ export default function TestimonialsPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Don't just take our word for it - hear from our satisfied clients about their 
-            experience at Modern Men Salon.
+            experience at Modern Men barber.
           </p>
         </div>
 
@@ -255,7 +255,7 @@ export default function TestimonialsPage() {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-8 text-center text-white mb-12">
           <h2 className="text-3xl font-bold mb-4">Share Your Experience</h2>
           <p className="text-xl mb-6 opacity-90">
-            We'd love to hear about your experience at Modern Men Salon.
+            We'd love to hear about your experience at Modern Men barber.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">

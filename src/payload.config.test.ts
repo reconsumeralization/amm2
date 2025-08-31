@@ -48,8 +48,8 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'test-secret-key-for-development',
   admin: {
     meta: {
-      title: 'Modern Men Salon - Test',
-      description: 'Test salon management system',
+      title: 'Modern Men barber - Test',
+      description: 'Test barber management system',
     },
   },
   collections: [

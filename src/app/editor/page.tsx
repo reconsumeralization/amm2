@@ -21,7 +21,7 @@ export default function EditorPage() {
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-black mb-2">Content Editor</h1>
-        <p className="text-gray-600">Create and edit rich content for your Modern Men salon website</p>
+        <p className="text-gray-600">Create and edit rich content for your Modern Men barber website</p>
       </div>
 
       {savedContent && (

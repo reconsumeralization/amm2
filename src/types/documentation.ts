@@ -2,9 +2,9 @@
 
 export type UserRole =
   | "developer"
-  | "salon_owner"
-  | "salon_employee"
-  | "salon_customer"
+  | "barber_owner"
+  | "barber_employee"
+  | "barber_customer"
   | "system_admin"
   | "guest"
   | "BarberShop_owner"

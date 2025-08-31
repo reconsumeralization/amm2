@@ -37,7 +37,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 const navigation = [
   { name: 'Home', href: '/', icon: Home, description: 'Return to homepage' },
-  { name: 'Services', href: '/services', icon: Scissors, description: 'Our salon services' },
+  { name: 'Services', href: '/services', icon: Scissors, description: 'Our barber services' },
   { name: 'Our Team', href: '/team', icon: User, description: 'Meet our stylists' },
   { name: 'Contact', href: '/contact', icon: Phone, description: 'Get in touch' },
 ]

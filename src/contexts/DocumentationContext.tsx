@@ -105,10 +105,10 @@ export function usePermissions() {
     canAccessSection,
     isAdmin: user?.role === 'system_admin',
     isDeveloper: user?.role === 'developer' || user?.role === 'system_admin',
-    isBusiness: ['salon_owner', 'salon_employee', 'salon_customer'].includes(user?.role || ''),
-    isOwner: user?.role === 'salon_owner',
-    isEmployee: user?.role === 'salon_employee',
-    isCustomer: user?.role === 'salon_customer',
+    isBusiness: ['barber_owner', 'barber_employee', 'barber_customer'].includes(user?.role || ''),
+    isOwner: user?.role === 'barber_owner',
+    isEmployee: user?.role === 'barber_employee',
+    isCustomer: user?.role === 'barber_customer',
     isGuest: !user || user.role === 'guest'
   }
 }
@@ -157,10 +157,10 @@ export function useRoleAccess() {
     canAccess: {
       developer: checkRoleAccess(['developer', 'system_admin']),
       admin: checkRoleAccess('system_admin'),
-      business: checkRoleAccess(['salon_owner', 'salon_employee', 'salon_customer', 'system_admin']),
-      owner: checkRoleAccess(['salon_owner', 'system_admin']),
-      employee: checkRoleAccess(['salon_employee', 'salon_owner', 'system_admin']),
-      customer: checkRoleAccess(['salon_customer', 'salon_employee', 'salon_owner', 'system_admin'])
+      business: checkRoleAccess(['barber_owner', 'barber_employee', 'barber_customer', 'system_admin']),
+      owner: checkRoleAccess(['barber_owner', 'system_admin']),
+      employee: checkRoleAccess(['barber_employee', 'barber_owner', 'system_admin']),
+      customer: checkRoleAccess(['barber_customer', 'barber_employee', 'barber_owner', 'system_admin'])
     }
   }
 }

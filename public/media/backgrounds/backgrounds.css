@@ -1,0 +1,127 @@
+/* Modern Men Barbershop Backgrounds */
+/* Auto-generated CSS variables and utility classes */
+
+:root {
+  /* Showroom backgrounds */
+  --bg-showroom-hero: url('/media/backgrounds/showroom/showroom-hero-1920x1080.webp');
+  --bg-showroom-large: url('/media/backgrounds/showroom/showroom-large-1200x675.webp');
+  --bg-showroom-medium: url('/media/backgrounds/showroom/showroom-medium-800x450.webp');
+  --bg-showroom-small: url('/media/backgrounds/showroom/showroom-small-400x225.webp');
+  --bg-showroom-blur: url('/media/backgrounds/showroom/showroom-blur-placeholder.webp');
+
+  /* Front entrance backgrounds */
+  --bg-front-entrance-hero: url('/media/backgrounds/front-entrance/front-entrance-hero-1920x1080.webp');
+  --bg-front-entrance-large: url('/media/backgrounds/front-entrance/front-entrance-large-1200x675.webp');
+  --bg-front-entrance-medium: url('/media/backgrounds/front-entrance/front-entrance-medium-800x450.webp');
+  --bg-front-entrance-small: url('/media/backgrounds/front-entrance/front-entrance-small-400x225.webp');
+  --bg-front-entrance-blur: url('/media/backgrounds/front-entrance/front-entrance-blur-placeholder.webp');
+
+  /* Barbers working backgrounds */
+  --bg-barbers-working-hero: url('/media/backgrounds/barbers-working/barbers-working-hero-1920x1080.webp');
+  --bg-barbers-working-large: url('/media/backgrounds/barbers-working/barbers-working-large-1200x675.webp');
+  --bg-barbers-working-medium: url('/media/backgrounds/barbers-working/barbers-working-medium-800x450.webp');
+  --bg-barbers-working-small: url('/media/backgrounds/barbers-working/barbers-working-small-400x225.webp');
+  --bg-barbers-working-blur: url('/media/backgrounds/barbers-working/barbers-working-blur-placeholder.webp');
+
+  /* Back house backgrounds */
+  --bg-back-house-hero: url('/media/backgrounds/back-house/back-house-hero-1920x1080.webp');
+  --bg-back-house-large: url('/media/backgrounds/back-house/back-house-large-1200x675.webp');
+  --bg-back-house-medium: url('/media/backgrounds/back-house/back-house-medium-800x450.webp');
+  --bg-back-house-small: url('/media/backgrounds/back-house/back-house-small-400x225.webp');
+  --bg-back-house-blur: url('/media/backgrounds/back-house/back-house-blur-placeholder.webp');
+
+  /* Modern Men logo backgrounds */
+  --bg-modern-men-logo-hero: url('/media/backgrounds/modern-men-logo/modern-men-logo-hero-1920x1080.webp');
+  --bg-modern-men-logo-large: url('/media/backgrounds/modern-men-logo/modern-men-logo-large-1200x675.webp');
+  --bg-modern-men-logo-medium: url('/media/backgrounds/modern-men-logo/modern-men-logo-medium-800x450.webp');
+  --bg-modern-men-logo-small: url('/media/backgrounds/modern-men-logo/modern-men-logo-small-400x225.webp');
+  --bg-modern-men-logo-thumbnail: url('/media/backgrounds/modern-men-logo/modern-men-logo-thumbnail-200x113.webp');
+  --bg-modern-men-logo-blur: url('/media/backgrounds/modern-men-logo/modern-men-logo-blur-placeholder.webp');
+}
+
+/* Utility classes for each background */
+.bg-showroom-hero { background-image: var(--bg-showroom-hero); background-size: cover; background-position: center; }
+.bg-showroom-large { background-image: var(--bg-showroom-large); background-size: cover; background-position: center; }
+.bg-showroom-medium { background-image: var(--bg-showroom-medium); background-size: cover; background-position: center; }
+.bg-showroom-small { background-image: var(--bg-showroom-small); background-size: cover; background-position: center; }
+.bg-showroom-blur { background-image: var(--bg-showroom-blur); background-size: cover; background-position: center; }
+
+.bg-front-entrance-hero { background-image: var(--bg-front-entrance-hero); background-size: cover; background-position: center; }
+.bg-front-entrance-large { background-image: var(--bg-front-entrance-large); background-size: cover; background-position: center; }
+.bg-front-entrance-medium { background-image: var(--bg-front-entrance-medium); background-size: cover; background-position: center; }
+.bg-front-entrance-small { background-image: var(--bg-front-entrance-small); background-size: cover; background-position: center; }
+.bg-front-entrance-blur { background-image: var(--bg-front-entrance-blur); background-size: cover; background-position: center; }
+
+.bg-barbers-working-hero { background-image: var(--bg-barbers-working-hero); background-size: cover; background-position: center; }
+.bg-barbers-working-large { background-image: var(--bg-barbers-working-large); background-size: cover; background-position: center; }
+.bg-barbers-working-medium { background-image: var(--bg-barbers-working-medium); background-size: cover; background-position: center; }
+.bg-barbers-working-small { background-image: var(--bg-barbers-working-small); background-size: cover; background-position: center; }
+.bg-barbers-working-blur { background-image: var(--bg-barbers-working-blur); background-size: cover; background-position: center; }
+
+.bg-back-house-hero { background-image: var(--bg-back-house-hero); background-size: cover; background-position: center; }
+.bg-back-house-large { background-image: var(--bg-back-house-large); background-size: cover; background-position: center; }
+.bg-back-house-medium { background-image: var(--bg-back-house-medium); background-size: cover; background-position: center; }
+.bg-back-house-small { background-image: var(--bg-back-house-small); background-size: cover; background-position: center; }
+.bg-back-house-blur { background-image: var(--bg-back-house-blur); background-size: cover; background-position: center; }
+
+.bg-modern-men-logo-hero { background-image: var(--bg-modern-men-logo-hero); background-size: cover; background-position: center; }
+.bg-modern-men-logo-large { background-image: var(--bg-modern-men-logo-large); background-size: cover; background-position: center; }
+.bg-modern-men-logo-medium { background-image: var(--bg-modern-men-logo-medium); background-size: cover; background-position: center; }
+.bg-modern-men-logo-small { background-image: var(--bg-modern-men-logo-small); background-size: cover; background-position: center; }
+.bg-modern-men-logo-thumbnail { background-image: var(--bg-modern-men-logo-thumbnail); background-size: cover; background-position: center; }
+.bg-modern-men-logo-blur { background-image: var(--bg-modern-men-logo-blur); background-size: cover; background-position: center; }
+
+/* Responsive background utilities */
+@media (max-width: 640px) {
+  .bg-responsive-showroom { background-image: var(--bg-showroom-small); }
+  .bg-responsive-front-entrance { background-image: var(--bg-front-entrance-small); }
+  .bg-responsive-barbers-working { background-image: var(--bg-barbers-working-small); }
+  .bg-responsive-back-house { background-image: var(--bg-back-house-small); }
+  .bg-responsive-modern-men-logo { background-image: var(--bg-modern-men-logo-small); }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .bg-responsive-showroom { background-image: var(--bg-showroom-medium); }
+  .bg-responsive-front-entrance { background-image: var(--bg-front-entrance-medium); }
+  .bg-responsive-barbers-working { background-image: var(--bg-barbers-working-medium); }
+  .bg-responsive-back-house { background-image: var(--bg-back-house-medium); }
+  .bg-responsive-modern-men-logo { background-image: var(--bg-modern-men-logo-medium); }
+}
+
+@media (min-width: 1025px) {
+  .bg-responsive-showroom { background-image: var(--bg-showroom-hero); }
+  .bg-responsive-front-entrance { background-image: var(--bg-front-entrance-hero); }
+  .bg-responsive-barbers-working { background-image: var(--bg-barbers-working-hero); }
+  .bg-responsive-back-house { background-image: var(--bg-back-house-hero); }
+  .bg-responsive-modern-men-logo { background-image: var(--bg-modern-men-logo-hero); }
+}
+
+/* Background overlay utilities */
+.bg-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.bg-overlay-light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.bg-overlay-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.bg-overlay > * {
+  position: relative;
+  z-index: 2;
+}
