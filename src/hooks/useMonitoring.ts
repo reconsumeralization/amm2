@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useCallback } from 'react'
 import { monitoring } from '@/lib/monitoring'
@@ -49,9 +49,9 @@ export function useMonitoring() {
     monitoring.track('performance_metric', metric)
   }, [])
 
-  // User action tracking
-  const trackAction = useCallback((action: any) => {
-    monitoring.track('user_action', action)
+  // User action tracking (accepts action name and optional data)
+  const trackAction = useCallback((action: string, data?: Record<string, any>) => {
+    monitoring.track('user_action', { action, ...(data || {}) })
   }, [])
 
   // Breadcrumb helper
@@ -61,7 +61,6 @@ export function useMonitoring() {
     level?: 'info' | 'warning' | 'error'
   ) => {
     monitoring.log?.(`Breadcrumb: ${message}`, { category, level })
->>>>>>> clean-merge
   }, [])
 
   // API call tracking helper
@@ -84,11 +83,11 @@ export function useMonitoring() {
     formName: string,
     success: boolean
   ) => {
-    monitoring.track('form_submission', { formName, success, duration })
+    monitoring.track('form_submission', { formName, success })
   }, [])
 
   // Search tracking helper
-  const trackrch = useCallback((query: string, resultsCount?: number) => {
+  const trackSearch = useCallback((query: string, resultsCount?: number) => {
     monitoring.track('search', { query, resultsCount })
   }, [])
 
@@ -179,7 +178,7 @@ export function useInteractionTracking() {
   const { trackAction } = useMonitoring()
 
   const trackClick = useCallback((target: string, data?: Record<string, any>) => {
-    trackAction('click', target)
+    trackAction('click', { target, ...(data || {}) })
   }, [trackAction])
 
   const trackFormInteraction = useCallback((
@@ -188,7 +187,7 @@ export function useInteractionTracking() {
     action: 'focus' | 'blur' | 'change',
     data?: Record<string, any>
   ) => {
-    trackAction('form_interaction', `${formName}.${field}`)
+    trackAction('form_interaction', { formName, field, action, ...(data || {}) })
   }, [trackAction])
 
   return {
@@ -201,7 +200,7 @@ export function useInteractionTracking() {
 export function useErrorBoundary() {
   const { captureError } = useMonitoring()
 
-  const reportError = useCallback((error: Error, errorInfo?: { componentStack?: string }) => {
+  const reportError = useCallback((error: Error, _errorInfo?: { componentStack?: string }) => {
     captureError(error)
   }, [captureError])
 

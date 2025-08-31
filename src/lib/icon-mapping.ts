@@ -42,7 +42,7 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     eye: Icons.Eye,
     messageSquare: Icons.MessageSquare,
     star: Icons.Star,
-    thumbsUp: Icons.ThumbsUp,
+    thumbsUp: FallbackIcon, // Use fallback as ThumbsUp is not available
     filter: Icons.Filter,
     loader2: Icons.Loader2,
     copy: Icons.Copy,
@@ -53,46 +53,46 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     zap: Icons.Zap,
     phone: Icons.Phone,
     mapPin: Icons.MapPin,
-    scissors: Icons.Scissors,
-    brush: Icons.Brush,
+    scissors: FallbackIcon, // Use fallback as Scissors is not available
+    brush: FallbackIcon, // Use fallback as Brush is not available
     award: Icons.Award,
     arrowRight: Icons.ArrowRight,
     wifiOff: Icons.WifiOff,
     home: Icons.Home,
-    messageCircle: Icons.MessageCircle,
+    messageCircle: FallbackIcon, // Use fallback as MessageCircle is not available
     bookOpen: Icons.BookOpen,
-    facebook: Icons.Facebook,
-    instagram: Icons.Instagram,
-    twitter: Icons.Twitter,
+    facebook: FallbackIcon, // Use fallback as Facebook is not available
+    instagram: FallbackIcon, // Use fallback as Instagram is not available
+    twitter: FallbackIcon, // Use fallback as Twitter is not available
     eyeOff: Icons.EyeOff,
-    sliders: Icons.Sliders,
-    circle: Icons.Circle,
-    type: Icons.Type,
-    mousePointer: Icons.MousePointer,
+    sliders: FallbackIcon, // Use fallback as Sliders is not available
+    circle: FallbackIcon, // Use fallback as Circle is not available
+    type: FallbackIcon, // Use fallback as Type is not available
+    mousePointer: FallbackIcon, // Use fallback as MousePointer is not available
     rotateCw: Icons.RotateCcw,
-    palette: Icons.Palette,
-    navigation: Icons.Navigation,
+    palette: FallbackIcon, // Use fallback as Palette is not available
+    navigation: FallbackIcon, // Use fallback as Navigation is not available
     volume2: Icons.Volume2,
     volumeX: Icons.VolumeX,
     pause: Icons.Pause,
-    target: Icons.Target,
+    target: FallbackIcon, // Use fallback as Target is not available
     grid: Icons.Grid,
-    list: Icons.List,
-    layout: Icons.Layout,
-    maximize: Icons.Maximize,
-    minimize: Icons.Minimize,
+    list: FallbackIcon, // Use fallback as List is not available
+    layout: FallbackIcon, // Use fallback as Layout is not available
+    maximize: FallbackIcon, // Use fallback as Maximize is not available
+    minimize: FallbackIcon, // Use fallback as Minimize is not available
     moreHorizontal: Icons.MoreHorizontal,
     moreVertical: Icons.MoreVertical,
     unlock: Icons.Unlock,
     heart: Icons.Heart,
     flag: Icons.Flag,
     tag: Icons.Tag,
-    bookmark: Icons.Bookmark,
-    gift: Icons.Gift,
+    bookmark: FallbackIcon, // Use fallback as Bookmark is not available
+    gift: FallbackIcon, // Use fallback as Gift is not available
     sparkles: Icons.Sparkles,
     gitCommit: Icons.GitCommit,
-    component: Icons.Component,
-    lineChart: Icons.LineChart,
+    component: FallbackIcon, // Use fallback as Component is not available
+    lineChart: FallbackIcon, // Use fallback as LineChart is not available
     trendingDown: Icons.TrendingDown,
     activity: Icons.Activity,
     logOut: Icons.LogOut,
@@ -101,7 +101,7 @@ const lucideIcons: Record<string, ComponentType<any>> = {
     BarChart: Icons.BarChart3, // Capitalized version
     Headphones: Icons.HelpCircle, // Use HelpCircle as fallback
     // Add more icons as needed
-    chart: Icons.Chart,
+    chart: FallbackIcon, // Use fallback as Chart is not available
 }
 
 /**
@@ -140,7 +140,7 @@ export const iconMapping: Record<string, ComponentType<any>> = {
   eye: Icons.Eye,
   messageSquare: Icons.MessageSquare,
   star: Icons.Star,
-  thumbsUp: Icons.ThumbsUp,
+  thumbsUp: FallbackIcon, // Use fallback as ThumbsUp is not available
   filter: Icons.Filter,
   loader2: Icons.Loader2,
   copy: Icons.Copy,
@@ -151,51 +151,51 @@ export const iconMapping: Record<string, ComponentType<any>> = {
   zap: Icons.Zap,
   phone: Icons.Phone,
   mapPin: Icons.MapPin,
-  scissors: Icons.Scissors,
-  brush: Icons.Brush,
+  scissors: FallbackIcon, // Use fallback as Scissors is not available
+  brush: FallbackIcon, // Use fallback as Brush is not available
   award: Icons.Award,
   arrowRight: Icons.ArrowRight,
   wifiOff: Icons.WifiOff,
   home: Icons.Home,
-  messageCircle: Icons.MessageCircle,
+  messageCircle: FallbackIcon, // Use fallback as MessageCircle is not available
   bookOpen: Icons.BookOpen,
-  facebook: Icons.Facebook,
-  instagram: Icons.Instagram,
-  twitter: Icons.Twitter,
+  facebook: FallbackIcon, // Use fallback as Facebook is not available
+  instagram: FallbackIcon, // Use fallback as Instagram is not available
+  twitter: FallbackIcon, // Use fallback as Twitter is not available
   eyeOff: Icons.EyeOff,
-  sliders: Icons.Sliders,
-  circle: Icons.Circle,
-  type: Icons.Type,
-  mousePointer: Icons.MousePointer,
+  sliders: FallbackIcon, // Use fallback as Sliders is not available
+  circle: FallbackIcon, // Use fallback as Circle is not available
+  type: FallbackIcon, // Use fallback as Type is not available
+  mousePointer: FallbackIcon, // Use fallback as MousePointer is not available
   rotateCw: Icons.RotateCcw,
-  palette: Icons.Palette,
-  navigation: Icons.Navigation,
+  palette: FallbackIcon, // Use fallback as Palette is not available
+  navigation: FallbackIcon, // Use fallback as Navigation is not available
   volume2: Icons.Volume2,
   volumeX: Icons.VolumeX,
   pause: Icons.Pause,
-  target: Icons.Target,
+  target: FallbackIcon, // Use fallback as Target is not available
   grid: Icons.Grid,
-  list: Icons.List,
-  layout: Icons.Layout,
-  maximize: Icons.Maximize,
-  minimize: Icons.Minimize,
+  list: FallbackIcon, // Use fallback as List is not available
+  layout: FallbackIcon, // Use fallback as Layout is not available
+  maximize: FallbackIcon, // Use fallback as Maximize is not available
+  minimize: FallbackIcon, // Use fallback as Minimize is not available
   moreHorizontal: Icons.MoreHorizontal,
   moreVertical: Icons.MoreVertical,
   unlock: Icons.Unlock,
   heart: Icons.Heart,
   flag: Icons.Flag,
   tag: Icons.Tag,
-  bookmark: Icons.Bookmark,
-  gift: Icons.Gift,
+  bookmark: FallbackIcon, // Use fallback as Bookmark is not available
+  gift: FallbackIcon, // Use fallback as Gift is not available
   sparkles: Icons.Sparkles,
   gitCommit: Icons.GitCommit,
-  component: Icons.Component,
-  lineChart: Icons.LineChart,
+  component: FallbackIcon, // Use fallback as Component is not available
+  lineChart: FallbackIcon, // Use fallback as LineChart is not available
   trendingDown: Icons.TrendingDown,
   activity: Icons.Activity,
   logOut: Icons.LogOut,
   camera: Icons.Camera,
-  chart: Icons.Chart,
+  chart: FallbackIcon, // Use fallback as Chart is not available
 
   // Fallback/alias mappings for missing or alternate icon names
   globe: Icons.Database,
@@ -212,12 +212,12 @@ export const iconMapping: Record<string, ComponentType<any>> = {
   alertCircleIcon: Icons.AlertTriangle,
   checkCircleIcon: Icons.CheckCircle,
   wifi: Icons.WifiOff,
-  paintbrush: Icons.Brush,
+  paintbrush: FallbackIcon, // Use fallback as Brush is not available
   loader: Icons.Loader2,
   terminal: Icons.Code,
   accessibility: Icons.HelpCircle,
   gitBranch: Icons.GitCommit,
-  thumbsDown: Icons.ThumbsUp,
+  thumbsDown: FallbackIcon, // Use fallback as ThumbsUp is not available
   link: Icons.ExternalLink,
   barChart: Icons.BarChart3,
   xCircle: Icons.X,
@@ -243,20 +243,21 @@ export * from './icons'
 
 // Direct exports for commonly used capitalized icon names
 export const Award = Icons.Award
-export const Scissors = Icons.Scissors
+export const Scissors = FallbackIcon // Use fallback as Scissors is not available
 export const Zap = Icons.Zap
-export const Brush = Icons.Brush
+export const Brush = FallbackIcon // Use fallback as Brush is not available
 export const Star = Icons.Star
-export const Facebook = Icons.Facebook
-export const Instagram = Icons.Instagram
+export const Facebook = FallbackIcon // Use fallback as Facebook is not available
+export const Instagram = FallbackIcon // Use fallback as Instagram is not available
 export const Mail = Icons.Bell
 export const Search = Icons.Search
 export const LogOut = Icons.LogOut
 export const Camera = Icons.Camera
 export const Book = Icons.BookOpen
-export const Chart = Icons.Chart
+export const Chart = FallbackIcon // Use fallback as Chart is not available
 export const BarChart = Icons.BarChart3
 export const Headphones = Icons.HelpCircle
+export const List = FallbackIcon
 
 // Additional exports for the booking system
 export const Calendar = Icons.Calendar
@@ -265,7 +266,7 @@ export const User = Icons.Users
 export const CheckCircle = Icons.CheckCircle
 export const MapPin = Icons.MapPin
 export const Phone = Icons.Phone
-export const MessageCircle = Icons.MessageCircle
+export const MessageCircle = FallbackIcon // Use fallback as MessageCircle is not available
 export const Send = Icons.ArrowRight
 export const Loader2 = Icons.Loader2
 export const Filter = Icons.Filter
@@ -273,9 +274,9 @@ export const Package = Icons.Package
 export const DollarSign = Icons.DollarSign
 export const Activity = Icons.Activity
 export const RefreshCw = Icons.RefreshCw
-export const AlertCircle = Icons.AlertCircle
-export const FileX = Icons.FileX
-export const Bookmark = Icons.Bookmark
+export const AlertCircle = Icons.AlertTriangle
+export const FileX = Icons.File // Use File as fallback for FileX
+export const Bookmark = FallbackIcon // Use fallback as Bookmark is not available
 export const Share = Icons.Share
 export const Printer = Icons.Printer
 export const Tag = Icons.Tag

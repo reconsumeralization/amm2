@@ -40,6 +40,7 @@ type Monitoring = {
   track: (eventName: string, properties?: Record<string, any>) => void
   error?: (error: Error, context?: Record<string, any>) => void
   log?: (message: string, context?: Record<string, any>) => void
+  getMetrics?: () => Record<string, any>
 }
 
 let currentUser: UserContext | undefined
@@ -81,7 +82,8 @@ export const monitoring: Monitoring = {
   },
   log: (message, context) => {
     console.log('[monitoring] log', { message, context })
-  }
+  },
+  getMetrics: () => ({ ...performanceMetrics })
 }
 
 export const monitoringHelpers = {

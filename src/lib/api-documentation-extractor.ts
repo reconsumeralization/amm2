@@ -45,7 +45,8 @@ export class APIDocumentationExtractor {
               endpoints: [],
               schemas: {},
               examples: [],
-              authentication: []
+              authentication: [],
+              articles: []
             }
           }
 

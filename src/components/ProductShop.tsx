@@ -1,12 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Input } from './ui/input';
-// Icons temporarily replaced with emoji placeholders due to import issues
+import {
+  Star,
+  Package as ShoppingCart,
+  Search,
+  Package as ShoppingBag,
+  Star as Sparkles,
+  TrendingUp,
+  Heart,
+  Eye,
+  Award,
+  Package,
+  Filter,
+  Grid,
+  List,
+  X,
+  X as Minus,
+  Star as Plus
+} from '@/lib/icon-mapping';
 
 interface Product {
   id: string;
@@ -48,14 +66,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
   const [cart, setCart] = useState<Array<{ product: Product; quantity: number }>>([]);
   const [showCart, setShowCart] = useState(false);
 
-  useEffect(() => {
-    fetchProducts();
-    if (showRecommendations && userId) {
-      fetchRecommendations();
-    }
-  }, [category, searchTerm, sortBy, userId]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -82,9 +93,9 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, sortBy, category, searchTerm]);
 
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     try {
       const response = await fetch(`/api/products/recommend?userId=${userId}&limit=6`);
       if (response.ok) {
@@ -94,7 +105,14 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
     } catch (err) {
       console.error('Failed to fetch recommendations:', err);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchProducts();
+    if (showRecommendations && userId) {
+      fetchRecommendations();
+    }
+  }, [category, searchTerm, sortBy, userId, showRecommendations, fetchProducts, fetchRecommendations]);
 
   const addToCart = (product: Product) => {
     setCart(prevCart => {
@@ -152,9 +170,19 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
       const { sessionId } = await response.json();
       
       // Redirect to Stripe Checkout
-      const stripe = await import('@stripe/stripe-js');
-      const stripeInstance = await stripe.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-      await stripeInstance?.redirectToCheckout({ sessionId });
+      try {
+        const stripe = await import('@stripe/stripe-js');
+        const stripeInstance = await stripe.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+        if (stripeInstance) {
+          await stripeInstance.redirectToCheckout({ sessionId });
+        } else {
+          throw new Error('Failed to load Stripe');
+        }
+      } catch (stripeError) {
+        console.error('Stripe loading error:', stripeError);
+        // Fallback: redirect to a custom checkout page or show error
+        window.location.href = `/checkout/${sessionId}`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initiate checkout');
     }
@@ -196,7 +224,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
             onClick={() => setShowCart(!showCart)}
             className="relative"
           >
-            <div className="h-4 w-4 mr-2">🛒</div>
+            <ShoppingCart className="h-4 w-4 mr-2" />
             Cart ({cart.length})
             {cart.length > 0 && (
               <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center">
@@ -211,7 +239,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
       {showRecommendations && recommendedProducts.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <div className="h-5 w-5 text-purple-600">✨</div>
+            <Sparkles className="h-5 w-5 text-purple-600" />
             <h3 className="text-lg font-semibold">Recommended for You</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -232,7 +260,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400">🔍</div>
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search products..."
               value={searchTerm}
@@ -296,7 +324,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="h-12 w-12 mx-auto text-gray-400 mb-4 flex items-center justify-center">🛍️</div>
+          <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No Products Found</h3>
           <p className="text-gray-500">Try adjusting your search or filters.</p>
         </div>
@@ -314,22 +342,24 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                   size="sm"
                   onClick={() => setShowCart(false)}
                 >
-                  ×
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
 
               {cart.length === 0 ? (
                 <div className="text-center py-8">
-                                     <div className="h-12 w-12 mx-auto text-gray-400 mb-4 flex items-center justify-center">🛒</div>
+                  <ShoppingCart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                   <p className="text-gray-500">Your cart is empty</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {cart.map((item) => (
                     <div key={item.product.id} className="flex gap-4 p-4 border rounded-lg">
-                      <img
-                        src={item.product.images[0]?.image.url}
+                      <Image
+                        src={item.product.images[0]?.image.url || ''}
                         alt={item.product.name}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 object-cover rounded"
                       />
                       <div className="flex-1">
@@ -341,7 +371,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                             variant="outline"
                             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           >
-                            -
+                            <Minus className="h-3 w-3" />
                           </Button>
                           <span className="w-8 text-center">{item.quantity}</span>
                           <Button
@@ -349,7 +379,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                             variant="outline"
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           >
-                            +
+                            <Plus className="h-3 w-3" />
                           </Button>
                         </div>
                       </div>
@@ -358,7 +388,7 @@ export default function ProductShop({ userId, limit = 12, showRecommendations = 
                         size="sm"
                         onClick={() => removeFromCart(item.product.id)}
                       >
-                        ×
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}
@@ -402,23 +432,24 @@ function ProductCard({ product, onAddToCart, formatPrice, getDiscountPercentage 
     >
       {/* Product Image */}
       <div className="aspect-square relative overflow-hidden">
-        <img
-          src={product.images[0]?.image.url}
+        <Image
+          src={product.images[0]?.image.url || ''}
           alt={product.images[0]?.image.alt || product.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         
         {/* Badges */}
         <div className="absolute top-2 left-2 space-y-1">
           {product.featured && (
             <Badge className="bg-yellow-500 text-white text-xs">
-                             <div className="h-3 w-3 mr-1">⭐</div>
+              <Star className="h-3 w-3 mr-1" />
               Featured
             </Badge>
           )}
           {product.bestseller && (
             <Badge className="bg-orange-500 text-white text-xs">
-                             <div className="h-3 w-3 mr-1">📈</div>
+              <TrendingUp className="h-3 w-3 mr-1" />
               Bestseller
             </Badge>
           )}
@@ -434,10 +465,10 @@ function ProductCard({ product, onAddToCart, formatPrice, getDiscountPercentage 
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
           <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-            <span className="text-sm">❤️</span>
+            <Heart className="h-4 w-4" />
           </Button>
           <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-            <span className="text-sm">👁️</span>
+            <Eye className="h-4 w-4" />
           </Button>
         </div>
 
@@ -445,7 +476,7 @@ function ProductCard({ product, onAddToCart, formatPrice, getDiscountPercentage 
         {product.loyaltyPoints > 0 && (
           <div className="absolute bottom-2 left-2">
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-              <span className="text-xs mr-1">🏆</span>
+              <Award className="h-3 w-3 mr-1" />
               +{product.loyaltyPoints} pts
             </Badge>
           </div>
@@ -488,7 +519,7 @@ function ProductCard({ product, onAddToCart, formatPrice, getDiscountPercentage 
               disabled={product.stock === 0}
               className="text-xs"
             >
-              <span className="text-xs mr-1">🛒</span>
+              <ShoppingCart className="h-3 w-3 mr-1" />
               Add to Cart
             </Button>
           </div>

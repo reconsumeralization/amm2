@@ -7,7 +7,7 @@ if (!cached) {
   cached = global.payload = { client: null, promise: null }
 }
 
-const getPayloadClient = async (p0: { config: () => Promise<any> }) => {
+const getPayloadClient = async (_opts?: { config: () => Promise<any> }) => {
   if (cached.client) {
     return cached.client
   }
