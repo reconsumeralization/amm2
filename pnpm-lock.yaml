@@ -228,8 +228,8 @@ importers:
         specifier: ^1.0.0
         version: 1.9.0(react@19.1.1)
       '@next/bundle-analyzer':
-        specifier: ^14.0.0
-        version: 14.2.32
+        specifier: ^15.5.2
+        version: 15.5.2
       '@playwright/test':
         specifier: ^1.40.0
         version: 1.55.0
@@ -1860,8 +1860,8 @@ packages:
   '@neon-rs/load@0.0.4':
     resolution: {integrity: sha512-kTPhdZyTQxB+2wpiRcFWrDcejc4JI6tkPuS7UZCG4l6Zvc5kU/gGQ/ozvHTh1XR5tS+UlfAfGuPajjzQjCiHCw==}
 
-  '@next/bundle-analyzer@14.2.32':
-    resolution: {integrity: sha512-AfHw6K01CqSFIxfhEZoD5P5jdqrZXB7xVfuwMnF1tY46nhoEnfZI5lQAXtNVV1EMiBmMPsZ8sf0gjNA4St0lUA==}
+  '@next/bundle-analyzer@15.5.2':
+    resolution: {integrity: sha512-UWOFpy/NK5iSeIP0mgdq4VqGB4/z37uq5v5dEtvzmY/BlaPO6m4EtFUaH6RVI0w2wG5sh0TG86i/cA5wcaJtgg==}
 
   '@next/env@15.5.2':
     resolution: {integrity: sha512-Qe06ew4zt12LeO6N7j8/nULSOe3fMXE4dM6xgpBQNvdzyK1sv5y4oAP3bq4LamrvGCZtmRYnW8URFCeX5nFgGg==}
@@ -10416,7 +10416,7 @@ snapshots:
 
   '@neon-rs/load@0.0.4': {}
 
-  '@next/bundle-analyzer@14.2.32':
+  '@next/bundle-analyzer@15.5.2':
     dependencies:
       webpack-bundle-analyzer: 4.10.1
     transitivePeerDependencies:
