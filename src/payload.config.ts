@@ -3,7 +3,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 
 // Import all collections from the organized structure
-import collections from './payload/collections'
+import collections from './payload/collections/index.ts'
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',

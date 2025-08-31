@@ -1,6 +1,6 @@
 // src/payload/utils/withSlugField.ts
 import type { CollectionConfig, Field } from 'payload';
-import { slugGenerator } from '../hooks';
+import { slugGenerator } from '../hooks/slugGenerator';
 
 export const slugField: Field = {
   name: 'slug',
