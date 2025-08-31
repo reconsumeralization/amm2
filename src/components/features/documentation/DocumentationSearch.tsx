@@ -18,46 +18,48 @@ interface SearchResult {
 }
 
 interface DocumentationSearchProps {
+  initialQuery?: string;
+  showFilters?: boolean;
   compact?: boolean;
   onResultClick?: (result: SearchResult) => void;
   className?: string;
 }
 
 export function DocumentationSearch({
+  initialQuery = '',
+  showFilters = false,
   compact = false,
   onResultClick,
   className = ''
 }: DocumentationSearchProps) {
   const router = useRouter();
-  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => {
-    if (typeof window !== 'undefined') {
-      return new URLSearchParams(window.location.search)
-    }
-    return new URLSearchParams()
-  });
   const [results, setResults] = useState<SearchResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Array<{ text: string }>>([]);
 
-  const query = searchParams.get('q') || '';
+  const query = initialQuery;
   const filters = {
-    category: searchParams.get('category')?.split(',') || [],
-    type: searchParams.get('type')?.split(',') || [],
-    difficulty: searchParams.get('difficulty')?.split(',') || [],
-    tags: searchParams.get('tags')?.split(',') || [],
+    category: [],
+    type: [],
+    difficulty: [],
+    tags: [],
   };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setSearchParams(new URLSearchParams(window.location.search))
-    }
-  }, [])
 
   const serviceRef = React.useRef<any>(null);
   if (!serviceRef.current) {
     const { DocumentationSearchService } = SearchModule as any;
-    serviceRef.current = new DocumentationSearchService({ rankingConfig: { titleBoost: 1, descriptionBoost: 1, contentBoost: 1, tagsBoost: 1, roleBasedBoost: { guest: 1 }, recencyBoost: 0, popularityBoost: 0 } });
+    serviceRef.current = new DocumentationSearchService({
+      rankingConfig: {
+        titleBoost: 1,
+        descriptionBoost: 1,
+        contentBoost: 1,
+        tagsBoost: 1,
+        roleBasedBoost: { guest: 1 },
+        recencyBoost: 0,
+        popularityBoost: 0,
+      },
+    });
   }
 
   const handleSearch = useCallback(async (searchQuery: string, searchFilters: any) => {
@@ -70,28 +72,34 @@ export function DocumentationSearch({
 
     setLoading(true);
     try {
-      const data: any = await serviceRef.current.search({ query: searchQuery, filters: searchFilters, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
-      const nextResults = (data.results || []) as any[];
-      const nextSuggestions = (data.suggestions || []) as Array<{ text: string }>;
+      const data: any = await serviceRef.current.search(
+        {
+          query: searchQuery,
+          filters: searchFilters,
+          pagination: { page: 1, limit: 20, offset: 0 },
+          sorting: { field: 'relevance', direction: 'desc' },
+        },
+        'developer' as any
+      );
 
-      const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().includes('did you mean'));
+      const nextResults = data.results || [];
+      const nextSuggestions = data.suggestions || [];
+      const hasDidYouMean = nextSuggestions.some(
+        (s: any) => typeof s.text === 'string' && s.text.toLowerCase().includes('did you mean')
+      );
 
       setSuggestions(nextSuggestions);
       if (hasDidYouMean) {
         setResults([]);
         setTotalCount(0);
+      } else if (nextSuggestions.length && !nextResults.length) {
+        setResults([]);
+        setTotalCount(0);
       } else {
-        const hasAnySuggestions = nextSuggestions && nextSuggestions.length > 0;
-        const hasResults = Array.isArray(nextResults) && nextResults.length > 0;
-        if (hasAnySuggestions && !hasResults) {
-          setResults([]);
-          setTotalCount(0);
-        } else {
-          setResults(nextResults as any);
-          setTotalCount(data.totalCount || (nextResults?.length ?? 0));
-        }
+        setResults(nextResults);
+        setTotalCount(data.totalCount || nextResults.length);
       }
-    } catch (error) {
+    } catch {
       setResults([]);
       setTotalCount(0);
     } finally {
@@ -103,7 +111,7 @@ export function DocumentationSearch({
     if (onResultClick) {
       onResultClick(result);
     } else {
-      const to = (result as any).path || `/documentation/${result.type}/${result.id}`;
+      const to = result.path || `/documentation/${result.type}/${result.id}`;
       router.push(to);
     }
   };
@@ -114,12 +122,8 @@ export function DocumentationSearch({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <SearchInput 
-        initialQuery={query}
-        isLoading={loading}
-      />
+      <SearchInput initialQuery={initialQuery} showFilters={showFilters} isLoading={loading} />
 
-      {/* Results */}
       {results.length > 0 && (
         <Card>
           <CardHeader>
@@ -158,7 +162,6 @@ export function DocumentationSearch({
         </Card>
       )}
 
-      {/* Suggestions */}
       {suggestions.length > 0 && (
         <Card>
           <CardHeader>
@@ -174,7 +177,6 @@ export function DocumentationSearch({
         </Card>
       )}
 
-      {/* No Results */}
       {!loading && query.trim() && results.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center">

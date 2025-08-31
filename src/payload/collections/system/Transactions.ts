@@ -16,13 +16,13 @@ export const Transactions: CollectionConfig = {
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any).role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any).role)) {
+        return { tenant: { equals: (req.user as any).tenant?.id } };
       }
       // Customers can only read their own transactions
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any).tenant?.id },
         order: {
           user: { equals: req.user.id }
         }
@@ -35,16 +35,16 @@ export const Transactions: CollectionConfig = {
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any).role === 'admin') return true;
       // Allow managers to update transaction status for reconciliation
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any).role === 'manager') {
+        return { tenant: { equals: (req.user as any).tenant?.id } };
       }
       return false;
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any).role === 'admin') return true;
       // Prevent accidental deletion
       return false;
     },
@@ -92,12 +92,12 @@ export const Transactions: CollectionConfig = {
         if (doc.order && req.payload) {
           try {
             const order = await req.payload.findByID({
-              collection: 'orders',
+              collection: 'orders' as any,
               id: doc.order
             });
 
             if (order) {
-              let newPaymentStatus = order.paymentStatus;
+              let newPaymentStatus = (order as any).paymentStatus;
 
               if (doc.status === 'succeeded' && doc.type === 'payment') {
                 newPaymentStatus = 'paid';
@@ -107,16 +107,16 @@ export const Transactions: CollectionConfig = {
                 newPaymentStatus = 'refunded';
               }
 
-              if (newPaymentStatus !== order.paymentStatus) {
+              if (newPaymentStatus !== (order as any).paymentStatus) {
                 await req.payload.update({
-                  collection: 'orders',
+                  collection: 'orders' as any,
                   id: doc.order,
                   data: {
                     paymentStatus: newPaymentStatus,
                     updatedAt: new Date().toISOString()
-                  }
+                  } as any
                 });
-                console.log(`Updated order ${order.id} payment status to ${newPaymentStatus}`);
+                console.log(`Updated order ${(order as any).id} payment status to ${newPaymentStatus}`);
               }
             }
           } catch (error) {
@@ -140,18 +140,18 @@ export const Transactions: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any,
       required: true,
       index: true,
       admin: {
         description: 'Business this transaction belongs to',
-        condition: (data, siblingData, { user }) => user?.role === 'admin',
+        condition: (data, siblingData, { user }) => (user as any)?.role === 'admin',
       },
     },
     {
       name: 'order',
       type: 'relationship',
-      relationTo: 'orders',
+      relationTo: 'orders' as any,
       index: true,
       admin: {
         description: 'Related order (if applicable)',
@@ -160,7 +160,7 @@ export const Transactions: CollectionConfig = {
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any,
       index: true,
       admin: {
         description: 'Related appointment (if applicable)',
@@ -433,7 +433,7 @@ export const Transactions: CollectionConfig = {
         {
           name: 'originalTransaction',
           type: 'relationship',
-          relationTo: 'transactions',
+          relationTo: 'transactions' as any,
           admin: {
             description: 'Original transaction being refunded',
           },

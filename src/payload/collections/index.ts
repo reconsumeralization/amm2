@@ -226,7 +226,8 @@ const collections = rawCollections.map((collection) => {
   let enhancedCollection = withDefaultHooks(collection);
   enhancedCollection = withLexicalEditor(enhancedCollection);
   enhancedCollection = withSlugField(enhancedCollection);
-  enhancedCollection = withSEOFields(enhancedCollection);
+  // Note: SEO fields are already defined manually in individual collections
+  // enhancedCollection = withSEOFields(enhancedCollection);
 
   // Remove global OG field/hook injection to avoid duplicates across collections.
 

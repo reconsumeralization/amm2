@@ -731,7 +731,7 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'category',
       type: 'relationship',
-      relationTo: 'pluginCategories',
+      relationTo: 'tags',
       admin: { description: 'Plugin category for better organization.' },
     },
     {

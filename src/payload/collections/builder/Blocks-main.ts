@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload';
 
 export const Blocks: CollectionConfig = {
-  slug: 'blocks',
+  slug: 'builder-blocks',
   admin: {
     useAsTitle: 'name',
     group: 'Editor',

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (status) where.status = { equals: status }
 
     const conversations = await payload.find({
-      collection: 'chat-conversations',
+              collection: 'chatbot-conversations',
       where,
       limit: parseInt(limit),
       page: parseInt(page),
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     // Create conversation
     const conversation = await payload.create({
-      collection: 'chat-conversations',
+              collection: 'chatbot-conversations',
       data: {
         conversationId,
         user: body.user,

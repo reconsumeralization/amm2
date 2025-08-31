@@ -175,7 +175,7 @@ export default function BookingChatbot({ userId = 'user-id-placeholder', tenantI
         }
 
         // Create or find existing conversation
-        const conversationRes = await fetch('/api/chat-conversations', {
+        const conversationRes = await fetch('/api/chatbot-conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

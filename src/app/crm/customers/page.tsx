@@ -48,8 +48,9 @@ async function getCustomers({ searchParams }: { searchParams: Promise<{ [key: st
   return customersData;
 }
 
-const CustomersContent = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const CustomersContent = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
   const customersData = await getCustomers({ searchParams });
+  const resolvedSearchParams = await searchParams;
 
   return (
     <div>
@@ -61,7 +62,7 @@ const CustomersContent = async ({ searchParams }: { searchParams: { [key: string
       </div>
       <div className="flex items-center justify-between mb-4">
         <form action="/crm/customers" method="GET" className="flex items-center space-x-2">
-        <Input name="search" placeholder="Search customers..." className="max-w-sm" defaultValue={typeof searchParams.search === 'string' ? searchParams.search : ''} />
+        <Input name="search" placeholder="Search customers..." className="max-w-sm" defaultValue={typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : ''} />
         <Button type="submit">Search</Button>
       </form>
         {/* Add filter controls here */}
@@ -106,7 +107,11 @@ const CustomersContent = async ({ searchParams }: { searchParams: { [key: string
   );
 };
 
-const CustomersPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+const CustomersPage = ({ searchParams }: PageProps) => {
     return (
         <Suspense fallback={<div>Loading customers...</div>}>
             <CustomersContent searchParams={searchParams} />

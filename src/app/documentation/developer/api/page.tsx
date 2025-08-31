@@ -1,5 +1,5 @@
 import React from 'react'
-import { APIDocumentation } from '@/components/documentation/APIDocumentation'
+import { APIDocumentation } from '@/components/features/documentation/APIDocumentation'
 import { apiDocExtractor } from '@/lib/api-documentation-extractor'
 import { sampleAPIDocumentation } from '@/lib/sample-api-docs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
