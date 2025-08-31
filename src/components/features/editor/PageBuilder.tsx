@@ -399,8 +399,8 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       console.log('Page content saved:', result);
       
       // Show success message
-      if (typeof window !== 'undefined' && window.toast) {
-        window.toast.success('Page saved successfully!');
+      if (typeof window !== 'undefined') {
+        toast.success('Page saved successfully!');
       }
     } catch (err) {
       console.error('Failed to save page content:', err);
@@ -466,9 +466,9 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       
       setComponents((prev) => [
         ...prev,
-        { 
-          id, 
-          type, 
+        {
+          id,
+          type,
           content: defaultContent[type as keyof typeof defaultContent] || 'New component',
           url: type === ComponentTypes.BUTTON ? '#' : type === ComponentTypes.BARBER_PROFILE ? 'barber-1' : undefined
         },
@@ -823,7 +823,7 @@ function ComponentEditor({
   const [content, setContent] = useState(component.content || '');
   const [url, setUrl] = useState(component.url || '');
 
-  const handleSave = () => {
+  const handleComponentSave = () => {
     onSave({ content, url });
   };
 
@@ -868,7 +868,7 @@ function ComponentEditor({
             Cancel
           </button>
           <button
-            onClick={handleSave}
+            onClick={handleComponentSave}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Save

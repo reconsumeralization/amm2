@@ -75,7 +75,7 @@ export const Events: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       required: true,
       admin: {
         description: 'Event promotional image',
@@ -94,7 +94,7 @@ export const Events: CollectionConfig = {
     {
       name: 'attendees',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       hasMany: true,
       admin: {
         description: 'Registered attendees',
@@ -104,7 +104,7 @@ export const Events: CollectionConfig = {
     {
       name: 'waitlist',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       hasMany: true,
       admin: {
         description: 'Waitlist attendees',
@@ -124,7 +124,7 @@ export const Events: CollectionConfig = {
     {
       name: 'instructor',
       type: 'relationship',
-      relationTo: 'stylists',
+      relationTo: 'stylists' as any as any,
       admin: {
         description: 'Event instructor/stylist',
       },

@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// Using a simple div-based popover instead of radix-ui Popover
-// import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Bell,
   Check,
@@ -17,12 +15,12 @@ import {
   CheckCircle,
   XCircle,
   Calendar,
-  User,
+  Users,
   DollarSign,
   Settings,
   Trash2,
   MoreHorizontal
-} from "lucide-react";
+} from '@/lib/icon-mapping';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -235,149 +233,148 @@ export default function NotificationCenter({ isOpen = false, onToggle }: Notific
 
       {showPopover && (
         <div className="absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold">Notifications</h3>
-          <div className="flex items-center space-x-2">
-            {unreadCount > 0 && (
+          <div className="flex items-center justify-between p-4 border-b">
+            <h3 className="font-semibold">Notifications</h3>
+            <div className="flex items-center space-x-2">
+              {unreadCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={markAllAsRead}
+                  className="text-xs"
+                >
+                  <CheckCheck className="h-4 w-4 mr-1" />
+                  Mark all read
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
-                className="text-xs"
+                onClick={clearAllNotifications}
+                className="text-xs text-red-600 hover:text-red-700"
               >
-                <CheckCheck className="h-4 w-4 mr-1" />
-                Mark all read
+                <Trash2 className="h-4 w-4" />
               </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAllNotifications}
-              className="text-xs text-red-600 hover:text-red-700"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
-          <div className="flex space-x-1">
-            {[
-              { key: 'all', label: 'All' },
-              { key: 'unread', label: 'Unread' },
-              { key: 'urgent', label: 'Urgent' }
-            ].map(({ key, label }) => (
-              <Button
-                key={key}
-                variant={filter === key ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setFilter(key as any)}
-                className="text-xs h-7"
-              >
-                {label}
-              </Button>
-            ))}
+          <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
+            <div className="flex space-x-1">
+              {[
+                { key: 'all', label: 'All' },
+                { key: 'unread', label: 'Unread' },
+                { key: 'urgent', label: 'Urgent' }
+              ].map(({ key, label }) => (
+                <Button
+                  key={key}
+                  variant={filter === key ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setFilter(key as any)}
+                  className="text-xs h-7"
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <ScrollArea className="h-96">
-          <AnimatePresence>
-            {filteredNotifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Bell className="h-12 w-12 text-gray-300 mb-3" />
-                <p className="text-gray-500 text-sm">No notifications</p>
-                {filter !== 'all' && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFilter('all')}
-                    className="mt-2 text-xs"
-                  >
-                    View all notifications
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="divide-y">
-                {filteredNotifications.map((notification) => (
-                  <motion.div
-                    key={notification.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      !notification.read ? 'bg-blue-50/50' : ''
-                    } ${getPriorityColor(notification.priority)}`}
-                    onClick={() => handleNotificationAction(notification)}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 mt-0.5">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <h4 className={`text-sm font-medium truncate ${
-                            !notification.read ? 'text-gray-900' : 'text-gray-700'
-                          }`}>
-                            {notification.title}
-                          </h4>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 ml-2"></div>
-                          )}
+          <ScrollArea className="h-96">
+            <AnimatePresence>
+              {filteredNotifications.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Bell className="h-12 w-12 text-gray-300 mb-3" />
+                  <p className="text-gray-500 text-sm">No notifications</p>
+                  {filter !== 'all' && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setFilter('all')}
+                      className="mt-2 text-xs"
+                    >
+                      View all notifications
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="divide-y">
+                  {filteredNotifications.map((notification) => (
+                    <motion.div
+                      key={notification.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                        !notification.read ? 'bg-blue-50/50' : ''
+                      } ${getPriorityColor(notification.priority)}`}
+                      onClick={() => handleNotificationAction(notification)}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 mt-0.5">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                          {notification.message}
-                        </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-500">
-                            {notification.timestamp.toLocaleString()}
-                          </span>
-                          <div className="flex items-center space-x-1">
-                            {notification.actionText && (
-                              <Button size="sm" variant="outline" className="text-xs h-6">
-                                {notification.actionText}
-                              </Button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <h4 className={`text-sm font-medium truncate ${
+                              !notification.read ? 'text-gray-900' : 'text-gray-700'
+                            }`}>
+                              {notification.title}
+                            </h4>
+                            {!notification.read && (
+                              <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 ml-2"></div>
                             )}
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e: React.MouseEvent) => {
-                                e.stopPropagation();
-                                deleteNotification(notification.id);
-                              }}
-                              className="text-xs h-6 p-1"
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                            {notification.message}
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-gray-500">
+                              {notification.timestamp.toLocaleString()}
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              {notification.actionText && (
+                                <Button size="sm" variant="outline" className="text-xs h-6">
+                                  {notification.actionText}
+                                </Button>
+                              )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e: React.MouseEvent) => {
+                                  e.stopPropagation();
+                                  deleteNotification(notification.id);
+                                }}
+                                className="text-xs h-6 p-1"
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </AnimatePresence>
-        </ScrollArea>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </AnimatePresence>
+          </ScrollArea>
 
-        {filteredNotifications.length > 0 && (
-          <div className="p-3 border-t bg-gray-50">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-xs"
-              onClick={() => {
-                // Navigate to full notifications page
-                window.location.href = '/admin/notifications';
-              }}
-            >
-              View all notifications
-            </Button>
-          </div>
-        )}
-      </div>
+          {filteredNotifications.length > 0 && (
+            <div className="p-3 border-t bg-gray-50">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs"
+                onClick={() => {
+                  window.location.href = '/admin/notifications';
+                }}
+              >
+                View all notifications
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Click outside to close */}
       {showPopover && (
         <div
           className="fixed inset-0 z-40"

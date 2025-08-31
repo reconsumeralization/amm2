@@ -40,7 +40,7 @@ export const Redirects: CollectionConfig = {
       defaultValue: 301,
       admin: { description: 'HTTP status code (301 permanent, 302 temporary).' },
     },
-    { name: 'tenant', type: 'relationship', relationTo: 'tenants', required: true },
+    { name: 'tenant', type: 'relationship', relationTo: 'tenants' as any as any, required: true },
     { name: 'active', type: 'checkbox', defaultValue: true },
   ],
 }

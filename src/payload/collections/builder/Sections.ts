@@ -14,23 +14,23 @@ export const Sections: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'editor'].includes(req.user.role);
+      return ['admin', 'manager', 'editor'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -73,7 +73,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'blocks',
       type: 'relationship',
-      relationTo: 'builder-blocks',
+      relationTo: 'builder-blocks' as any as any,
       hasMany: true,
       admin: {
         description: 'Blocks that make up this section',
@@ -82,7 +82,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'layout',
       type: 'relationship',
-      relationTo: 'builder-layouts',
+      relationTo: 'builder-layouts' as any as any,
       admin: {
         description: 'Layout used for this section',
       },
@@ -121,7 +121,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'backgroundImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Background image for this section',
       },
@@ -189,7 +189,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'animation',
       type: 'relationship',
-      relationTo: 'builder-animations',
+      relationTo: 'builder-animations' as any as any,
       admin: {
         description: 'Animation applied to this section',
       },
@@ -197,7 +197,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'conditionalRules',
       type: 'relationship',
-      relationTo: 'builder-conditional-rules',
+      relationTo: 'builder-conditional-rules' as any as any,
       hasMany: true,
       admin: {
         description: 'Conditional rules that affect this section',
@@ -206,7 +206,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'reusableComponent',
       type: 'relationship',
-      relationTo: 'builder-reusable-components',
+      relationTo: 'builder-reusable-components' as any as any,
       admin: {
         description: 'Reusable component to use for this section',
       },
@@ -221,7 +221,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -240,7 +240,7 @@ export const Sections: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -249,8 +249,8 @@ export const Sections: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -262,8 +262,8 @@ export const Sections: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         return data;

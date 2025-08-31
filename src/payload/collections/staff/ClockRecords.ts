@@ -20,36 +20,36 @@ export const ClockRecords: CollectionConfig = {
   access: {
     read: ({ req }: AccessArgs): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       // Staff can only view their own records
       return { staff: { equals: req.user.id } } as Where
     },
     create: ({ req }: AccessArgs): boolean => {
       if (!req.user) return false
-      return ['admin', 'manager', 'barber'].includes(req.user.role)
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role)
     },
     update: ({ req }: AccessArgs): boolean => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     delete: ({ req }: AccessArgs): boolean => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-set staff if not provided (for self clock-in)
-        if (operation === 'create' && !data.staff && req.user && req.user.role === 'barber') {
+        if (operation === 'create' && !data.staff && req.user && (req.user as any)?.role === 'barber') {
           data.staff = req.user.id
         }
 
@@ -66,7 +66,7 @@ export const ClockRecords: CollectionConfig = {
     {
       name: 'staff',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       filterOptions: ({ data }: FilterOptionsProps): Where | false => {
         if (!data?.tenant) return false
@@ -84,7 +84,7 @@ export const ClockRecords: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'The business location',

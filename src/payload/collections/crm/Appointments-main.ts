@@ -15,17 +15,17 @@ export const Appointments: CollectionConfig = {
     create: ({ req }) => !!req.user,
     read: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { customer: { equals: req.user.id } }
     },
     update: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { customer: { equals: req.user.id } }
     },
     delete: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { customer: { equals: req.user.id } }
     },
   },
@@ -35,9 +35,9 @@ export const Appointments: CollectionConfig = {
   ],
   fields: [
     { name: 'appointmentTitle', type: 'text', required: true, defaultValue: 'Appointment' },
-    { name: 'customer', type: 'relationship', relationTo: 'customers', required: true },
-    { name: 'stylist', type: 'relationship', relationTo: 'stylists', required: true },
-    { name: 'tenant', type: 'relationship', relationTo: 'tenants', required: true },
+    { name: 'customer', type: 'relationship', relationTo: 'customers' as any as any, required: true },
+    { name: 'stylist', type: 'relationship', relationTo: 'stylists' as any as any, required: true },
+    { name: 'tenant', type: 'relationship', relationTo: 'tenants' as any as any, required: true },
     { name: 'dateTime', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime' } } },
     { name: 'service', type: 'text', required: true },
     { 

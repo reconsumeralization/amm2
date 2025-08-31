@@ -225,7 +225,7 @@ const Contacts: CollectionConfig = {
     {
       name: 'assignedTo',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Assign this inquiry to a team member',
         position: 'sidebar',

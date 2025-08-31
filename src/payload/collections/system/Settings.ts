@@ -14,19 +14,19 @@ export const Settings: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin' || req.user.role === 'manager';
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager';
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin' || req.user.role === 'manager';
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager';
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin' || req.user.role === 'manager';
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager';
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin'; // Only admins can delete settings
+      return (req.user as any)?.role === 'admin'; // Only admins can delete settings
     },
   },
   fields: [
@@ -42,7 +42,7 @@ export const Settings: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       admin: { 
         description: 'Leave blank for global settings.' 
       },

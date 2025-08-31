@@ -12,7 +12,7 @@ export const Notifications: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: false,
       admin: {
         description: 'User who receives the notification (null for broadcasts)',
@@ -229,7 +229,7 @@ export const Notifications: CollectionConfig = {
     read: ({ req }) => {
       const user = req.user
       if (!user) return false
-      if (user.role === 'admin') return true
+      if ((user as any)?.role === 'admin') return true
 
       // Users can only see their own notifications or broadcast notifications
       return {
@@ -242,12 +242,12 @@ export const Notifications: CollectionConfig = {
     create: ({ req }) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin' || user.role === 'manager'
+      return (user as any)?.role === 'admin' || (user as any)?.role === 'manager'
     },
     update: ({ req }) => {
       const user = req.user
       if (!user) return false
-      if (user.role === 'admin') return true
+      if ((user as any)?.role === 'admin') return true
 
       // Users can only update their own notifications (mark as read)
       return { user: { equals: user.id } }
@@ -255,7 +255,7 @@ export const Notifications: CollectionConfig = {
     delete: ({ req }) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin'
+      return (user as any)?.role === 'admin'
     },
   },
   timestamps: true,

@@ -130,7 +130,7 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants' as any,
+      relationTo: 'tenants' as any as any as any,
       required: true,
       index: true,
       admin: {
@@ -187,7 +187,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'plugin',
               type: 'relationship',
-              relationTo: 'editorPlugins' as any,
+              relationTo: 'editorPlugins' as any as any as any,
               required: true,
             },
             {
@@ -215,7 +215,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'plugin',
               type: 'relationship',
-              relationTo: 'editorPlugins' as any,
+              relationTo: 'editorPlugins' as any as any as any,
               required: true,
             },
             {
@@ -402,19 +402,19 @@ export const EditorPlugins: CollectionConfig = {
         {
           name: 'mainScript',
           type: 'upload',
-          relationTo: 'media' as any,
+          relationTo: 'media' as any as any as any,
           admin: { description: 'Main plugin JavaScript file.' },
         },
         {
           name: 'styles',
           type: 'upload',
-          relationTo: 'media' as any,
+          relationTo: 'media' as any as any as any,
           admin: { description: 'Plugin CSS styles.' },
         },
         {
           name: 'manifest',
           type: 'upload',
-          relationTo: 'media' as any,
+          relationTo: 'media' as any as any as any,
           admin: { description: 'Plugin manifest file (JSON).' },
         },
         {
@@ -425,7 +425,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'file',
               type: 'upload',
-              relationTo: 'media' as any,
+              relationTo: 'media' as any as any as any,
               required: true,
             },
             {
@@ -483,7 +483,7 @@ export const EditorPlugins: CollectionConfig = {
         {
           name: 'allowedTenants',
           type: 'relationship',
-          relationTo: 'tenants' as any,
+          relationTo: 'tenants' as any as any as any,
           hasMany: true,
           admin: { description: 'Specific tenants allowed to use this plugin.' },
         },
@@ -734,13 +734,13 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'category',
       type: 'relationship',
-      relationTo: 'tags' as any,
+      relationTo: 'tags' as any as any as any,
       admin: { description: 'Plugin category for better organization.' },
     },
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -749,7 +749,7 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -813,7 +813,7 @@ export const EditorPlugins: CollectionConfig = {
         // Check if plugin is being used before deletion
         if (req.payload) {
           const plugin = await req.payload.findByID({
-            collection: 'editorPlugins' as any,
+            collection: 'editorPlugins' as any as any as any,
             id: id,
           })
           if (plugin && (plugin as any).usage?.activeUsers > 0) {

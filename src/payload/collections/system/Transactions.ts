@@ -92,7 +92,7 @@ export const Transactions: CollectionConfig = {
         if (doc.order && req.payload) {
           try {
             const order = await req.payload.findByID({
-              collection: 'orders' as any,
+              collection: 'orders' as any as any as any,
               id: doc.order
             });
 
@@ -109,7 +109,7 @@ export const Transactions: CollectionConfig = {
 
               if (newPaymentStatus !== (order as any).paymentStatus) {
                 await req.payload.update({
-                  collection: 'orders' as any,
+                  collection: 'orders' as any as any as any,
                   id: doc.order,
                   data: {
                     paymentStatus: newPaymentStatus,
@@ -140,7 +140,7 @@ export const Transactions: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants' as any,
+      relationTo: 'tenants' as any as any as any,
       required: true,
       index: true,
       admin: {
@@ -151,7 +151,7 @@ export const Transactions: CollectionConfig = {
     {
       name: 'order',
       type: 'relationship',
-      relationTo: 'orders' as any,
+      relationTo: 'orders' as any as any as any,
       index: true,
       admin: {
         description: 'Related order (if applicable)',
@@ -160,7 +160,7 @@ export const Transactions: CollectionConfig = {
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments' as any,
+      relationTo: 'appointments' as any as any as any,
       index: true,
       admin: {
         description: 'Related appointment (if applicable)',
@@ -169,7 +169,7 @@ export const Transactions: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       index: true,
       admin: {
         description: 'Customer involved in this transaction',
@@ -433,7 +433,7 @@ export const Transactions: CollectionConfig = {
         {
           name: 'originalTransaction',
           type: 'relationship',
-          relationTo: 'transactions' as any,
+          relationTo: 'transactions' as any as any as any,
           admin: {
             description: 'Original transaction being refunded',
           },
@@ -496,7 +496,7 @@ export const Transactions: CollectionConfig = {
         {
           name: 'reconciledBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Who reconciled this transaction',
           },

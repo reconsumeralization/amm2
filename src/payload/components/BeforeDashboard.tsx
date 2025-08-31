@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BeforeDashboard: React.FC = () => {
+const BeforeDashboard = () => {
   return (
     <div>
       <h2>Welcome to the Modern Men Admin Panel!</h2>

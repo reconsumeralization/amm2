@@ -14,23 +14,23 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return false;
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return false;
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -104,7 +104,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     {
       name: 'targetUsers',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       hasMany: true,
       admin: {
         description: 'Specific users to enable this feature for',
@@ -114,7 +114,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     {
       name: 'targetSegments',
       type: 'relationship',
-      relationTo: 'customer-tags',
+      relationTo: 'customer-tags' as any as any,
       hasMany: true,
       admin: {
         description: 'Customer segments to enable this feature for',
@@ -228,7 +228,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
         {
           name: 'featureFlag',
           type: 'relationship',
-          relationTo: 'feature-flags',
+          relationTo: 'feature-flags' as any as any,
           required: true,
           admin: {
             description: 'Required feature flag',
@@ -258,7 +258,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this feature flag',
         readOnly: true,
@@ -267,7 +267,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     {
       name: 'lastModifiedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who last modified this feature flag',
         readOnly: true,
@@ -276,7 +276,7 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -286,8 +286,8 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -299,8 +299,8 @@ export const FeatureFlags: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Set created by and last modified by

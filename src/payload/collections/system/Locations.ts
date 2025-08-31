@@ -16,28 +16,28 @@ export const Locations: CollectionConfig = {
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any)?.role)) {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can read locations for their tenant
-      return { tenant: { equals: req.user.tenant?.id } };
+      return { tenant: { equals: (req.user as any)?.tenant?.id } };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       return false;
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Prevent deletion if location has active resources or appointments
       return false;
     },
@@ -48,8 +48,8 @@ export const Locations: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Validate timezone
@@ -93,7 +93,7 @@ export const Locations: CollectionConfig = {
         if (req.payload) {
           // Check for active resources at this location
           const activeResources = await req.payload.find({
-            collection: 'resources',
+            collection: 'resources' as any as any,
             where: {
               location: { equals: id },
               active: { equals: true }
@@ -106,7 +106,7 @@ export const Locations: CollectionConfig = {
 
           // Check for upcoming appointments at this location
           const upcomingAppointments = await req.payload.find({
-            collection: 'appointments',
+            collection: 'appointments' as any as any,
             where: {
               tenant: { equals: req.user?.tenant?.id },
               date: { greater_than: new Date().toISOString() },
@@ -155,7 +155,7 @@ export const Locations: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -263,7 +263,7 @@ export const Locations: CollectionConfig = {
         {
           name: 'manager',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           filterOptions: ({ data }): any => {
             if (!data?.tenant) return false;
             return {
@@ -506,7 +506,7 @@ export const Locations: CollectionConfig = {
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {

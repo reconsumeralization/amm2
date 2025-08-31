@@ -16,36 +16,36 @@ export const TimeOffRequests: CollectionConfig = {
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Employees can only read their own requests
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         employee: { equals: req.user.id }
       };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'barber'].includes(req.user.role);
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Employees can update their own pending requests
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         employee: { equals: req.user.id },
         status: { equals: 'pending' }
       };
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Prevent deletion of approved requests
       return false;
     },
@@ -56,12 +56,12 @@ export const TimeOffRequests: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-assign employee for staff requests
-        if (operation === 'create' && !data.employee && req.user && ['barber', 'manager'].includes(req.user.role)) {
+        if (operation === 'create' && !data.employee && req.user && ['barber', 'manager'].includes((req.user as any)?.role)) {
           data.employee = req.user.id;
         }
 
@@ -125,14 +125,14 @@ export const TimeOffRequests: CollectionConfig = {
             
             // Get employee details
             const employee = await payload.findByID({
-              collection: 'users',
+              collection: 'users' as any as any,
               id: doc.employee
             });
 
             if (employee) {
               // Get all managers/admins in this tenant
               const managers = await payload.find({
-                collection: 'users',
+                collection: 'users' as any as any,
                 where: {
                   and: [
                     { tenant: { equals: doc.tenant } },
@@ -178,7 +178,7 @@ export const TimeOffRequests: CollectionConfig = {
 
             // Check for scheduling conflicts
             const conflictingAppointments = await payload.find({
-              collection: 'appointments',
+              collection: 'appointments' as any as any,
               where: {
                 and: [
                   { barber: { equals: doc.employee } },
@@ -192,7 +192,7 @@ export const TimeOffRequests: CollectionConfig = {
             if (conflictingAppointments.totalDocs > 0) {
               // Update the time off request with conflict information
               await payload.update({
-                collection: 'time-off-requests',
+                collection: 'time-off-requests' as any as any,
                 id: doc.id,
                 data: {
                   impact: {
@@ -219,7 +219,7 @@ export const TimeOffRequests: CollectionConfig = {
             
             // Get employee details
             const employee = await payload.findByID({
-              collection: 'users',
+              collection: 'users' as any as any,
               id: doc.employee
             });
 
@@ -277,7 +277,7 @@ export const TimeOffRequests: CollectionConfig = {
                     }
 
                     await payload.create({
-                      collection: 'staff-availability',
+                      collection: 'staff-availability' as any as any,
                       data: availabilityData
                     });
                   }
@@ -291,7 +291,7 @@ export const TimeOffRequests: CollectionConfig = {
 
               // Update conflicting appointments - notify customers and attempt rescheduling
               const conflictingAppointments = await payload.find({
-                collection: 'appointments',
+                collection: 'appointments' as any as any,
                 where: {
                   and: [
                     { barber: { equals: doc.employee } },
@@ -329,13 +329,13 @@ export const TimeOffRequests: CollectionConfig = {
             
             // Get employee details
             const employee = await payload.findByID({
-              collection: 'users',
+              collection: 'users' as any as any,
               id: doc.employee
             });
 
             // Get approver details
             const approver = doc.rejectedBy ? await payload.findByID({
-              collection: 'users',
+              collection: 'users' as any as any,
               id: doc.rejectedBy
             }) : null;
 
@@ -380,7 +380,7 @@ export const TimeOffRequests: CollectionConfig = {
         if (req.payload) {
           // Check if request is approved and in the future
           const request = await req.payload.findByID({
-            collection: 'time-off-requests',
+            collection: 'time-off-requests' as any as any,
             id
           });
 
@@ -398,7 +398,7 @@ export const TimeOffRequests: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -409,7 +409,7 @@ export const TimeOffRequests: CollectionConfig = {
     {
       name: 'employee',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -537,7 +537,7 @@ export const TimeOffRequests: CollectionConfig = {
     {
       name: 'approvedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Manager who approved this request',
         condition: (data) => data.status === 'approved',
@@ -554,7 +554,7 @@ export const TimeOffRequests: CollectionConfig = {
     {
       name: 'rejectedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Manager who rejected this request',
         condition: (data) => data.status === 'rejected',
@@ -605,7 +605,7 @@ export const TimeOffRequests: CollectionConfig = {
         {
           name: 'document',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -636,7 +636,7 @@ export const TimeOffRequests: CollectionConfig = {
         {
           name: 'alternativeStaff',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           hasMany: true,
           admin: {
             description: 'Alternative staff who could cover',

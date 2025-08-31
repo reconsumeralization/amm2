@@ -21,14 +21,14 @@ export const EditorTemplates: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any)?.role
       if (userRole === 'admin' || userRole === 'manager') return true
       if (userRole === 'barber') {
         // Barbers can see public templates or templates for their tenant
         return {
           or: [
             { isPublic: { equals: true } },
-            { tenant: { equals: req.user.tenant?.id } },
+            { tenant: { equals: (req.user as any)?.tenant?.id } },
           ],
         } as Where
       }
@@ -36,21 +36,21 @@ export const EditorTemplates: CollectionConfig = {
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any)?.role
       if (userRole === 'admin') return true
       // Managers can update templates for their tenant
       if (userRole === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       return false
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   hooks: {
@@ -59,7 +59,7 @@ export const EditorTemplates: CollectionConfig = {
         if (req.user) {
           if (operation === 'create') {
             data.createdBy = req.user.id
-            data.tenant = data.tenant || req.user.tenant
+            data.tenant = data.tenant || (req.user as any)?.tenant
           }
           data.updatedBy = req.user.id
         }
@@ -196,13 +196,13 @@ export const EditorTemplates: CollectionConfig = {
     {
       name: 'thumbnail',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: { description: 'Template preview image.' },
     },
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: { description: 'Tenant this template belongs to.' },
@@ -507,7 +507,7 @@ export const EditorTemplates: CollectionConfig = {
     {
       name: 'parentTemplate',
       type: 'relationship',
-      relationTo: 'editorTemplates',
+      relationTo: 'editorTemplates' as any as any,
       admin: {
         description: 'Parent template if this is a variant.',
         readOnly: true,
@@ -560,7 +560,7 @@ export const EditorTemplates: CollectionConfig = {
             {
               name: 'theme',
               type: 'relationship',
-              relationTo: 'editorThemes',
+              relationTo: 'editorThemes' as any as any,
               required: true,
             },
           ],
@@ -614,13 +614,13 @@ export const EditorTemplates: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { readOnly: true },
     },
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { readOnly: true },
     },
   ],

@@ -86,7 +86,7 @@ export const Products: CollectionConfig = {
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -354,7 +354,7 @@ export const Products: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -462,7 +462,7 @@ export const Products: CollectionConfig = {
 
         // Set tenant if not provided
         if (!data.tenant && req.user?.tenant) {
-          data.tenant = req.user.tenant;
+          data.tenant = (req.user as any)?.tenant;
         }
 
         return data;

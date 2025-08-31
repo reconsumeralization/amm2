@@ -22,29 +22,29 @@ export const Pages: CollectionConfig = {
           published: { equals: true }
         } as Where
       }
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       // Staff can read pages for their tenant
       return {
-        tenant: { equals: req.user.tenant?.id || null }
+        tenant: { equals: (req.user as any)?.tenant?.id || null }
       } as Where
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') {
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') {
         return {
-          tenant: { equals: req.user.tenant?.id }
+          tenant: { equals: (req.user as any)?.tenant?.id }
         } as Where
       }
       return false
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   versions: {
@@ -55,8 +55,8 @@ export const Pages: CollectionConfig = {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-generate slug from title if not provided
@@ -165,7 +165,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -176,7 +176,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'heroImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Hero image for the page',
       },
@@ -264,7 +264,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'parentPage',
       type: 'relationship',
-      relationTo: 'pages',
+      relationTo: 'pages' as any as any,
       admin: {
         description: 'Parent page for hierarchical navigation',
       },
@@ -336,7 +336,7 @@ export const Pages: CollectionConfig = {
         {
           name: 'metaImage',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           admin: {
             description: 'Image for social media sharing (1200x630px recommended)',
           },
@@ -530,7 +530,7 @@ async function triggerSitemapRegeneration() {
         'Authorization': `Bearer ${webhookSecret}`
       },
       body: JSON.stringify({
-        collection: 'pages',
+        collection: 'pages' as any as any,
         operation: 'sitemap_regeneration',
         timestamp: new Date().toISOString()
       })

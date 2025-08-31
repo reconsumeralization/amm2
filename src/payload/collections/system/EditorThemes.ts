@@ -116,7 +116,7 @@ export const EditorThemes: CollectionConfig = {
     {
       name: 'thumbnail',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: { 
         description: 'Theme preview image (recommended: 400x300px).',
       },
@@ -124,7 +124,7 @@ export const EditorThemes: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: { 
@@ -1132,7 +1132,7 @@ export const EditorThemes: CollectionConfig = {
     {
       name: 'parentTheme',
       type: 'relationship',
-      relationTo: 'editorThemes',
+      relationTo: 'editorThemes' as any as any,
       admin: {
         description: 'Parent theme if this is a variant.',
         position: 'sidebar',
@@ -1245,7 +1245,7 @@ export const EditorThemes: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -1254,7 +1254,7 @@ export const EditorThemes: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -1288,7 +1288,7 @@ export const EditorThemes: CollectionConfig = {
         
         // Auto-set tenant if not provided and user has tenant
         if (!data.tenant && req.user?.tenant) {
-          data.tenant = req.user.tenant;
+          data.tenant = (req.user as any)?.tenant;
         }
         
         return data;
@@ -1352,7 +1352,7 @@ export const EditorThemes: CollectionConfig = {
           try {
             // Update usage count and last used date
             req.payload.update({
-              collection: 'editorThemes',
+              collection: 'editorThemes' as any as any,
               id: doc.id,
               data: {
                 usageCount: (doc.usageCount || 0) + 1,
@@ -1394,7 +1394,7 @@ export const EditorThemes: CollectionConfig = {
           
           // Get the original theme
           const originalTheme = await req.payload.findByID({
-            collection: 'editorThemes',
+            collection: 'editorThemes' as any as any,
             id: id as string,
           });
           
@@ -1418,7 +1418,7 @@ export const EditorThemes: CollectionConfig = {
           };
           
           const duplicate = await req.payload.create({
-            collection: 'editorThemes',
+            collection: 'editorThemes' as any as any,
             data: duplicateData,
           });
           
@@ -1446,7 +1446,7 @@ export const EditorThemes: CollectionConfig = {
           }
           
           const theme = await req.payload.findByID({
-            collection: 'editorThemes',
+            collection: 'editorThemes' as any as any,
             id: id as string,
           });
           

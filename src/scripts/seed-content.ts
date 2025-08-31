@@ -8,7 +8,7 @@ async function seedCoupons() {
 
     // Get the first tenant for seeding
     const tenants = await payload.find({
-      collection: 'tenants',
+      collection: 'tenants' as any as any,
       limit: 1
     });
 
@@ -102,7 +102,7 @@ async function seedCoupons() {
       try {
         // Check if coupon already exists
         const existingCoupon = await payload.find({
-          collection: 'coupons',
+          collection: 'coupons' as any as any,
           where: {
             code: { equals: couponData.code }
           },
@@ -115,7 +115,7 @@ async function seedCoupons() {
         }
 
         const coupon = await payload.create({
-          collection: 'coupons',
+          collection: 'coupons' as any as any,
           data: {
             ...couponData,
             tenant: tenant.id,
@@ -134,7 +134,7 @@ async function seedCoupons() {
 
     // Display summary
     const allCoupons = await payload.find({
-      collection: 'coupons',
+      collection: 'coupons' as any as any,
       where: {
         tenant: { equals: tenant.id }
       }

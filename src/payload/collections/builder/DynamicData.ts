@@ -14,23 +14,23 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'editor'].includes(req.user.role);
+      return ['admin', 'manager', 'editor'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -147,7 +147,7 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
         {
           name: 'tagFilter',
           type: 'relationship',
-          relationTo: 'tags',
+          relationTo: 'tags' as any as any,
           hasMany: true,
           admin: {
             description: 'Filter by tags',
@@ -177,7 +177,7 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
     {
       name: 'singleRecord',
       type: 'relationship',
-      relationTo: 'products', // This will be dynamically set based on sourceCollection
+      relationTo: 'products' as any as any, // This will be dynamically set based on sourceCollection
       admin: {
         condition: (data: any) => data?.queryType === 'single',
         description: 'Specific record to display',
@@ -379,7 +379,7 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -398,7 +398,7 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -407,8 +407,8 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -420,8 +420,8 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Update last queried timestamp

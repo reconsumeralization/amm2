@@ -19,7 +19,6 @@ import {
   Trash2,
   MoreHorizontal,
   Shield,
-  User,
   Users,
   Mail,
   Phone,
@@ -32,7 +31,7 @@ import {
   Download,
   Upload,
   Filter
-} from "lucide-react";
+} from '@/lib/icon-mapping';
 import { toast } from 'sonner';
 
 interface User {

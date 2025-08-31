@@ -30,11 +30,11 @@ export const BusinessDocumentation: CollectionConfig = {
           status: { equals: 'published' }
         } as Where
       }
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return {
         or: [
           {
-            tenant: { equals: req.user.tenant?.id },
+            tenant: { equals: (req.user as any)?.tenant?.id },
             status: { in: ['published', 'draft'] }
           },
           {
@@ -46,21 +46,21 @@ export const BusinessDocumentation: CollectionConfig = {
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         status: { not_equals: 'archived' }
       } as Where
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         status: { in: ['draft', 'archived'] }
       } as Where
     },
@@ -69,8 +69,8 @@ export const BusinessDocumentation: CollectionConfig = {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-set author on create
@@ -256,7 +256,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -267,7 +267,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'author',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'Document author',
@@ -277,7 +277,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'reviewers',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       hasMany: true,
       filterOptions: {
         role: { in: ['admin', 'manager'] }
@@ -289,7 +289,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'approvedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who approved this document',
         readOnly: true,
@@ -345,7 +345,7 @@ export const BusinessDocumentation: CollectionConfig = {
         {
           name: 'changedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
         },
         {
@@ -391,7 +391,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'attachments',
       type: 'relationship',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       hasMany: true,
       admin: {
         description: 'Related files and attachments',
@@ -400,7 +400,7 @@ export const BusinessDocumentation: CollectionConfig = {
     {
       name: 'relatedDocuments',
       type: 'relationship',
-      relationTo: 'business-documentation',
+      relationTo: 'business-documentation' as any as any,
       hasMany: true,
       admin: {
         description: 'Related business documents',
@@ -413,7 +413,7 @@ export const BusinessDocumentation: CollectionConfig = {
         {
           name: 'user',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
         },
         {

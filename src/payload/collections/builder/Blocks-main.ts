@@ -31,7 +31,7 @@ export const Blocks: CollectionConfig = {
       defaultValue: 'custom',
       index: true,
     },
-    { name: 'tenant', type: 'relationship', relationTo: 'tenants', required: true },
+    { name: 'tenant', type: 'relationship', relationTo: 'tenants' as any as any, required: true },
     {
       name: 'content',
       type: 'json',

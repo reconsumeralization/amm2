@@ -17,27 +17,27 @@ export const Tags: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager', 'barber'].includes(req.user.role)
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role)
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-generate slug from name if not provided
@@ -179,7 +179,7 @@ export const Tags: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -218,7 +218,7 @@ export const Tags: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this tag',
         readOnly: true,
@@ -227,7 +227,7 @@ export const Tags: CollectionConfig = {
     {
       name: 'parentTag',
       type: 'relationship',
-      relationTo: 'tags',
+      relationTo: 'tags' as any as any,
       admin: {
         description: 'Parent tag for hierarchical organization',
       },

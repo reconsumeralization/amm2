@@ -9,8 +9,8 @@ export const GiftCards: CollectionConfig = {
     read: ({ req }) => {
       if (!req.user) return false;
       // Only authenticated users with proper tenant access
-      if (req.user.role === 'admin' || req.user.role === 'manager') {
-        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') {
+        return (req.user as any)?.tenant ? { tenant: { equals: (req.user as any)?.tenant.id } } : false;
       }
       return false;
     },
@@ -47,7 +47,7 @@ export const GiftCards: CollectionConfig = {
     {
       name: 'issuedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Staff member who issued the gift card',
       },
@@ -95,7 +95,7 @@ export const GiftCards: CollectionConfig = {
         {
           name: 'order',
           type: 'relationship',
-          relationTo: 'orders',
+          relationTo: 'orders' as any as any,
           admin: {
             description: 'Associated order (if applicable)',
           },
@@ -132,7 +132,7 @@ export const GiftCards: CollectionConfig = {
 
           if (calculatedBalance !== doc.balance) {
             await payload.update({
-              collection: 'gift-cards',
+              collection: 'gift-cards' as any as any,
               id: doc.id,
               data: { balance: calculatedBalance },
               req,

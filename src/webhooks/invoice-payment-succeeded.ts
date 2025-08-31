@@ -12,7 +12,7 @@ export const invoicePaymentSucceeded: WebhookHandler = async ({ event, payload }
 
     if (customerId) {
       const customers = await payload.find({
-        collection: 'customers',
+        collection: 'customers' as any as any,
         where: { stripeCustomerId: { equals: customerId } },
       });
 
@@ -21,7 +21,7 @@ export const invoicePaymentSucceeded: WebhookHandler = async ({ event, payload }
 
         // Update customer's billing info
         await payload.update({
-          collection: 'customers',
+          collection: 'customers' as any as any,
           id: customer.id,
           data: {
             lastPaymentDate: new Date().toISOString(),
@@ -31,14 +31,14 @@ export const invoicePaymentSucceeded: WebhookHandler = async ({ event, payload }
 
         // Create a payment record for this invoice
         await payload.create({
-          collection: 'orders',
+          collection: 'orders' as any as any,
           data: {
             customer: customer.id,
             total: invoice.amount_paid / 100, // Convert from cents
             status: 'paid',
             paymentMethod: 'subscription',
             stripeInvoiceId: invoice.id,
-            tenant: customer.tenant,
+            tenant: (customer as any)?.tenant,
             items: [{
               product: null,
               service: null,

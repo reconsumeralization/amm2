@@ -22,7 +22,7 @@ export const Orders: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       admin: {
         description: 'Customer who placed the order',
@@ -39,7 +39,7 @@ export const Orders: CollectionConfig = {
         {
           name: 'product',
           type: 'relationship',
-          relationTo: 'products',
+          relationTo: 'products' as any as any,
           required: true,
         },
         {
@@ -138,7 +138,7 @@ export const Orders: CollectionConfig = {
         {
           name: 'appliedPromotion',
           type: 'relationship',
-          relationTo: 'promotions',
+          relationTo: 'promotions' as any as any,
           admin: {
             description: 'Applied promotion/coupon',
           },
@@ -349,7 +349,7 @@ export const Orders: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -393,7 +393,7 @@ export const Orders: CollectionConfig = {
           for (const item of data.items) {
             try {
               const product = await req.payload.findByID({
-                collection: 'products',
+                collection: 'products' as any as any,
                 id: item.product
               });
 
@@ -413,7 +413,7 @@ export const Orders: CollectionConfig = {
           try {
             // Check for active promotions
             const promotions = await req.payload.find({
-              collection: 'promotions',
+              collection: 'promotions' as any as any,
               where: {
                 status: { equals: 'active' },
                 startDate: { less_than_equal: new Date().toISOString() },
@@ -439,7 +439,7 @@ export const Orders: CollectionConfig = {
 
         // Set tenant if not provided
         if (!data.tenant && req.user?.tenant) {
-          data.tenant = req.user.tenant;
+          data.tenant = (req.user as any)?.tenant;
         }
 
         return data;
@@ -455,14 +455,14 @@ export const Orders: CollectionConfig = {
             for (const item of doc.items) {
               try {
                 const product = await req.payload.findByID({
-                  collection: 'products',
+                  collection: 'products' as any as any,
                   id: item.product
                 });
 
                 if (product && product.stock !== undefined) {
                   const newStock = Math.max(0, product.stock - item.quantity);
                   await req.payload.update({
-                    collection: 'products',
+                    collection: 'products' as any as any,
                     id: item.product,
                     data: { stock: newStock }
                   });
@@ -478,7 +478,7 @@ export const Orders: CollectionConfig = {
           if (doc.customer && req.payload) {
             try {
               const loyaltyProgram = await req.payload.find({
-                collection: 'loyalty-program',
+                collection: 'loyalty-program' as any as any,
                 where: {
                   customer: { equals: doc.customer },
                   status: { equals: 'active' }
@@ -490,7 +490,7 @@ export const Orders: CollectionConfig = {
                 const purchasePoints = Math.floor((doc.pricing?.total || 0) / 10); // 1 point per $10 spent
 
                 await req.payload.update({
-                  collection: 'loyalty-program',
+                  collection: 'loyalty-program' as any as any,
                   id: loyaltyRecord.id,
                   data: {
                     points: (loyaltyRecord.points || 0) + purchasePoints,
@@ -511,22 +511,22 @@ export const Orders: CollectionConfig = {
           if (doc.customer && req.payload) {
             try {
               const customer = await req.payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.customer
               });
 
               if (customer?.email) {
-                console.log(`Sending order confirmation to: ${customer.email}`);
+                console.log(`Sending order confirmation to: ${(customer as any)?.email}`);
                 
                 try {
                   const { emailService } = await import('@/lib/email-service');
                   await emailService.sendEmail({
-                    to: customer.email,
+                    to: (customer as any)?.email,
                     subject: `Order Confirmation #${doc.orderNumber} - ModernMen`,
                     html: `
                       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                         <h2 style="color: #28a745;">Order Confirmed!</h2>
-                        <p>Hi ${customer.name || customer.email},</p>
+                        <p>Hi ${customer.name || (customer as any)?.email},</p>
                         <p>Thank you for your order! We've received your purchase and it's being processed.</p>
                         
                         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
@@ -563,10 +563,10 @@ export const Orders: CollectionConfig = {
                         <p>Best regards,<br>The ModernMen Team</p>
                       </div>
                     `,
-                    text: `Order Confirmed! Hi ${customer.name || customer.email}, Your order #${doc.orderNumber} for $${((doc.pricing?.total || 0) / 100).toFixed(2)} has been confirmed. We'll notify you when it ships. Thank you for shopping with ModernMen!`
+                    text: `Order Confirmed! Hi ${customer.name || (customer as any)?.email}, Your order #${doc.orderNumber} for $${((doc.pricing?.total || 0) / 100).toFixed(2)} has been confirmed. We'll notify you when it ships. Thank you for shopping with ModernMen!`
                   });
                   
-                  console.log(`Successfully sent order confirmation to: ${customer.email}`);
+                  console.log(`Successfully sent order confirmation to: ${(customer as any)?.email}`);
                 } catch (emailError) {
                   console.error('Error sending order confirmation email:', emailError);
                 }
@@ -579,7 +579,7 @@ export const Orders: CollectionConfig = {
           // Notify staff about new order
           try {
             const staffUsers = await req.payload.find({
-              collection: 'users',
+              collection: 'users' as any as any,
               where: {
                 role: { in: ['admin', 'manager'] },
                 tenant: { equals: doc.tenant }
@@ -640,13 +640,13 @@ export const Orders: CollectionConfig = {
                 for (const item of doc.items) {
                   try {
                     const product = await req.payload.findByID({
-                      collection: 'products',
+                      collection: 'products' as any as any,
                       id: item.product
                     });
 
                     if (product && product.stock !== undefined) {
                       await req.payload.update({
-                        collection: 'products',
+                        collection: 'products' as any as any,
                         id: item.product,
                         data: { stock: product.stock + item.quantity }
                       });
@@ -662,7 +662,7 @@ export const Orders: CollectionConfig = {
               if (doc.customer && req.payload) {
                 try {
                   const loyaltyProgram = await req.payload.find({
-                    collection: 'loyalty-program',
+                    collection: 'loyalty-program' as any as any,
                     where: {
                       customer: { equals: doc.customer },
                       status: { equals: 'active' }
@@ -674,7 +674,7 @@ export const Orders: CollectionConfig = {
                     const refundPoints = Math.floor((doc.pricing?.total || 0) / 20); // Half the points back
 
                     await req.payload.update({
-                      collection: 'loyalty-program',
+                      collection: 'loyalty-program' as any as any,
                       id: loyaltyRecord.id,
                       data: {
                         points: Math.max(0, (loyaltyRecord.points || 0) - refundPoints)
@@ -694,22 +694,22 @@ export const Orders: CollectionConfig = {
               if (doc.customer && req.payload) {
                 try {
                   const customer = await req.payload.findByID({
-                    collection: 'users',
+                    collection: 'users' as any as any,
                     id: doc.customer
                   });
 
                   if (customer?.email) {
-                    console.log(`Sending shipping confirmation to: ${customer.email}`);
+                    console.log(`Sending shipping confirmation to: ${(customer as any)?.email}`);
                     
                     try {
                       const { emailService } = await import('@/lib/email-service');
                       await emailService.sendEmail({
-                        to: customer.email,
+                        to: (customer as any)?.email,
                         subject: `Your Order #${doc.orderNumber} Has Shipped! - ModernMen`,
                         html: `
                           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                             <h2 style="color: #ffc107;">Your Order Has Shipped!</h2>
-                            <p>Hi ${customer.name || customer.email},</p>
+                            <p>Hi ${customer.name || (customer as any)?.email},</p>
                             <p>Great news! Your order is on its way to you.</p>
                             
                             <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
@@ -743,7 +743,7 @@ export const Orders: CollectionConfig = {
                         text: `Your order #${doc.orderNumber} has shipped! ${doc.shipping?.trackingNumber ? 'Tracking number: ' + doc.shipping.trackingNumber + '. ' : ''}${doc.shipping?.estimatedDelivery ? 'Estimated delivery: ' + new Date(doc.shipping.estimatedDelivery).toLocaleDateString() + '. ' : ''}Thank you for your business!`
                       });
                       
-                      console.log(`Successfully sent shipping confirmation to: ${customer.email}`);
+                      console.log(`Successfully sent shipping confirmation to: ${(customer as any)?.email}`);
                     } catch (emailError) {
                       console.error('Error sending shipping confirmation email:', emailError);
                     }
@@ -765,11 +765,11 @@ export const Orders: CollectionConfig = {
       if (!req.user) return false;
       
       // Super-admin has access to all orders
-      if (req.user.role === 'super-admin') return true;
+      if ((req.user as any)?.role === 'super-admin') return true;
       
       // Admin/Manager: tenant-based access
-      if (req.user.role === 'admin' || req.user.role === 'manager') {
-        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') {
+        return (req.user as any)?.tenant ? { tenant: { equals: (req.user as any)?.tenant.id } } : false;
       }
       
       // Customer can only see their own orders
@@ -778,12 +778,12 @@ export const Orders: CollectionConfig = {
     create: ({ req }: any): any => !!req.user,
     update: ({ req }: any): any => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { customer: { equals: req.user.id } }
     },
     delete: ({ req }: any): any => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return false // Customers cannot delete orders
     },
   },

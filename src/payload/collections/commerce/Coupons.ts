@@ -9,8 +9,8 @@ export const Coupons: CollectionConfig = {
     read: ({ req }) => {
       if (!req.user) return false;
       // Only authenticated users with proper tenant access
-      if (req.user.role === 'admin' || req.user.role === 'manager') {
-        return req.user.tenant ? { tenant: { equals: req.user.tenant.id } } : false;
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') {
+        return (req.user as any)?.tenant ? { tenant: { equals: (req.user as any)?.tenant.id } } : false;
       }
       return false;
     },
@@ -92,7 +92,7 @@ export const Coupons: CollectionConfig = {
       async ({ doc, req, operation, payload }: any) => {
         if (operation === 'create' && doc.uses == null) {
           await payload.update({
-            collection: 'coupons',
+            collection: 'coupons' as any as any,
             id: doc.id,
             data: { uses: 0 },
             req,

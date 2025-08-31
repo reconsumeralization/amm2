@@ -39,7 +39,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'chatbot',
       type: 'relationship',
-      relationTo: 'chatbots',
+      relationTo: 'chatbots' as any as any,
       required: true,
       admin: {
         description: 'Chatbot instance this message belongs to',
@@ -48,7 +48,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'Tenant this message belongs to',
@@ -57,7 +57,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'sender',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'User who sent this message',
@@ -114,7 +114,7 @@ export const ChatMessages: CollectionConfig = {
         {
           name: 'file',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
           admin: {
             description: 'Uploaded file attachment',
@@ -304,7 +304,7 @@ export const ChatMessages: CollectionConfig = {
         {
           name: 'executedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'User who executed this action',
           },
@@ -317,7 +317,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'parentMessage',
       type: 'relationship',
-      relationTo: 'chat-messages',
+      relationTo: 'chat-messages' as any as any,
       admin: {
         description: 'Parent message this is a reply to',
       },
@@ -354,7 +354,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this message',
         readOnly: true,

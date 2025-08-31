@@ -16,13 +16,13 @@ export const Coupons: CollectionConfig = {
   access: {
     read: ({ req }): any => {
       if (!req.user) return { active: { equals: true } };
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any)?.role)) {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can read active coupons for validation
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         active: { equals: true },
         and: [
           { startsAt: { less_than_equal: new Date().toISOString() } },
@@ -37,19 +37,19 @@ export const Coupons: CollectionConfig = {
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       return false;
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Prevent deletion if coupon has been used
       return false;
     },
@@ -60,8 +60,8 @@ export const Coupons: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Validate coupon code format
@@ -133,7 +133,7 @@ export const Coupons: CollectionConfig = {
         if (req.payload) {
           // Check if coupon has been used in orders
           const couponUsage = await req.payload.find({
-            collection: 'orders',
+            collection: 'orders' as any as any,
             where: {
               coupon: { equals: id }
             }
@@ -150,7 +150,7 @@ export const Coupons: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -297,7 +297,7 @@ export const Coupons: CollectionConfig = {
     {
       name: 'applicableProducts',
       type: 'relationship',
-      relationTo: 'products',
+      relationTo: 'products' as any as any,
       hasMany: true,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
@@ -313,7 +313,7 @@ export const Coupons: CollectionConfig = {
     {
       name: 'excludedProducts',
       type: 'relationship',
-      relationTo: 'products',
+      relationTo: 'products' as any as any,
       hasMany: true,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
@@ -329,7 +329,7 @@ export const Coupons: CollectionConfig = {
     {
       name: 'applicableServices',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
@@ -365,7 +365,7 @@ export const Coupons: CollectionConfig = {
         {
           name: 'specificCustomers',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           hasMany: true,
           filterOptions: ({ data }): any => {
             if (!data?.tenant) return false;
@@ -404,13 +404,13 @@ export const Coupons: CollectionConfig = {
         {
           name: 'order',
           type: 'relationship',
-          relationTo: 'orders',
+          relationTo: 'orders' as any as any,
           required: true,
         },
         {
           name: 'customer',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
         },
         {
@@ -432,7 +432,7 @@ export const Coupons: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         readOnly: true,
         description: 'User who created this coupon',

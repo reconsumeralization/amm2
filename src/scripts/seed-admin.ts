@@ -20,7 +20,7 @@ async function seedAdmin() {
     
     // Check if admin user already exists
     const existingAdmin = await payload.find({
-      collection: 'users',
+      collection: 'users' as any as any,
       where: {
         email: { equals: adminEmail }
       }
@@ -36,7 +36,7 @@ async function seedAdmin() {
 
     // Create admin user
     const adminUser = await payload.create({
-      collection: 'users',
+      collection: 'users' as any as any,
       data: {
         email: adminEmail,
         password: hashedPassword,

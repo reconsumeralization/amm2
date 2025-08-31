@@ -14,23 +14,23 @@ export const Integrations: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -398,7 +398,7 @@ export const Integrations: CollectionConfig = withDefaultHooks({
     {
       name: 'blocks',
       type: 'relationship',
-      relationTo: 'builder-blocks',
+      relationTo: 'builder-blocks' as any as any,
       hasMany: true,
       admin: {
         description: 'Blocks that use this integration',
@@ -485,7 +485,7 @@ export const Integrations: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -504,7 +504,7 @@ export const Integrations: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -513,8 +513,8 @@ export const Integrations: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -526,8 +526,8 @@ export const Integrations: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         return data;

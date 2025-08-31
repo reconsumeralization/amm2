@@ -8,8 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { adminApi } from '@/lib/admin-api';
 import {
-  BarChart,
-  User,
+  BarChart3,
   Users,
   Calendar,
   DollarSign,
@@ -28,7 +27,7 @@ import {
   UserCheck,
   CalendarDays,
   CreditCard
-} from "lucide-react";
+} from '@/lib/icon-mapping';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -87,14 +86,14 @@ export default function AdminDashboard() {
     {
       title: 'Analytics',
       description: 'View business insights',
-      icon: BarChart,
+      icon: BarChart3,
       href: '/admin/analytics',
       color: 'bg-green-500'
     },
     {
       title: 'User Management',
       description: 'Manage users and roles',
-      icon: User,
+      icon: Users,
       href: '/admin/users',
       color: 'bg-orange-500'
     },

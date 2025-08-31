@@ -26,38 +26,38 @@ export const BlogPosts: CollectionConfig = {
           isPublic: { equals: true }
         } as Where
       }
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return {
         or: [
           {
             published: { equals: true },
             isPublic: { equals: true }
           },
-          { tenant: { equals: req.user.tenant?.id } }
+          { tenant: { equals: (req.user as any)?.tenant?.id } }
         ]
       } as Where
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager', 'barber'].includes(req.user.role)
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return {
         or: [
           { author: { equals: req.user.id } },
           {
-            tenant: { equals: req.user.tenant?.id }
+            tenant: { equals: (req.user as any)?.tenant?.id }
           }
         ]
       } as Where
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       return false
     },
@@ -66,8 +66,8 @@ export const BlogPosts: CollectionConfig = {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-set author on create if not specified
@@ -126,7 +126,7 @@ export const BlogPosts: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       admin: {
         condition: (data, siblingData, { user }) => user?.role === 'admin',
         description: 'The tenant this blog post belongs to',
@@ -205,7 +205,7 @@ export const BlogPosts: CollectionConfig = {
     {
       name: 'hero',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Featured image for the blog post (recommended: 1200x630px)',
       },
@@ -221,7 +221,7 @@ export const BlogPosts: CollectionConfig = {
     {
       name: 'author',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }) => {
@@ -401,7 +401,7 @@ export const BlogPosts: CollectionConfig = {
     // {
     //   name: 'comments',
     //   type: 'relationship',
-    //   relationTo: 'comments',
+    //   relationTo: 'comments' as any as any,
     //   hasMany: true,
     //   admin: {
     //     description: 'Comments on this blog post',
@@ -412,7 +412,7 @@ export const BlogPosts: CollectionConfig = {
     {
       name: 'relatedPosts',
       type: 'relationship',
-      relationTo: 'blog-posts',
+      relationTo: 'blog-posts' as any as any,
       hasMany: true,
       maxRows: 5,
       filterOptions: ({ id, data }) => {
@@ -514,7 +514,7 @@ export const BlogPosts: CollectionConfig = {
         {
           name: 'ogImage',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           admin: {
             description: 'Image for social media sharing (1200x630px recommended)',
           },
@@ -660,7 +660,7 @@ export const BlogPosts: CollectionConfig = {
         {
           name: 'assignedEditor',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           filterOptions: ({ data }) => {
             if (data?.tenant) {
               return {
@@ -694,7 +694,7 @@ export const BlogPosts: CollectionConfig = {
         {
           name: 'approvedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'User who approved this post',
             readOnly: true,

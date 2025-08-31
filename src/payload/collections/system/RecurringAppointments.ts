@@ -11,44 +11,44 @@ export const RecurringAppointments: CollectionConfig = {
     group: 'Bookings',
     description: 'Manage recurring appointment series for customers',
     defaultColumns: ['title', 'customer', 'service', 'pattern', 'nextOccurrence', 'status'],
-    listSearchableFields: ['title', 'customer.name', 'customer.email', 'service'],
+    listSearchableFields: ['title', 'customer.name', '(customer as any)?.email', 'service'],
   },
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
       const user = req.user as any; // Type assertion for extended user properties
-      if (user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(user.role)) {
-        return { tenant: { equals: user.tenant?.id } };
+      if ((user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((user as any)?.role)) {
+        return { tenant: { equals: (user as any)?.tenant?.id } };
       }
       // Customers can only read their own recurring appointments
       return {
-        tenant: { equals: user.tenant?.id },
+        tenant: { equals: (user as any)?.tenant?.id },
         customer: { equals: user.id }
       };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
       const user = req.user as any; // Type assertion for extended user properties
-      return ['admin', 'manager', 'barber', 'customer'].includes(user.role);
+      return ['admin', 'manager', 'barber', 'customer'].includes((user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
       const user = req.user as any; // Type assertion for extended user properties
-      if (user.role === 'admin') return true;
-      if (user.role === 'manager') {
-        return { tenant: { equals: user.tenant?.id } };
+      if ((user as any)?.role === 'admin') return true;
+      if ((user as any)?.role === 'manager') {
+        return { tenant: { equals: (user as any)?.tenant?.id } };
       }
       // Customers can update their own recurring appointments
       return {
-        tenant: { equals: user.tenant?.id },
+        tenant: { equals: (user as any)?.tenant?.id },
         customer: { equals: user.id }
       };
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
       const user = req.user as any; // Type assertion for extended user properties
-      if (user.role === 'admin') return true;
+      if ((user as any)?.role === 'admin') return true;
       // Prevent deletion if there are active future occurrences
       return false;
     },
@@ -61,15 +61,15 @@ export const RecurringAppointments: CollectionConfig = {
         // Auto-assign tenant for non-admin users
         if (operation === 'create' && !data.tenant && req.user) {
           const user = req.user as any; // Type assertion for extended user properties
-          if (user.role !== 'admin') {
-            data.tenant = user.tenant?.id;
+          if ((user as any)?.role !== 'admin') {
+            data.tenant = (user as any)?.tenant?.id;
           }
         }
 
         // Auto-assign customer for customer role
         if (operation === 'create' && !data.customer && req.user) {
           const user = req.user as any; // Type assertion for extended user properties
-          if (user.role === 'customer') {
+          if ((user as any)?.role === 'customer') {
             data.customer = user.id;
           }
         }
@@ -113,7 +113,7 @@ export const RecurringAppointments: CollectionConfig = {
         if (req.payload) {
           // Check for active future appointments in this series
           const activeAppointments = await req.payload.find({
-            collection: 'appointments' as any,
+            collection: 'appointments' as any as any as any,
             where: {
               recurringAppointment: { equals: id },
               date: { greater_than: new Date().toISOString() },
@@ -140,7 +140,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants' as any,
+      relationTo: 'tenants' as any as any as any,
       required: true,
       index: true,
       admin: {
@@ -151,7 +151,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'users' as any,
+      relationTo: 'users' as any as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -168,7 +168,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'service',
       type: 'relationship',
-      relationTo: 'services' as any,
+      relationTo: 'services' as any as any as any,
       required: true,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
@@ -184,7 +184,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'barber',
       type: 'relationship',
-      relationTo: 'users' as any,
+      relationTo: 'users' as any as any as any,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
         return {
@@ -322,7 +322,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'location',
       type: 'relationship',
-      relationTo: 'locations' as any,
+      relationTo: 'locations' as any as any as any,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
         return {
@@ -346,7 +346,7 @@ export const RecurringAppointments: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users' as any,
+      relationTo: 'users' as any as any as any,
       admin: {
         readOnly: true,
         description: 'Who created this recurring appointment series',
@@ -483,7 +483,7 @@ async function createRecurringAppointmentInstances(recurringDoc: any, payload: a
       for (const appointmentData of appointments) {
         try {
           const created = await payload.create({
-            collection: 'appointments' as any,
+            collection: 'appointments' as any as any as any,
             data: appointmentData,
           });
           createdAppointments.push(created);
@@ -498,7 +498,7 @@ async function createRecurringAppointmentInstances(recurringDoc: any, payload: a
       // Update the recurring appointment with next occurrence
       if (createdAppointments.length > 0) {
         await payload.update({
-          collection: 'recurring-appointments' as any,
+          collection: 'recurring-appointments' as any as any as any,
           id: recurringDoc.id,
           data: {
             nextOccurrence: createdAppointments[0].date,
@@ -512,19 +512,19 @@ async function createRecurringAppointmentInstances(recurringDoc: any, payload: a
       try {
         if (recurringDoc.customer) {
           const customer = await payload.findByID({
-            collection: 'users' as any,
+            collection: 'users' as any as any as any,
             id: recurringDoc.customer,
           });
 
           if (customer?.email) {
             const { emailService } = await import('@/lib/email-service');
             await emailService.sendEmail({
-              to: customer.email,
+              to: (customer as any)?.email,
               subject: 'Recurring Appointments Created - ModernMen',
               html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                   <h2 style="color: #28a745;">Recurring Appointments Created</h2>
-                  <p>Hi ${customer.name || customer.email},</p>
+                  <p>Hi ${customer.name || (customer as any)?.email},</p>
                   <p>We've successfully set up your recurring appointments for "${recurringDoc.title}".</p>
                   <p><strong>${createdAppointments.length}</strong> appointments have been scheduled starting from ${startDate.toLocaleDateString()}.</p>
                   <p>You can view and manage your appointments through your customer portal or contact us if you need to make any changes.</p>
@@ -532,9 +532,9 @@ async function createRecurringAppointmentInstances(recurringDoc: any, payload: a
                   <p>Best regards,<br>The ModernMen Team</p>
                 </div>
               `,
-              text: `Hi ${customer.name || customer.email},\n\nWe've successfully set up your recurring appointments for "${recurringDoc.title}".\n\n${createdAppointments.length} appointments have been scheduled starting from ${startDate.toLocaleDateString()}.\n\nYou can view and manage your appointments through your customer portal.\n\nThank you for choosing ModernMen!\n\nBest regards,\nThe ModernMen Team`
+              text: `Hi ${customer.name || (customer as any)?.email},\n\nWe've successfully set up your recurring appointments for "${recurringDoc.title}".\n\n${createdAppointments.length} appointments have been scheduled starting from ${startDate.toLocaleDateString()}.\n\nYou can view and manage your appointments through your customer portal.\n\nThank you for choosing ModernMen!\n\nBest regards,\nThe ModernMen Team`
             });
-            console.log('Recurring appointments confirmation email sent to:', customer.email);
+            console.log('Recurring appointments confirmation email sent to:', (customer as any)?.email);
           }
         }
       } catch (emailError) {

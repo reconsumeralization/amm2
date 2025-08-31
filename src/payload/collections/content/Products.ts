@@ -24,7 +24,7 @@ export const Products: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
     },
   ],
 };

@@ -41,7 +41,7 @@ export const MediaFolders: CollectionConfig = {
     {
       name: 'parent',
       type: 'relationship',
-      relationTo: 'mediaFolders',
+      relationTo: 'mediaFolders' as any as any,
       admin: { 
         description: 'Parent folder (leave empty for root level).',
         position: 'sidebar',
@@ -50,7 +50,7 @@ export const MediaFolders: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: { 
         description: 'Tenant this folder belongs to.',
@@ -123,7 +123,7 @@ export const MediaFolders: CollectionConfig = {
         {
           name: 'allowedUsers',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           hasMany: true,
           admin: { description: 'Specific users allowed to access this folder.' },
         },
@@ -145,7 +145,7 @@ export const MediaFolders: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -154,7 +154,7 @@ export const MediaFolders: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -192,7 +192,7 @@ export const MediaFolders: CollectionConfig = {
         let path = doc.name;
         if (doc.parent) {
           const parent = await payload.findByID({
-            collection: 'mediaFolders',
+            collection: 'mediaFolders' as any as any,
             id: doc.parent,
           });
           if (parent) {
@@ -202,7 +202,7 @@ export const MediaFolders: CollectionConfig = {
 
         if (path !== doc.path) {
           await payload.update({
-            collection: 'mediaFolders',
+            collection: 'mediaFolders' as any as any,
             id: doc.id,
             data: { path },
           });
@@ -215,7 +215,7 @@ export const MediaFolders: CollectionConfig = {
         
         // Check if folder has children
         const children = await payload.find({
-          collection: 'mediaFolders',
+          collection: 'mediaFolders' as any as any,
           where: { parent: { equals: id } },
           limit: 1,
         });
@@ -226,7 +226,7 @@ export const MediaFolders: CollectionConfig = {
 
         // Check if folder has media files
         const media = await payload.find({
-          collection: 'media',
+          collection: 'media' as any as any,
           where: { 'folders.folder': { equals: id } },
           limit: 1,
         });

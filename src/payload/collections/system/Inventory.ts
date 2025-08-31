@@ -60,7 +60,7 @@ export const Inventory: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Product image',
       },
@@ -269,7 +269,7 @@ export const Inventory: CollectionConfig = {
     {
       name: 'services',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       admin: {
         description: 'Services that use this product',
@@ -426,17 +426,17 @@ export const Inventory: CollectionConfig = {
     create: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin' || user.role === 'manager'
+      return (user as any)?.role === 'admin' || (user as any)?.role === 'manager'
     },
     update: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin' || user.role === 'manager'
+      return (user as any)?.role === 'admin' || (user as any)?.role === 'manager'
     },
     delete: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin'
+      return (user as any)?.role === 'admin'
     },
   },
   timestamps: true,

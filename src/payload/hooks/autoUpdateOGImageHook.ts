@@ -154,7 +154,7 @@ async function cleanupOldOGImage(oldOGImageUrl: string, payload: any) {
 
     // Try to find and delete from Payload Media
     const mediaDocs = await payload.find({
-      collection: 'media',
+      collection: 'media' as any as any,
       where: {
         filename: {
           equals: filename,
@@ -165,7 +165,7 @@ async function cleanupOldOGImage(oldOGImageUrl: string, payload: any) {
 
     if (mediaDocs.docs.length > 0) {
       await payload.delete({
-        collection: 'media',
+        collection: 'media' as any as any,
         id: mediaDocs.docs[0].id,
       });
       console.log(`[OG] Cleaned up old Media entry: ${filename}`);

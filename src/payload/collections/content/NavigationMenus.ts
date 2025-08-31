@@ -28,7 +28,7 @@ export const NavigationMenus: CollectionConfig = {
       defaultValue: 'header',
       index: true,
     },
-    { name: 'tenant', type: 'relationship', relationTo: 'tenants', required: true },
+    { name: 'tenant', type: 'relationship', relationTo: 'tenants' as any as any, required: true },
     {
       name: 'items',
       type: 'array',
@@ -48,13 +48,13 @@ export const NavigationMenus: CollectionConfig = {
         {
           name: 'page',
           type: 'relationship',
-          relationTo: 'pages',
+          relationTo: 'pages' as any as any,
           admin: { condition: (data) => data.linkType === 'page' },
         },
         {
           name: 'content',
           type: 'relationship',
-          relationTo: 'content',
+          relationTo: 'content' as any as any,
           admin: { condition: (data) => data.linkType === 'content' },
         },
         {
@@ -81,8 +81,8 @@ export const NavigationMenus: CollectionConfig = {
               ],
               defaultValue: 'page',
             },
-            { name: 'page', type: 'relationship', relationTo: 'pages', admin: { condition: (data) => data.linkType === 'page' } },
-            { name: 'content', type: 'relationship', relationTo: 'content', admin: { condition: (data) => data.linkType === 'content' } },
+            { name: 'page', type: 'relationship', relationTo: 'pages' as any as any, admin: { condition: (data) => data.linkType === 'page' } },
+            { name: 'content', type: 'relationship', relationTo: 'content' as any as any, admin: { condition: (data) => data.linkType === 'content' } },
             { name: 'url', type: 'text', admin: { condition: (data) => data.linkType === 'external' } },
             { name: 'newTab', type: 'checkbox', defaultValue: false },
             { name: 'icon', type: 'text' },

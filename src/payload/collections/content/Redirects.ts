@@ -17,27 +17,27 @@ export const Redirects: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Validate URL formats
@@ -156,7 +156,7 @@ export const Redirects: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -194,7 +194,7 @@ export const Redirects: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this redirect',
         readOnly: true,

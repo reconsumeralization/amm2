@@ -8,7 +8,7 @@ export const Subscriptions: CollectionConfig = {
     group: 'Billing',
     description: 'Manage customer subscriptions and recurring payments',
     defaultColumns: ['stripeSubscriptionId', 'customer', 'status', 'plan', 'currentPeriodEnd', 'updatedAt'],
-    listSearchableFields: ['stripeSubscriptionId', 'customer.email', 'customer.name'],
+    listSearchableFields: ['stripeSubscriptionId', '(customer as any)?.email', 'customer.name'],
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
@@ -17,32 +17,32 @@ export const Subscriptions: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') return true // Managers need to view subscriptions
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') return true // Managers need to view subscriptions
       // Customers can only view their own subscriptions
       return { customer: { equals: req.user.id } }
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') return true // Managers can update subscriptions
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') return true // Managers can update subscriptions
       return false
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-set createdBy
@@ -119,7 +119,7 @@ export const Subscriptions: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       index: true,
       admin: {
@@ -282,7 +282,7 @@ export const Subscriptions: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -300,7 +300,7 @@ export const Subscriptions: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this subscription record',
         readOnly: true,

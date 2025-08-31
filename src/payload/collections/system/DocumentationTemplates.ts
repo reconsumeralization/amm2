@@ -184,7 +184,7 @@ export const DocumentationTemplates: any = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
     },
     {

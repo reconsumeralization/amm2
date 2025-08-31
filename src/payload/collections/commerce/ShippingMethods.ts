@@ -14,23 +14,23 @@ export const ShippingMethods: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return false;
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return false;
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -305,7 +305,7 @@ export const ShippingMethods: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -315,8 +315,8 @@ export const ShippingMethods: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -328,8 +328,8 @@ export const ShippingMethods: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Set estimated days from delivery window if not set

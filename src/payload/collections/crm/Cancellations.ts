@@ -16,35 +16,35 @@ export const Cancellations: CollectionConfig = {
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any)?.role)) {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can only read their own cancellations
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         requestedBy: { equals: req.user.id }
       };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'barber', 'customer'].includes(req.user.role);
+      return ['admin', 'manager', 'barber', 'customer'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Users can only update their own cancellations
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         requestedBy: { equals: req.user.id }
       };
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Prevent deletion of processed cancellations for audit purposes
       return false;
     },
@@ -55,8 +55,8 @@ export const Cancellations: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-assign requestedBy for customer cancellations
@@ -82,7 +82,7 @@ export const Cancellations: CollectionConfig = {
           // Validate that appointment exists and is cancellable
           if (data.appointment && req.payload) {
             const appointment = await req.payload.findByID({
-              collection: 'appointments',
+              collection: 'appointments' as any as any,
               id: data.appointment
             });
 
@@ -129,7 +129,7 @@ export const Cancellations: CollectionConfig = {
           // Update the associated appointment status
           if (doc.appointment && req.payload) {
             await req.payload.update({
-              collection: 'appointments',
+              collection: 'appointments' as any as any,
               id: doc.appointment,
               data: {
                 status: 'cancelled',
@@ -147,7 +147,7 @@ export const Cancellations: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -158,7 +158,7 @@ export const Cancellations: CollectionConfig = {
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -190,7 +190,7 @@ export const Cancellations: CollectionConfig = {
         {
           name: 'customer',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Customer who booked the appointment',
           },
@@ -198,7 +198,7 @@ export const Cancellations: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services',
+          relationTo: 'services' as any as any,
           admin: {
             description: 'Service that was booked',
           },
@@ -222,7 +222,7 @@ export const Cancellations: CollectionConfig = {
     {
       name: 'requestedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       admin: {
@@ -285,7 +285,7 @@ export const Cancellations: CollectionConfig = {
     {
       name: 'processedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Staff member who processed this cancellation',
         condition: (data) => data.status !== 'pending',
@@ -339,7 +339,7 @@ export const Cancellations: CollectionConfig = {
         {
           name: 'refundTransaction',
           type: 'relationship',
-          relationTo: 'transactions',
+          relationTo: 'transactions' as any as any,
           admin: {
             description: 'Associated refund transaction',
           },
@@ -391,7 +391,7 @@ export const Cancellations: CollectionConfig = {
         {
           name: 'rescheduledTo',
           type: 'relationship',
-          relationTo: 'appointments',
+          relationTo: 'appointments' as any as any,
           admin: {
             description: 'New appointment if rescheduled',
             condition: (data) => data.rescheduled,

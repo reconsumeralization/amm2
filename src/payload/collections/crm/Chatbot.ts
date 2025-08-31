@@ -39,7 +39,7 @@ export const Chatbot: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'Tenant this chatbot belongs to',
@@ -323,7 +323,7 @@ export const Chatbot: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this chatbot',
         readOnly: true,
@@ -332,7 +332,7 @@ export const Chatbot: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who last updated this chatbot',
         readOnly: true,

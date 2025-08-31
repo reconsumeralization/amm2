@@ -1,7 +1,7 @@
 'use client';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { INSERT_COMMAND } from '@lexical/helpers/LexicalCommands';
+import { INSERT_COMPONENT_COMMAND } from 'lexical';
 import { templates } from './templates';
 
 export default function ComponentTemplatesPlugin() {

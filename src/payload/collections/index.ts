@@ -88,6 +88,8 @@ import { Transactions } from './system/Transactions';
 import { Users } from './system/Users';
 import { WaitList } from './system/WaitList';
 import { WebhookLogs } from './system/WebhookLogs';
+import Providers from './Providers';
+import Webhooks from './Webhooks';
 
 // Visual Builder Collections
 import { Animations } from './builder/Animations';
@@ -198,6 +200,8 @@ const rawCollections = [
   Users,
   WaitList,
   WebhookLogs,
+  Providers,
+  Webhooks,
 
   // Visual Builder Collections
   Animations,

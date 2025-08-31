@@ -12,24 +12,24 @@ export const StaffRoles: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       // Managers can read roles within their tenant
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       return false
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       // Managers can update roles within their tenant (except admin level)
-      if (req.user.role === 'manager') {
+      if ((req.user as any)?.role === 'manager') {
         return {
-          tenant: { equals: req.user.tenant?.id },
+          tenant: { equals: (req.user as any)?.tenant?.id },
           level: { not_equals: 'admin' }
         } as Where
       }
@@ -37,7 +37,7 @@ export const StaffRoles: CollectionConfig = {
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   fields: [
@@ -145,7 +145,7 @@ export const StaffRoles: CollectionConfig = {
           type: 'textarea',
           admin: {
             description: 'Additional conditions or restrictions (JSON format)',
-            placeholder: '{"tenant": {"equals": "user.tenant.id"}}',
+            placeholder: '{"tenant": {"equals": "(user as any)?.tenant.id"}}',
           },
         },
       ],
@@ -159,7 +159,7 @@ export const StaffRoles: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       admin: {
         description: 'Tenant this role belongs to (leave empty for global roles)',
         condition: (data, siblingData, { user }) => user?.role === 'admin',
@@ -232,8 +232,8 @@ export const StaffRoles: CollectionConfig = {
     beforeValidate: [
       ({ data, req }) => {
         // Auto-set tenant for non-admin users
-        if (data && !data.tenant && req.user?.tenant?.id && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant.id
+        if (data && !data.tenant && req.user?.tenant?.id && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant.id
         }
         return data
       },
@@ -245,7 +245,7 @@ export const StaffRoles: CollectionConfig = {
         // Ensure only one default role per tenant
         if (data.defaultRole && operation === 'create') {
           const existingDefault = await req.payload.find({
-            collection: 'staff-roles',
+            collection: 'staff-roles' as any as any,
             where: {
               and: [
                 { defaultRole: { equals: true } },
@@ -257,7 +257,7 @@ export const StaffRoles: CollectionConfig = {
           if (existingDefault.totalDocs > 0) {
             // Unset existing default role
             await req.payload.update({
-              collection: 'staff-roles',
+              collection: 'staff-roles' as any as any,
               id: existingDefault.docs[0].id,
               data: { defaultRole: false },
             })
@@ -298,7 +298,7 @@ export const StaffRoles: CollectionConfig = {
         // Update users with this role if permissions changed
         if (operation === 'update') {
           const usersWithRole = await req.payload.find({
-            collection: 'users',
+            collection: 'users' as any as any,
             where: {
               role: { equals: doc.slug },
             },
@@ -319,7 +319,7 @@ export const StaffRoles: CollectionConfig = {
       async ({ req, id }) => {
         // Check if any users have this role
         const usersWithRole = await req.payload.find({
-          collection: 'users',
+          collection: 'users' as any as any,
           where: {
             role: { equals: id },
           },

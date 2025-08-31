@@ -162,7 +162,7 @@ export const Customers: CollectionConfig = {
     {
       name: 'avatar',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Customer profile picture',
       },
@@ -302,7 +302,7 @@ export const Customers: CollectionConfig = {
         {
           name: 'preferredStylist',
           type: 'relationship',
-          relationTo: 'stylists',
+          relationTo: 'stylists' as any as any,
           admin: {
             description: 'Preferred stylist for appointments',
           },
@@ -421,7 +421,7 @@ export const Customers: CollectionConfig = {
     {
       name: 'nextAppointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'Next scheduled appointment',
         readOnly: true,

@@ -7,7 +7,7 @@ export const auditLog: FieldHook = async ({ req, operation, originalDoc, data }:
     const collectionSlug = req?.collection?.slug || 'unknown';
 
     await req.payload.create({
-      collection: 'audit-logs',
+      collection: 'audit-logs' as any as any,
       data: {
         user: userId,
         collection: collectionSlug,

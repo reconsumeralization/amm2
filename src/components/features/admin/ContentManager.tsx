@@ -21,7 +21,7 @@ import {
   Video,
   Link,
   Calendar,
-  User,
+  Users,
   Tag,
   Filter,
   SortAsc,
@@ -29,7 +29,7 @@ import {
   Grid,
   List,
   MoreHorizontal
-} from "lucide-react";
+} from '@/lib/icon-mapping';
 import { toast } from 'sonner';
 
 interface ContentItem {

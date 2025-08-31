@@ -48,7 +48,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'chatbot',
       type: 'relationship',
-      relationTo: 'chatbots',
+      relationTo: 'chatbots' as any as any,
       required: true,
       admin: {
         description: 'Chatbot instance used for this conversation',
@@ -57,7 +57,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'Tenant this conversation belongs to',
@@ -66,7 +66,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'User participating in this conversation',
@@ -220,7 +220,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'assignedTo',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Staff member assigned to handle this conversation',
       },
@@ -228,7 +228,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'transferredFrom',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Previous assignee if conversation was transferred',
       },
@@ -374,7 +374,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this conversation',
         readOnly: true,
@@ -383,7 +383,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who last updated this conversation',
         readOnly: true,

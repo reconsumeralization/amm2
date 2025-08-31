@@ -10,7 +10,7 @@ const collectionAuditLog: CollectionAfterChangeHook = async ({ doc, req, operati
     const collectionSlug = collection?.slug || 'unknown';
 
     await req.payload.create({
-      collection: 'audit-logs',
+      collection: 'audit-logs' as any as any,
       data: {
         user: userId,
         collection: collectionSlug,
@@ -63,7 +63,7 @@ const collectionDeleteAuditLog: CollectionAfterDeleteHook = async ({ doc, req, c
     const collectionSlug = collection?.slug || 'unknown';
 
     await req.payload.create({
-      collection: 'audit-logs',
+      collection: 'audit-logs' as any as any,
       data: {
         user: userId,
         collection: collectionSlug,

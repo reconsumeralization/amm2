@@ -47,15 +47,15 @@ export const ownsTenant: Access = ({ req, data }: any) => {
 
 export const sameTenant: Access = ({ req, data }: any) => {
   if (!req.user) return false;
-  if (req.user.role === 'admin') return true;
+  if ((req.user as any)?.role === 'admin') return true;
 
   // For new documents, check if user can create in their tenant
   if (!data?.id) {
-    return Boolean(req.user.tenant?.id);
+    return Boolean((req.user as any)?.tenant?.id);
   }
 
   // For existing documents, check tenant matches
-  return Boolean(req.user.tenant?.id === data?.tenant);
+  return Boolean((req.user as any)?.tenant?.id === data?.tenant);
 };
 
 // Field-level access control

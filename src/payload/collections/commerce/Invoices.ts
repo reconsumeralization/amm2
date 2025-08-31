@@ -9,7 +9,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     group: 'Billing',
     description: 'Manage invoices and payment records',
     defaultColumns: ['invoiceId', 'customer', 'order', 'amount', 'status', 'createdAt'],
-    listSearchableFields: ['invoiceId', 'customer.email', 'customer.name'],
+    listSearchableFields: ['invoiceId', '(customer as any)?.email', 'customer.name'],
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
@@ -18,32 +18,32 @@ export const Invoices: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true; // Managers need to view invoices
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true; // Managers need to view invoices
       // Customers can only view their own invoices
       return { customer: { equals: req.user.id } };
     },
     create: ({ req }: any): any => {
       if (!req.user) return false;
-      return ['admin', 'manager'].includes(req.user.role);
+      return ['admin', 'manager'].includes((req.user as any)?.role);
     },
     update: ({ req }: any): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true; // Managers can update invoices
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true; // Managers can update invoices
       return false;
     },
     delete: ({ req }: any): any => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-generate invoice ID if not provided
@@ -146,7 +146,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       index: true,
       admin: {
@@ -156,7 +156,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     {
       name: 'order',
       type: 'relationship',
-      relationTo: 'orders',
+      relationTo: 'orders' as any as any,
       index: true,
       admin: {
         description: 'Order this invoice is for (if applicable)',
@@ -165,7 +165,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'Appointment this invoice is for (if applicable)',
       },
@@ -282,7 +282,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -352,7 +352,7 @@ export const Invoices: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this invoice',
         readOnly: true,

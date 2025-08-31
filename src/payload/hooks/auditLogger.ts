@@ -25,7 +25,7 @@ export const createAuditLog = async (
 ): Promise<void> => {
   try {
     await payload.create({
-      collection: 'audit-logs',
+      collection: 'audit-logs' as any as any,
       data: {
         ...data,
         createdAt: new Date().toISOString(),

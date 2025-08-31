@@ -103,6 +103,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
+    "glob": "^11.0.3",
     "googleapis": "^159.0.0",
     "gray-matter": "^4.0.3",
     "lexical": "0.28.0",

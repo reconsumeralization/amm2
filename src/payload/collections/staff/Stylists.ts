@@ -14,7 +14,7 @@ export const Stylists: CollectionConfig = {
       // Allow public read for basic stylist info
       if (!req.user) return { isActive: { equals: true } }
       // Staff can read all stylist info
-      if (req.user.role === 'admin' || req.user.role === 'manager' || req.user.role === 'barber') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager' || (req.user as any)?.role === 'barber') return true
       return { isActive: { equals: true } }
     },
     create: ({ req }) => {
@@ -23,7 +23,7 @@ export const Stylists: CollectionConfig = {
     update: ({ req }) => {
       const user = req.user
       if (!user) return false
-      if (user.role === 'admin' || user.role === 'manager') return true
+      if ((user as any)?.role === 'admin' || (user as any)?.role === 'manager') return true
       // Allow barbers to update their own profiles
       return { user: { equals: user.id } }
     },
@@ -37,7 +37,7 @@ export const Stylists: CollectionConfig = {
         // Auto-populate name from linked user
         if (data.user && !data.name) {
           const user = await req.payload.findByID({
-            collection: 'users',
+            collection: 'users' as any as any,
             id: data.user,
           })
           if (user) {
@@ -47,7 +47,7 @@ export const Stylists: CollectionConfig = {
 
         // Auto-set tenant for non-admin users
         if (!data.tenant && req.user?.tenant?.id) {
-          data.tenant = req.user.tenant.id
+          data.tenant = (req.user as any)?.tenant.id
         }
 
         return data
@@ -65,7 +65,7 @@ export const Stylists: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       unique: true,
       filterOptions: {
@@ -94,7 +94,7 @@ export const Stylists: CollectionConfig = {
     {
       name: 'profileImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Professional headshot',
       },
@@ -110,7 +110,7 @@ export const Stylists: CollectionConfig = {
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -125,14 +125,14 @@ export const Stylists: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services',
+          relationTo: 'services' as any as any,
         },
       ],
     },
     {
       name: 'specializations',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       admin: {
         description: 'Services this stylist specializes in',
@@ -176,7 +176,7 @@ export const Stylists: CollectionConfig = {
             {
               name: 'certificate',
               type: 'upload',
-              relationTo: 'media',
+              relationTo: 'media' as any as any,
             },
           ],
         },
@@ -391,7 +391,7 @@ export const Stylists: CollectionConfig = {
             {
               name: 'service',
               type: 'relationship',
-              relationTo: 'services',
+              relationTo: 'services' as any as any,
               required: true,
             },
             {
@@ -456,7 +456,7 @@ export const Stylists: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'The BarberShop/tenant this stylist belongs to',

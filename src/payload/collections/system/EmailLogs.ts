@@ -39,7 +39,7 @@ export const EmailLogs: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
     },
     {
       name: 'messageId',

@@ -66,7 +66,7 @@ export const ServicePackages: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Package hero image or before/after photo',
       },
@@ -81,7 +81,7 @@ export const ServicePackages: CollectionConfig = {
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -105,7 +105,7 @@ export const ServicePackages: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services',
+          relationTo: 'services' as any as any,
           required: true,
           admin: {
             allowCreate: false,
@@ -649,7 +649,7 @@ export const ServicePackages: CollectionConfig = {
         if (data?.services && data.services.length > 0) {
           try {
             const services = await req.payload.find({
-              collection: 'services',
+              collection: 'services' as any as any,
               where: {
                 id: { in: data.services.map((s: any) => s.service) },
               },
@@ -678,7 +678,7 @@ export const ServicePackages: CollectionConfig = {
         if (data?.services && data.services.length > 0) {
           try {
             const services = await req.payload.find({
-              collection: 'services',
+              collection: 'services' as any as any,
               where: {
                 id: { in: data.services.map((s: any) => s.service) },
               },
@@ -719,7 +719,7 @@ export const ServicePackages: CollectionConfig = {
         // Update analytics on view/booking (would be called from frontend)
         if (operation === 'update' && req.context?.action === 'view') {
           await req.payload.update({
-            collection: 'service-packages',
+            collection: 'service-packages' as any as any,
             id: doc.id,
             data: {
               'analytics.viewCount': (doc.analytics?.viewCount || 0) + 1,
@@ -743,17 +743,17 @@ export const ServicePackages: CollectionConfig = {
     create: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return ['admin', 'manager', 'staff'].includes(user.role)
+      return ['admin', 'manager', 'staff'].includes((user as any)?.role)
     },
     update: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return ['admin', 'manager', 'staff'].includes(user.role)
+      return ['admin', 'manager', 'staff'].includes((user as any)?.role)
     },
     delete: ({ req }: AccessArgs) => {
       const user = req.user
       if (!user) return false
-      return user.role === 'admin'
+      return (user as any)?.role === 'admin'
     },
   },
   versions: {

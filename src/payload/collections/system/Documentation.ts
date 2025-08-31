@@ -140,7 +140,7 @@ export const Documentation: CollectionConfig = {
     {
       name: 'author',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'Author of this documentation',
@@ -258,7 +258,7 @@ export const Documentation: CollectionConfig = {
             {
               name: 'reviewer',
               type: 'relationship',
-              relationTo: 'users',
+              relationTo: 'users' as any as any,
             },
           ],
         },
@@ -273,7 +273,7 @@ export const Documentation: CollectionConfig = {
             {
               name: 'author',
               type: 'relationship',
-              relationTo: 'users',
+              relationTo: 'users' as any as any,
             },
             {
               name: 'content',
@@ -310,7 +310,7 @@ export const Documentation: CollectionConfig = {
         {
           name: 'document',
           type: 'relationship',
-          relationTo: 'documentation',
+          relationTo: 'documentation' as any as any,
         },
       ],
       admin: {
@@ -326,7 +326,7 @@ export const Documentation: CollectionConfig = {
         {
           name: 'file',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
         },
         {
           name: 'description',
@@ -462,7 +462,7 @@ export const Documentation: CollectionConfig = {
       }
 
       // System admins can read everything
-      if (user.role === 'system_admin') {
+      if ((user as any)?.role === 'system_admin') {
         return true;
       }
 
@@ -474,7 +474,7 @@ export const Documentation: CollectionConfig = {
         'developer': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer'],
       };
 
-      const accessibleRoles = roleHierarchy[user.role as keyof typeof roleHierarchy] || [user.role];
+      const accessibleRoles = roleHierarchy[(user as any)?.role as keyof typeof roleHierarchy] || [(user as any)?.role];
 
       return {
         targetRole: { in: accessibleRoles },
@@ -493,10 +493,10 @@ export const Documentation: CollectionConfig = {
       const { req: { user }, id } = args;
       if (!user) return false;
 
-      if (user.role === 'system_admin') return true;
+      if ((user as any)?.role === 'system_admin') return true;
 
       // Authors can edit their own documentation
-      if (user.role === 'BarberShop_owner' || user.role === 'developer') {
+      if ((user as any)?.role === 'BarberShop_owner' || (user as any)?.role === 'developer') {
         return true;
       }
 

@@ -11,7 +11,7 @@ export const Reviews: CollectionConfig = {
     group: 'CRM',
     description: 'Customer reviews and ratings for services and staff',
     defaultColumns: ['customer', 'service', 'rating', 'approved', 'createdAt'],
-    listSearchableFields: ['customer.name', 'customer.email', 'text', 'service.name'],
+    listSearchableFields: ['customer.name', '(customer as any)?.email', 'text', 'service.name'],
   },
   access: {
     read: ({ req }): any => {
@@ -19,37 +19,37 @@ export const Reviews: CollectionConfig = {
         // Public can read approved reviews
         return { approved: { equals: true } };
       }
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any)?.role)) {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can read their own reviews
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         customer: { equals: req.user.id }
       };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
       // Allow customers to create reviews, staff to create on behalf of customers
-      return ['admin', 'manager', 'barber', 'customer'].includes(req.user.role);
+      return ['admin', 'manager', 'barber', 'customer'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can only update their own unapproved reviews
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         customer: { equals: req.user.id },
         approved: { equals: false }
       };
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Prevent deletion of approved reviews
       return false;
     },
@@ -60,12 +60,12 @@ export const Reviews: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-assign customer for customer reviews
-        if (operation === 'create' && !data.customer && req.user && req.user.role === 'customer') {
+        if (operation === 'create' && !data.customer && req.user && (req.user as any)?.role === 'customer') {
           data.customer = req.user.id;
         }
 
@@ -90,7 +90,7 @@ export const Reviews: CollectionConfig = {
           }
 
           // Auto-set approved status based on user role
-          if (req.user && ['admin', 'manager'].includes(req.user.role) && data.approved === undefined) {
+          if (req.user && ['admin', 'manager'].includes((req.user as any)?.role) && data.approved === undefined) {
             data.approved = true;
           }
         }
@@ -111,7 +111,7 @@ export const Reviews: CollectionConfig = {
             if (payload) {
               // Get staff members (managers and barbers) to notify
               const staffMembers = await payload.find({
-                collection: 'users',
+                collection: 'users' as any as any,
                 where: {
                   and: [
                     { tenant: { equals: doc.tenant } },
@@ -123,19 +123,19 @@ export const Reviews: CollectionConfig = {
 
               // Get customer details
               const customer = await payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.customer
               });
 
               // Get service details if available
               const service = doc.service ? await payload.findByID({
-                collection: 'services',
+                collection: 'services' as any as any,
                 id: doc.service
               }) : null;
 
               // Get barber details if specified
               const barber = doc.barber ? await payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.barber
               }) : null;
 
@@ -197,29 +197,29 @@ export const Reviews: CollectionConfig = {
             // Send notification to customer about approved review
             if (payload) {
               const customer = await payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.customer
               });
 
               if (customer?.email) {
                 // Get service and barber details for the notification
                 const service = doc.service ? await payload.findByID({
-                  collection: 'services',
+                  collection: 'services' as any as any,
                   id: doc.service
                 }) : null;
 
                 const barber = doc.barber ? await payload.findByID({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.barber
                 }) : null;
 
                 await emailService.sendEmail({
-                  to: customer.email,
+                  to: (customer as any)?.email,
                   subject: 'Your Review Has Been Published - ModernMen',
                   html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                       <h2 style="color: #28a745;">Your Review is Now Live!</h2>
-                      <p>Hi ${customer.name || customer.email},</p>
+                      <p>Hi ${customer.name || (customer as any)?.email},</p>
                       <p>Thank you for sharing your experience! Your review has been approved and is now published on our website.</p>
                       
                       <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
@@ -242,7 +242,7 @@ export const Reviews: CollectionConfig = {
                   text: `Your review has been published! Rating: ${doc.rating}/5 stars. Review: "${doc.text}". Thank you for your feedback!`
                 });
 
-                console.log(`Sent review approval notification to customer: ${customer.email}`);
+                console.log(`Sent review approval notification to customer: ${(customer as any)?.email}`);
               }
 
               // Recalculate average ratings now that review is approved
@@ -251,7 +251,7 @@ export const Reviews: CollectionConfig = {
               // Set approval timestamp and approver if not already set
               if (!doc.approvedAt) {
                 await payload.update({
-                  collection: 'reviews',
+                  collection: 'reviews' as any as any,
                   id: doc.id,
                   data: {
                     approvedAt: new Date().toISOString(),
@@ -286,7 +286,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -297,7 +297,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -314,7 +314,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       index: true,
       admin: {
         description: 'Appointment this review is for (optional)',
@@ -323,7 +323,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'service',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       admin: {
         description: 'Service being reviewed (optional)',
       },
@@ -331,7 +331,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'barber',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       filterOptions: ({ data }): any => {
         if (!data?.tenant) return false;
         return {
@@ -442,7 +442,7 @@ export const Reviews: CollectionConfig = {
     {
       name: 'approvedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Staff member who approved this review',
         condition: (data) => data.approved,
@@ -526,7 +526,7 @@ export const Reviews: CollectionConfig = {
         {
           name: 'respondedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Staff member who responded',
             condition: (data) => data.responded,
@@ -552,7 +552,7 @@ export const Reviews: CollectionConfig = {
         {
           name: 'photo',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -690,7 +690,7 @@ async function updateRatingsForReview(doc: any, payload: any, previousDoc?: any)
 async function updateBarberRating(barberId: string, payload: any) {
   try {
     const reviews = await payload.find({
-      collection: 'reviews',
+      collection: 'reviews' as any as any,
       where: {
         and: [
           { barber: { equals: barberId } },
@@ -719,7 +719,7 @@ async function updateBarberRating(barberId: string, payload: any) {
       });
 
       await payload.update({
-        collection: 'users',
+        collection: 'users' as any as any,
         id: barberId,
         data: {
           averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
@@ -732,7 +732,7 @@ async function updateBarberRating(barberId: string, payload: any) {
     } else {
       // No reviews, reset ratings
       await payload.update({
-        collection: 'users',
+        collection: 'users' as any as any,
         id: barberId,
         data: {
           averageRating: null,
@@ -754,7 +754,7 @@ async function updateBarberRating(barberId: string, payload: any) {
 async function updateServiceRating(serviceId: string, payload: any) {
   try {
     const reviews = await payload.find({
-      collection: 'reviews',
+      collection: 'reviews' as any as any,
       where: {
         and: [
           { service: { equals: serviceId } },
@@ -769,7 +769,7 @@ async function updateServiceRating(serviceId: string, payload: any) {
       const averageRating = totalRating / reviews.totalDocs;
 
       await payload.update({
-        collection: 'services',
+        collection: 'services' as any as any,
         id: serviceId,
         data: {
           averageRating: Math.round(averageRating * 10) / 10,
@@ -780,7 +780,7 @@ async function updateServiceRating(serviceId: string, payload: any) {
       console.log(`Updated service ${serviceId} rating to ${averageRating.toFixed(1)} stars (${reviews.totalDocs} reviews)`);
     } else {
       await payload.update({
-        collection: 'services',
+        collection: 'services' as any as any,
         id: serviceId,
         data: {
           averageRating: null,
@@ -801,7 +801,7 @@ async function updateServiceRating(serviceId: string, payload: any) {
 async function updateBusinessRating(tenantId: string, payload: any) {
   try {
     const reviews = await payload.find({
-      collection: 'reviews',
+      collection: 'reviews' as any as any,
       where: {
         and: [
           { tenant: { equals: tenantId } },
@@ -824,7 +824,7 @@ async function updateBusinessRating(tenantId: string, payload: any) {
       });
 
       await payload.update({
-        collection: 'tenants',
+        collection: 'tenants' as any as any,
         id: tenantId,
         data: {
           averageRating: Math.round(averageRating * 10) / 10,
@@ -836,7 +836,7 @@ async function updateBusinessRating(tenantId: string, payload: any) {
       console.log(`Updated business ${tenantId} rating to ${averageRating.toFixed(1)} stars (${reviews.totalDocs} total reviews)`);
     } else {
       await payload.update({
-        collection: 'tenants',
+        collection: 'tenants' as any as any,
         id: tenantId,
         data: {
           averageRating: null,

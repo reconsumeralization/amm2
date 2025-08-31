@@ -8,7 +8,7 @@ export const ChatConversations: CollectionConfig = {
     group: 'Communications',
     description: 'Manage chatbot conversations and support threads',
     defaultColumns: ['subject', 'customer', 'status', 'priority', 'lastMessageAt', 'updatedAt'],
-    listSearchableFields: ['subject', 'customer.email', 'customer.name'],
+    listSearchableFields: ['subject', '(customer as any)?.email', 'customer.name'],
     pagination: {
       defaultLimit: 25,
       limits: [10, 25, 50, 100],
@@ -17,37 +17,37 @@ export const ChatConversations: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') return true // Managers need to view conversations
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') return true // Managers need to view conversations
       // Users can only view their own conversations
       return { customer: { equals: req.user.id } }
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager', 'customer'].includes(req.user.role)
+      return ['admin', 'manager', 'customer'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') return true // Managers can update conversations
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') return true // Managers can update conversations
       // Customers can only update their own conversations
       return { customer: { equals: req.user.id } }
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
   },
   hooks: {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Auto-set customer for authenticated users creating conversations
-        if (operation === 'create' && !data.customer && req.user && req.user.role === 'customer') {
+        if (operation === 'create' && !data.customer && req.user && (req.user as any)?.role === 'customer') {
           data.customer = req.user.id
         }
 
@@ -151,7 +151,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       index: true,
       admin: {
@@ -161,7 +161,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'assignedTo',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Staff member assigned to handle this conversation',
       },
@@ -298,7 +298,7 @@ export const ChatConversations: CollectionConfig = {
             {
               name: 'file',
               type: 'upload',
-              relationTo: 'media',
+              relationTo: 'media' as any as any,
               required: true,
             },
             {
@@ -320,7 +320,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -373,7 +373,7 @@ export const ChatConversations: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this conversation',
         readOnly: true,

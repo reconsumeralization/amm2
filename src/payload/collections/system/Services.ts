@@ -82,7 +82,7 @@ export const Services: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       required: true,
       admin: {
         description: 'Service image or before/after photo',
@@ -98,7 +98,7 @@ export const Services: CollectionConfig = {
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {

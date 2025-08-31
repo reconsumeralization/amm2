@@ -33,7 +33,7 @@ export const seoFields: Field[] = [
   {
     name: 'ogImage',
     type: 'upload',
-    relationTo: 'media',
+    relationTo: 'media' as any as any,
     label: 'OG Image',
     admin: {
       description: 'Image used in link previews (1200x630px recommended)',

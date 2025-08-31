@@ -26,23 +26,23 @@ export const Appointments: CollectionConfig = {
     create: ({ req }): boolean => {
       if (!req.user) return false
       // Only authenticated users can create appointments
-      return ['admin', 'manager', 'barber', 'customer'].includes(req.user.role)
+      return ['admin', 'manager', 'barber', 'customer'].includes((req.user as any)?.role)
     },
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager' || req.user.role === 'barber') {
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager' || (req.user as any)?.role === 'barber') {
         // Staff can view appointments for their tenant
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       // Customers can only view their own appointments
       return { user: { equals: req.user.id } } as Where
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager' || req.user.role === 'barber') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager' || (req.user as any)?.role === 'barber') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       // Customers can update their own appointments (with restrictions)
       return { 
@@ -54,7 +54,7 @@ export const Appointments: CollectionConfig = {
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       // Customers can cancel their own future appointments
       return { 
         and: [
@@ -71,8 +71,8 @@ export const Appointments: CollectionConfig = {
         if (!data) return data
         
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
         
         // Validate appointment time slots
@@ -107,7 +107,7 @@ export const Appointments: CollectionConfig = {
             
             // Query for conflicting appointments
             const conflictingAppointments = await req.payload.find({
-              collection: 'appointments',
+              collection: 'appointments' as any as any,
               where: {
                 and: [
                   { barber: { equals: data.barber } },
@@ -154,7 +154,7 @@ export const Appointments: CollectionConfig = {
           // Get main service price
           if (data.service) {
             const service = await req.payload.findByID({
-              collection: 'services',
+              collection: 'services' as any as any,
               id: data.service as string
             })
             totalPrice += service.price || 0
@@ -164,7 +164,7 @@ export const Appointments: CollectionConfig = {
           if (data.additionalServices && Array.isArray(data.additionalServices) && data.additionalServices.length > 0) {
             for (const serviceId of data.additionalServices) {
               const service = await req.payload.findByID({
-                collection: 'services',
+                collection: 'services' as any as any,
                 id: serviceId as string
               })
               totalPrice += service.price || 0
@@ -207,7 +207,7 @@ export const Appointments: CollectionConfig = {
           try {
             if (doc.user && req.payload) {
               const customer = await req.payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.user
               })
 
@@ -216,8 +216,8 @@ export const Appointments: CollectionConfig = {
                 const { emailService } = await import('@/lib/email-service')
                 try {
                   await emailService.sendAppointmentConfirmation(
-                    customer.email,
-                    customer.name || customer.email,
+                    (customer as any)?.email,
+                    customer.name || (customer as any)?.email,
                     {
                       service: doc.service || 'Appointment',
                       date: new Date(doc.date).toLocaleDateString(),
@@ -226,7 +226,7 @@ export const Appointments: CollectionConfig = {
                       location: 'ModernMen Hair Salon'
                     }
                   )
-                  console.log(`Appointment confirmation email sent to: ${customer.email}`)
+                  console.log(`Appointment confirmation email sent to: ${(customer as any)?.email}`)
                 } catch (emailError) {
                   console.error('Failed to send appointment confirmation email:', emailError)
                 }
@@ -240,7 +240,7 @@ export const Appointments: CollectionConfig = {
           try {
             if (doc.barber && req.payload) {
               const barber = await req.payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.barber
               })
 
@@ -272,7 +272,7 @@ export const Appointments: CollectionConfig = {
           try {
             if (doc.user && req.payload) {
               const loyaltyProgram = await req.payload.find({
-                collection: 'loyalty-program',
+                collection: 'loyalty-program' as any as any,
                 where: {
                   customer: { equals: doc.user },
                   status: { equals: 'active' }
@@ -284,7 +284,7 @@ export const Appointments: CollectionConfig = {
                 const bookingPoints = 100 // Points for booking appointment
 
                 await req.payload.update({
-                  collection: 'loyalty-program',
+                  collection: 'loyalty-program' as any as any,
                   id: loyaltyRecord.id,
                   data: {
                     points: (loyaltyRecord.points || 0) + bookingPoints,
@@ -314,18 +314,18 @@ export const Appointments: CollectionConfig = {
               // Notify customer
               if (doc.user && req.payload) {
                 const customer = await req.payload.findByID({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.user
                 })
                 if (customer?.email) {
-                  console.log(`Sending cancellation email to customer: ${customer.email}`)
+                  console.log(`Sending cancellation email to customer: ${(customer as any)?.email}`)
                 }
               }
 
               // Notify barber
               if (doc.barber && req.payload) {
                 const barber = await req.payload.findByID({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.barber
                 })
                 if (barber?.email) {
@@ -341,7 +341,7 @@ export const Appointments: CollectionConfig = {
               try {
                 if (doc.user && req.payload) {
                   const loyaltyProgram = await req.payload.find({
-                    collection: 'loyalty-program',
+                    collection: 'loyalty-program' as any as any,
                     where: {
                       customer: { equals: doc.user },
                       status: { equals: 'active' }
@@ -353,7 +353,7 @@ export const Appointments: CollectionConfig = {
                     const refundPoints = 50 // Partial refund for cancellation
 
                     await req.payload.update({
-                      collection: 'loyalty-program',
+                      collection: 'loyalty-program' as any as any,
                       id: loyaltyRecord.id,
                       data: {
                         points: Math.max(0, (loyaltyRecord.points || 0) - refundPoints)
@@ -376,7 +376,7 @@ export const Appointments: CollectionConfig = {
             try {
               if (doc.user && req.payload) {
                 const loyaltyProgram = await req.payload.find({
-                  collection: 'loyalty-program',
+                  collection: 'loyalty-program' as any as any,
                   where: {
                     customer: { equals: doc.user },
                     status: { equals: 'active' }
@@ -388,7 +388,7 @@ export const Appointments: CollectionConfig = {
                   const completionPoints = 200 // Bonus points for completing appointment
 
                   await req.payload.update({
-                    collection: 'loyalty-program',
+                    collection: 'loyalty-program' as any as any,
                     id: loyaltyRecord.id,
                     data: {
                       points: (loyaltyRecord.points || 0) + completionPoints,
@@ -408,7 +408,7 @@ export const Appointments: CollectionConfig = {
             try {
               if (doc.user && req.payload) {
                 const customer = await req.payload.findByID({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.user
                 })
                 if (customer?.email) {
@@ -416,21 +416,21 @@ export const Appointments: CollectionConfig = {
                   try {
                     // Send a simple follow-up email after completed appointments
                     await emailService.sendEmail({
-                      to: customer.email,
+                      to: (customer as any)?.email,
                       subject: 'Thank you for visiting ModernMen!',
                       html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                           <h2 style="color: #333;">Thank you for your visit!</h2>
-                          <p>Hi ${customer.name || customer.email},</p>
+                          <p>Hi ${customer.name || (customer as any)?.email},</p>
                           <p>Thank you for choosing ModernMen for your grooming needs. We hope you loved your new look!</p>
                           <p>We'd love to hear about your experience. Please consider leaving us a review or booking your next appointment.</p>
                           <p>Looking forward to seeing you again soon!</p>
                           <p>Best regards,<br>The ModernMen Team</p>
                         </div>
                       `,
-                      text: `Hi ${customer.name || customer.email},\n\nThank you for choosing ModernMen for your grooming needs. We hope you loved your new look!\n\nWe'd love to hear about your experience. Please consider leaving us a review or booking your next appointment.\n\nLooking forward to seeing you again soon!\n\nBest regards,\nThe ModernMen Team`
+                      text: `Hi ${customer.name || (customer as any)?.email},\n\nThank you for choosing ModernMen for your grooming needs. We hope you loved your new look!\n\nWe'd love to hear about your experience. Please consider leaving us a review or booking your next appointment.\n\nLooking forward to seeing you again soon!\n\nBest regards,\nThe ModernMen Team`
                     })
-                    console.log(`Follow-up email sent to: ${customer.email}`)
+                    console.log(`Follow-up email sent to: ${(customer as any)?.email}`)
                   } catch (emailError) {
                     console.error('Failed to send follow-up email:', emailError)
                   }
@@ -448,11 +448,11 @@ export const Appointments: CollectionConfig = {
             try {
               if (doc.user && req.payload) {
                 const customer = await req.payload.findByID({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.user
                 })
                 if (customer?.email) {
-                  console.log(`Sending confirmation notification to: ${customer.email}`)
+                  console.log(`Sending confirmation notification to: ${(customer as any)?.email}`)
                 }
               }
             } catch (error) {
@@ -466,7 +466,7 @@ export const Appointments: CollectionConfig = {
       async ({ req, id }) => {
         // Prevent deletion of completed appointments for audit purposes
         const appointment = await req.payload.findByID({
-          collection: 'appointments',
+          collection: 'appointments' as any as any,
           id
         })
         
@@ -514,7 +514,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       admin: {
@@ -524,7 +524,7 @@ export const Appointments: CollectionConfig = {
         beforeChange: [
           ({ req, value }) => {
             // Auto-assign current user for customer role
-            if (!value && req.user && req.user.role === 'customer') {
+            if (!value && req.user && (req.user as any)?.role === 'customer') {
               return req.user.id
             }
             return value
@@ -535,7 +535,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -546,7 +546,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'barber',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       filterOptions: ({ data }): Where | false => {
         if (!data?.tenant) return false
         return {
@@ -635,7 +635,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'service',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       required: true,
       filterOptions: ({ data }): Where | false => {
         if (!data?.tenant) return false
@@ -651,7 +651,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'additionalServices',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       filterOptions: ({ data }): Where | false => {
         if (!data?.tenant) return false
@@ -1258,7 +1258,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'parentAppointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'Parent appointment if this is part of a recurring series',
         condition: (data) => data.isRecurring && !data.isParentAppointment,
@@ -1268,7 +1268,7 @@ export const Appointments: CollectionConfig = {
     {
       name: 'childAppointments',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       hasMany: true,
       admin: {
         readOnly: true,
@@ -1385,7 +1385,7 @@ async function createRecurringAppointments(parentDoc: any, req: any) {
 
     try {
       const created = await req.payload.create({
-        collection: 'appointments',
+        collection: 'appointments' as any as any,
         data: childAppointment,
       })
       appointments.push(created.id)
@@ -1399,7 +1399,7 @@ async function createRecurringAppointments(parentDoc: any, req: any) {
   // Update parent with child references
   if (appointments.length > 0) {
     await req.payload.update({
-      collection: 'appointments',
+      collection: 'appointments' as any as any,
       id: parentDoc.id,
       data: {
         childAppointments: appointments,

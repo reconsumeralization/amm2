@@ -1,7 +1,7 @@
 'use client';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { INSERT_COMMAND } from '@lexical/helpers/LexicalCommands';
+import { INSERT_VIDEO_COMMAND } from 'lexical';
 import { $createVideoNode, VideoNode } from '../../../nodes/VideoNode';
 
 export default function VideoPlugin() {

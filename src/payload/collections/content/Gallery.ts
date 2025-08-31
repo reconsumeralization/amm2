@@ -55,7 +55,7 @@ const Gallery: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       required: true,
       admin: {
         description: 'Main image for this gallery item',

@@ -29,7 +29,7 @@ export const Testimonials: CollectionConfig = {
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
         if (!data.tenant && req.user?.tenant?.id) {
-          data.tenant = req.user.tenant.id
+          data.tenant = (req.user as any)?.tenant.id
         }
 
         // Auto-set client if creating own testimonial
@@ -74,7 +74,7 @@ export const Testimonials: CollectionConfig = {
           if (doc.barber && req.payload) {
             try {
               const barber = await req.payload.findByID({
-                collection: 'users',
+                collection: 'users' as any as any,
                 id: doc.barber
               })
 
@@ -86,7 +86,7 @@ export const Testimonials: CollectionConfig = {
                   
                   // Get client information for the notification
                   const client = doc.client ? await req.payload.findByID({
-                    collection: 'users',
+                    collection: 'users' as any as any,
                     id: doc.client
                   }) : null;
 
@@ -131,7 +131,7 @@ export const Testimonials: CollectionConfig = {
           if (doc.barber && req.payload) {
             try {
               const allTestimonials = await req.payload.find({
-                collection: 'testimonials',
+                collection: 'testimonials' as any as any,
                 where: {
                   barber: { equals: doc.barber },
                   status: { equals: 'approved' }
@@ -144,7 +144,7 @@ export const Testimonials: CollectionConfig = {
 
                 // Update barber's profile with new average rating
                 await req.payload.update({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.barber,
                   data: {
                     averageRating: Math.round(averageRating * 10) / 10 // Round to 1 decimal
@@ -169,7 +169,7 @@ export const Testimonials: CollectionConfig = {
               if (doc.client && req.payload) {
                 try {
                   const client = await req.payload.findByID({
-                    collection: 'users',
+                    collection: 'users' as any as any,
                     id: doc.client
                   })
 
@@ -181,7 +181,7 @@ export const Testimonials: CollectionConfig = {
                       
                       // Get barber information for the notification
                       const barber = doc.barber ? await req.payload.findByID({
-                        collection: 'users',
+                        collection: 'users' as any as any,
                         id: doc.barber
                       }) : null;
 
@@ -227,7 +227,7 @@ export const Testimonials: CollectionConfig = {
               if (doc.client && req.payload) {
                 try {
                   const client = await req.payload.findByID({
-                    collection: 'users',
+                    collection: 'users' as any as any,
                     id: doc.client
                   })
 
@@ -239,7 +239,7 @@ export const Testimonials: CollectionConfig = {
                       
                       // Get barber information for the notification
                       const barber = doc.barber ? await req.payload.findByID({
-                        collection: 'users',
+                        collection: 'users' as any as any,
                         id: doc.barber
                       }) : null;
 
@@ -286,7 +286,7 @@ export const Testimonials: CollectionConfig = {
           if (doc.rating !== previousDoc.rating && doc.barber && req.payload) {
             try {
               const allTestimonials = await req.payload.find({
-                collection: 'testimonials',
+                collection: 'testimonials' as any as any,
                 where: {
                   barber: { equals: doc.barber },
                   status: { equals: 'approved' }
@@ -298,7 +298,7 @@ export const Testimonials: CollectionConfig = {
                 const averageRating = totalRating / allTestimonials.totalDocs
 
                 await req.payload.update({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: doc.barber,
                   data: {
                     averageRating: Math.round(averageRating * 10) / 10
@@ -325,13 +325,13 @@ export const Testimonials: CollectionConfig = {
         if (req.payload) {
           try {
             const testimonial = await req.payload.findByID({
-              collection: 'testimonials',
+              collection: 'testimonials' as any as any,
               id: id
             })
 
             if (testimonial?.barber) {
               const remainingTestimonials = await req.payload.find({
-                collection: 'testimonials',
+                collection: 'testimonials' as any as any,
                 where: {
                   barber: { equals: testimonial.barber },
                   status: { equals: 'approved' },
@@ -344,7 +344,7 @@ export const Testimonials: CollectionConfig = {
                 const averageRating = totalRating / remainingTestimonials.totalDocs
 
                 await req.payload.update({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: testimonial.barber,
                   data: {
                     averageRating: Math.round(averageRating * 10) / 10
@@ -355,7 +355,7 @@ export const Testimonials: CollectionConfig = {
               } else {
                 // No testimonials left, reset rating
                 await req.payload.update({
-                  collection: 'users',
+                  collection: 'users' as any as any,
                   id: testimonial.barber,
                   data: {
                     averageRating: null
@@ -397,7 +397,7 @@ export const Testimonials: CollectionConfig = {
     {
       name: 'barber',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       filterOptions: {
         role: { equals: 'barber' },
@@ -409,7 +409,7 @@ export const Testimonials: CollectionConfig = {
     {
       name: 'client',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       filterOptions: {
         role: { in: ['client', 'customer'] },
       },
@@ -420,7 +420,7 @@ export const Testimonials: CollectionConfig = {
     {
       name: 'service',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       admin: {
         description: 'The service this testimonial relates to',
       },
@@ -428,7 +428,7 @@ export const Testimonials: CollectionConfig = {
     {
       name: 'appointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'The appointment this testimonial relates to',
       },
@@ -464,7 +464,7 @@ export const Testimonials: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'The BarberShop/tenant this testimonial belongs to',

@@ -162,7 +162,7 @@ async function generateWithTemplate(
       const payload = req.payload
       if (payload) {
         const uploadedImage = await payload.create({
-          collection: 'media',
+          collection: 'media' as any as any,
           data: {
             alt: `Open Graph image for ${title}`,
             filename: filename,

@@ -14,23 +14,23 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'editor'].includes(req.user.role);
+      return ['admin', 'manager', 'editor'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       return { createdBy: { equals: req.user.id } };
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -115,7 +115,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
         {
           name: 'userSegment',
           type: 'relationship',
-          relationTo: 'customer-tags',
+          relationTo: 'customer-tags' as any as any,
           admin: {
             description: 'Required user segment/tag',
           },
@@ -136,7 +136,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
         {
           name: 'userId',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Specific user (for personalized content)',
           },
@@ -180,7 +180,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
         {
           name: 'hasTag',
           type: 'relationship',
-          relationTo: 'tags',
+          relationTo: 'tags' as any as any,
           hasMany: true,
           admin: {
             description: 'Content must have these tags',
@@ -446,7 +446,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
         {
           name: 'image',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           admin: {
             description: 'Alternative image',
           },
@@ -514,7 +514,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -533,7 +533,7 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -542,8 +542,8 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -555,8 +555,8 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Update last triggered timestamp

@@ -83,7 +83,7 @@ export const Content: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: { 
@@ -94,7 +94,7 @@ export const Content: CollectionConfig = {
     {
       name: 'template',
       type: 'relationship',
-      relationTo: 'editorTemplates',
+      relationTo: 'editorTemplates' as any as any,
       admin: { 
         description: 'Template used to create this content.',
         position: 'sidebar',
@@ -103,7 +103,7 @@ export const Content: CollectionConfig = {
     {
       name: 'theme',
       type: 'relationship',
-      relationTo: 'editorThemes',
+      relationTo: 'editorThemes' as any as any,
       admin: { 
         description: 'Theme applied to this content.',
         position: 'sidebar',
@@ -163,7 +163,7 @@ export const Content: CollectionConfig = {
     {
       name: 'parentVersion',
       type: 'relationship',
-      relationTo: 'content',
+      relationTo: 'content' as any as any,
       admin: {
         description: 'Parent version of this content.',
         readOnly: true,
@@ -285,7 +285,7 @@ export const Content: CollectionConfig = {
         {
           name: 'ogImage',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           admin: { description: 'Open Graph image for social sharing.' },
         },
         {
@@ -475,7 +475,7 @@ export const Content: CollectionConfig = {
         {
           name: 'file',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -535,7 +535,7 @@ export const Content: CollectionConfig = {
         {
           name: 'changedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
         },
         {
@@ -553,7 +553,7 @@ export const Content: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -562,7 +562,7 @@ export const Content: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -571,7 +571,7 @@ export const Content: CollectionConfig = {
     {
       name: 'publishedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { 
         readOnly: true,
         position: 'sidebar',
@@ -659,7 +659,7 @@ export const Content: CollectionConfig = {
 
               // Update the document with the new revision
               await req.payload.update({
-                collection: 'content',
+                collection: 'content' as any as any,
                 id: doc.id,
                 data: {
                   revisions: currentRevisions,

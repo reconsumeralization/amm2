@@ -14,8 +14,8 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       // Users can only view revisions of pages they can edit
       return { createdBy: { equals: req.user.id } };
     },
@@ -35,7 +35,7 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'page',
       type: 'relationship',
-      relationTo: 'builder-pages',
+      relationTo: 'builder-pages' as any as any,
       required: true,
       admin: {
         description: 'The page this revision belongs to',
@@ -71,7 +71,7 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'changedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'User who made the changes',
@@ -80,7 +80,7 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'previousRevision',
       type: 'relationship',
-      relationTo: 'builder-page-revisions',
+      relationTo: 'builder-page-revisions' as any as any,
       admin: {
         description: 'Previous revision for comparison',
       },
@@ -238,7 +238,7 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -247,8 +247,8 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -260,8 +260,8 @@ export const PageRevisions: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-generate version if not provided

@@ -21,7 +21,7 @@ export const WaitList: CollectionConfig = {
   access: {
     read: ({ req }) => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any)?.role
       if (userRole === 'admin' || userRole === 'manager') return true
       if (userRole === 'barber' || userRole === 'staff') return true
       // Customers can see their own wait list entries
@@ -36,7 +36,7 @@ export const WaitList: CollectionConfig = {
     },
     update: ({ req }) => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any)?.role
       if (userRole === 'admin' || userRole === 'manager' || userRole === 'barber' || userRole === 'staff') return true
       // Customers can update their own entries (limited fields)
       if (userRole === 'customer') {
@@ -46,7 +46,7 @@ export const WaitList: CollectionConfig = {
     },
     delete: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
   },
   hooks: {
@@ -56,11 +56,11 @@ export const WaitList: CollectionConfig = {
         if (data.customer && req.payload) {
           try {
             const customer = await req.payload.findByID({
-              collection: 'customers',
+              collection: 'customers' as any as any,
               id: data.customer,
             })
             if (customer) {
-              data.customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer'
+              data.customerName = `${(customer as any)?.firstName || ''} ${(customer as any)?.lastName || ''}`.trim() || 'Unknown Customer'
             }
           } catch (error) {
             data.customerName = 'Unknown Customer'
@@ -134,7 +134,7 @@ export const WaitList: CollectionConfig = {
           if (doc.customer && req.payload) {
             try {
               const customer = await req.payload.findByID({
-                collection: 'customers',
+                collection: 'customers' as any as any,
                 id: doc.customer,
               })
 
@@ -142,7 +142,7 @@ export const WaitList: CollectionConfig = {
                 // Queue confirmation email
                 yoloMonitoring.trackOperation('waitlist_confirmation_queued', {
                   customerId: doc.customer,
-                  email: customer.email,
+                  email: (customer as any)?.email,
                   waitListId: doc.id
                 })
               }
@@ -216,7 +216,7 @@ export const WaitList: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       index: true,
       admin: {
@@ -229,7 +229,7 @@ export const WaitList: CollectionConfig = {
         if (req.payload) {
           try {
             const existing = await req.payload.find({
-              collection: 'wait-list',
+              collection: 'wait-list' as any as any,
               where: {
                 and: [
                   { customer: { equals: value } },
@@ -263,7 +263,7 @@ export const WaitList: CollectionConfig = {
             if (siblingData.customer && req.payload) {
               try {
                 const customer = await req.payload.findByID({
-                  collection: 'customers',
+                  collection: 'customers' as any as any,
                   id: siblingData.customer,
                 })
                 return `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim() || 'Unknown Customer'
@@ -279,7 +279,7 @@ export const WaitList: CollectionConfig = {
     {
       name: 'service',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       required: true,
       index: true,
       admin: {
@@ -289,7 +289,7 @@ export const WaitList: CollectionConfig = {
     {
       name: 'stylist',
       type: 'relationship',
-      relationTo: 'stylists',
+      relationTo: 'stylists' as any as any,
       admin: {
         description: 'Preferred stylist (optional)',
       },
@@ -476,7 +476,7 @@ export const WaitList: CollectionConfig = {
         {
           name: 'staff',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
           admin: {
             description: 'Staff member who made contact',
@@ -514,7 +514,7 @@ export const WaitList: CollectionConfig = {
         {
           name: 'stylist',
           type: 'relationship',
-          relationTo: 'stylists',
+          relationTo: 'stylists' as any as any,
           admin: {
             description: 'Alternative stylist',
           },
@@ -522,7 +522,7 @@ export const WaitList: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services',
+          relationTo: 'services' as any as any,
           admin: {
             description: 'Alternative service (if different)',
           },
@@ -672,7 +672,7 @@ export const WaitList: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       admin: {
         position: 'sidebar',
         description: 'Business location',
@@ -681,7 +681,7 @@ export const WaitList: CollectionConfig = {
         beforeChange: [
           ({ req, siblingData }) => {
             if (req.user?.tenant && !siblingData.tenant) {
-              return req.user.tenant
+              return (req.user as any)?.tenant
             }
             return siblingData.tenant
           },
@@ -696,7 +696,7 @@ export const WaitList: CollectionConfig = {
 async function updateQueuePositions(payload: any, serviceId: string) {
   try {
     const waitingEntries = await payload.find({
-      collection: 'wait-list',
+      collection: 'wait-list' as any as any,
       where: {
         and: [
           { service: { equals: serviceId } },
@@ -709,7 +709,7 @@ async function updateQueuePositions(payload: any, serviceId: string) {
 
     const updates = waitingEntries.docs.map((entry: any, index: number) => 
       payload.update({
-        collection: 'wait-list',
+        collection: 'wait-list' as any as any,
         id: entry.id,
         data: {
           waitMetrics: {

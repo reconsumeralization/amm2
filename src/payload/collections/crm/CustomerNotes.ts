@@ -11,41 +11,41 @@ export const CustomerNotes: CollectionConfig = {
     group: 'CRM',
     description: 'Internal notes and observations about customers',
     defaultColumns: ['customer', 'author', 'note', 'visibility', 'createdAt'],
-    listSearchableFields: ['customer.name', 'customer.email', 'note', 'author.name'],
+    listSearchableFields: ['customer.name', '(customer as any)?.email', 'note', 'author.name'],
   },
   access: {
     read: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (['manager', 'barber'].includes(req.user.role)) {
-        return { tenant: { equals: req.user.tenant?.id } };
+      if ((req.user as any)?.role === 'admin') return true;
+      if (['manager', 'barber'].includes((req.user as any)?.role)) {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } };
       }
       // Customers can only read their own public notes
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         customer: { equals: req.user.id },
         visibility: { equals: 'public' }
       };
     },
     create: ({ req }): boolean => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'barber'].includes(req.user.role);
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role);
     },
     update: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Users can only update their own notes
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         author: { equals: req.user.id }
       };
     },
     delete: ({ req }): any => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Users can only delete their own notes
       return {
-        tenant: { equals: req.user.tenant?.id },
+        tenant: { equals: (req.user as any)?.tenant?.id },
         author: { equals: req.user.id }
       };
     },
@@ -56,12 +56,12 @@ export const CustomerNotes: CollectionConfig = {
         if (!data) return data;
 
         // Auto-assign tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-assign author for staff notes
-        if (operation === 'create' && !data.author && req.user && ['admin', 'manager', 'barber'].includes(req.user.role)) {
+        if (operation === 'create' && !data.author && req.user && ['admin', 'manager', 'barber'].includes((req.user as any)?.role)) {
           data.author = req.user.id;
         }
 
@@ -94,7 +94,7 @@ export const CustomerNotes: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -105,7 +105,7 @@ export const CustomerNotes: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -122,7 +122,7 @@ export const CustomerNotes: CollectionConfig = {
     {
       name: 'author',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       filterOptions: ({ data }): any => {
@@ -217,7 +217,7 @@ export const CustomerNotes: CollectionConfig = {
     {
       name: 'relatedAppointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'Appointment this note relates to (optional)',
       },
@@ -225,7 +225,7 @@ export const CustomerNotes: CollectionConfig = {
     {
       name: 'relatedService',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       admin: {
         description: 'Service this note relates to (optional)',
       },
@@ -275,7 +275,7 @@ export const CustomerNotes: CollectionConfig = {
         {
           name: 'file',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -381,7 +381,7 @@ export const CustomerNotes: CollectionConfig = {
             {
               name: 'editedBy',
               type: 'relationship',
-              relationTo: 'users',
+              relationTo: 'users' as any as any,
               required: true,
             },
             {

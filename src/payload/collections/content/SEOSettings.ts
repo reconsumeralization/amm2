@@ -55,7 +55,7 @@ export const SEOSettings: CollectionConfig = {
     {
       name: 'defaultOGImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       label: 'Default OG Image',
       admin: {
         description: 'Default social sharing image',
@@ -64,7 +64,7 @@ export const SEOSettings: CollectionConfig = {
     {
       name: 'favicon',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       label: 'Favicon',
       admin: {
         description: 'Site favicon (32x32px recommended)',

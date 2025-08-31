@@ -243,7 +243,7 @@ export const Promotions: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Promotional image or banner',
       },
@@ -251,7 +251,7 @@ export const Promotions: CollectionConfig = {
     {
       name: 'applicableServices',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       admin: {
         description: 'Services this promotion applies to (leave empty for all services)',
@@ -260,7 +260,7 @@ export const Promotions: CollectionConfig = {
     {
       name: 'applicableProducts',
       type: 'relationship',
-      relationTo: 'products',
+      relationTo: 'products' as any as any,
       hasMany: true,
       admin: {
         description: 'Products this promotion applies to (leave empty for all products)',

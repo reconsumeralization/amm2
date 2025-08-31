@@ -14,10 +14,10 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       // Users can only view revisions of blocks they can edit
-      return req.user.role === 'editor';
+      return (req.user as any)?.role === 'editor';
     },
     create: () => false, // Revisions are created automatically
     update: () => false, // Revisions should not be manually updated
@@ -35,7 +35,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'block',
       type: 'relationship',
-      relationTo: 'builder-blocks',
+      relationTo: 'builder-blocks' as any as any,
       required: true,
       admin: {
         description: 'The block this revision belongs to',
@@ -71,7 +71,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'changedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'User who made the changes',
@@ -80,7 +80,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'previousRevision',
       type: 'relationship',
-      relationTo: 'builder-block-revisions',
+      relationTo: 'builder-block-revisions' as any as any,
       admin: {
         description: 'Previous revision for comparison',
       },
@@ -192,7 +192,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'parentSection',
       type: 'relationship',
-      relationTo: 'builder-sections',
+      relationTo: 'builder-sections' as any as any,
       admin: {
         description: 'Section containing this block at the time of revision',
       },
@@ -200,7 +200,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'parentPage',
       type: 'relationship',
-      relationTo: 'builder-pages',
+      relationTo: 'builder-pages' as any as any,
       admin: {
         description: 'Page containing this block at the time of revision',
       },
@@ -256,7 +256,7 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -265,8 +265,8 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -278,8 +278,8 @@ export const BlockRevisions: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-generate version if not provided

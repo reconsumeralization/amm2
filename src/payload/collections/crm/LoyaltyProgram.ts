@@ -21,22 +21,22 @@ export const LoyaltyProgram: CollectionConfig = {
   access: {
     read: ({ req }) => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any)?.role
       if (userRole === 'admin' || userRole === 'manager') return true
       if (userRole === 'barber') return true // Barbers need to view loyalty info
       return false
     },
     create: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
     update: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
     delete: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
   },
   hooks: {
@@ -178,7 +178,7 @@ export const LoyaltyProgram: CollectionConfig = {
     {
       name: 'customer',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       required: true,
       unique: true,
       index: true,
@@ -192,7 +192,7 @@ export const LoyaltyProgram: CollectionConfig = {
         if (req.payload) {
           try {
             const existing = await req.payload.find({
-              collection: 'loyalty-program',
+              collection: 'loyalty-program' as any as any,
               where: {
                 customer: { equals: value as string },
               },
@@ -223,7 +223,7 @@ export const LoyaltyProgram: CollectionConfig = {
             if (siblingData.customer && req.payload) {
               try {
                 const customer = await req.payload.findByID({
-                  collection: 'customers',
+                  collection: 'customers' as any as any,
                   id: siblingData.customer as string,
                 })
                 return `${customer?.firstName || ''} ${customer?.lastName || ''}`.trim() || 'Unknown Customer'
@@ -373,7 +373,7 @@ export const LoyaltyProgram: CollectionConfig = {
     {
       name: 'referredBy',
       type: 'relationship',
-      relationTo: 'customers',
+      relationTo: 'customers' as any as any,
       admin: {
         description: 'Customer who referred this member',
         position: 'sidebar',
@@ -474,7 +474,7 @@ export const LoyaltyProgram: CollectionConfig = {
         {
           name: 'processedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Staff member who processed this transaction',
           },
@@ -600,7 +600,7 @@ export const LoyaltyProgram: CollectionConfig = {
         {
           name: 'redeemedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Staff member who processed the redemption',
           },

@@ -115,7 +115,7 @@ const SiteSections: CollectionConfig = {
     {
       name: 'background',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Background image for this section',
       },

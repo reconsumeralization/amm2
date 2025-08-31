@@ -1,33 +1,34 @@
-import React from 'react'
-import { APIDocumentation } from '@/components/features/documentation/APIDocumentation'
-import { apiDocExtractor } from '@/lib/api-documentation-extractor'
-import { sampleAPIDocumentation } from '@/lib/sample-api-docs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import React from 'react';
+import { APIDocumentation } from '@/components/features/documentation/APIDocumentation';
+import { apiDocExtractor } from '@/lib/api-documentation-extractor';
+import { sampleAPIDocumentation } from '@/lib/sample-api-docs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  AlertTriangle, // Changed from alertTriangle
-  HelpCircle,    // Changed from helpCircle
-  Code,          // Changed from code
-  Database,      // Changed from database          // Changed from lock
-  Zap,           // Changed from zap
-  Users,         // Changed from users
-  Calendar,      // Changed from calendar
-  FileText,      // Changed from fileText
-  BarChart3,     // Changed from barChart3          // Changed from cog
-  Book,          // Changed from book
-  Search,     // Changed from rch
-  ArrowLeft,     // Changed from arrowLeft
-  ChevronRight,  // Changed from chevronRight
-  Menu,          // Changed from menu
-  ExternalLink,  // Changed from externalLink
-  Copy,          // Changed from copy
-  Download,      // Changed from download
-  Play,          // Changed from play
-  ChevronDown    // Changed from chevronDown
-} from '@/lib/icon-mapping'
-import type { DocumentationCategory } from '@/lib/types'
-import { APIDocumentationSection } from '@/types/api-documentation'
+  AlertTriangle,
+  HelpCircle,
+  Code,
+  Database,
+  Zap,
+  Users,
+  Calendar,
+  FileText,
+  BarChart3,
+  Book,
+  Search,
+  ArrowLeft,
+  ChevronRight,
+  Menu,
+  ExternalLink,
+  Copy,
+  Download,
+  Play,
+  ChevronDown
+} from '@/lib/icon-mapping';
+import type { DocumentationCategory } from '@/lib/types';
+import { APIDocumentationSection } from '@/types/api-documentation';
+import { DocPage } from '@/components/features/documentation/DocPage';
 
 /**
  * API Documentation Page
@@ -35,39 +36,30 @@ import { APIDocumentationSection } from '@/types/api-documentation'
  * Displays API documentation for the Modern Men barber shop management system.
  * Falls back to sample data if extraction fails.
  */
-import { DocPage } from '@/components/features/documentation/DocPage';
-
 export default function ApiDocumentation() {
-  return (
-    <DocPage lastUpdated="2023-10-26">
-      <h1>API Documentation</h1>
-      <p>This is the API documentation.</p>
-    </DocPage>
-  );
-}
-  let sections: APIDocumentationSection[] = []
-  let error: string | null = null
-  let usingSampleData = false
+  let sections: APIDocumentationSection[] = [];
+  let error: string | null = null;
+  let usingSampleData = false;
 
   try {
-    // Extract API documentation from the codebase
-    const extractedSections = await apiDocExtractor.extractAPIDocumentation()
+    // Extract API documentation from the codebase (sync version)
+    const extractedSections = apiDocExtractor.extractFromCodebase();
 
     // Use extracted sections directly if they exist
     if (Array.isArray(extractedSections) && extractedSections.length > 0) {
-      sections = extractedSections as APIDocumentationSection[]
+      sections = extractedSections as APIDocumentationSection[];
     } else {
       // If no sections found, use sample data for demonstration
-      sections = sampleAPIDocumentation
-      usingSampleData = true
+      sections = sampleAPIDocumentation;
+      usingSampleData = true;
     }
   } catch (err) {
     // Extraction failed, fallback to sample data
     // eslint-disable-next-line no-console
-    console.error('Failed to extract API documentation:', err)
-    error = err instanceof Error ? err.message : 'Unknown error occurred'
-    sections = sampleAPIDocumentation
-    usingSampleData = true
+    console.error('Failed to extract API documentation:', err);
+    error = err instanceof Error ? err.message : 'Unknown error occurred';
+    sections = sampleAPIDocumentation;
+    usingSampleData = true;
   }
 
   // Configuration for API documentation
@@ -87,7 +79,7 @@ export default function ApiDocumentation() {
       packageName: 'modern-men-api',
       version: '1.0.0'
     }
-  }
+  };
 
   if (error) {
     return (
@@ -120,7 +112,7 @@ export default function ApiDocumentation() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (sections.length === 0) {
@@ -150,7 +142,7 @@ export default function ApiDocumentation() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -255,9 +247,9 @@ export default function ApiDocumentation() {
         sdkGeneration={apiConfig.sdkGeneration}
         onEndpointTest={(endpoint: any, result: any) => {
           // eslint-disable-next-line no-console
-          console.log('Endpoint test result:', { endpoint: endpoint.operationId, result })
+          console.log('Endpoint test result:', { endpoint: endpoint.operationId, result });
         }}
       />
     </div>
-  )
+  );
 }

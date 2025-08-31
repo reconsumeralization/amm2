@@ -35,13 +35,13 @@ export const Pages: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
     },
     {
       name: 'content',
       type: 'relationship',
-      relationTo: 'content',
+      relationTo: 'content' as any as any,
       required: true,
       admin: { description: 'Content entry to render for this page.' },
     },
@@ -77,7 +77,7 @@ export const Pages: CollectionConfig = {
         { name: 'metaTitle', type: 'text' },
         { name: 'metaDescription', type: 'textarea' },
         { name: 'canonicalUrl', type: 'text' },
-        { name: 'ogImage', type: 'upload', relationTo: 'media' },
+        { name: 'ogImage', type: 'upload', relationTo: 'media' as any as any },
       ],
     },
     {
@@ -89,7 +89,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { readOnly: true },
     },
   ],
@@ -109,7 +109,7 @@ export const Pages: CollectionConfig = {
                 'Authorization': `Bearer ${webhookSecret}`
               },
               body: JSON.stringify({
-                collection: 'pages',
+                collection: 'pages' as any as any,
                 operation,
                 docId: doc.id,
                 slug: doc.slug,
@@ -138,7 +138,7 @@ export const Pages: CollectionConfig = {
               'Authorization': `Bearer ${webhookSecret}`
             },
             body: JSON.stringify({
-              collection: 'pages',
+              collection: 'pages' as any as any,
               operation: 'delete',
               docId: doc.id,
               slug: doc.slug

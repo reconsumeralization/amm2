@@ -12,7 +12,7 @@ export const customerSubscriptionUpdated: WebhookHandler = async ({ event, paylo
 
     if (customerId) {
       const customers = await payload.find({
-        collection: 'customers',
+        collection: 'customers' as any as any,
         where: { stripeCustomerId: { equals: customerId } },
       });
 
@@ -47,7 +47,7 @@ export const customerSubscriptionUpdated: WebhookHandler = async ({ event, paylo
 
         // Update customer subscription info
         await payload.update({
-          collection: 'customers',
+          collection: 'customers' as any as any,
           id: customer.id,
           data: {
             subscriptionStatus: status,

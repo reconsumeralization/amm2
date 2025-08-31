@@ -18,7 +18,7 @@ export const AuditLogs: CollectionConfig = {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
       // Only admins can view audit logs
-      return req.user.role === 'admin'
+      return (req.user as any)?.role === 'admin'
     },
     create: (): AccessResult => false, // Only allow server-side creation
     update: (): AccessResult => false, // Audit logs should be immutable

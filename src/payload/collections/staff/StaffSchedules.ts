@@ -11,28 +11,28 @@ export const StaffSchedules: CollectionConfig = {
   access: {
     read: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { staff: { equals: req.user.id } }
     },
     create: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
     update: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { staff: { equals: req.user.id } }
     },
     delete: ({ req }) => {
       if (!req.user) return false
-      return req.user.role === 'admin' || req.user.role === 'manager'
+      return (req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager'
     },
   },
   fields: [
     {
       name: 'staff',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       filterOptions: { role: { equals: 'staff' } },
       admin: {
@@ -42,7 +42,7 @@ export const StaffSchedules: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         description: 'Tenant this schedule belongs to',
@@ -125,7 +125,7 @@ export const StaffSchedules: CollectionConfig = {
     {
       name: 'services',
       type: 'relationship',
-      relationTo: 'services',
+      relationTo: 'services' as any as any,
       hasMany: true,
       admin: {
         description: 'Services this staff member can perform during this shift',
@@ -175,7 +175,7 @@ export const StaffSchedules: CollectionConfig = {
 
         // Auto-set tenant for non-admin users
         if (!data.tenant && req.user?.tenant?.id) {
-          data.tenant = req.user.tenant.id
+          data.tenant = (req.user as any)?.tenant.id
         }
 
         return data;

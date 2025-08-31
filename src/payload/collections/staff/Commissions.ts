@@ -26,29 +26,29 @@ export const Commissions: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
       }
       // Stylists can only see their own commissions
       return { 
         and: [
           { stylist: { equals: req.user.id } },
-          { tenant: { equals: req.user.tenant?.id } }
+          { tenant: { equals: (req.user as any)?.tenant?.id } }
         ]
       } as Where
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager'].includes(req.user.role)
+      return ['admin', 'manager'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
-      if (req.user.role === 'manager') {
+      if ((req.user as any)?.role === 'admin') return true
+      if ((req.user as any)?.role === 'manager') {
         return { 
           and: [
-            { tenant: { equals: req.user.tenant?.id } },
+            { tenant: { equals: (req.user as any)?.tenant?.id } },
             { 'payment.status': { not_equals: 'paid' } }
           ]
         } as Where
@@ -57,7 +57,7 @@ export const Commissions: CollectionConfig = {
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       return false
     },
   },
@@ -65,8 +65,8 @@ export const Commissions: CollectionConfig = {
     beforeChange: [
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
-        if (operation === 'create' && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Generate period name
@@ -152,7 +152,7 @@ export const Commissions: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       index: true,
       admin: {
@@ -167,7 +167,7 @@ export const Commissions: CollectionConfig = {
     {
       name: 'stylist',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       index: true,
       admin: {
@@ -236,7 +236,7 @@ export const Commissions: CollectionConfig = {
         {
           name: 'appointment',
           type: 'relationship',
-          relationTo: 'appointments',
+          relationTo: 'appointments' as any as any,
           required: true,
           filterOptions: ({ data }) => {
             const filters: any = {}
@@ -258,7 +258,7 @@ export const Commissions: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services',
+          relationTo: 'services' as any as any,
           required: true,
           filterOptions: ({ data }) => {
             if (data?.tenant) {
@@ -392,7 +392,7 @@ export const Commissions: CollectionConfig = {
         {
           name: 'approvedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Manager who approved this deduction',
           },
@@ -455,7 +455,7 @@ export const Commissions: CollectionConfig = {
         {
           name: 'approvedBy',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Manager who approved this adjustment',
           },
@@ -626,7 +626,7 @@ export const Commissions: CollectionConfig = {
     {
       name: 'approvedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'Manager who approved this commission',
         position: 'sidebar',

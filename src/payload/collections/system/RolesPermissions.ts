@@ -14,19 +14,19 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -209,7 +209,7 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
     {
       name: 'assignedUsers',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       hasMany: true,
       admin: {
         description: 'Users assigned to this role',
@@ -228,7 +228,7 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this role',
         readOnly: true,
@@ -237,7 +237,7 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
     {
       name: 'parentRole',
       type: 'relationship',
-      relationTo: 'roles-permissions',
+      relationTo: 'roles-permissions' as any as any,
       admin: {
         description: 'Parent role to inherit permissions from',
       },
@@ -254,7 +254,7 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -264,8 +264,8 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -277,8 +277,8 @@ export const RolesPermissions: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Set created by

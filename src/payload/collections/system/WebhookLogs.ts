@@ -20,9 +20,9 @@ export const WebhookLogs: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where;
       }
       return false;
     },
@@ -32,17 +32,17 @@ export const WebhookLogs: CollectionConfig = {
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
+      if ((req.user as any)?.role === 'admin') return true;
       // Allow managers to update processing status
-      if (req.user.role === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where;
+      if ((req.user as any)?.role === 'manager') {
+        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where;
       }
       return false;
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false;
       // Only admins can delete webhook logs (for cleanup)
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   hooks: {
@@ -56,8 +56,8 @@ export const WebhookLogs: CollectionConfig = {
         }
 
         // Auto-assign tenant for non-admin users
-        if (data && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (data && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         return data;
@@ -103,7 +103,7 @@ export const WebhookLogs: CollectionConfig = {
           if (doc.webhookId && req.payload) {
             try {
               const existing = await req.payload.find({
-                collection: 'webhook-logs',
+                collection: 'webhook-logs' as any as any,
                 where: {
                   and: [
                     { webhookId: { equals: doc.webhookId } },
@@ -116,7 +116,7 @@ export const WebhookLogs: CollectionConfig = {
 
               if (existing.docs.length > 0) {
                 await req.payload.update({
-                  collection: 'webhook-logs',
+                  collection: 'webhook-logs' as any as any,
                   id: doc.id,
                   data: {
                     duplicateOf: existing.docs[0].id,
@@ -146,7 +146,7 @@ export const WebhookLogs: CollectionConfig = {
             // Update webhook with error status
             if (req.payload) {
               await req.payload.update({
-                collection: 'webhook-logs',
+                collection: 'webhook-logs' as any as any,
                 id: doc.id,
                 data: {
                   status: 'failed',
@@ -173,7 +173,7 @@ export const WebhookLogs: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       index: true,
       admin: {
         description: 'Business this webhook belongs to',
@@ -646,7 +646,7 @@ export const WebhookLogs: CollectionConfig = {
         {
           name: 'order',
           type: 'relationship',
-          relationTo: 'orders',
+          relationTo: 'orders' as any as any,
           admin: {
             description: 'Related order (if webhook affects an order)',
           },
@@ -654,7 +654,7 @@ export const WebhookLogs: CollectionConfig = {
         {
           name: 'appointment',
           type: 'relationship',
-          relationTo: 'appointments',
+          relationTo: 'appointments' as any as any,
           admin: {
             description: 'Related appointment',
           },
@@ -662,7 +662,7 @@ export const WebhookLogs: CollectionConfig = {
         {
           name: 'transaction',
           type: 'relationship',
-          relationTo: 'transactions',
+          relationTo: 'transactions' as any as any,
           admin: {
             description: 'Related transaction',
           },
@@ -670,7 +670,7 @@ export const WebhookLogs: CollectionConfig = {
         {
           name: 'customer',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           admin: {
             description: 'Related customer',
           },
@@ -678,7 +678,7 @@ export const WebhookLogs: CollectionConfig = {
         {
           name: 'subscription',
           type: 'relationship',
-          relationTo: 'subscriptions',
+          relationTo: 'subscriptions' as any as any,
           admin: {
             description: 'Related subscription',
           },
@@ -691,7 +691,7 @@ export const WebhookLogs: CollectionConfig = {
     {
       name: 'duplicateOf',
       type: 'relationship',
-      relationTo: 'webhook-logs',
+      relationTo: 'webhook-logs' as any as any,
       admin: {
         description: 'If this is a duplicate webhook, reference to original',
       },
@@ -822,7 +822,7 @@ async function processWebhookAutomatically(doc: any, payload: any) {
 
     // Update webhook with success status
     await payload.update({
-      collection: 'webhook-logs',
+      collection: 'webhook-logs' as any as any,
       id: doc.id,
       data: {
         status: 'processed',
@@ -844,7 +844,7 @@ async function processWebhookAutomatically(doc: any, payload: any) {
     
     // Update webhook with error status
     await payload.update({
-      collection: 'webhook-logs',
+      collection: 'webhook-logs' as any as any,
       id: doc.id,
       data: {
         status: 'failed',
@@ -1005,7 +1005,7 @@ async function handleStripePaymentSuccess(webhookPayload: any, payload: any, act
   
   // Find related order by payment intent ID
   const orders = await payload.find({
-    collection: 'orders',
+    collection: 'orders' as any as any,
     where: {
       'payment.stripePaymentIntentId': { equals: paymentIntent.id }
     },
@@ -1017,7 +1017,7 @@ async function handleStripePaymentSuccess(webhookPayload: any, payload: any, act
     
     // Update order status
     await payload.update({
-      collection: 'orders',
+      collection: 'orders' as any as any,
       id: order.id,
       data: {
         status: 'paid',
@@ -1044,7 +1044,7 @@ async function handleStripePaymentFailure(webhookPayload: any, payload: any, act
   
   // Find related order and update status
   const orders = await payload.find({
-    collection: 'orders',
+    collection: 'orders' as any as any,
     where: {
       'payment.stripePaymentIntentId': { equals: paymentIntent.id }
     },
@@ -1055,7 +1055,7 @@ async function handleStripePaymentFailure(webhookPayload: any, payload: any, act
     const order = orders.docs[0];
     
     await payload.update({
-      collection: 'orders',
+      collection: 'orders' as any as any,
       id: order.id,
       data: {
         status: 'payment_failed',
@@ -1079,7 +1079,7 @@ async function handleStripeSubscriptionChange(webhookPayload: any, payload: any,
   
   // Find related subscription in our system
   const subscriptions = await payload.find({
-    collection: 'subscriptions',
+    collection: 'subscriptions' as any as any,
     where: {
       stripeSubscriptionId: { equals: subscription.id }
     },
@@ -1090,7 +1090,7 @@ async function handleStripeSubscriptionChange(webhookPayload: any, payload: any,
     const localSubscription = subscriptions.docs[0];
     
     await payload.update({
-      collection: 'subscriptions',
+      collection: 'subscriptions' as any as any,
       id: localSubscription.id,
       data: {
         status: subscription.status,
@@ -1115,7 +1115,7 @@ async function handleStripeInvoicePayment(webhookPayload: any, payload: any, act
   // Handle subscription invoice payments
   if (invoice.subscription) {
     const subscriptions = await payload.find({
-      collection: 'subscriptions',
+      collection: 'subscriptions' as any as any,
       where: {
         stripeSubscriptionId: { equals: invoice.subscription }
       },
@@ -1126,7 +1126,7 @@ async function handleStripeInvoicePayment(webhookPayload: any, payload: any, act
       const subscription = subscriptions.docs[0];
       
       await payload.update({
-        collection: 'subscriptions',
+        collection: 'subscriptions' as any as any,
         id: subscription.id,
         data: {
           lastPaymentDate: new Date().toISOString(),
@@ -1149,11 +1149,11 @@ async function handleStripeCustomerCreation(webhookPayload: any, payload: any, a
   const customer = webhookPayload.data.object;
   
   // Try to find existing user by email and update with Stripe customer ID
-  if (customer.email) {
+  if ((customer as any)?.email) {
     const users = await payload.find({
-      collection: 'users',
+      collection: 'users' as any as any,
       where: {
-        email: { equals: customer.email }
+        email: { equals: (customer as any)?.email }
       },
       limit: 1
     });
@@ -1162,7 +1162,7 @@ async function handleStripeCustomerCreation(webhookPayload: any, payload: any, a
       const user = users.docs[0];
       
       await payload.update({
-        collection: 'users',
+        collection: 'users' as any as any,
         id: user.id,
         data: {
           stripeCustomerId: customer.id

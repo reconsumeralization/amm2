@@ -19,7 +19,7 @@ export const Media: CollectionConfig = {
       return {
         or: [
           { 
-            tenant: { equals: req.user.tenant?.id || null }
+            tenant: { equals: (req.user as any)?.tenant?.id || null }
           },
           { 
             isPublic: { equals: true }
@@ -29,16 +29,16 @@ export const Media: CollectionConfig = {
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return ['admin', 'manager', 'barber'].includes(req.user.role)
+      return ['admin', 'manager', 'barber'].includes((req.user as any)?.role)
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       // Users can update media from their tenant
       return { 
         or: [
           { 
-            tenant: { equals: req.user.tenant?.id || null }
+            tenant: { equals: (req.user as any)?.tenant?.id || null }
           },
           { 
             isPublic: { equals: true }
@@ -48,13 +48,13 @@ export const Media: CollectionConfig = {
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as any)?.role === 'admin') return true
       // Only managers can delete media from their tenant
-      if (req.user.role === 'manager') {
+      if ((req.user as any)?.role === 'manager') {
         return { 
           or: [
             { 
-              tenant: { equals: req.user.tenant?.id || null }
+              tenant: { equals: (req.user as any)?.tenant?.id || null }
             },
             { 
               isPublic: { equals: true }
@@ -70,8 +70,8 @@ export const Media: CollectionConfig = {
     beforeValidate: [
       ({ data, req }) => {
         // Auto-assign tenant for non-admin users
-        if (data && !data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (data && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
         return data
       },
@@ -79,8 +79,8 @@ export const Media: CollectionConfig = {
     beforeChange: [
       ({ data, operation, req }) => {
         // Set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id
         }
 
         // Set createdBy and updatedBy
@@ -151,15 +151,15 @@ export const Media: CollectionConfig = {
           // Check if media is being used in other collections before deletion
           const mediaUsage = await Promise.all([
             req.payload.find({
-              collection: 'blog-posts',
+              collection: 'blog-posts' as any as any,
               where: { hero: { equals: id } }
             }),
             req.payload.find({
-              collection: 'products',
+              collection: 'products' as any as any,
               where: { images: { in: [id] } }
             }),
             req.payload.find({
-              collection: 'editor-templates',
+              collection: 'editor-templates' as any as any,
               where: { thumbnail: { equals: id } }
             })
           ])
@@ -359,7 +359,7 @@ export const Media: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: { 
         description: 'Tenant this media belongs to.',
@@ -369,8 +369,8 @@ export const Media: CollectionConfig = {
         beforeChange: [
           ({ req, value }) => {
             // Auto-assign tenant for non-admin users
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id
             }
             return value
           },
@@ -440,7 +440,7 @@ export const Media: CollectionConfig = {
         {
           name: 'folder',
           type: 'relationship',
-          relationTo: 'mediaFolders',
+          relationTo: 'mediaFolders' as any as any,
           admin: { description: 'Folder this media belongs to.' },
         },
       ],
@@ -639,7 +639,7 @@ export const Media: CollectionConfig = {
         {
           name: 'allowedUsers',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           hasMany: true,
           admin: {
             description: 'Specific users allowed to access this media.',
@@ -796,13 +796,13 @@ export const Media: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { readOnly: true },
     },
     {
       name: 'updatedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: { readOnly: true },
     },
   ],

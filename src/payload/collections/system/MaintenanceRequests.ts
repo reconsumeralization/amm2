@@ -14,25 +14,25 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
   access: {
     read: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       // Users can only view their own requests
       return { requestedBy: { equals: req.user.id } };
     },
     create: ({ req }: any) => {
       if (!req.user) return false;
-      return ['admin', 'manager', 'user'].includes(req.user.role);
+      return ['admin', 'manager', 'user'].includes((req.user as any)?.role);
     },
     update: ({ req }: any) => {
       if (!req.user) return false;
-      if (req.user.role === 'admin') return true;
-      if (req.user.role === 'manager') return true;
+      if ((req.user as any)?.role === 'admin') return true;
+      if ((req.user as any)?.role === 'manager') return true;
       // Users can only update their own requests
       return { requestedBy: { equals: req.user.id } };
     },
     delete: ({ req }: any) => {
       if (!req.user) return false;
-      return req.user.role === 'admin';
+      return (req.user as any)?.role === 'admin';
     },
   },
   fields: [
@@ -104,7 +104,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     {
       name: 'requestedBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       required: true,
       admin: {
         description: 'User who created this request',
@@ -113,7 +113,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     {
       name: 'assignedTo',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User assigned to handle this request',
         condition: (data: any) => ['admin', 'manager'].includes(data?.assignedTo?.role),
@@ -151,7 +151,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     {
       name: 'location',
       type: 'relationship',
-      relationTo: 'locations',
+      relationTo: 'locations' as any as any,
       admin: {
         description: 'Location where the maintenance is needed',
       },
@@ -159,7 +159,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     {
       name: 'equipment',
       type: 'relationship',
-      relationTo: 'resources',
+      relationTo: 'resources' as any as any,
       admin: {
         description: 'Specific equipment that needs maintenance',
         condition: (data: any) => data?.requestType === 'equipment_repair',
@@ -221,7 +221,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
         {
           name: 'photo',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any as any,
           required: true,
         },
         {
@@ -262,7 +262,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
         {
           name: 'author',
           type: 'relationship',
-          relationTo: 'users',
+          relationTo: 'users' as any as any,
           required: true,
           admin: {
             description: 'Comment author',
@@ -345,7 +345,7 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any as any,
       required: true,
       admin: {
         position: 'sidebar',
@@ -355,8 +355,8 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
       hooks: {
         beforeChange: [
           ({ req, value }: any) => {
-            if (!value && req.user && req.user.role !== 'admin') {
-              return req.user.tenant?.id;
+            if (!value && req.user && (req.user as any)?.role !== 'admin') {
+              return (req.user as any)?.tenant?.id;
             }
             return value;
           },
@@ -368,8 +368,8 @@ export const MaintenanceRequests: CollectionConfig = withDefaultHooks({
     beforeChange: [
       ({ data, operation, req }: any) => {
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
 
         // Auto-set requested by

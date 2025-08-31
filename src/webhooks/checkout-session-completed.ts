@@ -35,7 +35,7 @@ async function handleOneTimePayment(payload: Payload, session: any) {
   const orderId = session.metadata?.orderId;
   if (orderId) {
     await payload.update({
-      collection: 'orders',
+      collection: 'orders' as any as any,
       id: orderId,
       data: {
         status: 'paid',
@@ -54,13 +54,13 @@ async function handleSubscriptionPayment(payload: Payload, session: any) {
   // Update customer with subscription info
   if (customerId) {
     const customers = await payload.find({
-      collection: 'customers',
+      collection: 'customers' as any as any,
       where: { stripeCustomerId: { equals: customerId } },
     });
 
     if (customers.docs.length > 0) {
       await payload.update({
-        collection: 'customers',
+        collection: 'customers' as any as any,
         id: customers.docs[0].id,
         data: {
           stripeSubscriptionId: subscriptionId,

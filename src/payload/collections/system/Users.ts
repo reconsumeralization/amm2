@@ -17,7 +17,7 @@ export const Users: CollectionConfig = {
     { name: 'name', type: 'text' },
     { name: 'role', type: 'select', options: [{ label: 'Admin', value: 'admin' }, { label: 'Customer', value: 'customer' }, { label: 'Staff', value: 'staff' }], defaultValue: 'customer', required: true },
     { name: 'googleAccessToken', type: 'text', admin: { hidden: true } },
-    { name: 'tenant', type: 'relationship', relationTo: 'tenants' },
+    { name: 'tenant', type: 'relationship', relationTo: 'tenants' as any as any },
     {
       name: 'bio',
       type: 'textarea',
@@ -32,7 +32,7 @@ export const Users: CollectionConfig = {
     {
       name: 'profilePhoto',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: { description: 'Profile photo for barber profile.' },
     },
     {

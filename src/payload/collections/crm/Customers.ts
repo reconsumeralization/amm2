@@ -25,8 +25,8 @@ export const Customers: CollectionConfig = {
     create: ({ req }) => !!req.user, // Only authenticated users
     read: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
-      if (req.user.role === 'barber') {
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
+      if ((req.user as any)?.role === 'barber') {
         // Barbers can only access data within their tenant
         return true;
       } // Barbers need to view customer info
@@ -34,12 +34,12 @@ export const Customers: CollectionConfig = {
     },
     update: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { createdBy: { equals: req.user.id } }
     },
     delete: ({ req }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin' || req.user.role === 'manager') return true
+      if ((req.user as any)?.role === 'admin' || (req.user as any)?.role === 'manager') return true
       return { createdBy: { equals: req.user.id } }
     },
   },
@@ -59,8 +59,8 @@ export const Customers: CollectionConfig = {
         }
 
         // Auto-set tenant for non-admin users
-        if (!data.tenant && req.user && req.user.role !== 'admin') {
-          data.tenant = req.user.tenant?.id;
+        if (!data.tenant && req.user && (req.user as any)?.role !== 'admin') {
+          data.tenant = (req.user as any)?.tenant?.id;
         }
       }
     ],
@@ -195,7 +195,7 @@ export const Customers: CollectionConfig = {
     {
       name: 'avatar',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'media' as any as any,
       admin: {
         description: 'Customer profile picture',
       },
@@ -437,7 +437,7 @@ export const Customers: CollectionConfig = {
         {
           name: 'preferredStylist',
           type: 'relationship',
-          relationTo: 'stylists',
+          relationTo: 'stylists' as any as any,
           admin: {
             description: 'Preferred stylist for appointments',
           },
@@ -681,7 +681,7 @@ export const Customers: CollectionConfig = {
     {
       name: 'nextAppointment',
       type: 'relationship',
-      relationTo: 'appointments',
+      relationTo: 'appointments' as any as any,
       admin: {
         description: 'Next scheduled appointment',
         readOnly: true,
@@ -706,7 +706,7 @@ export const Customers: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'users' as any as any,
       admin: {
         description: 'User who created this customer record',
         readOnly: true,

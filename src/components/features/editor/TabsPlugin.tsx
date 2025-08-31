@@ -1,7 +1,7 @@
 'use client';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { INSERT_COMMAND } from '@lexical/helpers/LexicalCommands';
+import { INSERT_TABS_COMMAND } from 'lexical';
 import { $createTabsNode, TabsNode } from '../../../nodes/TabsNode';
 
 export default function TabsPlugin() {
