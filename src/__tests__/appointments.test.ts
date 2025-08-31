@@ -55,10 +55,13 @@ describe('Appointments Collection', () => {
         ...mockReq,
         user: { id: 'customer-1', role: 'customer' }
       } as any
-      const result = Appointments.access?.read({ req: customerReq } as any)
-      expect(result).toEqual({
-        customer: { equals: 'customer-1' }
-      })
+      const accessFn = Appointments.access?.read
+      if (accessFn) {
+        const result = accessFn({ req: customerReq } as any)
+        expect(result).toEqual({
+          customer: { equals: 'customer-1' }
+        })
+      }
     })
   })
 

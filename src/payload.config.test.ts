@@ -31,14 +31,14 @@ const Users = {
     },
     {
       name: 'role',
-      type: 'select',
+      type: 'select' as const,
       required: true,
       defaultValue: 'staff',
       options: [
         { label: 'Admin', value: 'admin' },
         { label: 'Manager', value: 'manager' },
         { label: 'Staff', value: 'staff' },
-      ],
+      ] as const,
     },
   ],
   timestamps: true,

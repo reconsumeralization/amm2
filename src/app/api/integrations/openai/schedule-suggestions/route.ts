@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, service, preferences } = await req.json(); // userId will come from req.user

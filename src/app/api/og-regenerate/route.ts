@@ -15,10 +15,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Get the document
-    const doc = await payload.findByID({
+    const result = await payload.find({
       collection,
-      id,
+      where: { id: { equals: id } },
+      limit: 1,
     });
+    const doc = result.docs[0];
 
     if (!doc) {
       return NextResponse.json(
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     // Regenerate OG image using the universal hook
     const updatedDoc = await universalOGHook({
       data: { ...doc, regenerateOGImage: true },
-      collection: { slug: collection },
+      collection: { slug: collection, config: {} } as any,
       req: {} as any,
       operation: 'update',
     });
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
     // Update the document with the new OG image
     const result = await payload.update({
       collection,
-      id,
+      where: { id: { equals: id } },
       data: {
         ogImage: updatedDoc.ogImage,
       },
@@ -80,7 +82,7 @@ export async function GET(req: NextRequest) {
         excerpt: excerpt || '',
         regenerateOGImage: true,
       },
-      collection: { slug: collection },
+      collection: { slug: collection, config: {} } as any,
       req: {} as any,
       operation: 'create',
     });

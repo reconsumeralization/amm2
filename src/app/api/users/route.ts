@@ -3,7 +3,7 @@ import { getPayloadClient } from '../../../payload'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { sendUserNotification, sendAdminNotification } from '@/lib/notificationService'
-import { validateRequestBody, validaterchParams, createValidationErrorResponse, createServerErrorResponse } from '@/lib/validation-utils'
+import { validateRequestBody, validateSearchParams, createValidationErrorResponse, createServerErrorResponse } from '@/lib/validation-utils'
 import { createUserSchema } from '@/lib/validations'
 
 interface UserFilters {

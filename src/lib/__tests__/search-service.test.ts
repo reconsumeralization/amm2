@@ -58,7 +58,7 @@ describe('DocumentationSearchService integration tests', () => {
     // The first suggestion should be a typo correction for "aip".
     // Ensure at least one correction fohe typo is present.
     // Verify that at least one suggestion matches the expected typo correction.
-    const found = suggestions.some(s => s.text === query.replace(/aip|pai/g, 'api') && s.type === 'correction' && s.score === 0.8);
+    const found = suggestions.some((s: any) => s.text === query.replace(/aip|pai/g, 'api') && s.type === 'correction' && s.score === 0.8);
     expect(found).toBe(true);
   });
 
@@ -83,14 +83,14 @@ describe('DocumentationSearchService integration tests', () => {
     const relatedTerms = ['endpoint', 'rest', 'graphql', 'authentication'];
     relatedTerms.forEach(term => {
     // Verify each related term suggestion exists.
-    const found = suggestions.some(s => s.text === term && s.type === 'related' && s.score === 0.6);
+    const found = suggestions.some((s: any) => s.text === term && s.type === 'related' && s.score === 0.6);
     expect(found).toBe(true);
     });
     // Should contain at least one query completion
     // Verify at least one query completion suggestion.
     // Verify that a query completion suggestion exists.
     // Accept either 'completion' or 'suggestion' type for query completions
-    const found = suggestions.some(s => s.text === 'api authentication' && (s.type === 'completion' || s.type === 'suggestion') && s.score === 0.7);
+    const found = suggestions.some((s: any) => s.text === 'api authentication' && (s.type === 'completion' || s.type === 'suggestion') && s.score === 0.7);
     // Note: The type may be 'completion' depending on implementation; adjust accordingly.
     expect(found).toBe(true);
   });

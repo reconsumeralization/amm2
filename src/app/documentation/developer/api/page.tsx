@@ -244,7 +244,7 @@ export default async function APIDocumentationPage() {
         authentication={apiConfig.authentication}
         interactiveTesting={apiConfig.interactiveTesting}
         sdkGeneration={apiConfig.sdkGeneration}
-        onEndpointTest={(endpoint, result) => {
+        onEndpointTest={(endpoint: any, result: any) => {
           // eslint-disable-next-line no-console
           console.log('Endpoint test result:', { endpoint: endpoint.operationId, result })
         }}

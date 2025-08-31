@@ -25,15 +25,25 @@ export async function POST(req: Request) {
   try {
     let googleEventId;
     if (action === 'create') {
-      const response = await calendar.events.insert({ calendarId: 'primary', resource: event });
+      const response = await calendar.events.insert({
+        calendarId: 'primary',
+        requestBody: event
+      });
       googleEventId = response.data.id;
     } else if (action === 'update') {
       const appointment = await payload.findByID({ collection: 'appointments', id: appointmentId });
-      await calendar.events.update({ calendarId: 'primary', eventId: appointment.googleEventId, resource: event });
+      await calendar.events.update({
+        calendarId: 'primary',
+        eventId: appointment.googleEventId,
+        requestBody: event
+      });
       googleEventId = appointment.googleEventId;
     } else if (action === 'delete') {
       const appointment = await payload.findByID({ collection: 'appointments', id: appointmentId });
-      await calendar.events.delete({ calendarId: 'primary', eventId: appointment.googleEventId });
+      await calendar.events.delete({
+        calendarId: 'primary',
+        eventId: appointment.googleEventId
+      });
       return NextResponse.json({ success: true });
     }
 

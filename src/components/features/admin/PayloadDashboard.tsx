@@ -19,8 +19,8 @@ export function PayloadDashboard() {
   const {
     isLoading,
     error,
-    globalrch,
-    getSalonAnalytics,
+    globalSearch: globalrch,
+    getBarberShopAnalytics,
     syncAppointments,
     getBusinessDocumentation,
     clearError
