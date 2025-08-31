@@ -43,7 +43,7 @@ export function PayloadDashboard() {
 
   const loadAnalytics = async () => {
     try {
-      const result = await getSalonAnalytics()
+      const result = await getBarberShopAnalytics()
       setAnalytics(result)
     } catch (error) {
       console.error('Error loading analytics:', error)

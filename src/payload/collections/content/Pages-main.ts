@@ -23,8 +23,10 @@ export const Pages: CollectionConfig = {
       unique: true,
       index: true,
       admin: { description: 'Path without leading slash (e.g., "about", "services/haircut").' },
-      validate: (value) => {
-        if (!value || value.length < 1) return 'Slug is required';
+      validate: (value: string | string[] | null | undefined) => {
+        if (!value) return 'Slug is required';
+        if (Array.isArray(value)) return 'Slug cannot be an array';
+        if (value.length < 1) return 'Slug is required';
         if (!/^[a-z0-9-/]+$/.test(value)) return 'Use lowercase letters, numbers, hyphens, and slashes';
         if (value.startsWith('/')) return 'Do not include leading slash';
         return true;

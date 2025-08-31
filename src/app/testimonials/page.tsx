@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Star, thumbsUp as ThumbsUp, Heart } from '@/lib/icon-mapping';
+import { Star, ThumbsUp, Heart } from '@/lib/icon-mapping';
 
 // Quote doesn't exist in our mapping, let's create a simple one
 const Quote = ({ className }: { className?: string }) => <span className={className}>"</span>;

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '../../../../payload.config';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 
-const openai = new OpenAI({
+const openai = new (OpenAI as any)({
   apiKey: process.env.OPENAI_API_KEY,
 });
 

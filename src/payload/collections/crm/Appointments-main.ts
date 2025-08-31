@@ -8,7 +8,7 @@ export const Appointments: CollectionConfig = {
     group: 'Appointments',
     pagination: {
       defaultLimit: 25,
-      maxLimit: 100,
+      limits: [10, 25, 50, 100],
     },
   },
   access: {
@@ -30,8 +30,8 @@ export const Appointments: CollectionConfig = {
     },
   },
   indexes: [
-    { name: 'appointments_dateTime_status', fields: ['dateTime', 'status'] },
-    { name: 'appointments_stylist_dateTime', fields: ['stylist', 'dateTime'] },
+    { fields: ['dateTime', 'status'] },
+    { fields: ['stylist', 'dateTime'] },
   ],
   fields: [
     { name: 'appointmentTitle', type: 'text', required: true, defaultValue: 'Appointment' },

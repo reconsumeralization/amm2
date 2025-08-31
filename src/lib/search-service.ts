@@ -12,6 +12,9 @@ export interface SearchResult {
   tags: string[];
   relevanceScore: number;
   highlights: SearchHighlight[];
+  lastModified?: Date;
+  popularity?: number;
+  isNew?: boolean;
 }
 
 export interface SearchHighlight {
@@ -26,6 +29,7 @@ export interface SearchQuery {
     types?: string[];
     tags?: string[];
   };
+  sortBy?: string;
   pagination?: {
     page: number;
     limit: number;

@@ -159,12 +159,12 @@ describe('Appointments Collection', () => {
 
   describe('Validation', () => {
     it('should have field validation structure', () => {
-      const namedFields = Appointments.fields.filter(f => 'name' in f)
+      const namedFields = Appointments.fields.filter((f: any) => 'name' in f)
       expect(namedFields.length).toBeGreaterThan(0)
     })
 
     it('should have proper field configuration', () => {
-      const hasRequiredFields = Appointments.fields.some(f => 'name' in f && ['title', 'user', 'date', 'service', 'status'].includes(f.name as string))
+      const hasRequiredFields = Appointments.fields.some((f: any) => 'name' in f && ['title', 'user', 'date', 'service', 'status'].includes(f.name as string))
       expect(hasRequiredFields).toBe(true)
     })
   })

@@ -1,7 +1,8 @@
 // src/app/api/og-regenerate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { universalOGHook } from '../../../payload/hooks/universalOGHook';
-import payload from '../../../payload';
+import { getPayload } from 'payload';
+import config from '../../../payload.config';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,12 +16,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Get the document
-    const result = await payload.find({
+    const payloadClient = await getPayload({ config });
+    const findResult = await payloadClient.find({
       collection,
       where: { id: { equals: id } },
       limit: 1,
     });
-    const doc = result.docs[0];
+    const doc = findResult.docs[0];
 
     if (!doc) {
       return NextResponse.json(
@@ -33,12 +35,15 @@ export async function POST(req: NextRequest) {
     const updatedDoc = await universalOGHook({
       data: { ...doc, regenerateOGImage: true },
       collection: { slug: collection, config: {} } as any,
+      context: {} as any,
+      doc,
       req: {} as any,
       operation: 'update',
+      previousDoc: doc,
     });
 
     // Update the document with the new OG image
-    const result = await payload.update({
+    const updateResult = await payloadClient.update({
       collection,
       where: { id: { equals: id } },
       data: {
@@ -76,6 +81,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Generate a preview OG image
+    const payloadClient = await getPayload({ config });
     const previewDoc = await universalOGHook({
       data: {
         title,
@@ -83,8 +89,11 @@ export async function GET(req: NextRequest) {
         regenerateOGImage: true,
       },
       collection: { slug: collection, config: {} } as any,
+      context: {} as any,
+      doc: null,
       req: {} as any,
       operation: 'create',
+      previousDoc: null,
     });
 
     return NextResponse.json({

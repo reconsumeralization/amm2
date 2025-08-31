@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import ContentRenderer from '@/components/ContentRenderer'
@@ -8,7 +7,7 @@ type Params = {
 }
 
 async function getPageBySlug(slugPath: string) {
-  const payload = await getPayload({ config: await import('../../payload.config') })
+  const payload = await getPayload({ config: (await import('../../payload.config')).default })
   const pages = await payload.find({
     collection: 'pages',
     where: {
@@ -61,7 +60,12 @@ export default async function CatchAllPage({ params }: { params: Params }) {
   const page = await getPageBySlug(slugPath)
 
   if (!page) {
-    notFound()
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-semibold mb-6">Page Not Found</h1>
+        <p>The requested page does not exist.</p>
+      </div>
+    )
   }
 
   // Resolve related content

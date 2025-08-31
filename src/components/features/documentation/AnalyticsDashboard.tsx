@@ -10,7 +10,7 @@ import {
   MessageSquare,
   AlertTriangle,
   Star,
-  thumbsUp as ThumbsUp
+  ThumbsUp
 } from '@/lib/icon-mapping';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

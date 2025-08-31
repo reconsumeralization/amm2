@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, service, preferences } = await req.json(); // userId will come from req.user
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       where: { tenant: { equals: tenantId }, available: { equals: true } },
     });
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = new (OpenAI as any)({ apiKey: process.env.OPENAI_API_KEY });
     const prompt = `
       Suggest 3 optimal appointment times for a ${service || 'any'} service:
       - Existing appointments: ${JSON.stringify(appointments.docs.map((a: any) => a.date))}

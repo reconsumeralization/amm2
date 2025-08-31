@@ -23,8 +23,9 @@ import { Gallery } from './content/Gallery';
 import { Media } from './content/Media';
 import { MediaFolders } from './content/MediaFolders';
 import { Navigation } from './content/Navigation';
-import { Pages } from './content/Pages';
-import { Redirects } from './content/Redirects';
+import { Pages } from './content/Pages-main'; // Updated: using migrated collection
+import { Redirects } from './content/Redirects-main'; // Updated: using migrated collection
+import { NavigationMenus } from './content/NavigationMenus'; // Added: migrated from main collections
 import { SEOSettings } from './content/SEOSettings';
 import { Tags } from './content/Tags';
 
@@ -33,12 +34,13 @@ import { Cancellations } from './crm/Cancellations';
 import { Contacts } from './crm/Contacts';
 import { CustomerNotes } from './crm/CustomerNotes';
 import { CustomerTags } from './crm/CustomerTags';
-import { Customers } from './crm/Customers';
+import { Customers } from './crm/Customers-main'; // Updated: using migrated collection
 import { EmailCampaigns } from './crm/EmailCampaigns';
 import { LoyaltyProgram } from './crm/LoyaltyProgram';
 import { Reviews } from './crm/Reviews';
 import { Subscriptions } from './crm/Subscriptions';
 import { Testimonials } from './crm/Testimonials';
+import { Appointments } from './crm/Appointments-main'; // Added: migrated from main collections
 
 // Staff Collections
 import { ClockRecords } from './staff/ClockRecords';
@@ -49,7 +51,7 @@ import { Stylists } from './staff/Stylists';
 import { TimeOffRequests } from './staff/TimeOffRequests';
 
 // System Collections
-import { Appointments } from './system/Appointments';
+// Appointments moved to CRM domain (Appointments-main)
 import { AuditLogs } from './system/AuditLogs';
 import { BusinessDocumentation } from './system/BusinessDocumentation';
 import { ChatConversations } from './system/ChatConversations';
@@ -87,7 +89,7 @@ import { WebhookLogs } from './system/WebhookLogs';
 // Visual Builder Collections
 import { Animations } from './builder/Animations';
 import { BlockRevisions } from './builder/BlockRevisions';
-import { Blocks } from './builder/Blocks';
+import { Blocks } from './builder/Blocks-main'; // Updated: using migrated collection
 import { ConditionalRules } from './builder/ConditionalRules';
 import { Drafts } from './builder/Drafts';
 import { Forms } from './builder/Forms';
@@ -147,8 +149,9 @@ const rawCollections = [
   Media,
   MediaFolders,
   Navigation,
-  Pages,
-  Redirects,
+  Pages, // Migrated from main collections
+  Redirects, // Migrated from main collections
+  NavigationMenus, // Migrated from main collections
   SEOSettings,
   Tags,
 
@@ -157,12 +160,13 @@ const rawCollections = [
   Contacts,
   CustomerNotes,
   CustomerTags,
-  Customers,
+  Customers, // Migrated from main collections
   EmailCampaigns,
   LoyaltyProgram,
   Reviews,
   Subscriptions,
   Testimonials,
+  Appointments, // Migrated from main collections
 
   // Staff Collections
   ClockRecords,
@@ -173,7 +177,7 @@ const rawCollections = [
   TimeOffRequests,
 
   // System Collections
-  Appointments,
+  // Appointments moved to CRM domain
   AuditLogs,
   BusinessDocumentation,
   ChatConversations,
@@ -211,7 +215,7 @@ const rawCollections = [
   // Visual Builder Collections
   Animations,
   BlockRevisions,
-  Blocks,
+  Blocks, // Migrated from main collections
   ConditionalRules,
   Drafts,
   Forms,

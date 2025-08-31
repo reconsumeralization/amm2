@@ -20,8 +20,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
-// Import collections
-import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks } from '../collections';
+// Import collections from organized structure
+import collections from '../payload/collections';
 // import { productAnalyticsEndpoint, bulkProductOperationsEndpoint } from '../endpoints'; // TODO: Fix endpoint types
 
 const filename = fileURLToPath(import.meta.url);
@@ -29,50 +29,21 @@ const dirname = path.dirname(filename);
 
 const config = buildConfig({
   admin: {
-    user: 'users',
+    user: 'customers',
     components: {
       views: { Dashboard: '/components/admin/Dashboard' } as any,
       afterNavLinks: ['/components/admin/AnalyticsWidget', '/components/admin/ScheduleWidget', '/components/admin/ClockWidget', '/components/admin/SettingsWidget'] as any,
     } as any,
   },
   editor: lexicalEditor(),
-  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks],
+  collections: collections,
   endpoints: [], // TODO: Fix endpoint types
   db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || '' } }),
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
   sharp: sharp as any,
   plugins: [
-    multiTenantPlugin({
-      collections: ['appointments', 'users', 'staff-schedules', 'clock-records', 'settings', 'testimonials', 'products', 'orders'] as any,
-    }),
-    payloadAiPlugin({
-      collections: { appointments: true, 'business-documentation': true, 'staff-schedules': true, 'clock-records': true, settings: true, products: true, orders: true },
-      debugging: false,
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    } as any),
-    formBuilderPlugin({
-      fields: { text: true, date: true, payment: true },
-      formSubmissionOverrides: {
-        access: { create: () => true, read: ({ req }) => !!req.user },
-      },
-    }),
-    stripePlugin({
-      stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
-      webhooks: { endpoint: '/api/integrations/stripe/webhook' } as any,
-    }),
-    searchPlugin({
-      collections: ['appointments', 'business-documentation', 'staff-schedules', 'clock-records', 'products', 'events', 'settings', 'orders'],
-      defaultPriorities: {
-        appointments: 10,
-        'business-documentation': 5,
-        'staff-schedules': 8,
-        'clock-records': 6,
-        products: 7,
-        events: 9,
-        settings: 2,
-        orders: 8,
-      },
-    }),
+    // Plugins will be configured in the main payload config
+    // Keeping minimal configuration for type generation
   ],
   typescript: {
     outputFile: path.resolve(dirname, '../payload-types.ts'),

@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const settings = await payload.find({ collection: 'settings', limit: 1 });
     const config = settings.docs[0] || {};
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = new (OpenAI as any)({ apiKey: process.env.OPENAI_API_KEY });
     let generatedText = '';
     try {
       const response = await openai.chat.completions.create({

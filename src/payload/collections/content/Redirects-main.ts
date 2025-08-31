@@ -21,8 +21,10 @@ export const Redirects: CollectionConfig = {
       required: true,
       unique: true,
       admin: { description: 'Path starting with / (e.g., /old-path)' },
-      validate: (value) => {
-        if (!value || !value.startsWith('/')) return 'Must start with /';
+      validate: (value: string | string[] | null | undefined) => {
+        if (!value) return 'Path is required';
+        if (Array.isArray(value)) return 'Path cannot be an array';
+        if (!value.startsWith('/')) return 'Must start with /';
         return true;
       },
     },
