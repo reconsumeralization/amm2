@@ -1,6 +1,6 @@
 // src/payload/collections/index.ts
 import { withDefaultHooks, withSlugField, withSEOFields } from '../utils';
-import { generateOGImageHook } from '../hooks/generateOGImageHook';
+import { withLexicalEditor } from '../utils/withLexicalEditor';
 
 // Import all collections by domain
 
@@ -110,26 +110,7 @@ import { Templates } from './builder/Templates';
 import { Themes } from './builder/Themes';
 import { BuilderTranslations as Translations } from './builder/Translations';
 
-// Define collections that should have OG image generation
-const collectionsWithOGImages = [
-  'pages',
-  'blog-posts',
-  'products',
-  'services',
-  'events',
-  'testimonials',
-  'email-campaigns',
-  'push-notifications',
-  'shipping-methods',
-  'payment-methods',
-  'maintenance-requests',
-  // Visual Builder Collections
-  'pages', // Builder pages
-  'sections',
-  'blocks',
-  'templates',
-  'reusable-components'
-];
+// Note: OG generation is handled per-collection where applicable
 
 // Raw collection definitions organized by domain
 const rawCollections = [
@@ -243,59 +224,11 @@ const rawCollections = [
 // Apply global utilities to all collections
 const collections = rawCollections.map((collection) => {
   let enhancedCollection = withDefaultHooks(collection);
+  enhancedCollection = withLexicalEditor(enhancedCollection);
   enhancedCollection = withSlugField(enhancedCollection);
   enhancedCollection = withSEOFields(enhancedCollection);
 
-  // Add OG image field to all collections with title
-  const hasTitle = enhancedCollection.fields?.some((f: any) => f.name === 'title');
-  if (hasTitle && !enhancedCollection.fields?.some((f: any) => f.name === 'ogImage')) {
-    enhancedCollection.fields = [
-      ...(enhancedCollection.fields || []),
-      {
-        name: 'ogImage',
-        type: 'text',
-        admin: {
-          readOnly: true,
-          description: 'Auto-generated Open Graph image URL',
-          position: 'sidebar',
-        },
-      },
-      {
-        name: 'categoryColor',
-        type: 'text',
-        admin: {
-          description: 'Hex color for OG image background (optional)',
-          placeholder: '#1a1a1a',
-        },
-      },
-      {
-        name: 'logoUrl',
-        type: 'text',
-        admin: {
-          description: 'Custom logo URL for OG image (optional)',
-          placeholder: '/logo.png',
-        },
-      },
-    ];
-  }
-
-  // Add OG image generation hook to collections with title
-  if (hasTitle) {
-    const userHooks = enhancedCollection.hooks || {};
-    enhancedCollection.hooks = {
-      ...userHooks,
-      afterChange: [
-        ...(userHooks.afterChange || []),
-        generateOGImageHook({
-          titleField: 'title',
-          excerptField: 'excerpt',
-          categoryField: 'category',
-          categoryColorField: 'categoryColor',
-          logoUrlField: 'logoUrl',
-        }),
-      ],
-    };
-  }
+  // Remove global OG field/hook injection to avoid duplicates across collections.
 
   return enhancedCollection;
 });
