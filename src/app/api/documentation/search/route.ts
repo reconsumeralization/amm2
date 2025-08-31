@@ -18,9 +18,9 @@ const searchConfig: SearchConfig = {
   rankingConfig: {
     roleBasedBoost: {
       guest: 1,
-      salon_customer: 1.1,
-      salon_employee: 1.2,
-      salon_owner: 1.3,
+      BarberShop_customer: 1.1,
+      BarberShop_employee: 1.2,
+      BarberShop_owner: 1.3,
       developer: 1.4,
       system_admin: 1.5
     },
@@ -88,9 +88,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(searchResponse)
   } catch (error) {
-    console.error('rch API error:', error)
+    console.error('search API error:', error)
     return NextResponse.json(
-      { error: 'rch service unavailable' },
+      { error: 'search service unavailable' },
       { status: 500 }
     )
   }
@@ -118,9 +118,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(searchResponse)
   } catch (error) {
-    console.error('rch API error:', error)
+    console.error('search API error:', error)
     return NextResponse.json(
-      { error: 'rch service unavailable' },
+      { error: 'search service unavailable' },
       { status: 500 }
     )
   }

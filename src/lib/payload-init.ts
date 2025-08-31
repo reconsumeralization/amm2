@@ -5,7 +5,7 @@ export async function initializePayload() {
   try {
     logger.info('Initializing Payload CMS...')
 
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) })
 
     // Test database connection
     await payload.db.connect()
@@ -74,7 +74,7 @@ export async function initializePayload() {
 // Health check function for Payload
 export async function checkPayloadHealth() {
   try {
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) })
     await payload.db.connect()
     return { status: 'healthy', timestamp: new Date().toISOString() }
   } catch (error) {
@@ -89,7 +89,7 @@ export async function checkPayloadHealth() {
 // Function to seed initial data
 export async function seedInitialData() {
   try {
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) })
 
     logger.info('🌱 Seeding initial data...')
 

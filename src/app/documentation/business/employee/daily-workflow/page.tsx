@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 import { UserRole, GuideContent } from '@/types/documentation'
 
 export const metadata: Metadata = {
   title: 'Daily Workflow Guide - Employee Operations',
-  description: 'Complete daily workflow guide for salon employees from opening to closing',
+  description: 'Complete daily workflow guide for BarberShop employees from opening to closing',
 }
 
 const dailyWorkflowGuide: GuideContent = {
   metadata: {
     id: 'employee-daily-workflow',
     title: 'Daily Workflow Guide',
-    description: 'Step-by-step guide for daily salon operations and employee responsibilities',
+    description: 'Step-by-step guide for daily BarberShop operations and employee responsibilities',
     author: 'Operations Team',
     lastUpdated: new Date('2024-01-15'),
     version: { major: 1, minor: 0, patch: 0 },
-    targetAudience: ['salon_employee' as UserRole],
+    targetAudience: ['BarberShop_employee' as UserRole],
     difficulty: 'beginner' as const,
     estimatedTime: 25,
     tags: ['daily-operations', 'workflow', 'procedures'],
@@ -24,7 +24,7 @@ const dailyWorkflowGuide: GuideContent = {
     deprecated: false,
   },
   content: {
-    introduction: `This guide provides a comprehensive overview of daily operations for salon employees. Following these procedures ensures consistent service quality, efficient operations, and excellent customer experiences throughout each workday.`,
+    introduction: `This guide provides a comprehensive overview of daily operations for BarberShop employees. Following these procedures ensures consistent service quality, efficient operations, and excellent customer experiences throughout each workday.`,
     prerequisites: [
       {
         id: 'employee-account',
@@ -35,13 +35,13 @@ const dailyWorkflowGuide: GuideContent = {
       {
         id: 'system-training',
         title: 'Basic System Training',
-        description: 'Completion of basic salon management system training',
+        description: 'Completion of basic BarberShop management system training',
         required: true,
       },
       {
         id: 'safety-training',
         title: 'Safety and Sanitation Training',
-        description: 'Current certification in salon safety and sanitation procedures',
+        description: 'Current certification in BarberShop safety and sanitation procedures',
         required: true,
       }
     ],
@@ -49,11 +49,11 @@ const dailyWorkflowGuide: GuideContent = {
       {
         id: 'opening-procedures',
         title: 'Opening Procedures',
-        description: 'Essential tasks to complete when opening the salon',
+        description: 'Essential tasks to complete when opening the BarberShop',
         content: `**Pre-Opening Checklist (30 minutes before first appointment)**
 
 **Facility Preparation**
-1. **Unlock and Disarm**: Safely unlock the salon and disarm security system
+1. **Unlock and Disarm**: Safely unlock the BarberShop and disarm security system
 2. **Lighting and Climate**: Turn on all lights and adjust temperature to comfortable levels
 3. **Music and Ambiance**: Start background music at appropriate volume
 4. **Safety Check**: Quick visual inspection for any overnight issues or hazards
@@ -109,7 +109,7 @@ const openingChecklist = {
             type: 'component-playground' as const,
             configuration: {
               component: 'OpeningChecklist',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -157,7 +157,7 @@ const openingChecklist = {
             type: 'component-playground' as const,
             configuration: {
               component: 'CheckInSimulator',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]
@@ -182,7 +182,7 @@ const openingChecklist = {
 
 **Scheduling Changes**
 1. **Cancellations**: Handle cancellations professionally and offer rescheduling
-2. **No-shows**: Follow salon policy for no-show customers and fees
+2. **No-shows**: Follow BarberShop policy for no-show customers and fees
 3. **Rescheduling**: Accommodate reasonable rescheduling requests when possible
 4. **Overbooking**: Manage overbooking situations with grace and solutions
 
@@ -235,7 +235,7 @@ const openingChecklist = {
       {
         id: 'closing-procedures',
         title: 'Closing Procedures',
-        description: 'End-of-day tasks to ensure salon is ready for the next day',
+        description: 'End-of-day tasks to ensure BarberShop is ready for the next day',
         content: `**End-of-Day Checklist**
 
 **Workstation Cleanup**
@@ -276,7 +276,7 @@ const openingChecklist = {
             type: 'component-playground' as const,
             configuration: {
               component: 'ClosingChecklist',
-              props: { userRole: 'salon_employee' }
+              props: { userRole: 'BarberShop_employee' }
             }
           }
         ]

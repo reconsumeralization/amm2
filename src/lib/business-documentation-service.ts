@@ -69,7 +69,7 @@ export class BusinessDocumentationService {
             id: this.generateId(),
             step: 'draft' as WorkflowStep,
             action: 'created' as const,
-            actor: { id: authorId, name: '', role: 'salon_owner' as UserRole },
+            actor: { id: authorId, name: '', role: 'BarberShop_owner' as UserRole },
             timestamp: new Date(),
             comment: 'Document created'
           }]
@@ -416,7 +416,7 @@ export class BusinessDocumentationService {
     if (comment) {
       workflow.comments.push({
         id: this.generateId(),
-        author: { id: userId, name: '', role: 'salon_owner' },
+        author: { id: userId, name: '', role: 'BarberShop_owner' },
         content: comment,
         type: action === 'approve' ? 'approval' : action === 'reject' ? 'rejection' : 'comment',
         createdAt: new Date()
@@ -509,11 +509,11 @@ export class BusinessDocumentationService {
 
     // Apply role-based filtering
     const roleHierarchy = {
-      'salon_customer': ['guest', 'salon_customer'],
-      'salon_employee': ['guest', 'salon_customer', 'salon_employee'],
-      'salon_owner': ['guest', 'salon_customer', 'salon_employee', 'salon_owner'],
-      'developer': ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer'],
-      'system_admin': ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer', 'system_admin']
+      'BarberShop_customer': ['guest', 'BarberShop_customer'],
+      'BarberShop_employee': ['guest', 'BarberShop_customer', 'BarberShop_employee'],
+      'BarberShop_owner': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner'],
+      'developer': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer'],
+      'system_admin': ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer', 'system_admin']
     }
 
     const accessibleRoles = roleHierarchy[userRole as keyof typeof roleHierarchy] || [userRole]

@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import { BusinessDocumentation } from '@/types/business-documentation'
 import { UserRole } from '@/types/documentation'
 
-export interface PayloadrchResult {
+export interface PayloadSearchResult {
   results: any[]
   total: number
   collections: Record<string, number>
@@ -58,13 +58,13 @@ export function usePayloadIntegration() {
   }, [session])
 
   /**
-   * Perform global rch across Payload collections
+   * Perform global search across Payload collections
    */
-  const globalrch = useCallback(async (
+  const globalSearch = useCallback(async (
     query: string,
     collections: string[] = ['services', 'customers', 'stylists', 'documentation'],
     limit: number = 20
-  ): Promise<PayloadrchResult | null> => {
+  ): Promise<PayloadSearchResult | null> => {
     if (!session || !query.trim()) return null
 
     setIsLoading(true)
@@ -77,16 +77,16 @@ export function usePayloadIntegration() {
         limit: limit.toString()
       })
 
-      const response = await fetch(`/api/payload-integration/rch?${params}`)
+      const response = await fetch(`/api/payload-integration/search?${params}`)
 
       if (!response.ok) {
-        throw new Error('rch failed')
+        throw new Error('search failed')
       }
 
       const result = await response.json()
       return result
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'rch failed'
+      const errorMessage = err instanceof Error ? err.message : 'search failed'
       setError(errorMessage)
       return null
     } finally {
@@ -95,9 +95,9 @@ export function usePayloadIntegration() {
   }, [session])
 
   /**
-   * Get salon analytics from Payload
+   * Get BarberShop analytics from Payload
    */
-  const getSalonAnalytics = useCallback(async (
+  const getBarberShopAnalytics = useCallback(async (
     dateRange?: { start: Date; end: Date }
   ): Promise<PayloadAnalytics | null> => {
     if (!session) return null
@@ -168,7 +168,7 @@ export function usePayloadIntegration() {
       type?: string[]
       category?: string[]
       status?: string[]
-      rch?: string
+      search?: string
       limit?: number
       page?: number
     } = {}
@@ -329,11 +329,11 @@ export function usePayloadIntegration() {
     // User management
     syncUser,
     
-    // rch
-    globalrch,
+    // search
+    globalSearch,
     
     // Analytics
-    getSalonAnalytics,
+    getBarberShopAnalytics,
     
     // Appointments
     syncAppointments,

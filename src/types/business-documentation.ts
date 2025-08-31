@@ -46,7 +46,7 @@ export type BusinessDocumentationType =
   | 'template'
 
 export type BusinessDocumentationCategory =
-  | 'salon-operations'
+  | 'BarberShop-operations'
   | 'customer-service'
   | 'booking-management'
   | 'staff-training'
@@ -190,7 +190,7 @@ export interface DocumentationAnalytics {
   averageTimeOnPage: number
   bounceRate: number
   completionRate: number
-  rchRanking: number
+  searchRanking: number
   popularSections: string[]
   commonExitPoints: string[]
   userFeedback: {
@@ -219,7 +219,7 @@ export interface BusinessDocumentationFilter {
     start: Date
     end: Date
   }
-  rchQuery?: string
+  searchQuery?: string
 }
 
 export interface BusinessDocumentationCreateRequest {
@@ -304,6 +304,6 @@ export interface DocumentationMetrics {
     activeUsers: number
     averageSessionDuration: number
     mostViewedCategories: string[]
-    rchQueries: string[]
+    searchQueries: string[]
   }
 }

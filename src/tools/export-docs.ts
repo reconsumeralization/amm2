@@ -41,7 +41,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 async function exportDocs() {
-  const payload = await getPayloadClient();
+  const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) });
 
   // Fetch all documentation entries (no pagination for simplicity)
   const { docs } = await payload.find({

@@ -1,273 +1,458 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'
 
 export interface Settings {
-  chatbot?: {
-    enabled?: boolean;
-    displayPaths?: Array<{ path: string }>;
-    roles?: string[];
-    aiTriggers?: {
-      pendingAppointments?: boolean;
-      staffAvailability?: boolean;
-      newServices?: boolean;
-    };
-    styles?: {
-      position?: string;
-      backgroundColor?: string;
-      borderRadius?: string;
-      maxWidth?: string;
-    };
-    behavior?: {
-      autoOpen?: boolean;
-      welcomeMessage?: string;
-      typingIndicator?: boolean;
-    };
-  };
-  clock?: {
-    enabled?: boolean;
-    notifications?: {
-      emailAdmins?: boolean;
-      emailTemplate?: string;
-      slackWebhook?: string;
-    };
-    shiftRules?: {
-      minShiftHours?: number;
-      maxShiftHours?: number;
-      breakTime?: number;
-      overtimeThreshold?: number;
-    };
-    geolocation?: {
-      enabled?: boolean;
-      radius?: number;
-      workplaceAddress?: string;
-    };
-  };
-  editor?: {
-    enabledPlugins?: string[];
-    theme?: {
-      heading?: string;
-      link?: string;
-      paragraph?: string;
-      list?: string;
-    };
-    aiFeatures?: {
-      contentGeneration?: boolean;
-      grammarCheck?: boolean;
-      toneAdjustment?: boolean;
-    };
-  };
-  barbershop?: {
-    services?: Array<{
-      name: string;
-      description?: string;
-      price?: number;
-      duration?: number;
-      category?: string;
-    }>;
-    loyalty?: {
-      pointsPerBooking?: number;
-      pointsPerReferral?: number;
-      pointsPerDollar?: number;
-      badgeThreshold?: number;
-      tiers?: Array<{
-        name: string;
-        minPoints: number;
-        multiplier: number;
-        benefits?: string;
-      }>;
-    };
-    simulator?: {
-      enabled?: boolean;
-      maxFileSize?: number;
-      styles?: Array<{
-        style: string;
-        category?: string;
-      }>;
-      aiSettings?: {
-        model?: string;
-        imageSize?: string;
-        quality?: string;
-      };
-    };
-    events?: {
-      enabled?: boolean;
-      categories?: Array<{
-        name: string;
-        description?: string;
-      }>;
-      defaultLoyaltyPoints?: number;
-      maxCapacity?: number;
-    };
-    retail?: {
-      enabled?: boolean;
-      categories?: Array<{
-        name: string;
-        description?: string;
-      }>;
-      aiRecommendations?: boolean;
-      loyaltyPoints?: number;
-    };
-  };
-  notifications?: {
-    email?: {
-      enabled?: boolean;
-      fromEmail?: string;
-      fromName?: string;
-      templates?: {
-        appointmentConfirmation?: string;
-        appointmentReminder?: string;
-        loyaltyPoints?: string;
-      };
-    };
-    sms?: {
-      enabled?: boolean;
-      provider?: string;
-      apiKey?: string;
-    };
-  };
-  analytics?: {
-    enabled?: boolean;
-    tracking?: {
-      pageViews?: boolean;
-      userActions?: boolean;
-      featureUsage?: boolean;
-      performance?: boolean;
-    };
-    retention?: number;
-  };
-}
-
-interface UseSettingsOptions {
-  tenantId?: string;
-  autoRefresh?: boolean;
-  refreshInterval?: number;
-}
-
-export function useSettings(options: UseSettingsOptions = {}) {
-  const { tenantId, autoRefresh = false, refreshInterval = 30000 } = options;
-  const [settings, setSettings] = useState<Settings>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSettings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const url = tenantId 
-        ? `/api/settings?tenantId=${tenantId}`
-        : '/api/settings';
-        
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch settings: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setSettings(data);
-    } catch (err) {
-      console.error('Error fetching settings:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch settings');
-    } finally {
-      setLoading(false);
+  id: string
+  name: string
+  tenant?: string | {
+    id: string
+    name: string
+  }
+  chatbot: {
+    enabled: boolean
+    displayPaths: Array<{ path: string }>
+    greetingMessage?: string
+    offlineMessage?: string
+    businessHours?: {
+      enabled: boolean
+      timezone: string
+      schedule: Array<{
+        day: string
+        startTime: string
+        endTime: string
+        isOpen: boolean
+      }>
     }
-  };
+  }
+  booking: {
+    enabled: boolean
+    requireLogin: boolean
+    advanceBookingDays: number
+    cancellationHours: number
+    reminderHours: number
+    maxAppointmentsPerDay: number
+    bufferTimeMinutes: number
+    workingHours: {
+      startTime: string
+      endTime: string
+    }
+    blockedDates: string[]
+    holidays: Array<{
+      date: string
+      name: string
+      isClosed: boolean
+    }>
+  }
+  notifications: {
+    enabled: boolean
+    emailEnabled: boolean
+    smsEnabled: boolean
+    pushEnabled: boolean
+    smtpSettings?: {
+      host: string
+      port: number
+      secure: boolean
+      user: string
+      pass: string
+    }
+    smsSettings?: {
+      provider: string
+      apiKey: string
+      senderId: string
+    }
+    templates: {
+      appointmentConfirmation?: string
+      appointmentReminder?: string
+      appointmentCancellation?: string
+      paymentConfirmation?: string
+    }
+  }
+  payments: {
+    enabled: boolean
+    currency: string
+    stripePublishableKey?: string
+    stripeSecretKey?: string
+    paypalClientId?: string
+    paypalClientSecret?: string
+    paymentMethods: string[]
+    taxRate: number
+    depositRequired: boolean
+    depositPercentage?: number
+  }
+  business: {
+    name: string
+    address: {
+      street: string
+      city: string
+      state: string
+      zipCode: string
+      country: string
+    }
+    phone: string
+    email: string
+    website?: string
+    socialMedia: {
+      facebook?: string
+      instagram?: string
+      twitter?: string
+      linkedin?: string
+    }
+    license?: string
+    insurance?: string
+  }
+  seo: {
+    title?: string
+    description?: string
+    keywords?: string[]
+    ogImage?: {
+      id: string
+      url: string
+    }
+    favicon?: {
+      id: string
+      url: string
+    }
+  }
+  features: {
+    gallery: boolean
+    blog: boolean
+    testimonials: boolean
+    loyaltyProgram: boolean
+    giftCards: boolean
+    onlineStore: boolean
+  }
+  maintenance: {
+    enabled: boolean
+    message?: string
+    estimatedTime?: string
+  }
+  createdAt: string
+  updatedAt: string
+}
 
-  useEffect(() => {
-    fetchSettings();
-  }, [tenantId]);
+export interface SettingsFilters {
+  tenant?: string
+  sort?: string
+}
 
-  useEffect(() => {
-    if (!autoRefresh) return;
+export interface SettingsCreateInput {
+  name?: string
+  tenant?: string
+  chatbot?: Partial<Settings['chatbot']>
+  booking?: Partial<Settings['booking']>
+  notifications?: Partial<Settings['notifications']>
+  payments?: Partial<Settings['payments']>
+  business?: Partial<Settings['business']>
+  seo?: Partial<Settings['seo']>
+  features?: Partial<Settings['features']>
+  maintenance?: Partial<Settings['maintenance']>
+}
 
-    const interval = setInterval(fetchSettings, refreshInterval);
-    return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval, tenantId]);
+export interface SettingsUpdateInput extends Partial<SettingsCreateInput> {
+  id: string
+}
 
-  const updateSettings = async (newSettings: Partial<Settings>) => {
+export function useSettings() {
+  const [settings, setSettings] = useState<Settings | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch settings
+  const fetchSettings = useCallback(async (filters?: SettingsFilters) => {
+    setLoading(true)
+    setError(null)
+
     try {
-      setError(null);
-      
+      const queryParams = new URLSearchParams()
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/settings?${queryParams.toString()}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch settings')
+      }
+
+      const data = await response.json()
+      if (data.settings && data.settings.length > 0) {
+        setSettings(data.settings[0]) // Take the first/global settings
+      } else if (data) {
+        setSettings(data)
+      }
+      return data
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch settings'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  // Get settings by tenant
+  const getSettingsByTenant = useCallback(async (tenantId?: string) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const queryParams = new URLSearchParams()
+      if (tenantId) {
+        queryParams.append('tenant', tenantId)
+      }
+
+      const response = await fetch(`/api/settings?${queryParams.toString()}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch tenant settings')
+      }
+
+      const data = await response.json()
+      return data
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch tenant settings'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  // Create settings
+  const createSettings = useCallback(async (settingsData: SettingsCreateInput) => {
+    setLoading(true)
+    setError(null)
+
+    try {
       const response = await fetch('/api/settings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          tenantId,
-          ...newSettings,
-        }),
-      });
+        body: JSON.stringify(settingsData),
+      })
 
       if (!response.ok) {
-        throw new Error(`Failed to update settings: ${response.statusText}`);
+        throw new Error('Failed to create settings')
       }
 
-      const updatedSettings = await response.json();
-      setSettings(updatedSettings);
-      return updatedSettings;
+      const newSettings = await response.json()
+      setSettings(newSettings)
+      return newSettings
     } catch (err) {
-      console.error('Error updating settings:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update settings');
-      throw err;
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create settings'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
     }
-  };
+  }, [])
 
-  // Helper functions for common settings checks
-  const isFeatureEnabled = (feature: keyof Settings) => {
-    const featureSettings = settings[feature];
-    return featureSettings && typeof featureSettings === 'object' && 'enabled' in featureSettings
-      ? (featureSettings as any).enabled
-      : false;
-  };
+  // Update settings
+  const updateSettings = useCallback(async (settingsData: SettingsUpdateInput) => {
+    setLoading(true)
+    setError(null)
 
-  const getServiceByName = (serviceName: string) => {
-    return settings.barbershop?.services?.find(service => service.name === serviceName);
-  };
+    try {
+      const response = await fetch(`/api/settings/${settingsData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settingsData),
+      })
 
-  const getLoyaltyTier = (points: number) => {
-    const tiers = settings.barbershop?.loyalty?.tiers;
-    if (!tiers) return null;
-    
-    // Sort tiers by minPoints in descending order to find the highest applicable tier
-    const sortedTiers = [...tiers].sort((a, b) => b.minPoints - a.minPoints);
-    return sortedTiers.find(tier => points >= tier.minPoints) || sortedTiers[sortedTiers.length - 1];
-  };
+      if (!response.ok) {
+        throw new Error('Failed to update settings')
+      }
 
-  const getNextTier = (currentPoints: number) => {
-    const tiers = settings.barbershop?.loyalty?.tiers;
-    if (!tiers) return null;
-    
-    const sortedTiers = [...tiers].sort((a, b) => a.minPoints - b.minPoints);
-    return sortedTiers.find(tier => tier.minPoints > currentPoints);
-  };
-
-  const calculateLoyaltyPoints = (action: 'booking' | 'referral' | 'purchase', value?: number) => {
-    const loyalty = settings.barbershop?.loyalty;
-    if (!loyalty) return 0;
-
-    switch (action) {
-      case 'booking':
-        return loyalty.pointsPerBooking || 0;
-      case 'referral':
-        return loyalty.pointsPerReferral || 0;
-      case 'purchase':
-        return value ? Math.floor(value * (loyalty.pointsPerDollar || 0)) : 0;
-      default:
-        return 0;
+      const updatedSettings = await response.json()
+      setSettings(updatedSettings)
+      return updatedSettings
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update settings'
+      setError(errorMessage)
+      throw err
+    } finally {
+      setLoading(false)
     }
-  };
+  }, [])
+
+  // Update chatbot settings
+  const updateChatbotSettings = useCallback(async (chatbotSettings: Partial<Settings['chatbot']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      chatbot: {
+        ...settings.chatbot,
+        ...chatbotSettings,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Update booking settings
+  const updateBookingSettings = useCallback(async (bookingSettings: Partial<Settings['booking']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      booking: {
+        ...settings.booking,
+        ...bookingSettings,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Update notification settings
+  const updateNotificationSettings = useCallback(async (notificationSettings: Partial<Settings['notifications']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      notifications: {
+        ...settings.notifications,
+        ...notificationSettings,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Update payment settings
+  const updatePaymentSettings = useCallback(async (paymentSettings: Partial<Settings['payments']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      payments: {
+        ...settings.payments,
+        ...paymentSettings,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Update business settings
+  const updateBusinessSettings = useCallback(async (businessSettings: Partial<Settings['business']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      business: {
+        ...settings.business,
+        ...businessSettings,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Update feature flags
+  const updateFeatures = useCallback(async (features: Partial<Settings['features']>) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      features: {
+        ...settings.features,
+        ...features,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Enable maintenance mode
+  const enableMaintenanceMode = useCallback(async (message?: string, estimatedTime?: string) => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      maintenance: {
+        enabled: true,
+        message,
+        estimatedTime,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Disable maintenance mode
+  const disableMaintenanceMode = useCallback(async () => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    return updateSettings({
+      id: settings.id,
+      maintenance: {
+        enabled: false,
+      },
+    })
+  }, [settings, updateSettings])
+
+  // Test SMTP settings
+  const testEmailSettings = useCallback(async () => {
+    if (!settings) {
+      throw new Error('Settings not loaded')
+    }
+
+    try {
+      const response = await fetch('/api/settings/test-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ settingsId: settings.id }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to test email settings')
+      }
+
+      const result = await response.json()
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to test email settings'
+      setError(errorMessage)
+      throw err
+    }
+  }, [settings])
+
+  // Clear error
+  const clearError = useCallback(() => {
+    setError(null)
+  }, [])
 
   return {
+    // State
     settings,
     loading,
     error,
+
+    // Actions
     fetchSettings,
+    getSettingsByTenant,
+    createSettings,
     updateSettings,
-    isFeatureEnabled,
-    getServiceByName,
-    getLoyaltyTier,
-    getNextTier,
-    calculateLoyaltyPoints,
-  };
+    updateChatbotSettings,
+    updateBookingSettings,
+    updateNotificationSettings,
+    updatePaymentSettings,
+    updateBusinessSettings,
+    updateFeatures,
+    enableMaintenanceMode,
+    disableMaintenanceMode,
+    testEmailSettings,
+    clearError,
+  }
 }

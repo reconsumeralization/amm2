@@ -36,23 +36,23 @@ export const documentationPermissions: DocumentationPermissions = {
 
   // Business documentation - role-specific access
   'business': {
-    read: ['salon_owner', 'salon_employee', 'salon_customer', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin'],
+    edit: ['BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.owner': {
-    read: ['salon_owner', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['BarberShop_owner', 'system_admin'],
+    edit: ['BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.employee': {
-    read: ['salon_owner', 'salon_employee', 'system_admin'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['BarberShop_owner', 'BarberShop_employee', 'system_admin'],
+    edit: ['BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'business.customer': {
-    read: ['salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['salon_owner', 'system_admin'],
+    read: ['BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin', 'guest'],
+    edit: ['BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
 
@@ -80,22 +80,22 @@ export const documentationPermissions: DocumentationPermissions = {
 
   // Shared resources - accessible to all authenticated users
   'shared': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.glossary': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.troubleshooting': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
-    edit: ['developer', 'salon_owner', 'system_admin'],
+    read: ['developer', 'BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin', 'guest'],
+    edit: ['developer', 'BarberShop_owner', 'system_admin'],
     admin: ['system_admin']
   },
   'shared.changelog': {
-    read: ['developer', 'salon_owner', 'salon_employee', 'salon_customer', 'system_admin', 'guest'],
+    read: ['developer', 'BarberShop_owner', 'BarberShop_employee', 'BarberShop_customer', 'system_admin', 'guest'],
     edit: ['developer', 'system_admin'],
     admin: ['system_admin']
   }
@@ -143,18 +143,18 @@ export function getUserRoleFromSession(session: any): UserRole {
       return 'system_admin'
     case 'developer':
       return 'developer'
-    case 'salon_owner':
+    case 'BarberShop_owner':
     case 'owner':
-      return 'salon_owner'
-    case 'salon_employee':
+      return 'BarberShop_owner'
+    case 'BarberShop_employee':
     case 'employee':
     case 'stylist':
     case 'receptionist':
-      return 'salon_employee'
+      return 'BarberShop_employee'
     case 'customer':
-    case 'salon_customer':
+    case 'BarberShop_customer':
     case 'client':
-      return 'salon_customer'
+      return 'BarberShop_customer'
     default:
       return 'guest'
   }
@@ -184,7 +184,7 @@ export function getRoleBasedNavigation(userRole: UserRole): NavigationItem[] {
     const businessSections: NavigationSection[] = []
     
     if (hasDocumentationPermission(userRole, 'business.owner', 'read')) {
-      businessSections.push({ title: 'Salon Owner', href: '/documentation/business/owner' })
+      businessSections.push({ title: 'BarberShop Owner', href: '/documentation/business/owner' })
     }
     
     if (hasDocumentationPermission(userRole, 'business.employee', 'read')) {

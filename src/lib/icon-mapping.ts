@@ -269,14 +269,16 @@ export const MessageCircle = Icons.MessageCircle
 export const Send = Icons.ArrowRight
 export const Loader2 = Icons.Loader2
 export const Filter = Icons.Filter
-
-// Additional exports for documentation components
-export const PlayIcon = Icons.Play
-export const HistoryIcon = Icons.Clock
-export const CopyIcon = Icons.Copy
-export const CodeIcon = Icons.Code
-export const DownloadIcon = Icons.Download
-export const BookOpen = Icons.BookOpen
-export const Globe = Icons.Database
-export const AlertCircle = Icons.AlertTriangle
-export const RotateCcw = Icons.RefreshCw
+export const Package = Icons.Package
+export const DollarSign = Icons.DollarSign
+export const Activity = Icons.Activity
+export const RefreshCw = Icons.RefreshCw
+export const AlertCircle = Icons.AlertCircle
+export const FileX = Icons.FileX
+export const Bookmark = Icons.Bookmark
+export const Share = Icons.Share
+export const Printer = Icons.Printer
+export const Tag = Icons.Tag
+export const Eye = Icons.Eye
+export const History = Icons.History
+export const Image = Icons.Image

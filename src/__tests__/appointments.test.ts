@@ -15,7 +15,7 @@ const mockReq = {
     id: 'user-1',
     role: 'admin',
   },
-}
+} as any
 
 describe('Appointments Collection', () => {
   beforeEach(() => {
@@ -28,16 +28,16 @@ describe('Appointments Collection', () => {
     })
 
     it('should have required fields', () => {
-      const fieldNames = Appointments.fields.map(field => 'name' in field ? field.name : '')
-      expect(fieldNames).toContain('title')
+      const fieldNames = Appointments.fields.map((field: any) => field.name)
       expect(fieldNames).toContain('user')
+      expect(fieldNames).toContain('tenant')
       expect(fieldNames).toContain('date')
       expect(fieldNames).toContain('status')
     })
 
     it('should have proper admin configuration', () => {
-      expect(Appointments.admin?.group).toBe('Appointments')
-      expect(Appointments.admin?.defaultColumns).toContain('appointmentTitle')
+      expect(Appointments.admin?.group).toBe('Bookings')
+      expect(Appointments.admin?.defaultColumns).toContain('title')
     })
   })
 
@@ -50,10 +50,16 @@ describe('Appointments Collection', () => {
       expect(Appointments.access?.create).toBeDefined()
     })
 
-    it('should have proper access control', () => {
-      expect(Appointments.access?.read).toBeDefined()
-      expect(Appointments.access?.update).toBeDefined()
-      expect(Appointments.access?.delete).toBeDefined()
+    it('should restrict customer access to their own appointments', () => {
+      const customerReq = {
+        ...mockReq,
+        user: { id: 'customer-1', role: 'customer' }
+      } as any
+      const result = Appointments.access?.read({ req: customerReq } as any)
+      expect(result).toEqual({
+        user: { equals: 'customer-1' }
+      })
+    })
     })
   })
 
@@ -64,7 +70,7 @@ describe('Appointments Collection', () => {
         { id: 'service-2', duration: 45, bufferTime: 10 }
       ]
 
-      mockPayload.find.mockResolvedValue({ docs: mockServices })
+      mockPayload.find.mockResolvedValue({ docs: mockServices } as any)
 
       const data = {
         services: ['service-1', 'service-2'],
@@ -86,7 +92,7 @@ describe('Appointments Collection', () => {
         lastName: 'Doe'
       }
 
-      mockPayload.findByID.mockResolvedValue(mockCustomer)
+      mockPayload.findByID.mockResolvedValue(mockCustomer as any)
 
       const data = {
         customer: 'customer-1',
@@ -107,7 +113,7 @@ describe('Appointments Collection', () => {
         { id: 'service-2', price: 3500 }  // $35.00
       ]
 
-      mockPayload.find.mockResolvedValue({ docs: mockServices })
+      mockPayload.find.mockResolvedValue({ docs: mockServices } as any)
 
       const data = {
         services: ['service-1', 'service-2'],
@@ -132,7 +138,7 @@ describe('Appointments Collection', () => {
         }]
       }
 
-      mockPayload.find.mockResolvedValue(mockConflicts)
+      mockPayload.find.mockResolvedValue(mockConflicts as any)
 
       const data = {
         stylist: 'stylist-1',

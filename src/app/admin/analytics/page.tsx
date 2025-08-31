@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
-import { RevenueChart } from '@/components/charts/RevenueChart'
-import { ServicePerformanceChart } from '@/components/charts/ServicePerformanceChart'
-import { EmployeeAnalyticsChart } from '@/components/charts/EmployeeAnalyticsChart'
+import { RevenueChart } from '@/components/features/charts/RevenueChart'
+import { ServicePerformanceChart } from '@/components/features/charts/ServicePerformanceChart'
+import { EmployeeAnalyticsChart } from '@/components/features/charts/EmployeeAnalyticsChart'
 import { motion } from 'framer-motion'
 
 interface DashboardStats {
@@ -23,14 +23,8 @@ interface DashboardStats {
   }
 }
 
-export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState('30')
-  const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [activeTab, setActiveTab] = useState('overview')
-
-  // Sample data - In a real app, this would come from your APIs
-  const revenueData = [
+// Sample data - In a real app, this would come from your APIs
+const revenueData = [
     { date: '2024-08-01', revenue: 12500, appointments: 45, services: 67 },
     { date: '2024-08-02', revenue: 11800, appointments: 42, services: 63 },
     { date: '2024-08-03', revenue: 13200, appointments: 48, services: 71 },
@@ -46,18 +40,18 @@ export default function AnalyticsPage() {
     { date: '2024-08-13', revenue: 16100, appointments: 58, services: 87 },
     { date: '2024-08-14', revenue: 14700, appointments: 53, services: 80 },
     { date: '2024-08-15', revenue: 15800, appointments: 57, services: 86 }
-  ]
+]
 
-  const serviceData = [
+const serviceData = [
     { name: 'Hair Cut & Style', count: 234, revenue: 35100, rating: 4.8, duration: 45 },
     { name: 'Beard Trim & Shape', count: 156, revenue: 15600, rating: 4.7, duration: 25 },
     { name: 'Color Treatment', count: 89, revenue: 26700, rating: 4.6, duration: 120 },
     { name: 'Full Service Package', count: 67, revenue: 40200, rating: 4.9, duration: 90 },
     { name: 'Men\'s Facial', count: 45, revenue: 6750, rating: 4.5, duration: 60 },
     { name: 'Hot Towel Shave', count: 78, revenue: 11700, rating: 4.8, duration: 30 }
-  ]
+]
 
-  const employeeData = [
+const employeeData = [
     { date: '2024-08-01', efficiency: 85, satisfaction: 92, performance: 88, punctuality: 95, bookings: 8 },
     { date: '2024-08-02', efficiency: 87, satisfaction: 94, performance: 90, punctuality: 96, bookings: 7 },
     { date: '2024-08-03', efficiency: 89, satisfaction: 91, performance: 87, punctuality: 94, bookings: 9 },
@@ -68,13 +62,16 @@ export default function AnalyticsPage() {
     { date: '2024-08-08', efficiency: 89, satisfaction: 94, performance: 88, punctuality: 96, bookings: 9 },
     { date: '2024-08-09', efficiency: 91, satisfaction: 95, performance: 90, punctuality: 97, bookings: 10 },
     { date: '2024-08-10', efficiency: 93, satisfaction: 98, performance: 92, punctuality: 98, bookings: 10 }
-  ]
+]
 
-  useEffect(() => {
-    loadAnalyticsData()
-  }, [timeRange])
+export default function AnalyticsPage() {
+  const [timeRange, setTimeRange] = useState('30')
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [activeTab, setActiveTab] = useState('overview')
 
-  const loadAnalyticsData = async () => {
+
+  const loadAnalyticsData = useCallback(async () => {
     setLoading(true)
     try {
       // Simulate API call
@@ -101,7 +98,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadAnalyticsData()
+  }, [loadAnalyticsData])
 
   const exportReport = async (format: 'pdf' | 'csv' | 'excel') => {
     try {

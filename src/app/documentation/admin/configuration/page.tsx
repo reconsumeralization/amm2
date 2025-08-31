@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export const metadata: Metadata = {
   title: 'System Configuration - Admin Documentation',
-  description: 'Complete guide for configuring and managing the salon management system.',
+  description: 'Complete guide for configuring and managing the BarberShop management system.',
 }
 
 function ConfigurationPage() {
@@ -188,7 +188,7 @@ function ConfigurationPage() {
           </h1>
         </div>
         <p className="text-slate-300 text-lg">
-          Complete guide for configuring and managing the salon management system infrastructure.
+          Complete guide for configuring and managing the BarberShop management system infrastructure.
         </p>
       </div>
 

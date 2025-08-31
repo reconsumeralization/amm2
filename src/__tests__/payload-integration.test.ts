@@ -62,7 +62,7 @@ describe('Payload Integration', () => {
           id: 'user-1',
           email: 'test@example.com',
           name: 'Test User',
-          role: 'salon_customer'
+          role: 'BarberShop_customer'
         })
       }
 
@@ -116,7 +116,7 @@ describe('Payload Integration', () => {
         {
           id: 'doc-1',
           title: 'Test Doc',
-          targetRole: 'salon_employee',
+          targetRole: 'BarberShop_employee',
           status: 'published'
         }
       ]
@@ -132,7 +132,7 @@ describe('Payload Integration', () => {
 
       service['payload'] = mockPayload as any
 
-      const result = await service.getBusinessDocumentation('salon_employee')
+      const result = await service.getBusinessDocumentation('BarberShop_employee')
 
       expect(result).toBeTruthy()
       expect(result.docs).toHaveLength(1)
@@ -142,7 +142,7 @@ describe('Payload Integration', () => {
           collection: 'documentation',
           where: expect.objectContaining({
             and: expect.arrayContaining([
-              { targetRole: { in: ['guest', 'salon_customer', 'salon_employee'] } },
+              { targetRole: { in: ['guest', 'BarberShop_customer', 'BarberShop_employee'] } },
               { status: { equals: 'published' } }
             ])
           })
@@ -167,8 +167,8 @@ describe('Payload Integration', () => {
       const result = await service.createBusinessDocumentation({
         title: 'New Doc',
         type: 'guide',
-        targetRole: 'salon_employee',
-        category: 'salon-operations',
+        targetRole: 'BarberShop_employee',
+        category: 'BarberShop-operations',
         content: 'Test content'
       }, 'user-1')
 
@@ -195,7 +195,7 @@ describe('Payload Integration', () => {
 
       service['payload'] = mockPayload as any
 
-      const result = await service.globalrch('test', ['services', 'customers', 'documentation'])
+      const result = await service.globalSearch('test', ['services', 'customers', 'documentation'])
 
       expect(result).toBeTruthy()
       expect(result.results).toHaveLength(3)
@@ -205,7 +205,7 @@ describe('Payload Integration', () => {
   })
 
   describe('Analytics', () => {
-    it('should fetch salon analytics', async () => {
+    it('should fetch BarberShop analytics', async () => {
       const mockCounts = {
         appointments: { totalDocs: 100 },
         customers: { totalDocs: 50 },
@@ -227,7 +227,7 @@ describe('Payload Integration', () => {
 
       service['payload'] = mockPayload as any
 
-      const result = await service.getSalonAnalytics()
+      const result = await service.getBarberShopAnalytics()
 
       expect(result).toBeTruthy()
       expect(result.appointments).toBe(100)
@@ -246,7 +246,7 @@ describe('Payload Integration', () => {
 
       service['payload'] = mockPayload as any
 
-      await expect(service.getBusinessDocumentation('salon_employee'))
+      await expect(service.getBusinessDocumentation('BarberShop_employee'))
         .rejects.toThrow('Failed to fetch documentation')
     })
 
@@ -272,9 +272,9 @@ describe('Payload Integration', () => {
       service['payload'] = mockPayload as any
 
       // First call
-      const result1 = await service.getBusinessDocumentation('salon_employee')
+      const result1 = await service.getBusinessDocumentation('BarberShop_employee')
       // Second call should use cache
-      const result2 = await service.getBusinessDocumentation('salon_employee')
+      const result2 = await service.getBusinessDocumentation('BarberShop_employee')
 
       expect(result1).toEqual(result2)
       expect(mockPayload.find).toHaveBeenCalledTimes(1) // Should only be called once due to caching

@@ -16,9 +16,9 @@ jest.mock('../documentation-permissions', () => ({
     const permissions = {
       'system_admin': ['developer', 'business', 'admin', 'shared'],
       'developer': ['developer', 'shared'],
-      'salon_owner': ['business', 'business.owner', 'shared'],
-      'salon_employee': ['business.employee', 'business.customer', 'shared'],
-      'salon_customer': ['business.customer', 'shared'],
+      'BarberShop_owner': ['business', 'business.owner', 'shared'],
+      'BarberShop_employee': ['business.employee', 'business.customer', 'shared'],
+      'BarberShop_customer': ['business.customer', 'shared'],
       'guest': ['shared', 'business.customer']
     }
     
@@ -48,8 +48,8 @@ describe('Content Filtering', () => {
     owner: {
       id: 'owner-1',
       email: 'owner@example.com',
-      name: 'Salon Owner',
-      role: 'salon_owner',
+      name: 'BarberShop Owner',
+      role: 'BarberShop_owner',
       permissions: ['documentation.read', 'business.owner.access'],
       preferences: { theme: 'light', language: 'en', compactMode: false }
     },
@@ -57,7 +57,7 @@ describe('Content Filtering', () => {
       id: 'customer-1',
       email: 'customer@example.com',
       name: 'Customer User',
-      role: 'salon_customer',
+      role: 'BarberShop_customer',
       permissions: ['documentation.read', 'business.customer.access'],
       preferences: { theme: 'system', language: 'en', compactMode: false }
     }
@@ -95,7 +95,7 @@ describe('Content Filtering', () => {
       title: 'Business Owner Content',
       content: 'This is business owner content',
       metadata: {
-        roles: ['salon_owner', 'system_admin'] as UserRole[],
+        roles: ['BarberShop_owner', 'system_admin'] as UserRole[],
         permissions: ['business.owner.access'],
         sections: ['business.owner'],
         tags: ['business'],
@@ -283,9 +283,9 @@ describe('Content Filtering', () => {
 
   describe('getRestrictedContentFallback', () => {
     it('returns appropriate fallback for developer content', () => {
-      const fallback = getRestrictedContentFallback('developer', 'salon_customer')
+      const fallback = getRestrictedContentFallback('developer', 'BarberShop_customer')
       expect(fallback.title).toBe('Developer Documentation Restricted')
-      expect(fallback.message).toContain('salon customer')
+      expect(fallback.message).toContain('BarberShop customer')
       expect(fallback.suggestions).toContain('Contact your administrator to request developer access')
     })
 

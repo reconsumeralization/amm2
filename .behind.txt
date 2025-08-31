@@ -1,0 +1,33 @@
+0ddf26c Merge pull request #7 from reconsumeralization/cursor/update-seo-navigation-rendering-search-and-chatbot-ed58
+ed0ebec Add dynamic footer, improve content rendering, and implement catch-all page
+5ca6db1 Merge pull request #6 from reconsumeralization/cursor/fix-all-remaining-issues-35ab
+fa45017 Fix test environment handling and improve component robustness
+5e04608 Refactor testing, search, and documentation components with improved configs
+97f4f88 Merge pull request #5 from reconsumeralization/cursor/fix-payload-cms-issues-and-add-missing-collections-846e
+74f8658 Add Pages, NavigationMenus, Redirects, and Blocks collections
+f6211b2 Merge pull request #4 from reconsumeralization/clean-merge
+30d0747 Update src/tools/security-auditor.ts
+d33cf52 Update src/tools/security-auditor.ts
+9515403 Update payload config after clean merge
+d8a0d62 Merge remote-tracking branch 'origin/main' into clean-merge
+f5e25cd Merge remote-tracking branch 'origin/cursor/fix-one-hundred-issues-b950' into clean-merge
+bb6433a Merge pull request #3 from reconsumeralization/cursor/fix-one-hundred-issues-b950
+e5ca509 Update dependencies and lock file to Payload CMS v3.54.0
+b56e654 merge: resolve conflicts (package scripts, testimonials API, monitoring shim, search page, admin route); bump Payload to 3.54; keep security scripts
+6c000eb Update security auditor with git pull improvements
+50cf90d security: repo-agnostic hardening (SECURITY.md, issue/PR templates, audit workflow, bootstrap script)
+022ce50 docs(workflow): add enhanced bug report template and Mermaid diagrams for bug lifecycle and data model
+b97a683 Checkpoint before follow-up message
+638b94a Update security auditor logs and issue tracking files
+cfca5e6 Fix syntax error in security-auditor.ts
+8f8f362 Merge pull request #2 from reconsumeralization/cursor/automated-vulnerability-remediation-workflow-f41b
+abc16c4 chore(security): run vuln audit, add pnpm overrides (esbuild>=0.25, @babel/runtime>=7.26.10, form-data>=4.0.4), re-audit to 0 vulns; save reports
+37414df Fix 008: Potential Reflected XSS: innerHTML used with unsanitized input
+fbb105e Merge pull request #1 from reconsumeralization/cursor/automated-vulnerability-remediation-workflow-f41b
+f1053c6 Checkpoint before follow-up message
+cafaeca fix
+51aa968 Fix TypeScript errors and update .gitignore to prevent large file commits
+73bc887 Add scan profiles to security auditor for targeted vulnerability checks
+1678b6a Fix potential XSS vulnerability in security-auditor.ts
+2372c53 Fix 001: Potential Reflected XSS: innerHTML used with unsanitized input
+ff7453f Add security auditor CLI tool for automated vulnerability scanning

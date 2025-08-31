@@ -23,8 +23,8 @@ describe('BusinessDocumentationService', () => {
   const mockUser: DocumentationUser = {
     id: 'user-1',
     email: 'owner@example.com',
-    name: 'Salon Owner',
-    role: 'salon_owner',
+    name: 'BarberShop Owner',
+    role: 'BarberShop_owner',
     permissions: ['business.owner.access'],
     preferences: { theme: 'light', language: 'en', compactMode: false }
   }
@@ -32,8 +32,8 @@ describe('BusinessDocumentationService', () => {
   const createRequest: BusinessDocumentationCreateRequest = {
     title: 'Sample Guide',
     type: 'guide' as BusinessDocumentationType,
-    targetRole: 'salon_owner' as UserRole,
-    category: 'salon-operations' as BusinessDocumentationCategory,
+    targetRole: 'BarberShop_owner' as UserRole,
+    category: 'BarberShop-operations' as BusinessDocumentationCategory,
     content: 'Sample content',
     tags: ['owner'],
     difficulty: 'beginner' as DifficultyLevel,
@@ -46,8 +46,8 @@ describe('BusinessDocumentationService', () => {
     title: 'Updated Guide',
     content: 'Updated content',
     type: 'guide' as BusinessDocumentationType,
-    targetRole: 'salon_owner' as UserRole,
-    category: 'salon-operations' as BusinessDocumentationCategory,
+    targetRole: 'BarberShop_owner' as UserRole,
+    category: 'BarberShop-operations' as BusinessDocumentationCategory,
     tags: ['owner'],
     difficulty: 'beginner' as DifficultyLevel,
     priority: 'low' as PriorityLevel,
@@ -78,8 +78,8 @@ describe('BusinessDocumentationService', () => {
         responseBody.author = mockUser.id
         responseBody.content = 'Fetched content'
         responseBody.type = 'guide'
-        responseBody.category = 'salon-operations'
-        responseBody.targetRole = 'salon_owner'
+        responseBody.category = 'BarberShop-operations'
+        responseBody.targetRole = 'BarberShop_owner'
         responseBody.difficulty = 'beginner'
         responseBody.priority = 'low'
         responseBody.tags = ['owner']
@@ -126,7 +126,7 @@ describe('BusinessDocumentationService', () => {
     expect(doc?.id).toBe('doc-1')
     expect(doc?.title).toBe('Fetched Guide')
     expect(doc?.type).toBe('guide')
-    expect(doc?.category).toBe('salon-operations')
+    expect(doc?.category).toBe('BarberShop-operations')
   })
 
   test('updateDocumentation updates fields correctly', async () => {

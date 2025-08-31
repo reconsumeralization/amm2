@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
     const payloadService = getPayloadIntegrationService()
     await payloadService.initialize()
     
-    const results = await payloadService.globalrch(query, collections, limit)
+    const results = await payloadService.globalSearch(query, collections, limit)
 
     return NextResponse.json(results)
   } catch (error) {
-    console.error('Error performing global rch:', error)
+    console.error('Error performing global search:', error)
     return NextResponse.json(
-      { error: 'rch failed' },
+      { error: 'search failed' },
       { status: 500 }
     )
   }

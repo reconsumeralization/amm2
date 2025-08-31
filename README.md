@@ -26,12 +26,65 @@ The `modernmen-yolo` project is a multi-tenant barbershop management system buil
   - Error handling for missing settings or invalid barber IDs.
 
 ## Setup
+
+### Quick Start (Docker Recommended)
+```bash
+# Clone and start with Docker (includes PostgreSQL, Redis, pgAdmin)
+git clone <repo-url>
+cd modernmen-yolo
+cp .env.example .env
+docker-compose up
+```
+
+### Manual Setup
 1. Clone the repository: `git clone <repo-url>`
 2. Install dependencies: `npm install`
 3. Configure environment variables in `.env` (see `.env.example`).
-4. Run the development server: `npm run dev`
-5. Access the admin panel: `http://localhost:3000/admin/payload`
-6. Access the customer portal: `http://localhost:3000/portal`
+4. Start PostgreSQL and Redis services
+5. Run database migrations: `npm run db:push`
+6. Seed initial data: `npm run db:seed`
+7. Run the development server: `npm run dev`
+8. Access the admin panel: `http://localhost:3000/admin/payload`
+9. Access the customer portal: `http://localhost:3000/portal`
+
+### Development Tools
+- **pgAdmin**: http://localhost:8080 (PostgreSQL admin interface)
+- **Redis Commander**: http://localhost:8081 (Redis admin interface)
+- **Storybook**: `npm run storybook` (Component development)
+- **Bundle Analyzer**: `npm run bundle:analyze` (Performance analysis)
+
+## Testing
+
+This project implements a comprehensive testing strategy:
+
+### Testing Pyramid
+- **Unit Tests**: Individual functions and components (`npm run test:unit`)
+- **Integration Tests**: API endpoints and database interactions (`npm run test:integration`)
+- **E2E Tests**: Full user workflows with Playwright (`npm run test:e2e`)
+
+### Running Tests
+```bash
+# All tests
+npm test
+
+# With coverage
+npm run test:coverage
+
+# Watch mode
+npm run test:watch
+
+# Specific test types
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+```
+
+### Code Coverage
+- Target: 70% coverage across statements, branches, functions, and lines
+- Reports generated automatically in CI/CD
+- View coverage: `npm run test:coverage` then open `coverage/lcov-report/index.html`
+
+For detailed testing information, see [TESTING.md](./TESTING.md).
 
 ## Environment Variables
 ```plaintext

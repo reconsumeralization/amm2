@@ -8,7 +8,7 @@ import { Footer } from '@/components/layout/footer';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'ModernMen barber shop',
+  title: 'ModernMen Hair BarberShop',
   description: 'Regina\'s Premier Men\'s Grooming',
 };
 

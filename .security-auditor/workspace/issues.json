@@ -1,0 +1,34 @@
+{
+  "repoPath": "/workspace",
+  "slug": "workspace",
+  "issues": [
+    {
+      "id": "001",
+      "repoPath": "/workspace",
+      "description": "Potential Reflected XSS: innerHTML used with unsanitized input",
+      "filePath": "/workspace/src/tools/security-auditor.ts",
+      "cwe": "CWE-79",
+      "severity": "Medium",
+      "cvss": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
+      "state": "Complete",
+      "createdAt": "2025-08-28T12:10:34.307Z",
+      "updatedAt": "2025-08-28T12:10:34.320Z",
+      "remediationPlan": "Escape HTML before injecting; avoid innerHTML; use textContent.",
+      "fixPatchPath": "/workspace/.security-auditor/workspace/fix-001.diff"
+    }
+  ],
+  "logs": [
+    "Initializing issue states to Submitted @ 8/28/2025, 12:10:33 PM",
+    "Gathering context for /workspace @ 8/28/2025, 12:10:33 PM",
+    "Detecting tech stack and domain for /workspace @ 8/28/2025, 12:10:33 PM",
+    "Analyzing repository with static tools @ 8/28/2025, 12:10:33 PM",
+    "eslint: exit=0\n\n\nOops! Something went wrong! :(\n\nESLint: 8.57.1\n\nESLint couldn't find a configuration file. To set up a configuration file for this project, please run:\n\n    npm init @eslint/config\n\nESLint looked for configuration files in /workspace and its ancestors. If it found none, it then looked in your home directory.\n\nIf you think you already have a configuration file or if you need more help, please stop by the ESLint Discord server: https://eslint.org/chat\n\nnpm notice\nnpm notice New major version of npm available! 10.9.2 -> 11.5.2\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2\nnpm notice To update run: npm install -g npm@11.5.2\nnpm notice\n\n @ 8/28/2025, 12:10:34 PM",
+    "Issue 001: Fixed @ 8/28/2025, 12:10:34 PM",
+    "Issue 001: Verified and committed @ 8/28/2025, 12:10:34 PM"
+  ],
+  "lastRunAt": "2025-08-28T12:10:33.665Z",
+  "techStack": [
+    "JavaScript"
+  ],
+  "domain": "AI integration"
+}

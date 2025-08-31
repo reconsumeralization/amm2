@@ -8,7 +8,7 @@
  */
 
 import { buildConfig } from 'payload';
-import { mongooseAdapter } from '@payloadcms/db-mongodb';
+import postgresAdapter from '@payloadcms/db-postgres';
 import lexicalEditor from '@payloadcms/richtext-lexical';
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { stripePlugin } from '@payloadcms/plugin-stripe';
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
 // Import collections
-import { Appointments, BusinessDocumentation, Users, Tenants, Media, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders } from '../collections';
+import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram } from '../collections';
 // import { productAnalyticsEndpoint, bulkProductOperationsEndpoint } from '../endpoints'; // TODO: Fix endpoint types
 
 const filename = fileURLToPath(import.meta.url);
@@ -36,12 +36,15 @@ const config = buildConfig({
     } as any,
   },
   editor: lexicalEditor(),
-  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders],
+  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram],
   endpoints: [], // TODO: Fix endpoint types
-  db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
+  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || '' } }),
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
   sharp: sharp as any,
   plugins: [
+    multiTenantPlugin({
+      collections: ['appointments', 'users', 'staff-schedules', 'clock-records', 'settings', 'testimonials', 'products', 'orders'] as any,
+    }),
     payloadAiPlugin({
       collections: { appointments: true, 'business-documentation': true, 'staff-schedules': true, 'clock-records': true, settings: true, products: true, orders: true },
       debugging: false,
@@ -50,7 +53,7 @@ const config = buildConfig({
     formBuilderPlugin({
       fields: { text: true, date: true, payment: true },
       formSubmissionOverrides: {
-        access: { create: () => true, read: ({ req }) => !!req.user },
+        access: { create: () => true, read: ({ req }: { req: any }) => !!req.user },
       },
     }),
     stripePlugin({
@@ -69,9 +72,6 @@ const config = buildConfig({
         settings: 2,
         orders: 8,
       },
-    }),
-    multiTenantPlugin({
-      collections: ['appointments', 'users', 'staff-schedules', 'clock-records', 'settings', 'testimonials', 'products', 'orders'] as any,
     }),
   ],
   typescript: {

@@ -1,21 +1,67 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { yoloMonitoring } from '@/lib/monitoring'
+import { monitoring } from '@/lib/monitoring'
 import { useSession } from 'next-auth/react'
 import { logger } from '@/lib/logger'
 
 export function useMonitoring() {
   const { data: session } = useSession()
 
+  // Initialize monitoring on mount
+  useEffect(() => {
+    const initializeMonitoring = async () => {
+      try {
+        const { monitoringConfig } = await import('@/config/monitoring')
+
+        // Use the monitoring object for initialization
+        monitoring.log?.('Monitoring initialized via useMonitoring hook')
+
+        logger.info('Monitoring initialized via useMonitoring hook')
+      } catch (error) {
+        logger.error('Failed to initialize monitoring', {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        })
+      }
+    }
+
+    initializeMonitoring()
+  }, [])
+
+  // Set user context when session changes
+  useEffect(() => {
+    if (session?.user) {
+      monitoring.log?.('User session changed', {
+        userId: session.user.id,
+        email: session.user.email,
+        role: session.user.role
+      })
+    }
+  }, [session])
+
   // Error capture helper
-  const captureError = useCallback((error: Error) => {
-    yoloMonitoring.captureException(error)
+  const captureError = useCallback((error: any) => {
+    monitoring.error?.(error)
+  }, [])
+
+  // Performance metric tracking
+  const trackMetric = useCallback((metric: any) => {
+    monitoring.track('performance_metric', metric)
   }, [])
 
   // User action tracking
-  const trackAction = useCallback((action: string, page: string) => {
-    yoloMonitoring.trackUserInteraction(action, page)
+  const trackAction = useCallback((action: any) => {
+    monitoring.track('user_action', action)
+  }, [])
+
+  // Breadcrumb helper
+  const addBreadcrumb = useCallback((
+    message: string,
+    category?: string,
+    level?: 'info' | 'warning' | 'error'
+  ) => {
+    monitoring.log?.(`Breadcrumb: ${message}`, { category, level })
+>>>>>>> clean-merge
   }, [])
 
   // API call tracking helper
@@ -25,12 +71,12 @@ export function useMonitoring() {
     duration: number,
     success: boolean
   ) => {
-    yoloMonitoring.trackApiPerformance(endpoint, duration, success ? 200 : 500)
+    monitoring.track('api_call', { endpoint, method, duration, success })
   }, [])
 
   // Page view tracking helper
-  const trackPageView = useCallback((page: string) => {
-    yoloMonitoring.trackUserInteraction('page_view', page)
+  const trackPageView = useCallback((page: string, properties?: Record<string, any>) => {
+    monitoring.track('page_view', { page, ...properties })
   }, [])
 
   // Form submission tracking helper
@@ -38,35 +84,27 @@ export function useMonitoring() {
     formName: string,
     success: boolean
   ) => {
-    yoloMonitoring.trackUserInteraction(
-      success ? 'form_submit_success' : 'form_submit_error',
-      formName
-    )
+    monitoring.track('form_submission', { formName, success, duration })
   }, [])
 
   // Search tracking helper
-  const trackSearch = useCallback((query: string, resultsCount?: number) => {
-    yoloMonitoring.trackUserInteraction('search', 'search_page')
+  const trackrch = useCallback((query: string, resultsCount?: number) => {
+    monitoring.track('search', { query, resultsCount })
   }, [])
 
   // Event tracking helper
   const trackEvent = useCallback((eventName: string, properties?: Record<string, any>) => {
-    yoloMonitoring.trackUserInteraction(eventName, 'event')
+    monitoring.track(eventName, properties)
   }, [])
 
   // Performance metrics helper
-  const getPerformanceMetrics = useCallback(async () => {
-    return await yoloMonitoring.getPerformanceMetrics?.() || {}
+  const getPerformanceMetrics = useCallback(() => {
+    return {}
   }, [])
 
-  // General metrics helper
-  const getMetrics = useCallback(async () => {
-    return await yoloMonitoring.getMetrics?.() || {}
-  }, [])
-
-  // Track metric helper (for component performance hook)
-  const trackMetric = useCallback((metric: { name: string; value: number; unit?: string; tags?: Record<string, any> }) => {
-    yoloMonitoring.trackBusinessMetric(metric.name, metric.value, metric.tags?.component || 'general')
+  // Metrics helper (alias for getPerformanceMetrics)
+  const getMetrics = useCallback(() => {
+    return {}
   }, [])
 
   return {
@@ -107,7 +145,7 @@ export function useComponentPerformance(componentName: string) {
 }
 
 // Hook for tracking API performance
-export function upiPerformance() {
+export function useApiPerformance() {
   const { trackApiCall } = useMonitoring()
 
   const trackApiRequest = useCallback(async <T>(

@@ -1,29 +1,48 @@
-'use client';
-import { useEffect } from 'react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
-import { $createImageNode, ImageNode } from '@/nodes/ImageNode';
+import React from 'react'
+import { ImageNode, $createImageNode } from '@/nodes/ImageNode'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR } from 'lexical'
+import { createCommand, LexicalCommand } from 'lexical'
 
-export const INSERT_IMAGE_COMMAND = createCommand('insertImage');
+// Define the INSERT_IMAGE_COMMAND
+export const INSERT_IMAGE_COMMAND: LexicalCommand<{
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number | 'auto';
+  caption?: string;
+}> = createCommand('INSERT_IMAGE_COMMAND')
 
-export default function ImagesPlugin(): null {
-  const [editor] = useLexicalComposerContext();
+export function ImagesPlugin(): JSX.Element | null {
+  const [editor] = useLexicalComposerContext()
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!editor.hasNodes([ImageNode])) {
-      throw new Error('ImagesPlugin: ImageNode not registered');
+      throw new Error('ImagesPlugin: ImageNode not registered on editor')
     }
 
     return editor.registerCommand(
       INSERT_IMAGE_COMMAND,
-      (payload: { src: string; alt: string }) => {
-        const imageNode = $createImageNode(payload.src, payload.alt);
-        $insertNodes([imageNode]);
-        return true;
+      (payload) => {
+        const selection = $getSelection()
+        if (!$isRangeSelection(selection)) {
+          return false
+        }
+
+        const focusNode = selection.focus.getNode()
+        if (focusNode !== null) {
+          const { src, alt, width, height, caption } = payload
+          const imageNode = $createImageNode(src, alt, width, height, caption)
+          selection.insertNodes([imageNode])
+        }
+
+        return true
       },
       COMMAND_PRIORITY_EDITOR
-    );
-  }, [editor]);
+    )
+  }, [editor])
 
-  return null;
+  return null
 }
+
+export default ImagesPlugin

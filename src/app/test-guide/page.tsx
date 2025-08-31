@@ -1,5 +1,5 @@
 import React from 'react'
-import { GuideRenderer } from '@/components/documentation'
+import { GuideRenderer } from '@/components/features/documentation'
 import { GuideContent } from '@/types/documentation'
 
 // Simple test guide

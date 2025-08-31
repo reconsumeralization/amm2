@@ -45,6 +45,8 @@ export const ERROR_CODES = {
   CONFIGURATION_ERROR: 'CONFIGURATION_ERROR',
 } as const;
 
+export const APIErrors = ERROR_CODES
+
 /**
  * Create a standardized error response
  */
@@ -294,6 +296,7 @@ export class RateLimiter {
 // Global rate limiter instance
 export const globalRateLimiter = new RateLimiter(100, 60000); // 100 requests per minute
 
+<<<<<<< HEAD
 /**
  * Higher-order function to wrap API handlers with error handling
  */

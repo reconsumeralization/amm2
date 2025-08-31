@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "modernmen-hair-salon",
+  "name": "modernmen-hair-BarberShop",
   "builds": [
     {
       "src": "src/payload.config.ts",

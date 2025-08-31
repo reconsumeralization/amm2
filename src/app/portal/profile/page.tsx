@@ -11,12 +11,32 @@ import { Textarea } from '@/components/ui/textarea'
 import { Icons } from '@/components/ui/icons'
 import { toast } from 'sonner'
 
+/**
+ * Interface for user profile form data
+ */
+interface ProfileFormData {
+  name: string
+  email: string
+  phone: string
+  dateOfBirth: string
+  address: string
+  emergencyContact: string
+  preferredStylist: string
+  hairType: string
+  skinSensitivity: string
+  specialNotes: string
+}
+
+/**
+ * Portal profile page component for user account management
+ * Allows users to view and edit their personal information and preferences
+ */
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
     email: '',
     phone: '',
@@ -70,7 +90,7 @@ export default function ProfilePage() {
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof ProfileFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 

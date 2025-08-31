@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { AdminNavigation } from '@/components/admin/AdminNavigation';
-import PageEditor from '@/components/admin/PageEditor';
+import { AdminNavigation } from '@/components/features/admin/AdminNavigation';
+import PageEditor from '@/components/features/admin/PageEditor';
 
 export default function PageBuilderAdmin() {
   const { data: session } = useSession();
@@ -151,3 +151,4 @@ export default function PageBuilderAdmin() {
     </div>
   );
 }
+

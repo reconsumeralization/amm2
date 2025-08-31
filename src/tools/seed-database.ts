@@ -34,7 +34,7 @@ function loadSeed<T>(fileName: string): T[] {
 
 // Main seeding function
 async function seed() {
-  const payload = await getPayloadClient();
+  const payload = await getPayloadClient({ config: () => import('../payload.config').then(m => m.default) });
 
   // Define which collections to seed and their corresponding files
   const collections = [

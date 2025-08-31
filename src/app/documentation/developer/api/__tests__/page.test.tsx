@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // Mock the APIDocumentation component to avoid complex dependencies
-jest.mock('@/components/documentation/APIDocumentation', () => ({
+jest.mock('@/components/features/documentation/APIDocumentation', () => ({
   APIDocumentation: ({ sections }: { sections: any[] }) => (
     <div data-testid="api-documentation">
       <h1>API Documentation</h1>

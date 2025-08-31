@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
           completionRate: 0,
           averageRating: 0,
           feedbackCount: 0,
-          rchRanking: 0
+          searchRanking: 0
         },
         versioning: {
           changeHistory: [],
@@ -246,7 +246,7 @@ export async function PUT(request: NextRequest) {
           completionRate: 0,
           averageRating: 0,
           feedbackCount: 0,
-          rchRanking: 0
+          searchRanking: 0
         },
         versioning: {
           changeHistory: [],

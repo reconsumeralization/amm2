@@ -6,7 +6,7 @@ import { AlertTriangle, CheckCircle, XCircle, RefreshCw, WifiOff, Monitor, Smart
 
 export const metadata: Metadata = {
   title: 'Troubleshooting Guide - Documentation',
-  description: 'Step-by-step solutions for common issues with the salon management system.',
+  description: 'Step-by-step solutions for common issues with the BarberShop management system.',
 }
 
 export default function TroubleshootingPage() {
@@ -91,7 +91,7 @@ export default function TroubleshootingPage() {
             'Try selecting a different time or date',
             'Ensure your payment information is correct and up to date',
             'Try booking by phone if online booking fails',
-            'Contact the salon directly for assistance'
+            'Contact the BarberShop directly for assistance'
           ],
           tags: ['booking', 'appointments', 'payment']
         },
@@ -103,7 +103,7 @@ export default function TroubleshootingPage() {
             'Check your email spam/junk folder',
             'Verify your email address and phone number are correct',
             'Log into your account to confirm the appointment was saved',
-            'Contact the salon to verify your appointment',
+            'Contact the BarberShop to verify your appointment',
             'Update your notification preferences in settings'
           ],
           tags: ['confirmation', 'notifications', 'email']

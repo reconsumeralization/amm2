@@ -18,7 +18,7 @@ export async function GET(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const userId = id
 
     // Check permissions
@@ -72,7 +72,7 @@ export async function PUT(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const userId = id
     const body = await request.json()
 
@@ -134,7 +134,7 @@ export async function DELETE(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const userId = id
 
     // Prevent deleting own account

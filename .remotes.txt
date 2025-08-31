@@ -1,0 +1,2 @@
+origin	https://github.com/reconsumeralization/amm2.git (fetch)
+origin	https://github.com/reconsumeralization/amm2.git (push)

@@ -32,14 +32,14 @@ export async function validateRequestBody<T>(
 }
 
 /**
- * Validates URL rch parameters
+ * Validates URL search parameters
  */
-export function validaterchParams<T>(
-  rchParams: URLSearchParams,
+export function validateSearchParams<T>(
+  searchParams: URLSearchParams,
   schema: z.ZodSchema<T>
 ): ValidationResult<T> {
   try {
-    const params = Object.fromEntries(rchParams.entries())
+    const params = Object.fromEntries(searchParams.entries())
     const validatedData = schema.parse(params)
     return { success: true, data: validatedData }
   } catch (error) {

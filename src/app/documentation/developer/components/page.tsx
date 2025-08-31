@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { DesignSystemDocs } from '@/components/documentation/DesignSystemDocs';
-import { ComponentPlayground } from '@/components/documentation/ComponentPlayground';
+import { DesignSystemDocs } from '@/components/features/documentation/DesignSystemDocs';
+import { ComponentPlayground } from '@/components/features/documentation/ComponentPlayground';
 import { storybookService } from '@/lib/storybook-integration';
 import { DesignSystemDocumentation, ComponentDocumentation } from '@/types/storybook-integration';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

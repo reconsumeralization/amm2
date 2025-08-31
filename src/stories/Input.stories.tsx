@@ -45,7 +45,7 @@ export const Default: Story = {
 };
 
 export const WithLabel: Story = {
-  render: (args) => (
+  render: (args: any) => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label htmlFor="email">Email</Label>
       <Input {...args} id="email" />

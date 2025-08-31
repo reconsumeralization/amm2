@@ -54,17 +54,16 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
     // Use a simple div with image for now to avoid circular dependencies
     return React.createElement('div', {
       className: 'image-component',
-      children: React.createElement('img', {
-        src: this.__src,
-        alt: this.__alt,
-        style: {
-          width: `${this.__width}px`,
-          height: this.__height === 'auto' ? 'auto' : `${this.__height}px`,
-          maxWidth: '100%',
-        },
-        className: 'image-node',
-      }),
-    });
+    }, React.createElement('img', {
+      src: this.__src,
+      alt: this.__alt,
+      className: 'image-node',
+      style: {
+        width: `${this.__width}px`,
+        height: this.__height === 'auto' ? 'auto' : `${this.__height}px`,
+        maxWidth: '100%'
+      }
+    }));
   }
 
   // Getters

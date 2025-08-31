@@ -1,0 +1,298 @@
+/* ModernMen Payload CMS Admin Panel Styling */
+
+/* Custom CSS variables for ModernMen branding */
+:root {
+  --modernmen-primary: #d97706; /* amber-600 */
+  --modernmen-primary-dark: #b45309; /* amber-700 */
+  --modernmen-secondary: #374151; /* gray-700 */
+  --modernmen-accent: #f59e0b; /* amber-500 */
+  --modernmen-background: #f9fafb; /* gray-50 */
+  --modernmen-surface: #ffffff;
+  --modernmen-text: #111827; /* gray-900 */
+  --modernmen-text-muted: #6b7280; /* gray-500 */
+}
+
+/* Override Payload's default colors */
+.payload-admin {
+  --theme-bg: var(--modernmen-background);
+  --theme-elevation-0: var(--modernmen-surface);
+  --theme-elevation-50: #f8fafc;
+  --theme-elevation-100: #f1f5f9;
+  --theme-elevation-150: #e2e8f0;
+  --theme-elevation-200: #cbd5e1;
+  --theme-elevation-250: #94a3b8;
+  --theme-elevation-300: #64748b;
+  --theme-elevation-400: #475569;
+  --theme-elevation-500: #334155;
+  --theme-elevation-600: #1e293b;
+  --theme-elevation-700: #0f172a;
+  --theme-elevation-800: #020617;
+  --theme-elevation-900: #000000;
+
+  --theme-text: var(--modernmen-text);
+  --theme-success-50: #f0fdf4;
+  --theme-success-100: #dcfce7;
+  --theme-success-150: #bbf7d0;
+  --theme-success-200: #86efac;
+  --theme-success-250: #4ade80;
+  --theme-success-300: #22c55e;
+  --theme-success-400: #16a34a;
+  --theme-success-500: #15803d;
+  --theme-success-600: #166534;
+  --theme-success-700: #14532d;
+  --theme-success-750: #052e16;
+  --theme-success-800: #000000;
+
+  --theme-warning-50: #fffbeb;
+  --theme-warning-100: #fef3c7;
+  --theme-warning-150: #fde68a;
+  --theme-warning-200: #fcd34d;
+  --theme-warning-250: #fbbf24;
+  --theme-warning-300: var(--modernmen-accent);
+  --theme-warning-400: var(--modernmen-primary);
+  --theme-warning-500: var(--modernmen-primary-dark);
+  --theme-warning-600: #92400e;
+  --theme-warning-700: #78350f;
+  --theme-warning-750: #451a03;
+  --theme-warning-800: #000000;
+
+  --theme-error-50: #fef2f2;
+  --theme-error-100: #fee2e2;
+  --theme-error-150: #fecaca;
+  --theme-error-200: #fca5a5;
+  --theme-error-250: #f87171;
+  --theme-error-300: #ef4444;
+  --theme-error-400: #dc2626;
+  --theme-error-500: #b91c1c;
+  --theme-error-600: #991b1b;
+  --theme-error-700: #7f1d1d;
+  --theme-error-750: #450a0a;
+  --theme-error-800: #000000;
+}
+
+/* Header styling */
+.payload-admin .app-header {
+  background: linear-gradient(135deg, var(--modernmen-primary) 0%, var(--modernmen-primary-dark) 100%);
+  border-bottom: 1px solid var(--modernmen-primary-dark);
+}
+
+/* Navigation styling */
+.payload-admin .nav {
+  background: var(--modernmen-surface);
+  border-right: 1px solid #e5e7eb;
+}
+
+.payload-admin .nav__link {
+  color: var(--modernmen-secondary);
+  border-radius: 6px;
+  margin: 2px 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.payload-admin .nav__link:hover {
+  background-color: #f3f4f6;
+  color: var(--modernmen-primary);
+}
+
+.payload-admin .nav__link.nav__link--active {
+  background: linear-gradient(135deg, var(--modernmen-primary) 0%, var(--modernmen-primary-dark) 100%);
+  color: white;
+}
+
+/* Button styling */
+.payload-admin .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.payload-admin .btn--style-primary {
+  background: linear-gradient(135deg, var(--modernmen-primary) 0%, var(--modernmen-primary-dark) 100%);
+  border-color: var(--modernmen-primary);
+}
+
+.payload-admin .btn--style-primary:hover {
+  background: var(--modernmen-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+/* Form styling */
+.payload-admin .form-field {
+  margin-bottom: 1.5rem;
+}
+
+.payload-admin .field-type input,
+.payload-admin .field-type textarea,
+.payload-admin .field-type select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.payload-admin .field-type input:focus,
+.payload-admin .field-type textarea:focus,
+.payload-admin .field-type select:focus {
+  border-color: var(--modernmen-primary);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+}
+
+/* Table styling */
+.payload-admin .table {
+  background: var(--modernmen-surface);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.payload-admin .table__header {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Dashboard styling */
+.payload-admin .dashboard {
+  background: var(--modernmen-background);
+}
+
+.payload-admin .dashboard__header {
+  background: var(--modernmen-surface);
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom ModernMen welcome message */
+.payload-admin .dashboard__header::before {
+  content: "Welcome to ModernMen Admin Panel";
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--modernmen-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Collection list styling */
+.payload-admin .collection-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.payload-admin .collection-list__item {
+  background: var(--modernmen-surface);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.payload-admin .collection-list__item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--modernmen-primary);
+}
+
+/* Sidebar branding */
+.payload-admin .nav__brand {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Custom scrollbar */
+.payload-admin ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.payload-admin ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.payload-admin ::-webkit-scrollbar-thumb {
+  background: var(--modernmen-primary);
+  border-radius: 3px;
+}
+
+.payload-admin ::-webkit-scrollbar-thumb:hover {
+  background: var(--modernmen-primary-dark);
+}
+
+/* Status indicators */
+.payload-admin .status--published {
+  color: #059669;
+  background-color: #d1fae5;
+}
+
+.payload-admin .status--draft {
+  color: var(--modernmen-primary);
+  background-color: #fef3c7;
+}
+
+/* Loading states */
+.payload-admin .loading {
+  color: var(--modernmen-primary);
+}
+
+.payload-admin .spinner {
+  border-color: var(--modernmen-primary);
+}
+
+/* Footer customization */
+.payload-admin .app-footer {
+  background: var(--modernmen-surface);
+  border-top: 1px solid #e5e7eb;
+  color: var(--modernmen-text-muted);
+}
+
+.payload-admin .app-footer::after {
+  content: "© 2024 ModernMen Hair BarberShop. All rights reserved.";
+  display: block;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payload-admin .collection-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .payload-admin .nav {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .payload-admin .nav.nav--open {
+    transform: translateX(0);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .payload-admin {
+    --modernmen-background: #111827;
+    --modernmen-surface: #1f2937;
+    --modernmen-text: #f9fafb;
+    --modernmen-text-muted: #9ca3af;
+  }
+}
+
+/* Accessibility improvements */
+.payload-admin :focus {
+  outline: 2px solid var(--modernmen-primary);
+  outline-offset: 2px;
+}
+
+.payload-admin .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
