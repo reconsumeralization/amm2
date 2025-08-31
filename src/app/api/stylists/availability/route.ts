@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
+import { getPayloadClient } from '@/payload'
+import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler'
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const serviceId = searchParams.get('serviceId')
 
     if (!stylistId || !date) {
-      return createErrorResponse('Stylist ID and date are required', 'VALIDATION_ERROR')
+      return createErrorResponse('Stylist ID and date are required', ERROR_CODES.VALIDATION_ERROR, 400)
     }
 
     const payload = await getPayloadClient({ config: () => import('../../../payload.config').then(m => m.default) })

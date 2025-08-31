@@ -135,8 +135,11 @@ export class PayloadIntegrationService {
       salon_customer: ['guest', 'salon_customer'],
       salon_employee: ['guest', 'salon_customer', 'salon_employee'],
       salon_owner: ['guest', 'salon_customer', 'salon_employee', 'salon_owner'],
-      developer: ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer'],
-      system_admin: ['guest', 'salon_customer', 'salon_employee', 'salon_owner', 'developer', 'system_admin'],
+      BarberShop_customer: ['guest', 'BarberShop_customer'],
+      BarberShop_employee: ['guest', 'BarberShop_customer', 'BarberShop_employee'],
+      BarberShop_owner: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner'],
+      developer: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer'],
+      system_admin: ['guest', 'BarberShop_customer', 'BarberShop_employee', 'BarberShop_owner', 'developer', 'system_admin'],
       guest: ['guest']
     }
 
@@ -482,9 +485,23 @@ export class PayloadIntegrationService {
   }
 
   /**
-   * rch across all collections
+   * Alias for getSalonAnalytics - get barber shop analytics
    */
-  async globalrch(
+  async getBarberShopAnalytics(dateRange?: { start: Date; end: Date }): Promise<{
+    appointments: number
+    customers: number
+    services: number
+    revenue: number
+    topServices: any[]
+    topStylists: any[]
+  }> {
+    return this.getSalonAnalytics(dateRange)
+  }
+
+  /**
+   * Global search across all collections
+   */
+  async globalSearch(
     query: string,
     collections: string[] = ['services', 'customers', 'stylists', 'documentation'],
     limit: number = 20

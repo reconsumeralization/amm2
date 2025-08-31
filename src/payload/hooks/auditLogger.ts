@@ -60,12 +60,12 @@ export const createAuditHook = (
     await createAuditLog(req.payload, {
       action: operation,
       collection: collectionName,
-      docID: doc.id,
+      docID: doc.id?.toString() || 'unknown',
       user: req.user?.email || 'system',
-      userId: req.user?.id,
+      userId: req.user?.id?.toString() || 'unknown',
       tenant: req.user?.tenant?.id || doc.tenant,
-      ipAddress: req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'],
-      userAgent: req.headers?.['user-agent'],
+      ipAddress: req.headers?.get('x-forwarded-for') || req.headers?.get('x-real-ip') || 'unknown',
+      userAgent: req.headers?.get('user-agent') || 'unknown',
       payload: operation === 'create' ? doc : undefined,
       oldData: previousDoc,
       newData: operation === 'update' ? doc : undefined,
@@ -91,12 +91,12 @@ export const createDeleteAuditHook = (
         await createAuditLog(req.payload, {
           action: 'delete',
           collection: collectionName,
-          docID: id,
+          docID: id?.toString() || 'unknown',
           user: req.user?.email || 'system',
-          userId: req.user?.id,
+          userId: req.user?.id?.toString() || 'unknown',
           tenant: req.user?.tenant?.id || doc.tenant,
-          ipAddress: req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'],
-          userAgent: req.headers?.['user-agent'],
+          ipAddress: req.headers?.get('x-forwarded-for') || req.headers?.get('x-real-ip') || 'unknown',
+          userAgent: req.headers?.get('user-agent') || 'unknown',
           oldData: doc,
           severity: 'high', // Deletions are high severity
         })

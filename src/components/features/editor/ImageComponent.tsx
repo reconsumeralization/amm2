@@ -5,6 +5,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 import Image from 'next/image';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ImageNode } from '../../nodes/ImageNode';
+import type { ImageNode as ImageNodeType } from '../../nodes/ImageNode';
 import type { NodeKey } from 'lexical';
 
 interface ImageComponentProps {
@@ -156,7 +157,7 @@ export default function ImageComponent({
       
       // Update the Lexical node
       editor.update(() => {
-        const node = editor.getEditorState()._nodeMap.get(nodeKey) as ImageNode;
+        const node = editor.getEditorState()._nodeMap.get(nodeKey) as InstanceType<typeof ImageNode>;
         if (node && typeof node.setSrc === 'function') {
           node.setSrc(newSrc);
           if (altText !== alt && typeof node.setAlt === 'function') {
@@ -183,7 +184,7 @@ export default function ImageComponent({
 
   const updateAltText = useCallback(() => {
     editor.update(() => {
-      const node = editor.getEditorState()._nodeMap.get(nodeKey) as ImageNode;
+      const node = editor.getEditorState()._nodeMap.get(nodeKey) as InstanceType<typeof ImageNode>;
       if (node && typeof node.setAlt === 'function') {
         node.setAlt(altText);
       }

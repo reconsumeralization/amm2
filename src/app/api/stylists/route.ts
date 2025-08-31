@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
-import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
+import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler'
 
 export async function GET(request: NextRequest) {
   try {

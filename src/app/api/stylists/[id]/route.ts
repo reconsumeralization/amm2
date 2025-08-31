@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import { getPayloadClient } from '@/payload'
 import { authOptions } from '@/lib/auth'
-import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
+import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler'
 
 
 
@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const { id } = await params
 
     const stylist = await payload.findByID({
@@ -21,7 +21,7 @@ export async function GET(
     })
 
     if (!stylist) {
-      return createErrorResponse('Stylist not found', 404)
+      return createErrorResponse('Stylist not found', ERROR_CODES.RESOURCE_NOT_FOUND, 404)
     }
 
     // Transform for frontend
@@ -48,7 +48,7 @@ export async function GET(
 
   } catch (error) {
     console.error('Stylist detail API error:', error)
-    return createErrorResponse('Failed to fetch stylist details', 500)
+    return createErrorResponse('Failed to fetch stylist details', ERROR_CODES.INTERNAL_SERVER_ERROR, 500)
   }
 }
 
@@ -60,10 +60,10 @@ export async function PUT(
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const { id } = await params
     const body = await request.json()
 
@@ -76,7 +76,7 @@ export async function PUT(
       })
 
       if (!existingStylist || existingStylist.user !== session.user.id) {
-        return createErrorResponse('Insufficient permissions', 403)
+        return createErrorResponse('Insufficient permissions', ERROR_CODES.FORBIDDEN, 403)
       }
     }
 
@@ -98,7 +98,7 @@ export async function PUT(
 
   } catch (error) {
     console.error('Error updating stylist:', error)
-    return createErrorResponse('Failed to update stylist', 500)
+    return createErrorResponse('Failed to update stylist', ERROR_CODES.INTERNAL_SERVER_ERROR, 500)
   }
 }
 
@@ -110,15 +110,15 @@ export async function DELETE(
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401)
     }
 
     // Only admins can delete stylists
     if (session.user.role !== 'admin') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', ERROR_CODES.FORBIDDEN, 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayloadClient({ config: () => import('../../../../payload.config').then(m => m.default) })
     const { id } = await params
 
     // Check if stylist exists
@@ -128,7 +128,7 @@ export async function DELETE(
     })
 
     if (!stylist) {
-      return createErrorResponse('Stylist not found', 404)
+      return createErrorResponse('Stylist not found', ERROR_CODES.RESOURCE_NOT_FOUND, 404)
     }
 
     // Delete stylist
@@ -143,6 +143,6 @@ export async function DELETE(
 
   } catch (error) {
     console.error('Error deleting stylist:', error)
-    return createErrorResponse('Failed to delete stylist', 500)
+    return createErrorResponse('Failed to delete stylist', ERROR_CODES.INTERNAL_SERVER_ERROR, 500)
   }
 }

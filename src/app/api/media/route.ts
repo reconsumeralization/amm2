@@ -1,10 +1,11 @@
 // src/app/api/media/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
+import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayload();
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
     const media = await payload.find({
       collection: 'media',
       limit: 100, // Add pagination later
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
 // to the Payload API endpoint for the media collection.
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload();
+    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
     const data = await req.json(); // This would need to contain the file data in a specific format
     const newMedia = await payload.create({
       collection: 'media',

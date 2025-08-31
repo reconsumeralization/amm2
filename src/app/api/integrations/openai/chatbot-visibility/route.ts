@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { OpenAIApi, Configuration } from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, pathname, aiTriggers } = await req.json(); // userId will come from req.user
@@ -41,7 +41,10 @@ export async function POST(req: Request) {
       where: { tenant: { equals: tenantId }, available: { equals: true } },
     });
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
     const prompt = `
       Should the chatbot be displayed for a user with role "${user.role}" on page "${pathname}"?
       - User has ${appointments.totalDocs} pending appointments.
@@ -53,13 +56,13 @@ export async function POST(req: Request) {
 
     let show = false;
     try {
-      const response = await openai.chat.completions.create({
+      const response = await openai.createChatCompletion({
         model: config.ai?.model || 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: config.ai?.maxTokens || 1000,
         temperature: config.ai?.temperature || 0.7,
       });
-      const parsedResponse = JSON.parse(response.choices[0].message.content || '{ "show": false }');
+      const parsedResponse = JSON.parse(response.data.choices[0]?.message?.content || '{ "show": false }');
       show = parsedResponse.show;
     } catch (openaiError: any) {
       console.error('OpenAI API call failed:', openaiError.response?.data || openaiError.message);

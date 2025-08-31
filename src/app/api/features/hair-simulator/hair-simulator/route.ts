@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
-import OpenAI from 'openai';
+import { OpenAIApi, Configuration } from 'openai';
 import sharp from 'sharp';
 import config from '../../../../../payload.config';
 
-const openai = new OpenAI({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const openai = new OpenAIApi(configuration);
 
 // Valid formats for sharp
 const VALID_FORMATS = ['jpeg', 'png', 'webp', 'avif', 'gif', 'tiff'] as const;
@@ -48,21 +49,18 @@ export async function POST(req: NextRequest) {
     const imageFile = new File([blob], 'image.jpg', { type: 'image/jpeg' });
 
     // Generate the hair style preview using OpenAI
-    const response = await openai.images.generate({
-      model: "dall-e-3",
+    const response = await openai.createImage({
       prompt: `${prompt}. Professional barbershop quality, natural lighting, realistic result.`,
       n: 1,
       size: "1024x1024",
-      quality: "standard",
-      style: "natural",
     });
 
-    if (!response.data || !response.data[0]?.url) {
+    if (!response.data || !response.data.data || !response.data.data[0]?.url) {
       throw new Error('Failed to generate image');
     }
 
     // Download the generated image and upload to our media collection
-    const generatedImageResponse = await fetch(response.data[0].url);
+    const generatedImageResponse = await fetch(response.data.data[0].url);
     const generatedImageBuffer = await generatedImageResponse.arrayBuffer();
     const generatedImageBlob = new Blob([generatedImageBuffer]);
     const generatedImageFile = new File([generatedImageBlob], 'hair-preview.jpg', { type: 'image/jpeg' });

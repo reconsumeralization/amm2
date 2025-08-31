@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrendingUp, Clock, Users, Target, Zap, Search, Filter, Star, Calendar, MapPin, BookOpen, Scissors, Brush, X, ArrowRight, Sparkles, History } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
+import { useBreadcrumbTracking } from '@/hooks/useMonitoring'
 import { searchService, SearchResult } from '@/lib/search-service'
 
 // Custom Search icon (inline SVG, styled to match lucide-react)
@@ -54,7 +55,8 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
     popularQueries: [] as string[]
   })
 
-  const { trackPageView, addBreadcrumb } = useMonitoring()
+  const { trackPageView } = useMonitoring()
+  const { addBreadcrumb } = useBreadcrumbTracking()
 
   // Load search history from localStorage
   useEffect(() => {
@@ -79,7 +81,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
 
   useEffect(() => {
     trackPageView('/search', { initialQuery })
-    addBreadcrumb('search page loaded', 'navigation', 'info')
+    addBreadcrumb('search page loaded', { category: 'navigation', level: 'info' })
   }, [trackPageView, addBreadcrumb, initialQuery])
 
   // Debounced search suggestions
@@ -179,7 +181,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
   }
 
   const handleResultClick = (result: SearchResult) => {
-    addBreadcrumb(`Clicked search result: ${result.title}`, 'interaction', 'info')
+    addBreadcrumb(`Clicked search result: ${result.title}`, { category: 'interaction', level: 'info' })
 
     // Track result click
     if (typeof window !== 'undefined' && (window as any).gtag) {

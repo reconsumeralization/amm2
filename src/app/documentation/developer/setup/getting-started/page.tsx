@@ -397,7 +397,7 @@ export default function GettingStartedPage() {
         guide={sampleGuide}
         interactive={true}
         stepByStep={true}
-        onStepComplete={(stepId) => {
+        onStepComplete={(stepId: any) => {
           console.log('Step completed:', stepId)
           // In a real app, this would track completion analytics
         }}

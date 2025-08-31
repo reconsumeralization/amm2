@@ -50,4 +50,5 @@ export const Icons = {
   alertCircle: AlertCircle,
   search: Search,
   image: Image,
+  eye: Bell, // Using Bell as eye icon fallback
 }

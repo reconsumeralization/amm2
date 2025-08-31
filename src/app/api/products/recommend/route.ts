@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
-import OpenAI from 'openai';
+import { OpenAIApi, Configuration } from 'openai';
 
-const openai = new OpenAI({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const openai = new OpenAIApi(configuration);
 
 export async function GET(req: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function GET(req: NextRequest) {
 
     try {
       // Get AI recommendations
-      const completion = await openai.chat.completions.create({
+      const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [
           {
@@ -117,7 +118,7 @@ export async function GET(req: NextRequest) {
         max_tokens: 500,
       });
 
-      const responseText = completion.choices[0]?.message?.content || '';
+      const responseText = completion.data.choices[0]?.message?.content || '';
       
       // Parse AI response
       let recommendedProductIds: string[] = [];

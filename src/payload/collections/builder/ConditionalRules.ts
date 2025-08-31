@@ -178,20 +178,19 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
           },
         },
         {
-          name: 'hasCategory',
-          type: 'relationship',
-          relationTo: 'categories',
-          admin: {
-            description: 'Content must have this category',
-          },
-        },
-        {
           name: 'hasTag',
           type: 'relationship',
           relationTo: 'tags',
           hasMany: true,
           admin: {
             description: 'Content must have these tags',
+          },
+        },
+        {
+          name: 'hasCategory',
+          type: 'text',
+          admin: {
+            description: 'Content must have this category (text field)',
           },
         },
         {

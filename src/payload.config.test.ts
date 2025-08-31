@@ -20,31 +20,32 @@ const Users = {
   fields: [
     {
       name: 'name',
-      type: 'text',
+      type: 'text' as const,
       required: true,
     },
     {
       name: 'email',
-      type: 'email',
+      type: 'email' as const,
       required: true,
       unique: true,
     },
     {
       name: 'role',
-      type: 'select',
+      type: 'select' as const,
       required: true,
       defaultValue: 'staff',
       options: [
         { label: 'Admin', value: 'admin' },
         { label: 'Manager', value: 'manager' },
         { label: 'Staff', value: 'staff' },
-      ],
+      ] as const,
     },
-  ],
+  ] as any,
   timestamps: true,
 }
 
 export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET || 'test-secret-key-for-development',
   admin: {
     meta: {
       title: 'Modern Men Salon - Test',

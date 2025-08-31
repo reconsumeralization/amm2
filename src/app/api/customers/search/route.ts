@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { getPayload } from 'payload'
+import config from '../../../../payload.config'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,15 +10,15 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin or has customer access
     if (session.user.role !== 'admin' && session.user.role !== 'employee') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
 
     // Parse search parameters
     const url = new URL(request.url)
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
 
     if (!query || query.length < 2) {
-      return createErrorResponse('Search query must be at least 2 characters', 400)
+      return createErrorResponse('Search query must be at least 2 characters', 'VALIDATION_ERROR', 400)
     }
 
     // Search customers with multiple fields
@@ -70,6 +71,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error searching customers:', error)
-    return createErrorResponse('Failed to search customers', 500)
+    return createErrorResponse('Failed to search customers', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

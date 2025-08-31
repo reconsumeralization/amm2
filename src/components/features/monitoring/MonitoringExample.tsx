@@ -87,7 +87,7 @@ export function MonitoringExample() {
   // Example: Track search
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      trackAction('search', 'monitoring-example')
+      trackAction('search', { component: 'monitoring-example' })
       logger.info(`Search performed: "${searchQuery}"`, { 
         component: 'MonitoringExample',
         query: searchQuery 
@@ -105,7 +105,7 @@ export function MonitoringExample() {
       const result = { success: true, data: 'Example data' }
 
       trackApiCall('/api/example', 'GET', duration, result.success)
-      trackAction('api_call', '/api/example')
+      trackAction('api_call', { endpoint: '/api/example' })
 
       // API call completed successfully
     } catch (error) {

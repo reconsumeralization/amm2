@@ -283,3 +283,29 @@ export const Tag = Icons.Tag
 export const Eye = Icons.Eye
 export const History = Icons.History
 export const Image = Icons.Image
+
+// Additional icon exports for missing components
+export const GitBranch = FallbackIcon // Git branch icon
+export const ThumbsUp = FallbackIcon // Thumbs up icon
+export const ThumbsDown = FallbackIcon // Thumbs down icon
+export const Circle = Icons.CheckCircle // Circle icon (using CheckCircle as fallback)
+export const Target = FallbackIcon // Target icon
+export const Terminal = FallbackIcon // Terminal icon
+export const Gift = FallbackIcon // Gift icon
+
+// More missing icon exports
+export const Palette = FallbackIcon // Palette icon
+export const Type = FallbackIcon // Type icon
+export const Accessibility = FallbackIcon // Accessibility icon
+export const Monitor = FallbackIcon // Monitor icon
+export const Smartphone = FallbackIcon // Smartphone icon
+export const Minimize = FallbackIcon // Minimize icon
+export const Maximize = FallbackIcon // Maximize icon
+export const PlayIcon = Icons.Play // Play icon
+export const HistoryIcon = Icons.History // History icon
+export const CopyIcon = Icons.Copy // Copy icon
+export const CodeIcon = Icons.Code // Code icon
+export const DownloadIcon = Icons.Download // Download icon
+export const AlertCircleIcon = Icons.AlertTriangle // Alert circle icon
+export const CheckCircleIcon = Icons.CheckCircle // Check circle icon
+export const Component = Icons.Settings // Component icon (using Settings as fallback)

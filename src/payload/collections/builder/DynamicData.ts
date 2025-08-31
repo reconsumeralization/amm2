@@ -145,20 +145,19 @@ export const DynamicData: CollectionConfig = withDefaultHooks({
           ],
         },
         {
-          name: 'categoryFilter',
-          type: 'relationship',
-          relationTo: 'categories',
-          admin: {
-            description: 'Filter by category',
-          },
-        },
-        {
           name: 'tagFilter',
           type: 'relationship',
           relationTo: 'tags',
           hasMany: true,
           admin: {
             description: 'Filter by tags',
+          },
+        },
+        {
+          name: 'categoryFilter',
+          type: 'text',
+          admin: {
+            description: 'Filter by category (text field)',
           },
         },
         {

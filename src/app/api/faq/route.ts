@@ -4,7 +4,7 @@ import { getPayload } from 'payload';
 // Dynamic import for payload config
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler';
+import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     return createSuccessResponse(faqs);
   } catch (error) {
     console.error('Error fetching FAQs:', error);
-    return createErrorResponse('Failed to fetch FAQs', 500);
+    return createErrorResponse('Failed to fetch FAQs', ERROR_CODES.INTERNAL_SERVER_ERROR, 500);
   }
 }
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user || (session.user.role !== 'admin' && session.user.role !== 'manager')) {
-      return createErrorResponse('Unauthorized', 401);
+      return createErrorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED, 401);
     }
 
     const payload = await getPayload({ config: (await import('../../../../payload.config')).default });
@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
       collection: 'faq',
       data,
     });
-    return createSuccessResponse(newFaq, 201);
+    return createSuccessResponse(newFaq, 'FAQ created successfully', 201);
   } catch (error) {
     console.error('Error creating FAQ:', error);
-    return createErrorResponse('Failed to create FAQ', 500);
+    return createErrorResponse('Failed to create FAQ', ERROR_CODES.INTERNAL_SERVER_ERROR, 500);
   }
 }

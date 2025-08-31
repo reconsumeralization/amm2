@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { getPayload } from 'payload'
+import config from '../../../../payload.config'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,12 +10,12 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user has template access
     if (session.user.role !== 'admin' && session.user.role !== 'barber' && session.user.role !== 'manager') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     const { searchParams } = new URL(request.url)
@@ -28,10 +29,10 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get('sort') || 'usageCount'
 
     if (!tenantId) {
-      return createErrorResponse('Tenant ID is required', 400)
+      return createErrorResponse('Tenant ID is required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
 
     // Build query filters
     const where: any = {
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching templates:', error)
-    return createErrorResponse('Failed to fetch templates', 500)
+    return createErrorResponse('Failed to fetch templates', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -125,25 +126,25 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user can create templates
     if (session.user.role !== 'admin' && session.user.role !== 'manager') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
     const body = await request.json()
     const tenantId = request.headers.get('X-Tenant-ID') || body.tenantId
 
     if (!tenantId) {
-      return createErrorResponse('Tenant ID is required', 400)
+      return createErrorResponse('Tenant ID is required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Validate required fields
     if (!body.name || !body.templateData) {
-      return createErrorResponse('Name and template data are required', 400)
+      return createErrorResponse('Name and template data are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Create template
@@ -162,11 +163,11 @@ export async function POST(request: NextRequest) {
     return createSuccessResponse({
       template,
       message: 'Template created successfully'
-    }, 201)
+    }, 'Template created successfully', 201)
 
   } catch (error) {
     console.error('Error creating template:', error)
-    return createErrorResponse('Failed to create template', 500)
+    return createErrorResponse('Failed to create template', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -175,16 +176,16 @@ export async function PUT(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
     const body = await request.json()
     const tenantId = request.headers.get('X-Tenant-ID') || body.tenantId
     const { id, ...updateData } = body
 
     if (!id || !tenantId) {
-      return createErrorResponse('Template ID and Tenant ID are required', 400)
+      return createErrorResponse('Template ID and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Check if user can update this template
@@ -195,7 +196,7 @@ export async function PUT(request: NextRequest) {
       })
 
       if (!existingTemplate || existingTemplate.createdBy !== session.user.id) {
-        return createErrorResponse('Insufficient permissions', 403)
+        return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
       }
     }
 
@@ -226,7 +227,7 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     console.error('Error updating template:', error)
-    return createErrorResponse('Failed to update template', 500)
+    return createErrorResponse('Failed to update template', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -235,7 +236,7 @@ export async function DELETE(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     const { searchParams } = new URL(request.url)
@@ -243,15 +244,15 @@ export async function DELETE(request: NextRequest) {
     const tenantId = request.headers.get('X-Tenant-ID')
 
     if (!id || !tenantId) {
-      return createErrorResponse('Template ID and Tenant ID are required', 400)
+      return createErrorResponse('Template ID and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Only admins can delete templates
     if (session.user.role !== 'admin') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
 
     // Check if template exists
     const template = await payload.findByID({
@@ -260,7 +261,7 @@ export async function DELETE(request: NextRequest) {
     })
 
     if (!template) {
-      return createErrorResponse('Template not found', 404)
+      return createErrorResponse('Template not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Delete template
@@ -275,6 +276,6 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     console.error('Error deleting template:', error)
-    return createErrorResponse('Failed to delete template', 500)
+    return createErrorResponse('Failed to delete template', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

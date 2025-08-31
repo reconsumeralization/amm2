@@ -1,10 +1,11 @@
 // src/app/api/products/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
+import { getPayloadClient } from '@/payload';
+import { createErrorResponse, createSuccessResponse, ERROR_CODES } from '@/lib/api-error-handler';
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayload();
+    const payload = await getPayloadClient();
     const products = await payload.find({
       collection: 'products',
       limit: 100, // Add pagination later
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayload();
+    const payload = await getPayloadClient();
     const data = await req.json();
     const newProduct = await payload.create({
       collection: 'products',

@@ -173,6 +173,17 @@ export function useApiPerformance() {
   return { trackApiRequest }
 }
 
+// Hook for breadcrumb tracking
+export function useBreadcrumbTracking() {
+  const { trackAction } = useMonitoring()
+
+  const addBreadcrumb = useCallback((crumb: string, data?: Record<string, any>) => {
+    trackAction('breadcrumb', { crumb, ...(data || {}) })
+  }, [trackAction])
+
+  return { addBreadcrumb }
+}
+
 // Hook for tracking user interactions
 export function useInteractionTracking() {
   const { trackAction } = useMonitoring()

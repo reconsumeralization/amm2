@@ -7,20 +7,41 @@ import path from 'path'
 import type { PayloadHandler } from 'payload'
 
 // Import collections
-import { Users } from './collections/Users'
-import { Appointments } from './collections/Appointments'
-import { Services } from './collections/Services'
-import { Stylists } from './collections/Stylists'
-import { Customers } from './collections/Customers'
-import { Products } from './collections/Products'
-import { Orders } from './collections/Orders'
-import { Testimonials } from './collections/Testimonials'
-import { Media } from './collections/Media'
-import { Content } from './collections/Content'
-import { Events } from './collections/Events'
-import { BusinessDocumentation } from './collections/BusinessDocumentation'
-import { StaffSchedules } from './collections/StaffSchedules'
-import { ClockRecords } from './collections/ClockRecords'
+import { Users } from './collections/system/Users'
+import { Appointments } from './collections/system/Appointments'
+import { Services } from './collections/system/Services'
+import { Stylists } from './collections/staff/Stylists'
+import { Customers } from './collections/crm/Customers'
+import { Products } from './collections/commerce/Products'
+import { Orders } from './collections/commerce/Orders'
+import { Testimonials } from './collections/crm/Testimonials'
+import { Media } from './collections/content/Media'
+import { Content } from './collections/content/Content'
+import { Events } from './collections/system/Events'
+import { BusinessDocumentation } from './collections/system/BusinessDocumentation'
+import { StaffSchedules } from './collections/staff/StaffSchedules'
+import { ClockRecords } from './collections/staff/ClockRecords'
+
+// Import builder collections
+import { Animations } from './collections/builder/Animations'
+import { BlockRevisions } from './collections/builder/BlockRevisions'
+import { Blocks } from './collections/builder/Blocks'
+import { ConditionalRules } from './collections/builder/ConditionalRules'
+import { Drafts } from './collections/builder/Drafts'
+import { DynamicData } from './collections/builder/DynamicData'
+import { Forms } from './collections/builder/Forms'
+import { GlobalStyles } from './collections/builder/GlobalStyles'
+import { Integrations as BuilderIntegrations } from './collections/builder/Integrations'
+import { Layouts } from './collections/builder/Layouts'
+import { PageRevisions } from './collections/builder/PageRevisions'
+import { Pages as BuilderPages } from './collections/builder/Pages'
+import { PublishQueue } from './collections/builder/PublishQueue'
+import { ReusableComponents } from './collections/builder/ReusableComponents'
+import { Sections } from './collections/builder/Sections'
+import { SEO as BuilderSEO } from './collections/builder/SEO'
+import { Templates } from './collections/builder/Templates'
+import { Themes } from './collections/builder/Themes'
+import { Translations } from './collections/builder/Translations'
 
 // Import globals
 import { Settings } from './globals/Settings'
@@ -106,6 +127,27 @@ export default buildConfig({
     BusinessDocumentation,
     StaffSchedules,
     ClockRecords,
+
+    // Visual Builder Collections
+    Animations,
+    BlockRevisions,
+    Blocks,
+    ConditionalRules,
+    Drafts,
+    DynamicData,
+    Forms,
+    GlobalStyles,
+    BuilderIntegrations,
+    Layouts,
+    PageRevisions,
+    BuilderPages,
+    PublishQueue,
+    ReusableComponents,
+    Sections,
+    BuilderSEO,
+    Templates,
+    Themes,
+    Translations,
   ],
   globals: [
     Settings,
@@ -132,8 +174,8 @@ export default buildConfig({
     seoPlugin({
       collections: ['content', 'services', 'events'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }) => `${doc.title} | Modern Men`,
-      generateDescription: ({ doc }) => doc.excerpt || doc.description,
+      generateTitle: ({ doc }: { doc: any }) => `${doc.title} | Modern Men`,
+      generateDescription: ({ doc }: { doc: any }) => doc.excerpt || doc.description,
     }),
     ...(process.env.S3_BUCKET ? [
       cloudStoragePlugin({
@@ -170,7 +212,6 @@ export default buildConfig({
     limits: {
       fileSize: 10000000, // 10MB
     },
-    mimeTypes: ['image/*', 'application/pdf'],
   },
   email: nodemailerAdapter({
     defaultFromAddress: process.env.FROM_EMAIL || 'noreply@modernmen.com',

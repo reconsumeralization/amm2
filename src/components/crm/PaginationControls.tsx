@@ -15,18 +15,13 @@ interface PaginationControlsProps {
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({ totalDocs, page, limit, totalPages, hasNextPage, hasPrevPage }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handlePrev = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', (page - 1).toString());
-    router.push(`/crm/customers?${params.toString()}`);
+    router.push(`/crm/customers?page=${page - 1}&limit=${limit}`);
   };
 
   const handleNext = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', (page + 1).toString());
-    router.push(`/crm/customers?${params.toString()}`);
+    router.push(`/crm/customers?page=${page + 1}&limit=${limit}`);
   };
 
   return (

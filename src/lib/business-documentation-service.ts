@@ -98,7 +98,7 @@ export class BusinessDocumentationService {
           averageTimeOnPage: 0,
           bounceRate: 0,
           completionRate: 0,
-          rchRanking: 0,
+          searchRanking: 0,
           popularSections: [],
           commonExitPoints: [],
           userFeedback: {
@@ -213,9 +213,9 @@ export class BusinessDocumentationService {
   }
 
   /**
-   * rch and filter documentation
+   * Search and filter documentation
    */
-  async rchDocumentation(
+  async searchDocumentation(
     filter: BusinessDocumentationFilter,
     userRole: UserRole,
     page: number = 1,
@@ -227,7 +227,7 @@ export class BusinessDocumentationService {
     totalPages: number
   }> {
     try {
-      const query = this.buildrchQuery(filter, userRole)
+      const query = this.buildSearchQuery(filter, userRole)
       const response = await this.makePayloadRequest('GET', '/api/documentation', {
         ...query,
         page,
@@ -241,8 +241,8 @@ export class BusinessDocumentationService {
         totalPages: response.totalPages
       }
     } catch (error) {
-      console.error('Error rching documentation:', error)
-      throw new Error('Failed to rch documentation')
+      console.error('Error searching documentation:', error)
+      throw new Error('Failed to search documentation')
     }
   }
 
@@ -370,7 +370,7 @@ export class BusinessDocumentationService {
           mostViewedCategories: Object.keys(documentsByCategory)
             .sort((a, b) => documentsByCategory[b] - documentsByCategory[a])
             .slice(0, 5),
-          rchQueries: [] // Would be populated from rch analytics
+          searchQueries: [] // Would be populated from search analytics
         }
       }
     } catch (error) {
@@ -459,9 +459,9 @@ export class BusinessDocumentationService {
   }
 
   /**
-   * Build rch query from filter
+   * Build search query from filter
    */
-  private buildrchQuery(filter: BusinessDocumentationFilter, userRole: UserRole): any {
+  private buildSearchQuery(filter: BusinessDocumentationFilter, userRole: UserRole): any {
     const query: any = {}
 
     if (filter.type?.length) {
@@ -499,11 +499,11 @@ export class BusinessDocumentationService {
       }
     }
 
-    if (filter.rchQuery) {
+    if (filter.searchQuery) {
       query.$or = [
-        { title: { $regex: filter.rchQuery, $options: 'i' } },
-        { excerpt: { $regex: filter.rchQuery, $options: 'i' } },
-        { content: { $regex: filter.rchQuery, $options: 'i' } }
+        { title: { $regex: filter.searchQuery, $options: 'i' } },
+        { excerpt: { $regex: filter.searchQuery, $options: 'i' } },
+        { content: { $regex: filter.searchQuery, $options: 'i' } }
       ]
     }
 
@@ -583,7 +583,7 @@ export class BusinessDocumentationService {
         averageTimeOnPage: 0,
         bounceRate: 0,
         completionRate: 0,
-        rchRanking: 0,
+        searchRanking: 0,
         popularSections: [],
         commonExitPoints: [],
         userFeedback: { helpful: 0, notHelpful: 0, averageRating: 0, totalRatings: 0 },

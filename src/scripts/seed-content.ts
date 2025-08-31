@@ -142,8 +142,8 @@ async function seedCoupons() {
 
     console.log(`\n📊 Coupon Summary:`);
     console.log(`Total coupons: ${allCoupons.totalDocs}`);
-    console.log(`Active coupons: ${allCoupons.docs.filter(c => c.active).length}`);
-    console.log(`Inactive coupons: ${allCoupons.docs.filter(c => !c.active).length}`);
+    console.log(`Active coupons: ${allCoupons.docs.filter((c: any) => c.active).length}`);
+    console.log(`Inactive coupons: ${allCoupons.docs.filter((c: any) => !c.active).length}`);
 
   } catch (error) {
     console.error('❌ Error seeding coupons:', error);

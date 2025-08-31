@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { getPayload } from 'payload'
+import config from '../../../../payload.config'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,15 +10,15 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin or has analytics access
     if (session.user.role !== 'admin' && session.user.role !== 'owner') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
 
     // Get URL parameters for date range filtering
     const url = new URL(request.url)
@@ -76,7 +77,7 @@ export async function GET(request: NextRequest) {
     let totalSpent = 0
 
     loyaltyStats.docs.forEach((customer: any) => {
-      const tier = customer.loyaltyTier || 'bronze'
+      const tier = (customer.loyaltyTier || 'bronze') as keyof typeof loyaltyTiers
       loyaltyTiers[tier]++
 
       if (customer.loyaltyProgram?.points) {
@@ -150,6 +151,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching customer analytics:', error)
-    return createErrorResponse('Failed to fetch customer analytics', 500)
+    return createErrorResponse('Failed to fetch customer analytics', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

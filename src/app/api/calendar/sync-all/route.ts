@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
       limit: 1,
     });
 
-    const config = settings.docs[0];
+    const settingsConfig = settings.docs[0];
     
-    if (!config?.googleCalendar?.enabled) {
+    if (!settingsConfig?.googleCalendar?.enabled) {
       return NextResponse.json(
         { error: 'Google Calendar sync is not enabled in settings' },
         { status: 400 }

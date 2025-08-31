@@ -14,6 +14,7 @@ const createMockSession = (overrides?: Partial<Session>): Session => ({
     role: 'customer',
     ...overrides?.user,
   },
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   ...overrides,
 });
 

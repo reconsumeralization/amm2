@@ -6,7 +6,10 @@ export type UserRole =
   | "salon_employee"
   | "salon_customer"
   | "system_admin"
-  | "guest";
+  | "guest"
+  | "BarberShop_owner"
+  | "BarberShop_employee"
+  | "BarberShop_customer";
 
 export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 

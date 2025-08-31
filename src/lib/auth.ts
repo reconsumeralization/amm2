@@ -168,8 +168,8 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
-                      logAuthEvent('signin_failed_missing_credentials', { email: credentials.email || 'unknown' })
-          throw new Error('Missing credentials')
+            logAuthEvent('signin_failed_missing_credentials', { email: credentials?.email || 'unknown' })
+            throw new Error('Missing credentials')
           }
 
           const validatedFields = loginSchema.safeParse(credentials)

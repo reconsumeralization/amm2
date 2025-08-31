@@ -130,7 +130,9 @@ export default function Gallery({
 
       {filteredItems.length === 0 && (
         <div className="text-center py-12">
-          <Icons.image className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <div className="h-16 w-16 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
+            <span className="text-gray-400 text-sm">No Image</span>
+          </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No items found
           </h3>

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '../../../../payload.config';
-import OpenAI from 'openai';
+import { OpenAIApi, Configuration } from 'openai';
 
-const openai = new OpenAI({
+const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const openai = new OpenAIApi(configuration);
 
 export async function POST(req: NextRequest) {
   try {
@@ -164,7 +165,7 @@ Services: ${JSON.stringify(context.services.slice(0, 5))}
 
 Respond with the JSON format specified above.`;
 
-    const completion = await openai.chat.completions.create({
+    const completion = await openai.createChatCompletion({
       model: 'gpt-4',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -174,7 +175,7 @@ Respond with the JSON format specified above.`;
       max_tokens: 1000,
     });
 
-    const responseText = completion.choices[0]?.message?.content || '';
+    const responseText = completion.data.choices[0]?.message?.content || '';
     
     try {
       // Try to parse JSON response

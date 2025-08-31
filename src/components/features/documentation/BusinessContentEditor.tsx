@@ -77,15 +77,6 @@ export function BusinessContentEditor({
   }))
 
   // Load existing document or apply template
-  useEffect(() => {
-    if (documentId) {
-      loadDocument()
-    } else if (template) {
-      applyTemplate(template)
-    }
-    loadTemplates()
-  }, [documentId, template, loadDocument, loadTemplates])
-
   const loadDocument = useCallback(async () => {
     if (!documentId) return
     
@@ -123,6 +114,15 @@ export function BusinessContentEditor({
       console.error('Error loading templates:', error)
     }
   }, [docService])
+
+  useEffect(() => {
+    if (documentId) {
+      loadDocument()
+    } else if (template) {
+      applyTemplate(template)
+    }
+    loadTemplates()
+  }, [documentId, template, loadDocument, loadTemplates])
 
   const applyTemplate = (template: DocumentationTemplate) => {
     setSelectedTemplate(template)

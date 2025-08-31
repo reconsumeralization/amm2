@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { getPayload } from 'payload'
+import config from '../../../../payload.config'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,15 +10,15 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin or manager
     if (session.user.role !== 'admin' && session.user.role !== 'manager' && session.user.role !== 'owner') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
-    const payload = await getPayload()
+    const payload = await getPayload({ config })
 
     // Get URL parameters for date range filtering
     const url = new URL(request.url)
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     const endDate = url.searchParams.get('endDate')
 
     if (!tenantId) {
-      return createErrorResponse('Tenant ID is required', 400)
+      return createErrorResponse('Tenant ID is required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Build date filter for analytics
@@ -211,6 +212,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching content analytics:', error)
-    return createErrorResponse('Failed to fetch content analytics', 500)
+    return createErrorResponse('Failed to fetch content analytics', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

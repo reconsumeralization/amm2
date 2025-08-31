@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { OpenAIApi, Configuration } from 'openai';
 
 export async function POST(req: Request) {
   const { tenantId, service, preferences } = await req.json(); // userId will come from req.user
@@ -40,7 +40,10 @@ export async function POST(req: Request) {
       where: { tenant: { equals: tenantId }, available: { equals: true } },
     });
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
     const prompt = `
       Suggest 3 optimal appointment times for a ${service || 'any'} service:
       - Existing appointments: ${JSON.stringify(appointments.docs.map((a: any) => a.date))}
@@ -51,13 +54,13 @@ export async function POST(req: Request) {
 
     let suggestedTimes = [];
     try {
-      const response = await openai.chat.completions.create({
+      const response = await openai.createChatCompletion({
         model: config.ai?.model || 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: config.ai?.maxTokens || 1000,
         temperature: config.ai?.temperature || 0.7,
       });
-      suggestedTimes = JSON.parse(response.choices[0].message.content || '[]');
+      suggestedTimes = JSON.parse(response.data.choices[0]?.message?.content || '[]');
     } catch (openaiError: any) {
       console.error('OpenAI API call failed:', openaiError.response?.data || openaiError.message);
       return NextResponse.json({ error: 'Failed to generate suggestions from AI' }, { status: 500 });

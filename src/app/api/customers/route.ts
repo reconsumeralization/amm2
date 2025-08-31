@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import getPayload from '@/payload'
 import { authOptions } from '@/lib/auth'
-import { validateSearchParams } from '@/lib/validation-utils'
+import { validateRequestBody } from '@/lib/validation-utils'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
+import { z } from 'zod'
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin or has customer access
     if (session.user.role !== 'admin' && session.user.role !== 'employee') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     const payload = await getPayload()
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching customers:', error)
-    return createErrorResponse('Failed to fetch customers', 500)
+    return createErrorResponse('Failed to fetch customers', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -81,33 +82,42 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user is admin
     if (session.user.role !== 'admin') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     const payload = await getPayload()
-    const body = await request.json()
 
-    // Validate customer data
-    const validation = validateSearchParams(body, {
-      firstName: 'string',
-      lastName: 'string',
-      email: 'string',
+    // Define customer creation schema
+    const customerSchema = z.object({
+      firstName: z.string().min(1, 'First name is required'),
+      lastName: z.string().min(1, 'Last name is required'),
+      email: z.string().email('Invalid email address'),
+      phone: z.string().optional(),
+      address: z.object({
+        street: z.string().optional(),
+        city: z.string().optional(),
+        state: z.string().optional(),
+        zipCode: z.string().optional(),
+      }).optional(),
     })
 
-    if (!validation.isValid) {
-      return createErrorResponse(`Validation error: ${validation.errors.join(', ')}`, 400)
+    // Validate customer data
+    const validation = await validateRequestBody(request, customerSchema)
+
+    if (!validation.success) {
+      return createErrorResponse(`Validation error: ${validation.errors?.join(', ') || 'Unknown validation error'}`, 'VALIDATION_ERROR', 400)
     }
 
     // Create customer
     const customer = await payload.create({
       collection: 'customers',
       data: {
-        ...body,
+        ...validation.data,
         createdBy: session.user.id,
       },
       depth: 2,
@@ -116,10 +126,10 @@ export async function POST(request: NextRequest) {
     return createSuccessResponse({
       customer,
       message: 'Customer created successfully'
-    }, 201)
+    })
 
   } catch (error) {
     console.error('Error creating customer:', error)
-    return createErrorResponse('Failed to create customer', 500)
+    return createErrorResponse('Failed to create customer', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

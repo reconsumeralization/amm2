@@ -13,7 +13,7 @@ import { UserRole } from '@/types/documentation'
 // Mock the documentation permissions
 jest.mock('../documentation-permissions', () => ({
   hasDocumentationPermission: jest.fn((role: UserRole, section: string, action: string) => {
-    const permissions = {
+    const permissions: Record<string, string[]> = {
       'system_admin': ['developer', 'business', 'admin', 'shared'],
       'developer': ['developer', 'shared'],
       'BarberShop_owner': ['business', 'business.owner', 'shared'],
@@ -23,7 +23,7 @@ jest.mock('../documentation-permissions', () => ({
     }
     
     const userSections = permissions[role] || []
-    return userSections.some(s => section.startsWith(s))
+    return userSections.some((s: string) => section.startsWith(s))
   })
 }))
 

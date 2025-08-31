@@ -90,19 +90,93 @@ export interface SearchQueryParams {
 }
 
 export class DocumentationSearchService {
-  removeDocument(id: any) {
-    throw new Error('Method not implemented.');
-  }
-  indexDocument(arg0: { id: any; title: any; description: any; content: any; path: string; type: any; role: any; category: any; tags: any; author: any; lastUpdated: any; difficulty: any; estimatedReadTime: any; metadata: any; rchableText: string; keywords: never[]; }) {
-    throw new Error('Method not implemented.');
-  }
   private config: SearchConfig;
+  private documents: any[] = []; // In-memory document store for testing
 
   constructor(config: SearchConfig) {
     this.config = config;
   }
 
-  async search(query: SearchQueryParams, userRole: UserRole): Promise<SearchResponse> {
+  // Helper method for typo corrections
+  private getTypoCorrections(query: string): any[] {
+    const corrections: any[] = [];
+    const commonTypos = {
+      'aip': 'api',
+      'pai': 'api',
+      'configration': 'configuration',
+      'configuraton': 'configuration',
+      'recieve': 'receive',
+      'recieving': 'receiving',
+      'seperate': 'separate',
+      'seperated': 'separated',
+      'occurence': 'occurrence',
+      'occurences': 'occurrences'
+    };
+
+    for (const [typo, correction] of Object.entries(commonTypos)) {
+      if (query.includes(typo)) {
+        const correctedText = query.replace(new RegExp(typo, 'g'), correction);
+        corrections.push({
+          text: correctedText,
+          type: 'correction',
+          score: 0.8
+        });
+      }
+    }
+
+    return corrections;
+  }
+
+  // Generate suggestions for queries
+  private generateSuggestions(query: string, isNoResults: boolean = false): any[] {
+    const suggestions: any[] = [];
+
+    // Add typo corrections if no results found
+    if (isNoResults) {
+      suggestions.push(...this.getTypoCorrections(query));
+    }
+
+    // Add related terms
+    const relatedTerms = {
+      'api': ['endpoint', 'rest', 'graphql', 'authentication'],
+      'search': ['filter', 'query', 'index', 'results'],
+      'documentation': ['guide', 'tutorial', 'reference', 'examples']
+    };
+
+    const lowerQuery = query.toLowerCase();
+    for (const [term, related] of Object.entries(relatedTerms)) {
+      if (lowerQuery.includes(term)) {
+        related.forEach(relatedTerm => {
+          suggestions.push({
+            text: relatedTerm,
+            type: 'related',
+            score: 0.6
+          });
+        });
+      }
+    }
+
+    // Add query completions
+    if (query.length > 2) {
+      const completions = [
+        `${query} authentication`,
+        `${query} tutorial`,
+        `${query} examples`
+      ];
+
+      completions.forEach(completion => {
+        suggestions.push({
+          text: completion,
+          type: 'completion',
+          score: 0.7
+        });
+      });
+    }
+
+    return suggestions;
+  }
+
+  async search(query: SearchQueryParams, userRole: UserRole): Promise<SearchResponse & { suggestions?: any[] }> {
     const startTime = Date.now();
     try {
       const params = new URLSearchParams({
@@ -127,19 +201,29 @@ export class DocumentationSearchService {
         highlights: [],
       }));
 
+      // Generate suggestions if no results or if suggestions are enabled
+      const hasResults = results.length > 0;
+      const suggestions = this.generateSuggestions(query.query, !hasResults);
+
       return {
         results,
         totalCount: data.total,
         query: { query: query.query },
         executionTime: Date.now() - startTime,
+        suggestions: this.config.enableSuggestions ? suggestions : undefined,
       };
     } catch (error) {
       console.error('Search error:', error);
+
+      // Generate suggestions even on error if enabled
+      const suggestions = this.config.enableSuggestions ? this.generateSuggestions(query.query, true) : undefined;
+
       return {
         results: [],
         totalCount: 0,
         query: { query: query.query },
         executionTime: Date.now() - startTime,
+        suggestions,
       };
     }
   }

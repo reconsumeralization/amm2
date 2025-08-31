@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withErrorHandler, createSuccessResponse } from '@/lib/api-error-handler'
-import { rchService } from '@/lib/search-service-simple'
+import { searchService } from '@/lib/search-service-simple'
 import { logger } from '@/lib/logger'
 
 interface SearchQuery {
@@ -52,7 +52,7 @@ async function handleSearch(request: NextRequest) {
       offset: searchQuery.offset
     })
 
-    const results = await rchService.rch(searchQuery)
+    const results = await searchService.search(searchQuery)
 
     return createSuccessResponse({
       results: results.results,

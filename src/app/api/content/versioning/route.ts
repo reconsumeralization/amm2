@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getPayload } from 'payload'
+import getPayload from '@/payload'
 import { authOptions } from '@/lib/auth'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error-handler'
 
@@ -9,12 +9,12 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Check if user has content access
     if (session.user.role !== 'admin' && session.user.role !== 'barber' && session.user.role !== 'manager') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     const { searchParams } = new URL(request.url)
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10')
 
     if (!contentId || !tenantId) {
-      return createErrorResponse('Content ID and Tenant ID are required', 400)
+      return createErrorResponse('Content ID and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     const payload = await getPayload()
@@ -36,12 +36,12 @@ export async function GET(request: NextRequest) {
     })
 
     if (!content) {
-      return createErrorResponse('Content not found', 404)
+      return createErrorResponse('Content not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Check if user can access this content
     if (session.user.role !== 'admin' && session.user.role !== 'manager' && content.createdBy !== session.user.id) {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     // Get all revisions for this content
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching content versions:', error)
-    return createErrorResponse('Failed to fetch content versions', 500)
+    return createErrorResponse('Failed to fetch content versions', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     const payload = await getPayload()
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     const tenantId = request.headers.get('X-Tenant-ID')
 
     if (!contentId || !versionId || !tenantId) {
-      return createErrorResponse('Content ID, Version ID, and Tenant ID are required', 400)
+      return createErrorResponse('Content ID, Version ID, and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Fetch current content
@@ -93,19 +93,19 @@ export async function POST(request: NextRequest) {
     })
 
     if (!currentContent) {
-      return createErrorResponse('Content not found', 404)
+      return createErrorResponse('Content not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Check permissions
     if (session.user.role !== 'admin' && session.user.role !== 'manager' && currentContent.createdBy !== session.user.id) {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     // Find the specific revision
     const revision = currentContent.revisions?.find((rev: any) => rev.id === versionId)
 
     if (!revision) {
-      return createErrorResponse('Version not found', 404)
+      return createErrorResponse('Version not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     if (action === 'restore') {
@@ -156,11 +156,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    return createErrorResponse('Invalid action', 400)
+    return createErrorResponse('Invalid action', 'VALIDATION_ERROR', 400)
 
   } catch (error) {
     console.error('Error managing content version:', error)
-    return createErrorResponse('Failed to manage content version', 500)
+    return createErrorResponse('Failed to manage content version', 'INTERNAL_SERVER_ERROR', 500)
   }
 }
 
@@ -169,7 +169,7 @@ export async function DELETE(request: NextRequest) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user) {
-      return createErrorResponse('Unauthorized', 401)
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     const { searchParams } = new URL(request.url)
@@ -177,12 +177,12 @@ export async function DELETE(request: NextRequest) {
     const tenantId = request.headers.get('X-Tenant-ID')
 
     if (!contentId || !tenantId) {
-      return createErrorResponse('Content ID and Tenant ID are required', 400)
+      return createErrorResponse('Content ID and Tenant ID are required', 'MISSING_REQUIRED_FIELD', 400)
     }
 
     // Only admins can clear all revisions
     if (session.user.role !== 'admin') {
-      return createErrorResponse('Insufficient permissions', 403)
+      return createErrorResponse('Insufficient permissions', 'FORBIDDEN', 403)
     }
 
     const payload = await getPayload()
@@ -203,6 +203,6 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     console.error('Error clearing content revisions:', error)
-    return createErrorResponse('Failed to clear content revisions', 500)
+    return createErrorResponse('Failed to clear content revisions', 'INTERNAL_SERVER_ERROR', 500)
   }
 }

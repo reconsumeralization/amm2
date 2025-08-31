@@ -14,9 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize Payload
-    const payload = await getPayload({
-      config: () => config,
-    });
+    const payload = await getPayload({ config });
 
     // Find the coupon
     const result = await payload.find({
