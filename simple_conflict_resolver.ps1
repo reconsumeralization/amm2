@@ -1,4 +1,4 @@
-# Simple Conflict Resolver - Handles common patterns automatically
+﻿# Simple Conflict Resolver - Handles common patterns automatically
 # Focuses on the most frequent conflict types we've encountered
 
 param(

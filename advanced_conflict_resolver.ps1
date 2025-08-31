@@ -1,4 +1,4 @@
-# Advanced Conflict Resolution Automation Script
+﻿# Advanced Conflict Resolution Automation Script
 # Comprehensive solution for resolving merge conflicts intelligently
 
 param(

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useCallback } from 'react'
 import { monitoring } from '@/lib/monitoring'

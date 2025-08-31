@@ -1,4 +1,4 @@
-# PowerShell script to resolve all remaining merge conflicts by keeping clean-merge version
+﻿# PowerShell script to resolve all remaining merge conflicts by keeping clean-merge version
 Get-ChildItem -Path "." -Recurse -Include "*.ts","*.tsx","*.js","*.jsx","*.json","*.md","*.css" -Exclude "*.d.ts" |
 Where-Object { $_.FullName -notlike "*node_modules*" -and $_.FullName -notlike "*.next*" -and $_.FullName -notlike "*.git*" } |
 ForEach-Object {

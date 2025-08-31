@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 
 /**
  * Standard API error response structure
@@ -296,7 +296,6 @@ export class RateLimiter {
 // Global rate limiter instance
 export const globalRateLimiter = new RateLimiter(100, 60000); // 100 requests per minute
 
-<<<<<<< HEAD
 /**
  * Higher-order function to wrap API handlers with error handling
  */
