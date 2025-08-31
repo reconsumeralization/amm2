@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { usePayloadIntegration } from '@/hooks/usePayloadIntegration'
 import { usePermissions } from '@/contexts/DocumentationContext'
-import { AdminOnly } from '@/components/documentation/AccessControl'
+import { AdminOnly } from '@/components/features/documentation/AccessControl'
 
 
 

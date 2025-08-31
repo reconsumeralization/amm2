@@ -2,7 +2,7 @@
 
 import React, { Suspense } from 'react';
 // Using window.location.search instead of useSearchParams to avoid Next.js version issues
-import { DocumentationSearch } from '@/components/documentation/DocumentationSearch';
+import { DocumentationSearch } from '@/components/features/documentation/DocumentationSearch';
 import { Card, CardContent } from '@/components/ui/card';
 // Using text alternatives for icons due to package compatibility issues
 

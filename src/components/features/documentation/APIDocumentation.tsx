@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../ui/collapsible'
 import { ChevronDown, ChevronRight, Play, Copy, Download } from '@/lib/icon-mapping'
 import { APIEndpoint, APIDocumentationSection, SDKGenerationConfig } from '@/types/api-documentation'
 import { HTTPMethod } from '@/types/documentation'

@@ -29,7 +29,7 @@ import {
   hasDocumentationPermission
 } from "@/lib/documentation-permissions"
 import { DocumentationProvider, useDocumentation, usePermissions } from "@/contexts/DocumentationContext"
-import { RouteGuard } from "@/components/documentation/RouteGuard"
+import { RouteGuard } from "@/components/features/documentation/RouteGuard"
 import { UserRole, BreadcrumbItem, SidebarConfig } from "@/types/documentation"
 import { title } from "process"
 

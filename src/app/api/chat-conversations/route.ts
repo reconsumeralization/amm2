@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '@/payload'
 import config from '@/payload.config'
-import { createSuccessResponse, createErrorResponse } from '@/lib/api-response'
+import { createSuccessResponse, createErrorResponse } from '@/lib/api-error-handler'
 import { v4 as uuidv4 } from 'uuid'
 
 export async function GET(request: NextRequest) {

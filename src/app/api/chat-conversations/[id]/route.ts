@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '@/payload'
 import config from '@/payload.config'
-import { createSuccessResponse, createErrorResponse } from '@/lib/api-response'
+import { createSuccessResponse, createErrorResponse } from '@/lib/api-error-handler'
 
 export async function GET(
   request: NextRequest,
@@ -16,9 +16,8 @@ export async function GET(
       collection: 'chat-conversations',
       id,
     })
-
     if (!conversation) {
-      return createErrorResponse('Conversation not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Conversation not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     return createSuccessResponse(conversation, 'Conversation retrieved successfully')
@@ -45,7 +44,7 @@ export async function PUT(
     })
 
     if (!existingConversation) {
-      return createErrorResponse('Conversation not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Conversation not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Update conversation
@@ -81,7 +80,7 @@ export async function DELETE(
     })
 
     if (!existingConversation) {
-      return createErrorResponse('Conversation not found', 'NOT_FOUND', 404)
+      return createErrorResponse('Conversation not found', 'RESOURCE_NOT_FOUND', 404)
     }
 
     // Delete conversation and all associated messages

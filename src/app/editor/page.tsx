@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Editor from '@/components/editor/Editor';
+import Editor from '@/components/features/editor/Editor';
 
 export default function EditorPage() {
   const [savedContent, setSavedContent] = useState('');
