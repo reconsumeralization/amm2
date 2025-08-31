@@ -517,8 +517,59 @@ export const Orders: CollectionConfig = {
 
               if (customer?.email) {
                 console.log(`Sending order confirmation to: ${customer.email}`);
-                // TODO: Implement email service
-                // await emailService.sendOrderConfirmation(customer.email, doc);
+                
+                try {
+                  const { emailService } = await import('@/lib/email-service');
+                  await emailService.sendEmail({
+                    to: customer.email,
+                    subject: `Order Confirmation #${doc.orderNumber} - ModernMen`,
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #28a745;">Order Confirmed!</h2>
+                        <p>Hi ${customer.name || customer.email},</p>
+                        <p>Thank you for your order! We've received your purchase and it's being processed.</p>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                          <h3>Order Details:</h3>
+                          <p><strong>Order Number:</strong> #${doc.orderNumber}</p>
+                          <p><strong>Status:</strong> ${doc.status}</p>
+                          <p><strong>Order Date:</strong> ${new Date(doc.createdAt).toLocaleDateString()}</p>
+                          
+                          <h4>Items Ordered:</h4>
+                          ${doc.items?.map((item: any) => `
+                            <div style="border-left: 3px solid #28a745; padding-left: 15px; margin: 10px 0;">
+                              <p><strong>Item:</strong> ${item.product?.name || 'Product'}</p>
+                              ${item.variant ? `<p><strong>Variant:</strong> ${item.variant}</p>` : ''}
+                              <p><strong>Quantity:</strong> ${item.quantity}</p>
+                              <p><strong>Price:</strong> $${((item.totalPrice || 0) / 100).toFixed(2)}</p>
+                            </div>
+                          `).join('') || ''}
+                          
+                          <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
+                            <p><strong>Subtotal:</strong> $${((doc.pricing?.subtotal || 0) / 100).toFixed(2)}</p>
+                            ${doc.pricing?.tax ? `<p><strong>Tax:</strong> $${(doc.pricing.tax / 100).toFixed(2)}</p>` : ''}
+                            ${doc.pricing?.shipping ? `<p><strong>Shipping:</strong> $${(doc.pricing.shipping / 100).toFixed(2)}</p>` : ''}
+                            <p style="font-size: 18px;"><strong>Total:</strong> $${((doc.pricing?.total || 0) / 100).toFixed(2)}</p>
+                          </div>
+                        </div>
+                        
+                        <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                          <h4>What's Next?</h4>
+                          <p>We'll send you another email when your order ships with tracking information.</p>
+                          <p>If you have any questions, please contact our customer service team.</p>
+                        </div>
+                        
+                        <p>Thank you for shopping with ModernMen!</p>
+                        <p>Best regards,<br>The ModernMen Team</p>
+                      </div>
+                    `,
+                    text: `Order Confirmed! Hi ${customer.name || customer.email}, Your order #${doc.orderNumber} for $${((doc.pricing?.total || 0) / 100).toFixed(2)} has been confirmed. We'll notify you when it ships. Thank you for shopping with ModernMen!`
+                  });
+                  
+                  console.log(`Successfully sent order confirmation to: ${customer.email}`);
+                } catch (emailError) {
+                  console.error('Error sending order confirmation email:', emailError);
+                }
               }
             } catch (error) {
               console.error('Error sending order confirmation:', error);
@@ -538,7 +589,39 @@ export const Orders: CollectionConfig = {
             for (const staff of staffUsers.docs) {
               if (staff.email) {
                 console.log(`Notifying staff ${staff.email} about new order ${doc.orderNumber}`);
-                // TODO: Implement notification service
+                
+                try {
+                  const { emailService } = await import('@/lib/email-service');
+                  await emailService.sendEmail({
+                    to: staff.email,
+                    subject: `New Order #${doc.orderNumber} - ModernMen`,
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #17a2b8;">New Order Received</h2>
+                        <p>Hi ${staff.name || staff.email},</p>
+                        <p>A new order has been placed and requires processing.</p>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                          <h3>Order Summary:</h3>
+                          <p><strong>Order Number:</strong> #${doc.orderNumber}</p>
+                          <p><strong>Customer:</strong> ${doc.customer?.name || doc.customer?.email || 'N/A'}</p>
+                          <p><strong>Status:</strong> ${doc.status}</p>
+                          <p><strong>Total:</strong> $${((doc.pricing?.total || 0) / 100).toFixed(2)}</p>
+                          <p><strong>Items:</strong> ${doc.items?.length || 0} item(s)</p>
+                          <p><strong>Order Date:</strong> ${new Date(doc.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        
+                        <p>Please process this order in the admin dashboard.</p>
+                        <p>Best regards,<br>ModernMen System</p>
+                      </div>
+                    `,
+                    text: `New order #${doc.orderNumber} from ${doc.customer?.name || doc.customer?.email || 'customer'} for $${((doc.pricing?.total || 0) / 100).toFixed(2)}. Status: ${doc.status}. Please process in admin dashboard.`
+                  });
+                  
+                  console.log(`Successfully sent order notification to staff: ${staff.email}`);
+                } catch (emailError) {
+                  console.error(`Error sending order notification to ${staff.email}:`, emailError);
+                }
               }
             }
           } catch (error) {
@@ -617,7 +700,53 @@ export const Orders: CollectionConfig = {
 
                   if (customer?.email) {
                     console.log(`Sending shipping confirmation to: ${customer.email}`);
-                    // TODO: Implement shipping notification
+                    
+                    try {
+                      const { emailService } = await import('@/lib/email-service');
+                      await emailService.sendEmail({
+                        to: customer.email,
+                        subject: `Your Order #${doc.orderNumber} Has Shipped! - ModernMen`,
+                        html: `
+                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #ffc107;">Your Order Has Shipped!</h2>
+                            <p>Hi ${customer.name || customer.email},</p>
+                            <p>Great news! Your order is on its way to you.</p>
+                            
+                            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                              <h3>Shipping Details:</h3>
+                              <p><strong>Order Number:</strong> #${doc.orderNumber}</p>
+                              <p><strong>Shipped Date:</strong> ${new Date().toLocaleDateString()}</p>
+                              <p><strong>Total:</strong> $${((doc.pricing?.total || 0) / 100).toFixed(2)}</p>
+                              ${doc.shipping?.trackingNumber ? `<p><strong>Tracking Number:</strong> ${doc.shipping.trackingNumber}</p>` : ''}
+                              ${doc.shipping?.carrier ? `<p><strong>Carrier:</strong> ${doc.shipping.carrier}</p>` : ''}
+                              ${doc.shipping?.estimatedDelivery ? `<p><strong>Estimated Delivery:</strong> ${new Date(doc.shipping.estimatedDelivery).toLocaleDateString()}</p>` : ''}
+                            </div>
+                            
+                            <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                              <h4>Track Your Package:</h4>
+                              ${doc.shipping?.trackingNumber ? `
+                                <p>You can track your package using the tracking number above on the carrier's website.</p>
+                                ${doc.shipping?.trackingUrl ? `<p><a href="${doc.shipping.trackingUrl}" style="color: #007bff;">Click here to track your package</a></p>` : ''}
+                              ` : '<p>You will receive tracking information once your package is picked up by the carrier.</p>'}
+                            </div>
+                            
+                            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                              <h4>Delivery Information:</h4>
+                              <p>Please ensure someone is available to receive your package. If you're not available, the carrier may leave a delivery notice with instructions for pickup or redelivery.</p>
+                            </div>
+                            
+                            <p>Thank you for your business! We hope you love your purchase.</p>
+                            <p>If you have any questions about your shipment, please contact our customer service team.</p>
+                            <p>Best regards,<br>The ModernMen Team</p>
+                          </div>
+                        `,
+                        text: `Your order #${doc.orderNumber} has shipped! ${doc.shipping?.trackingNumber ? 'Tracking number: ' + doc.shipping.trackingNumber + '. ' : ''}${doc.shipping?.estimatedDelivery ? 'Estimated delivery: ' + new Date(doc.shipping.estimatedDelivery).toLocaleDateString() + '. ' : ''}Thank you for your business!`
+                      });
+                      
+                      console.log(`Successfully sent shipping confirmation to: ${customer.email}`);
+                    } catch (emailError) {
+                      console.error('Error sending shipping confirmation email:', emailError);
+                    }
                   }
                 } catch (error) {
                   console.error('Error sending shipping notification:', error);

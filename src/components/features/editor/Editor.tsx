@@ -17,10 +17,17 @@ import HairSimulatorPlugin from './HairSimulatorPlugin';
 import TestimonialPlugin from './TestimonialPlugin';
 import PageBuilder from './PageBuilder';
 import ToolbarPlugin from './ToolbarPlugin';
+import VideoPlugin from './VideoPlugin';
+import AccordionPlugin from './AccordionPlugin';
+import TabsPlugin from './TabsPlugin';
+import ComponentTemplatesPlugin from './ComponentTemplatesPlugin';
 import { ListNode, ListItemNode } from '@lexical/list';
 import { LinkNode } from '@lexical/link';
 import { TableNode, TableCellNode, TableRowNode } from '@lexical/table';
 import { ImageNode } from '../../../nodes/ImageNode';
+import { VideoNode } from '../../../nodes/VideoNode';
+import { AccordionNode } from '../../../nodes/AccordionNode';
+import { TabsNode } from '../../../nodes/TabsNode';
 import { $getRoot, $createParagraphNode, $createTextNode } from 'lexical';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
@@ -28,7 +35,7 @@ export default function Editor({ initialContent, onSaveAction, tenantId = 'tenan
   const [error, setError] = useState('');
   const [settings, setSettings] = useState<any>({ 
     editor: { 
-      enabledPlugins: ['image', 'serviceTemplate', 'productEmbed', 'aiContent', 'hairSimulator'], 
+      enabledPlugins: ['image', 'serviceTemplate', 'productEmbed', 'aiContent', 'hairSimulator', 'video', 'accordion', 'tabs', 'componentTemplates'], 
       theme: {}, 
       imageOptimization: {
         maxImageSize: 5242880,
@@ -58,7 +65,7 @@ export default function Editor({ initialContent, onSaveAction, tenantId = 'tenan
 
   const initialConfig = {
     namespace: 'ModernMenEditor',
-    nodes: [ListNode, ListItemNode, LinkNode, ImageNode, TableNode, TableCellNode, TableRowNode],
+    nodes: [ListNode, ListItemNode, LinkNode, ImageNode, TableNode, TableCellNode, TableRowNode, VideoNode, AccordionNode, TabsNode],
     onError: (err: Error) => {
       console.error('Lexical Editor Error:', err);
       setError(err.message);
@@ -138,7 +145,19 @@ export default function Editor({ initialContent, onSaveAction, tenantId = 'tenan
           <TestimonialPlugin tenantId={tenantId} />
         )}
         {settings.editor?.enabledPlugins?.includes('pageBuilder') && (
-          <PageBuilder tenantId={tenantId} settings={settings} onSave={onSaveAction} />
+          <PageBuilder tenantId={tenantId} settings={settings} />
+        )}
+        {settings.editor?.enabledPlugins?.includes('video') && (
+          <VideoPlugin />
+        )}
+        {settings.editor?.enabledPlugins?.includes('accordion') && (
+          <AccordionPlugin />
+        )}
+        {settings.editor?.enabledPlugins?.includes('tabs') && (
+          <TabsPlugin />
+        )}
+        {settings.editor?.enabledPlugins?.includes('componentTemplates') && (
+          <ComponentTemplatesPlugin />
         )}
         
         {error && (

@@ -14,7 +14,7 @@ export function Chat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!input.trim()) return
 
@@ -25,18 +25,47 @@ export function Chat() {
     }
 
     setMessages((prev: Message[]) => [...prev, newMessage])
+    const userInput = input.trim()
     setInput('')
 
-    // TODO: Add API call to handle the message
-    // For now, we'll just echo the message back
-    setTimeout(() => {
-      const response: Message = {
+    try {
+      // Call the chatbot API
+      const response = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userInput,
+          history: messages
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from chatbot')
+      }
+
+      const data = await response.json()
+      
+      const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Echo: ${newMessage.content}`,
+        content: data.message,
       }
-      setMessages((prev: Message[]) => [...prev, response])
-    }, 1000)
+      
+      setMessages((prev: Message[]) => [...prev, assistantMessage])
+    } catch (error) {
+      console.error('Error calling chatbot API:', error)
+      
+      // Fallback response if API fails
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment or contact us directly for assistance.",
+      }
+      
+      setMessages((prev: Message[]) => [...prev, errorMessage])
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

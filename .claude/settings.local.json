@@ -5,7 +5,9 @@
       "Bash(find:*)",
       "Bash(node fix-auth-imports.js)",
       "Bash(node:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run typecheck:*)"
     ],
     "deny": [],
     "ask": []

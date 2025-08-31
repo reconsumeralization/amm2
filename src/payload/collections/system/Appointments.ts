@@ -212,9 +212,24 @@ export const Appointments: CollectionConfig = {
               })
 
               if (customer?.email) {
-                // TODO: Implement email service
-                console.log(`Sending confirmation email to: ${customer.email}`)
-                // await emailService.sendAppointmentConfirmation(customer.email, doc)
+                // Import email service dynamically to avoid circular dependencies
+                const { emailService } = await import('@/lib/email-service')
+                try {
+                  await emailService.sendAppointmentConfirmation(
+                    customer.email,
+                    customer.name || customer.email,
+                    {
+                      service: doc.service || 'Appointment',
+                      date: new Date(doc.date).toLocaleDateString(),
+                      time: doc.time || 'TBD',
+                      stylist: doc.barber || 'Staff Member',
+                      location: 'ModernMen Hair Salon'
+                    }
+                  )
+                  console.log(`Appointment confirmation email sent to: ${customer.email}`)
+                } catch (emailError) {
+                  console.error('Failed to send appointment confirmation email:', emailError)
+                }
               }
             }
           } catch (error) {
@@ -230,8 +245,23 @@ export const Appointments: CollectionConfig = {
               })
 
               if (barber?.email) {
-                console.log(`Notifying barber: ${barber.email}`)
-                // await notificationService.notifyBarberOfAppointment(barber.email, doc)
+                const { emailService } = await import('@/lib/email-service')
+                try {
+                  await emailService.sendStaffNotification(
+                    barber.email,
+                    barber.name || 'Staff Member',
+                    'new_appointment',
+                    {
+                      appointmentDate: new Date(doc.date).toLocaleDateString(),
+                      appointmentTime: doc.time || 'TBD',
+                      service: doc.service || 'Appointment',
+                      customerName: customer?.name || 'Customer'
+                    }
+                  )
+                  console.log(`Staff notification sent to: ${barber.email}`)
+                } catch (emailError) {
+                  console.error('Failed to send staff notification:', emailError)
+                }
               }
             }
           } catch (error) {
@@ -382,8 +412,28 @@ export const Appointments: CollectionConfig = {
                   id: doc.user
                 })
                 if (customer?.email) {
-                  console.log(`Sending follow-up email to: ${customer.email}`)
-                  // TODO: Implement follow-up email service
+                  const { emailService } = await import('@/lib/email-service')
+                  try {
+                    // Send a simple follow-up email after completed appointments
+                    await emailService.sendEmail({
+                      to: customer.email,
+                      subject: 'Thank you for visiting ModernMen!',
+                      html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                          <h2 style="color: #333;">Thank you for your visit!</h2>
+                          <p>Hi ${customer.name || customer.email},</p>
+                          <p>Thank you for choosing ModernMen for your grooming needs. We hope you loved your new look!</p>
+                          <p>We'd love to hear about your experience. Please consider leaving us a review or booking your next appointment.</p>
+                          <p>Looking forward to seeing you again soon!</p>
+                          <p>Best regards,<br>The ModernMen Team</p>
+                        </div>
+                      `,
+                      text: `Hi ${customer.name || customer.email},\n\nThank you for choosing ModernMen for your grooming needs. We hope you loved your new look!\n\nWe'd love to hear about your experience. Please consider leaving us a review or booking your next appointment.\n\nLooking forward to seeing you again soon!\n\nBest regards,\nThe ModernMen Team`
+                    })
+                    console.log(`Follow-up email sent to: ${customer.email}`)
+                  } catch (emailError) {
+                    console.error('Failed to send follow-up email:', emailError)
+                  }
                 }
               }
             } catch (error) {

@@ -218,7 +218,7 @@ export default function BookingChatbot({
         // Fetch settings with graceful fallback for development
         let settingsData: any = {};
         try {
-          const settingsRes = await fetch(`/api/settings?tenantId=${tenantId}`);
+          const settingsRes = await fetch(`/api/settings/public?tenantId=${tenantId}`);
           if (settingsRes.ok) {
             settingsData = await settingsRes.json();
           } else {

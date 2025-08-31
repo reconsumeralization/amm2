@@ -18,12 +18,38 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const payload = await getPayloadClient();
     const data = await req.json();
 
-    // TODO: Add authorization check to ensure only the author or an admin can edit
+    // Get the existing note to check authorization
+    const existingNote = await payload.findByID({
+      collection: 'customer-notes',
+      id: id,
+    });
+
+    if (!existingNote) {
+      return createErrorResponse('Customer note not found', 'NOT_FOUND', 404);
+    }
+
+    // Authorization check: only the author or an admin can edit
+    const userId = (session as any).user.id;
+    const userRole = (session as any).user.role;
+    const isAuthor = existingNote.author === userId || existingNote.authorId === userId;
+    const isAdmin = ['admin', 'system_admin', 'salon_owner', 'BarberShop_owner'].includes(userRole);
+
+    if (!isAuthor && !isAdmin) {
+      return createErrorResponse(
+        'Insufficient permissions to edit this note',
+        'FORBIDDEN',
+        403
+      );
+    }
 
     const updatedNote = await payload.update({
       collection: 'customer-notes',
       id: id,
-      data,
+      data: {
+        ...data,
+        updatedAt: new Date(),
+        updatedBy: userId
+      },
     });
 
     return createSuccessResponse(updatedNote);
@@ -44,7 +70,29 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   // @ts-ignore - Payload config type issue
     const payload = await getPayloadClient();
 
-    // TODO: Add authorization check to ensure only the author or an admin can delete
+    // Get the existing note to check authorization
+    const existingNote = await payload.findByID({
+      collection: 'customer-notes',
+      id: id,
+    });
+
+    if (!existingNote) {
+      return createErrorResponse('Customer note not found', 'NOT_FOUND', 404);
+    }
+
+    // Authorization check: only the author or an admin can delete
+    const userId = (session as any).user.id;
+    const userRole = (session as any).user.role;
+    const isAuthor = existingNote.author === userId || existingNote.authorId === userId;
+    const isAdmin = ['admin', 'system_admin', 'salon_owner', 'BarberShop_owner'].includes(userRole);
+
+    if (!isAuthor && !isAdmin) {
+      return createErrorResponse(
+        'Insufficient permissions to delete this note',
+        'FORBIDDEN',
+        403
+      );
+    }
 
     await payload.delete({
       collection: 'customer-notes',

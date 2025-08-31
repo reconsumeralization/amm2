@@ -97,7 +97,31 @@ export const Resources: CollectionConfig = {
 
         if (operation === 'update' && doc.active === false) {
           console.log(`Resource deactivated: ${doc.name}`);
-          // TODO: Handle existing appointments for deactivated resources
+          
+          // Handle existing appointments for deactivated resources
+          try {
+            const { resourceManagementService } = await import('@/lib/resource-management');
+            
+            // Determine resource type for handling
+            let resourceType: 'staff' | 'room' | 'equipment' = 'equipment';
+            if (doc.type === 'chair' || doc.type === 'station') {
+              resourceType = 'staff'; // Treat chairs/stations as staff resources
+            } else if (doc.type === 'room') {
+              resourceType = 'room';
+            } else if (doc.type === 'equipment') {
+              resourceType = 'equipment';
+            }
+            
+            await resourceManagementService.handleDeactivatedResource(
+              resourceType,
+              doc.id,
+              `Resource "${doc.name}" has been deactivated`
+            );
+            
+            console.log(`Successfully handled appointments for deactivated resource: ${doc.name}`);
+          } catch (error) {
+            console.error('Error handling appointments for deactivated resource:', error);
+          }
         }
       },
     ],

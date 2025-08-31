@@ -80,8 +80,47 @@ export const Testimonials: CollectionConfig = {
 
               if (barber?.email) {
                 console.log(`Notifying barber ${barber.email} of new testimonial`)
-                // TODO: Implement barber notification
-                // await notifyBarberOfTestimonial(barber.email, doc)
+                
+                try {
+                  const { emailService } = await import('@/lib/email-service');
+                  
+                  // Get client information for the notification
+                  const client = doc.client ? await req.payload.findByID({
+                    collection: 'users',
+                    id: doc.client
+                  }) : null;
+
+                  await emailService.sendEmail({
+                    to: barber.email,
+                    subject: 'New Testimonial Received - ModernMen',
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #ffc107;">New Customer Testimonial</h2>
+                        <p>Hi ${barber.name || barber.email},</p>
+                        <p>Great news! You've received a new testimonial from a happy customer.</p>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                          <h3>Testimonial Details:</h3>
+                          <p><strong>Rating:</strong> ${'⭐'.repeat(doc.rating || 5)} (${doc.rating}/5 stars)</p>
+                          <p><strong>Customer:</strong> ${client?.name || 'Anonymous'}</p>
+                          ${doc.service ? `<p><strong>Service:</strong> ${doc.service?.name || 'Service'}</p>` : ''}
+                          <div style="border-left: 3px solid #ffc107; padding-left: 15px; margin: 15px 0;">
+                            <p><em>"${doc.content}"</em></p>
+                          </div>
+                          <p><strong>Status:</strong> ${doc.status === 'approved' ? '✅ Approved' : '⏳ Pending Review'}</p>
+                        </div>
+                        
+                        <p>Keep up the excellent work! Customer feedback like this helps build your reputation and attracts new clients.</p>
+                        <p>Best regards,<br>The ModernMen Team</p>
+                      </div>
+                    `,
+                    text: `New testimonial received! Rating: ${doc.rating}/5 stars. Customer: ${client?.name || 'Anonymous'}. Testimonial: "${doc.content}". Status: ${doc.status}.`
+                  });
+
+                  console.log(`Successfully sent testimonial notification to barber: ${barber.email}`);
+                } catch (emailError) {
+                  console.error('Error sending barber testimonial notification:', emailError);
+                }
               }
             } catch (error) {
               console.error('Error notifying barber:', error)
@@ -136,7 +175,46 @@ export const Testimonials: CollectionConfig = {
 
                   if (client?.email) {
                     console.log(`Notifying client ${client.email} of testimonial approval`)
-                    // TODO: Implement approval notification
+                    
+                    try {
+                      const { emailService } = await import('@/lib/email-service');
+                      
+                      // Get barber information for the notification
+                      const barber = doc.barber ? await req.payload.findByID({
+                        collection: 'users',
+                        id: doc.barber
+                      }) : null;
+
+                      await emailService.sendEmail({
+                        to: client.email,
+                        subject: 'Testimonial Approved - Thank You! - ModernMen',
+                        html: `
+                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #28a745;">Your Testimonial Has Been Approved!</h2>
+                            <p>Hi ${client.name || client.email},</p>
+                            <p>Thank you for sharing your experience! Your testimonial has been approved and is now live on our website.</p>
+                            
+                            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                              <h3>Your Published Testimonial:</h3>
+                              <p><strong>Rating:</strong> ${'⭐'.repeat(doc.rating || 5)} (${doc.rating}/5 stars)</p>
+                              <p><strong>About:</strong> ${barber?.name || 'Our Team'}</p>
+                              <div style="border-left: 3px solid #28a745; padding-left: 15px; margin: 15px 0;">
+                                <p><em>"${doc.content}"</em></p>
+                              </div>
+                            </div>
+                            
+                            <p>Your feedback helps other customers make informed decisions and helps us continue to provide excellent service.</p>
+                            <p>Thank you for being a valued customer!</p>
+                            <p>Best regards,<br>The ModernMen Team</p>
+                          </div>
+                        `,
+                        text: `Your testimonial has been approved! Rating: ${doc.rating}/5 stars. Your review: "${doc.content}". Thank you for your feedback!`
+                      });
+
+                      console.log(`Successfully sent approval notification to client: ${client.email}`);
+                    } catch (emailError) {
+                      console.error('Error sending testimonial approval notification:', emailError);
+                    }
                   }
                 } catch (error) {
                   console.error('Error sending approval notification:', error)
@@ -155,7 +233,47 @@ export const Testimonials: CollectionConfig = {
 
                   if (client?.email) {
                     console.log(`Notifying client ${client.email} of testimonial rejection`)
-                    // TODO: Implement rejection notification
+                    
+                    try {
+                      const { emailService } = await import('@/lib/email-service');
+                      
+                      // Get barber information for the notification
+                      const barber = doc.barber ? await req.payload.findByID({
+                        collection: 'users',
+                        id: doc.barber
+                      }) : null;
+
+                      await emailService.sendEmail({
+                        to: client.email,
+                        subject: 'Testimonial Update - ModernMen',
+                        html: `
+                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2 style="color: #6c757d;">Testimonial Review Update</h2>
+                            <p>Hi ${client.name || client.email},</p>
+                            <p>Thank you for taking the time to share your feedback with us. After review, we were unable to publish your recent testimonial.</p>
+                            
+                            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                              <h3>Your Submission:</h3>
+                              <p><strong>Rating:</strong> ${'⭐'.repeat(doc.rating || 5)} (${doc.rating}/5 stars)</p>
+                              <p><strong>About:</strong> ${barber?.name || 'Our Team'}</p>
+                              <div style="border-left: 3px solid #6c757d; padding-left: 15px; margin: 15px 0;">
+                                <p><em>"${doc.content}"</em></p>
+                              </div>
+                              ${doc.moderatorNotes ? `<p><strong>Moderator Notes:</strong> ${doc.moderatorNotes}</p>` : ''}
+                            </div>
+                            
+                            <p>This may be due to our content guidelines or review policies. If you have questions about this decision, please don't hesitate to contact us.</p>
+                            <p>We value your feedback and appreciate your understanding.</p>
+                            <p>Best regards,<br>The ModernMen Team</p>
+                          </div>
+                        `,
+                        text: `Your testimonial submission was not approved for publication. Rating: ${doc.rating}/5 stars. Content: "${doc.content}". ${doc.moderatorNotes ? 'Notes: ' + doc.moderatorNotes : ''} Contact us if you have questions.`
+                      });
+
+                      console.log(`Successfully sent rejection notification to client: ${client.email}`);
+                    } catch (emailError) {
+                      console.error('Error sending testimonial rejection notification:', emailError);
+                    }
                   }
                 } catch (error) {
                   console.error('Error sending rejection notification:', error)

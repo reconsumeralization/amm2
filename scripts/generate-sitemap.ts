@@ -62,29 +62,57 @@ async function generateSitemap() {
     { loc: '/portal/services', priority: 0.4, changefreq: 'monthly' },
   ];
 
-  // Dynamic blog posts (you'll need to fetch from Payload API)
+  // Dynamic blog posts - fetch from Payload API
   const blogUrls: SitemapUrl[] = [];
+  try {
+    const { getPayloadClient } = await import('../src/lib/payload-client');
+    const payload = await getPayloadClient();
+    
+    const blogPosts = await payload.find({
+      collection: 'posts',
+      limit: 1000,
+      where: {
+        _status: { equals: 'published' }
+      }
+    });
 
-  // TODO: Fetch blog posts from Payload API
-  // const blogPosts = await fetchBlogPosts();
-  // blogUrls.push(...blogPosts.map(post => ({
-  //   loc: `/blog/${post.slug}`,
-  //   lastmod: post.updatedAt,
-  //   priority: 0.6,
-  //   changefreq: 'monthly'
-  // })));
+    blogUrls.push(...blogPosts.docs.map((post: any) => ({
+      loc: `/blog/${post.slug}`,
+      lastmod: post.updatedAt,
+      priority: 0.6,
+      changefreq: 'monthly'
+    })));
+    
+    console.log(`Added ${blogPosts.docs.length} blog posts to sitemap`);
+  } catch (error) {
+    console.log('Could not fetch blog posts for sitemap:', error);
+  }
 
-  // Dynamic team member pages
+  // Dynamic team member pages - fetch from Payload API
   const teamUrls: SitemapUrl[] = [];
-  
-  // TODO: Fetch team members from Payload API
-  // const teamMembers = await fetchTeamMembers();
-  // teamUrls.push(...teamMembers.map(member => ({
-  //   loc: `/team/${member.id}`,
-  //   lastmod: member.updatedAt,
-  //   priority: 0.5,
-  //   changefreq: 'monthly'
-  // })));
+  try {
+    const { getPayloadClient } = await import('../src/lib/payload-client');
+    const payload = await getPayloadClient();
+    
+    const teamMembers = await payload.find({
+      collection: 'team-members',
+      limit: 100,
+      where: {
+        active: { equals: true }
+      }
+    });
+
+    teamUrls.push(...teamMembers.docs.map((member: any) => ({
+      loc: `/team/${member.slug || member.id}`,
+      lastmod: member.updatedAt,
+      priority: 0.5,
+      changefreq: 'monthly'
+    })));
+    
+    console.log(`Added ${teamMembers.docs.length} team members to sitemap`);
+  } catch (error) {
+    console.log('Could not fetch team members for sitemap:', error);
+  }
 
   const allUrls = [...staticPages, ...blogUrls, ...teamUrls];
 

@@ -7,15 +7,15 @@ import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { AdvancedSearch } from '@/components/ui/advanced-search'
-import { 
-  BarChart3, 
-  Users, 
-  Calendar, 
-  Scissors, 
-  Settings, 
-  FileText, 
-  Camera, 
-  Clock, 
+import {
+  BarChart3,
+  Users,
+  Calendar,
+  Scissors,
+  Settings,
+  FileText,
+  Camera,
+  Clock,
   Star,
   Gift,
   BookOpen,
@@ -36,19 +36,63 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 const adminNavigation = [
+  // Main Admin Features
   {
     name: 'Dashboard',
     href: '/admin',
-    icon: BarChart3,
-    description: 'Overview and analytics',
+    icon: Home,
+    description: 'Admin home and overview',
     badge: null
   },
+  {
+    name: 'Content Manager',
+    href: '/admin/content',
+    icon: FileText,
+    description: 'Manage website content',
+    badge: null
+  },
+  {
+    name: 'Page Builder',
+    href: '/admin/page-builder',
+    icon: BookOpen,
+    description: 'Visual page builder',
+    badge: null
+  },
+  {
+    name: 'Analytics',
+    href: '/admin/analytics',
+    icon: BarChart3,
+    description: 'Business insights and reports',
+    badge: null
+  },
+  {
+    name: 'User Management',
+    href: '/admin/users',
+    icon: Users,
+    description: 'Manage users and roles',
+    badge: null
+  },
+  {
+    name: 'Settings',
+    href: '/admin/settings',
+    icon: Settings,
+    description: 'System configuration',
+    badge: null
+  },
+  {
+    name: 'Backups',
+    href: '/admin/backups',
+    icon: Database,
+    description: 'Backup and restore system',
+    badge: null
+  },
+  // Payload CMS Collections
   {
     name: 'Appointments',
     href: '/admin/collections/appointments',
     icon: Calendar,
     description: 'Manage bookings and schedules',
-    badge: '12'
+    badge: null
   },
   {
     name: 'Customers',
@@ -72,31 +116,10 @@ const adminNavigation = [
     badge: null
   },
   {
-    name: 'Products',
-    href: '/admin/collections/products',
-    icon: Gift,
-    description: 'Product catalog and inventory',
-    badge: 'New'
-  },
-  {
-    name: 'Events',
-    href: '/admin/collections/events',
-    icon: Calendar,
-    description: 'Special events and promotions',
-    badge: null
-  },
-  {
-    name: 'Media',
-    href: '/admin/collections/media',
-    icon: Camera,
-    description: 'Images, videos, and files',
-    badge: null
-  },
-  {
     name: 'Staff Schedules',
     href: '/admin/collections/staff-schedules',
     icon: Clock,
-    description: 'Employee scheduling and availability',
+    description: 'Employee scheduling',
     badge: null
   },
   {
@@ -107,27 +130,34 @@ const adminNavigation = [
     badge: null
   },
   {
-    name: 'Settings',
-    href: '/admin/collections/settings',
-    icon: Settings,
-    description: 'System configuration',
+    name: 'Media',
+    href: '/admin/collections/media',
+    icon: Camera,
+    description: 'Images, videos, and files',
     badge: null
   },
   {
-    name: 'Documentation',
-    href: '/admin/collections/business-documentation',
-    icon: FileText,
-    description: 'Business documents and policies',
+    name: 'Products',
+    href: '/admin/collections/products',
+    icon: Gift,
+    description: 'Product catalog and inventory',
+    badge: null
+  },
+  {
+    name: 'Payload CMS',
+    href: '/admin/payload',
+    icon: Database,
+    description: 'Payload CMS admin panel',
     badge: null
   }
 ]
 
 const quickActions = [
   {
-    name: 'Content Editor',
-    href: '/admin/editor',
-    icon: BookOpen,
-    description: 'Rich text content editor',
+    name: 'Content Manager',
+    href: '/admin/content',
+    icon: FileText,
+    description: 'Manage website content',
     color: 'bg-blue-500'
   },
   {
@@ -138,25 +168,32 @@ const quickActions = [
     color: 'bg-purple-500'
   },
   {
-    name: 'New Appointment',
-    href: '/admin/collections/appointments/create',
-    icon: Plus,
-    description: 'Create a new booking',
+    name: 'Analytics',
+    href: '/admin/analytics',
+    icon: BarChart3,
+    description: 'View business analytics',
     color: 'bg-green-500'
   },
   {
-    name: 'New Customer',
-    href: '/admin/collections/customers/create',
+    name: 'User Management',
+    href: '/admin/users',
     icon: Users,
-    description: 'Add a new client',
+    description: 'Manage users and roles',
     color: 'bg-orange-500'
   },
   {
-    name: 'New Service',
-    href: '/admin/collections/services/create',
-    icon: Scissors,
-    description: 'Add a new service',
+    name: 'System Settings',
+    href: '/admin/settings',
+    icon: Settings,
+    description: 'Configure system settings',
     color: 'bg-pink-500'
+  },
+  {
+    name: 'Create Backup',
+    href: '/admin/backups',
+    icon: Database,
+    description: 'Backup system data',
+    color: 'bg-indigo-500'
   }
 ]
 
@@ -183,7 +220,7 @@ const dashboardStats = [
     title: 'Revenue Today',
     value: '$1,240',
     change: '+8% from yesterday',
-    icon: '$',
+    icon: 'DollarSign',
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
     borderColor: 'border-purple-200'

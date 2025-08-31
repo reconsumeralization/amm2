@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
+import { emailService } from '@/lib/email-service'
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -62,20 +63,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Send reset email
-    const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${resetToken}`
-
-    console.log('Password reset requested for:', email)
-    console.log('Reset URL:', resetUrl)
-
-    // For now, we'll just log the reset URL since email service isn't configured
-    // In production, you would send an email with this URL
-
-    if (process.env.EMAIL_SERVER) {
-      // Implement email sending logic here
-      console.log('Email would be sent to:', email)
-    } else {
-      console.warn('EMAIL_SERVER not configured. Password reset URL:', resetUrl)
+    // Send password reset email
+    try {
+      const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${resetToken}`
+      await emailService.sendPasswordResetEmail(user.email, user.name, resetUrl)
+      console.log('Password reset email sent to:', email)
+    } catch (emailError) {
+      console.error('Failed to send password reset email:', emailError)
+      // Continue with success response even if email fails for security
     }
 
     return NextResponse.json(

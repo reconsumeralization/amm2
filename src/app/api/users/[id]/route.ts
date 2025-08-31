@@ -9,7 +9,6 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions)
-
     if (!session) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -18,7 +17,6 @@ export async function GET(
     }
 
     const { id } = await params
-    const payload = await getPayloadClient()
     const userId = id
 
     // Check permissions
@@ -32,6 +30,9 @@ export async function GET(
         { status: 403 }
       )
     }
+
+    // @ts-ignore - Payload config type issue
+    const payload = await getPayloadClient()
 
     const user = await payload.findByID({
       collection: 'users',

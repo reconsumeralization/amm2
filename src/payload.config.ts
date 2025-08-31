@@ -2,8 +2,15 @@ import { buildConfig } from 'payload'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 
-// Import all collections from the organized structure
-import collections from './payload/collections/index'
+// Import essential collections only for testing
+import { Users } from './payload/collections/system/Users'
+import { Settings } from './payload/collections/system/Settings'
+import { Media } from './payload/collections/content/Media'
+import { Tenants } from './payload/collections/system/Tenants'
+import { Products } from './payload/collections/content/Products'
+import BeforeDashboard from './payload/components/BeforeDashboard'
+
+const collections = [Users, Settings, Media, Tenants, Products]
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',
@@ -14,6 +21,7 @@ export default buildConfig({
       titleSuffix: '- ModernMen Admin',
     },
     components: {
+      beforeDashboard: [BeforeDashboard],
       graphics: {
         Logo: { path: '@/payload/components/Logo' },
         Icon: { path: '@/payload/components/Icon' },
@@ -29,7 +37,7 @@ export default buildConfig({
   endpoints: [],
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URI || 'file:./dev.db',
+      url: process.env.DATABASE_URL || process.env.DATABASE_URI || 'file:./dev.db',
     },
   }),
   typescript: {

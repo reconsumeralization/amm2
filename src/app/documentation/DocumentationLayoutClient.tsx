@@ -32,6 +32,9 @@ import { DocumentationProvider, useDocumentation, usePermissions } from "@/conte
 import { RouteGuard } from "@/components/features/documentation/RouteGuard"
 import { UserRole, BreadcrumbItem, SidebarConfig } from "@/types/documentation"
 import { title } from "process"
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 interface DocumentationLayoutClientProps {
   children: React.ReactNode
@@ -108,7 +111,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
     <div className="h-full flex flex-col">
       {/* Search */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           placeholder="search documentation..."
           value={searchQuery}
@@ -119,7 +122,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
               setSidebarOpen(false)
             }
           }}
-          className="pl-10 py-2 bg-slate-800/50 border-slate-700 text-slate-200 placeholder:text-slate-400"
+          className="pl-10 py-2 bg-gray-800/50 border-gray-700 text-gray-200 placeholder:text-gray-400"
         />
       </div>
 
@@ -151,7 +154,7 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
       {/* Navigation */}
       <ScrollArea className="flex-1">
         <div className="pr-4 pb-8">
-          <h3 className="font-medium text-slate-300 mb-3">Documentation</h3>
+          <h3 className="font-medium text-gray-300 mb-3">Documentation</h3>
           {/* The NavItem interface definition was incorrectly placed inside JSX.
               It should be defined in a valid TypeScript scope, e.g., at the top
               of the component file or within the component function but outside its JSX return.
@@ -169,14 +172,14 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
               <div key={section.title} className="space-y-2">
                 <Link
                   href={section.href}
-                  className="flex items-center gap-2 text-sm font-medium text-slate-200 hover:text-cyan-400 transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-gray-200 hover:text-red-400 transition-colors"
                   onClick={() => setSidebarOpen(false)}
                 >
                   {getSectionIcon(section.title)}
                   {section.title}
                 </Link>
                 {section.sections && (
-                  <ul className="space-y-1 border-l border-slate-700 pl-3 ml-1">
+                  <ul className="space-y-1 border-l border-gray-700 pl-3 ml-1">
                     {/* Replaced 'NavItem' with an inline type to resolve 'Cannot find name NavItem' error,
                         as the interface is not defined in the current scope. This provides basic type safety
                         for the properties used (href, title) without requiring a global NavItem definition. */}
@@ -186,8 +189,8 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
                           href={subsection.href}
                           className={`text-xs block py-1 transition-colors ${
                             pathname === subsection.href
-                              ? 'text-cyan-400 font-medium'
-                              : 'text-slate-400 hover:text-cyan-400'
+                              ? 'text-red-400 font-medium'
+                              : 'text-gray-400 hover:text-red-400'
                           }`}
                           onClick={() => setSidebarOpen(false)}
                         >
@@ -207,15 +210,15 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
 
   return (
     <RouteGuard showAccessDenied={true}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100">
+      <div className={`min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100 ${inter.className}`}>
         {/* Header */}
-        <header className="border-b border-slate-700/50 sticky top-0 z-10 bg-slate-900/80 backdrop-blur-md">
+        <header className="border-b border-gray-700/50 sticky top-0 z-10 bg-gray-900/80 backdrop-blur-md">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Database className="h-6 w-6 text-cyan-500" />
-                  <span className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                  <Database className="h-6 w-6 text-red-500" />
+                  <span className="text-lg font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">
                     Modern Men barber shop
                   </span>
                 </div>
@@ -223,11 +226,11 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
                 {/* Mobile menu button */}
                 <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="sm" className="md:hidden">
+                    <Button variant="ghost" size="sm" className="md-hidden">
                       <Menu className="h-4 w-4" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="left" className="w-80 bg-slate-900 border-slate-700">
+                  <SheetContent side="left" className="w-80 bg-gray-900 border-gray-700">
                     <SidebarContent />
                   </SheetContent>
                 </Sheet>
@@ -235,11 +238,11 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
 
               <div className="flex items-center gap-4">
                 {user && (
-                  <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400">
+                  <div className="hidden sm:flex items-center gap-2 text-sm text-gray-400">
                     <span>Welcome, {user.name}</span>
                   </div>
                 )}
-                <Link href="/" className="flex items-center text-sm text-slate-400 hover:text-cyan-400 transition-colors">
+                <Link href="/" className="flex items-center text-sm text-gray-400 hover:text-red-400 transition-colors">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Home
                 </Link>
@@ -249,20 +252,20 @@ function DocumentationLayoutContent({ children }: DocumentationLayoutClientProps
         </header>
 
         {/* Breadcrumbs */}
-        <div className="border-b border-slate-700/30">
+        <div className="border-b border-gray-700/30">
           <div className="container mx-auto px-4 py-3">
             <nav className="flex items-center space-x-2 text-sm">
               {breadcrumbs.map((crumb, index) => (
                 <React.Fragment key={crumb.href}>
                   {index > 0 && (
-                    <ChevronRight className="h-4 w-4 text-slate-500" />
+                    <ChevronRight className="h-4 w-4 text-gray-500" />
                   )}
                   <Link
                     href={crumb.href}
                     className={`transition-colors ${
                       crumb.current
-                        ? 'text-cyan-400 font-medium'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'text-red-400 font-medium'
+                        : 'text-gray-400 hover:text-gray-200'
                     }`}
                   >
                     {crumb.label}

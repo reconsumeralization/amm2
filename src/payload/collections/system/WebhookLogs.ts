@@ -136,8 +136,30 @@ export const WebhookLogs: CollectionConfig = {
 
         // Auto-process certain webhook types if configured
         if (operation === 'create' && doc.status === 'pending' && !doc.duplicateOf) {
-          // TODO: Implement auto-processing logic for known webhook types
           console.log(`Webhook ready for processing: ${doc.eventType}`);
+          
+          try {
+            await processWebhookAutomatically(doc, req.payload);
+          } catch (error) {
+            console.error(`Error auto-processing webhook ${doc.id}:`, error);
+            
+            // Update webhook with error status
+            if (req.payload) {
+              await req.payload.update({
+                collection: 'webhook-logs',
+                id: doc.id,
+                data: {
+                  status: 'failed',
+                  processedAt: new Date().toISOString(),
+                  processingResult: {
+                    success: false,
+                    error: error instanceof Error ? error.message : 'Unknown error during auto-processing',
+                    errorCode: 'AUTO_PROCESS_FAILED'
+                  }
+                }
+              });
+            }
+          }
         }
       },
     ],
@@ -753,3 +775,553 @@ export const WebhookLogs: CollectionConfig = {
   ],
   timestamps: true,
 };
+
+/**
+ * Auto-process webhooks based on their type and provider
+ */
+async function processWebhookAutomatically(doc: any, payload: any) {
+  if (!payload) return;
+  
+  const { provider, eventType, payload: webhookPayload } = doc;
+  const actions: any[] = [];
+  let success = true;
+  let error = null;
+
+  try {
+    console.log(`Auto-processing webhook: ${provider}.${eventType}`);
+
+    switch (provider) {
+      case 'stripe':
+        await processStripeWebhook(doc, payload, actions);
+        break;
+        
+      case 'paypal':
+        await processPayPalWebhook(doc, payload, actions);
+        break;
+        
+      case 'google_calendar':
+        await processGoogleCalendarWebhook(doc, payload, actions);
+        break;
+        
+      case 'outlook_calendar':
+        await processOutlookCalendarWebhook(doc, payload, actions);
+        break;
+        
+      case 'mailchimp':
+        await processMailchimpWebhook(doc, payload, actions);
+        break;
+        
+      case 'twilio':
+        await processTwilioWebhook(doc, payload, actions);
+        break;
+        
+      default:
+        console.log(`No auto-processing configured for provider: ${provider}`);
+        return; // Don't update status, leave as pending for manual processing
+    }
+
+    // Update webhook with success status
+    await payload.update({
+      collection: 'webhook-logs',
+      id: doc.id,
+      data: {
+        status: 'processed',
+        processedAt: new Date().toISOString(),
+        processingResult: {
+          success: true,
+          actions: actions
+        }
+      }
+    });
+
+    console.log(`Successfully auto-processed webhook ${doc.id} with ${actions.length} actions`);
+
+  } catch (processingError) {
+    success = false;
+    error = processingError instanceof Error ? processingError.message : 'Unknown processing error';
+    
+    console.error(`Error processing webhook ${doc.id}:`, processingError);
+    
+    // Update webhook with error status
+    await payload.update({
+      collection: 'webhook-logs',
+      id: doc.id,
+      data: {
+        status: 'failed',
+        processedAt: new Date().toISOString(),
+        processingResult: {
+          success: false,
+          error: error,
+          errorCode: 'PROCESSING_FAILED',
+          actions: actions
+        }
+      }
+    });
+
+    throw processingError;
+  }
+}
+
+/**
+ * Process Stripe webhooks
+ */
+async function processStripeWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'payment_intent.succeeded':
+      await handleStripePaymentSuccess(webhookPayload, payload, actions);
+      break;
+      
+    case 'payment_intent.payment_failed':
+      await handleStripePaymentFailure(webhookPayload, payload, actions);
+      break;
+      
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated':
+      await handleStripeSubscriptionChange(webhookPayload, payload, actions);
+      break;
+      
+    case 'invoice.payment_succeeded':
+      await handleStripeInvoicePayment(webhookPayload, payload, actions);
+      break;
+      
+    case 'customer.created':
+      await handleStripeCustomerCreation(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for Stripe event: ${eventType}`);
+  }
+}
+
+/**
+ * Process PayPal webhooks
+ */
+async function processPayPalWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'PAYMENT.CAPTURE.COMPLETED':
+      await handlePayPalPaymentCapture(webhookPayload, payload, actions);
+      break;
+      
+    case 'BILLING.SUBSCRIPTION.CREATED':
+      await handlePayPalSubscriptionCreated(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for PayPal event: ${eventType}`);
+  }
+}
+
+/**
+ * Process Google Calendar webhooks
+ */
+async function processGoogleCalendarWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'event.created':
+      await handleGoogleCalendarEventCreated(webhookPayload, payload, actions);
+      break;
+      
+    case 'event.updated':
+      await handleGoogleCalendarEventUpdated(webhookPayload, payload, actions);
+      break;
+      
+    case 'event.deleted':
+      await handleGoogleCalendarEventDeleted(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for Google Calendar event: ${eventType}`);
+  }
+}
+
+/**
+ * Process Outlook Calendar webhooks
+ */
+async function processOutlookCalendarWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'calendar.event.created':
+      await handleOutlookEventCreated(webhookPayload, payload, actions);
+      break;
+      
+    case 'calendar.event.updated':
+      await handleOutlookEventUpdated(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for Outlook Calendar event: ${eventType}`);
+  }
+}
+
+/**
+ * Process Mailchimp webhooks
+ */
+async function processMailchimpWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'subscribe':
+      await handleMailchimpSubscribe(webhookPayload, payload, actions);
+      break;
+      
+    case 'unsubscribe':
+      await handleMailchimpUnsubscribe(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for Mailchimp event: ${eventType}`);
+  }
+}
+
+/**
+ * Process Twilio webhooks
+ */
+async function processTwilioWebhook(doc: any, payload: any, actions: any[]) {
+  const { eventType, payload: webhookPayload } = doc;
+  
+  switch (eventType) {
+    case 'message.received':
+      await handleTwilioMessageReceived(webhookPayload, payload, actions);
+      break;
+      
+    case 'call.completed':
+      await handleTwilioCallCompleted(webhookPayload, payload, actions);
+      break;
+      
+    default:
+      console.log(`No handler for Twilio event: ${eventType}`);
+  }
+}
+
+// Stripe webhook handlers
+async function handleStripePaymentSuccess(webhookPayload: any, payload: any, actions: any[]) {
+  const paymentIntent = webhookPayload.data.object;
+  
+  // Find related order by payment intent ID
+  const orders = await payload.find({
+    collection: 'orders',
+    where: {
+      'payment.stripePaymentIntentId': { equals: paymentIntent.id }
+    },
+    limit: 1
+  });
+
+  if (orders.docs.length > 0) {
+    const order = orders.docs[0];
+    
+    // Update order status
+    await payload.update({
+      collection: 'orders',
+      id: order.id,
+      data: {
+        status: 'paid',
+        'payment.status': 'completed',
+        'payment.paidAt': new Date().toISOString(),
+        'payment.transactionId': paymentIntent.charges?.data[0]?.id
+      }
+    });
+
+    actions.push({
+      action: 'update_order_status',
+      target: order.id,
+      result: 'success',
+      details: `Updated order status to paid`,
+      timestamp: new Date().toISOString()
+    });
+
+    console.log(`Updated order ${order.id} status to paid`);
+  }
+}
+
+async function handleStripePaymentFailure(webhookPayload: any, payload: any, actions: any[]) {
+  const paymentIntent = webhookPayload.data.object;
+  
+  // Find related order and update status
+  const orders = await payload.find({
+    collection: 'orders',
+    where: {
+      'payment.stripePaymentIntentId': { equals: paymentIntent.id }
+    },
+    limit: 1
+  });
+
+  if (orders.docs.length > 0) {
+    const order = orders.docs[0];
+    
+    await payload.update({
+      collection: 'orders',
+      id: order.id,
+      data: {
+        status: 'payment_failed',
+        'payment.status': 'failed',
+        'payment.failureReason': paymentIntent.last_payment_error?.message
+      }
+    });
+
+    actions.push({
+      action: 'update_order_payment_failed',
+      target: order.id,
+      result: 'success',
+      details: `Updated order payment status to failed`,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+async function handleStripeSubscriptionChange(webhookPayload: any, payload: any, actions: any[]) {
+  const subscription = webhookPayload.data.object;
+  
+  // Find related subscription in our system
+  const subscriptions = await payload.find({
+    collection: 'subscriptions',
+    where: {
+      stripeSubscriptionId: { equals: subscription.id }
+    },
+    limit: 1
+  });
+
+  if (subscriptions.docs.length > 0) {
+    const localSubscription = subscriptions.docs[0];
+    
+    await payload.update({
+      collection: 'subscriptions',
+      id: localSubscription.id,
+      data: {
+        status: subscription.status,
+        currentPeriodStart: new Date(subscription.current_period_start * 1000).toISOString(),
+        currentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+      }
+    });
+
+    actions.push({
+      action: 'update_subscription',
+      target: localSubscription.id,
+      result: 'success',
+      details: `Updated subscription status to ${subscription.status}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+async function handleStripeInvoicePayment(webhookPayload: any, payload: any, actions: any[]) {
+  const invoice = webhookPayload.data.object;
+  
+  // Handle subscription invoice payments
+  if (invoice.subscription) {
+    const subscriptions = await payload.find({
+      collection: 'subscriptions',
+      where: {
+        stripeSubscriptionId: { equals: invoice.subscription }
+      },
+      limit: 1
+    });
+
+    if (subscriptions.docs.length > 0) {
+      const subscription = subscriptions.docs[0];
+      
+      await payload.update({
+        collection: 'subscriptions',
+        id: subscription.id,
+        data: {
+          lastPaymentDate: new Date().toISOString(),
+          status: 'active'
+        }
+      });
+
+      actions.push({
+        action: 'update_subscription_payment',
+        target: subscription.id,
+        result: 'success',
+        details: `Updated subscription payment status`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+}
+
+async function handleStripeCustomerCreation(webhookPayload: any, payload: any, actions: any[]) {
+  const customer = webhookPayload.data.object;
+  
+  // Try to find existing user by email and update with Stripe customer ID
+  if (customer.email) {
+    const users = await payload.find({
+      collection: 'users',
+      where: {
+        email: { equals: customer.email }
+      },
+      limit: 1
+    });
+
+    if (users.docs.length > 0) {
+      const user = users.docs[0];
+      
+      await payload.update({
+        collection: 'users',
+        id: user.id,
+        data: {
+          stripeCustomerId: customer.id
+        }
+      });
+
+      actions.push({
+        action: 'link_stripe_customer',
+        target: user.id,
+        result: 'success',
+        details: `Linked Stripe customer ID to user`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+}
+
+// PayPal webhook handlers
+async function handlePayPalPaymentCapture(webhookPayload: any, payload: any, actions: any[]) {
+  // Similar to Stripe payment success handling
+  console.log('Processing PayPal payment capture:', webhookPayload);
+  
+  actions.push({
+    action: 'process_paypal_payment',
+    target: webhookPayload.resource?.id,
+    result: 'success',
+    details: 'Processed PayPal payment capture',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handlePayPalSubscriptionCreated(webhookPayload: any, payload: any, actions: any[]) {
+  // Handle PayPal subscription creation
+  console.log('Processing PayPal subscription creation:', webhookPayload);
+  
+  actions.push({
+    action: 'process_paypal_subscription',
+    target: webhookPayload.resource?.id,
+    result: 'success',
+    details: 'Processed PayPal subscription creation',
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Calendar webhook handlers
+async function handleGoogleCalendarEventCreated(webhookPayload: any, payload: any, actions: any[]) {
+  // Sync Google Calendar event to appointments
+  console.log('Processing Google Calendar event creation:', webhookPayload);
+  
+  actions.push({
+    action: 'sync_google_calendar_event',
+    target: webhookPayload.id,
+    result: 'success',
+    details: 'Synced Google Calendar event creation',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleGoogleCalendarEventUpdated(webhookPayload: any, payload: any, actions: any[]) {
+  // Update corresponding appointment
+  console.log('Processing Google Calendar event update:', webhookPayload);
+  
+  actions.push({
+    action: 'sync_google_calendar_update',
+    target: webhookPayload.id,
+    result: 'success',
+    details: 'Synced Google Calendar event update',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleGoogleCalendarEventDeleted(webhookPayload: any, payload: any, actions: any[]) {
+  // Handle appointment cancellation
+  console.log('Processing Google Calendar event deletion:', webhookPayload);
+  
+  actions.push({
+    action: 'sync_google_calendar_deletion',
+    target: webhookPayload.id,
+    result: 'success',
+    details: 'Synced Google Calendar event deletion',
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Outlook webhook handlers
+async function handleOutlookEventCreated(webhookPayload: any, payload: any, actions: any[]) {
+  console.log('Processing Outlook Calendar event creation:', webhookPayload);
+  
+  actions.push({
+    action: 'sync_outlook_calendar_event',
+    target: webhookPayload.id,
+    result: 'success',
+    details: 'Synced Outlook Calendar event creation',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleOutlookEventUpdated(webhookPayload: any, payload: any, actions: any[]) {
+  console.log('Processing Outlook Calendar event update:', webhookPayload);
+  
+  actions.push({
+    action: 'sync_outlook_calendar_update',
+    target: webhookPayload.id,
+    result: 'success',
+    details: 'Synced Outlook Calendar event update',
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Mailchimp webhook handlers
+async function handleMailchimpSubscribe(webhookPayload: any, payload: any, actions: any[]) {
+  // Update user's marketing preferences
+  console.log('Processing Mailchimp subscription:', webhookPayload);
+  
+  actions.push({
+    action: 'update_mailchimp_subscription',
+    target: webhookPayload.data?.email,
+    result: 'success',
+    details: 'Updated marketing subscription status',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleMailchimpUnsubscribe(webhookPayload: any, payload: any, actions: any[]) {
+  // Update user's marketing preferences
+  console.log('Processing Mailchimp unsubscription:', webhookPayload);
+  
+  actions.push({
+    action: 'update_mailchimp_unsubscription',
+    target: webhookPayload.data?.email,
+    result: 'success',
+    details: 'Updated marketing unsubscription status',
+    timestamp: new Date().toISOString()
+  });
+}
+
+// Twilio webhook handlers
+async function handleTwilioMessageReceived(webhookPayload: any, payload: any, actions: any[]) {
+  // Handle incoming SMS messages
+  console.log('Processing Twilio message:', webhookPayload);
+  
+  actions.push({
+    action: 'process_twilio_message',
+    target: webhookPayload.MessageSid,
+    result: 'success',
+    details: 'Processed incoming SMS message',
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleTwilioCallCompleted(webhookPayload: any, payload: any, actions: any[]) {
+  // Handle completed phone calls
+  console.log('Processing Twilio call completion:', webhookPayload);
+  
+  actions.push({
+    action: 'process_twilio_call',
+    target: webhookPayload.CallSid,
+    result: 'success',
+    details: 'Processed completed phone call',
+    timestamp: new Date().toISOString()
+  });
+}

@@ -35,7 +35,16 @@ import { APIDocumentationSection } from '@/types/api-documentation'
  * Displays API documentation for the Modern Men barber shop management system.
  * Falls back to sample data if extraction fails.
  */
-export default async function APIDocumentationPage() {
+import { DocPage } from '@/components/features/documentation/DocPage';
+
+export default function ApiDocumentation() {
+  return (
+    <DocPage lastUpdated="2023-10-26">
+      <h1>API Documentation</h1>
+      <p>This is the API documentation.</p>
+    </DocPage>
+  );
+}
   let sections: APIDocumentationSection[] = []
   let error: string | null = null
   let usingSampleData = false

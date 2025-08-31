@@ -21,33 +21,33 @@ export const EditorPlugins: CollectionConfig = {
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any).role
       if (userRole === 'admin' || userRole === 'manager') return true
       // Users can see public plugins or plugins for their tenant
       return {
         or: [
           { isPublic: { equals: true } },
-          { tenant: { equals: req.user.tenant?.id } },
+          { tenant: { equals: (req.user as any).tenant?.id } },
         ],
       } as Where
     },
     create: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any).role === 'admin'
     },
     update: ({ req }): AccessResult => {
       if (!req.user) return false
-      const userRole = req.user.role
+      const userRole = (req.user as any).role
       if (userRole === 'admin') return true
       // Managers can update plugins for their tenant
       if (userRole === 'manager') {
-        return { tenant: { equals: req.user.tenant?.id } } as Where
+        return { tenant: { equals: (req.user as any).tenant?.id } } as Where
       }
       return false
     },
     delete: ({ req }): AccessResult => {
       if (!req.user) return false
-      return req.user.role === 'admin'
+      return (req.user as any).role === 'admin'
     },
   },
   fields: [
@@ -130,10 +130,10 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants',
+      relationTo: 'tenants' as any,
       required: true,
       index: true,
-      admin: { 
+      admin: {
         description: 'Tenant this plugin belongs to.',
         position: 'sidebar',
       },
@@ -187,7 +187,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'plugin',
               type: 'relationship',
-              relationTo: 'editorPlugins',
+              relationTo: 'editorPlugins' as any,
               required: true,
             },
             {
@@ -215,7 +215,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'plugin',
               type: 'relationship',
-              relationTo: 'editorPlugins',
+              relationTo: 'editorPlugins' as any,
               required: true,
             },
             {
@@ -402,19 +402,19 @@ export const EditorPlugins: CollectionConfig = {
         {
           name: 'mainScript',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any,
           admin: { description: 'Main plugin JavaScript file.' },
         },
         {
           name: 'styles',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any,
           admin: { description: 'Plugin CSS styles.' },
         },
         {
           name: 'manifest',
           type: 'upload',
-          relationTo: 'media',
+          relationTo: 'media' as any,
           admin: { description: 'Plugin manifest file (JSON).' },
         },
         {
@@ -425,7 +425,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'file',
               type: 'upload',
-              relationTo: 'media',
+              relationTo: 'media' as any,
               required: true,
             },
             {
@@ -470,6 +470,7 @@ export const EditorPlugins: CollectionConfig = {
         {
           name: 'requiredRoles',
           type: 'select',
+          dbName: 'required_roles',
           hasMany: true,
           options: [
             { label: 'Admin', value: 'admin' },
@@ -482,13 +483,14 @@ export const EditorPlugins: CollectionConfig = {
         {
           name: 'allowedTenants',
           type: 'relationship',
-          relationTo: 'tenants',
+          relationTo: 'tenants' as any,
           hasMany: true,
           admin: { description: 'Specific tenants allowed to use this plugin.' },
         },
         {
           name: 'restrictedFeatures',
           type: 'array',
+          dbName: 'editor_plugins_restricted_features',
           admin: { description: 'Features that require special permissions.' },
           fields: [
             {
@@ -499,6 +501,7 @@ export const EditorPlugins: CollectionConfig = {
             {
               name: 'requiredRole',
               type: 'select',
+              dbName: 'required_role',
               options: [
                 { label: 'Admin', value: 'admin' },
                 { label: 'Manager', value: 'manager' },
@@ -731,7 +734,7 @@ export const EditorPlugins: CollectionConfig = {
     {
       name: 'category',
       type: 'relationship',
-      relationTo: 'tags',
+      relationTo: 'tags' as any,
       admin: { description: 'Plugin category for better organization.' },
     },
     {
@@ -771,7 +774,7 @@ export const EditorPlugins: CollectionConfig = {
         if (req.user) {
           if (operation === 'create') {
             data.createdBy = req.user.id
-            data.tenant = data.tenant || req.user.tenant
+            data.tenant = data.tenant || (req.user as any).tenant
           }
           data.updatedBy = req.user.id
         }
@@ -810,10 +813,10 @@ export const EditorPlugins: CollectionConfig = {
         // Check if plugin is being used before deletion
         if (req.payload) {
           const plugin = await req.payload.findByID({
-            collection: 'editorPlugins',
+            collection: 'editorPlugins' as any,
             id: id,
           })
-          if (plugin && plugin.usage?.activeUsers > 0) {
+          if (plugin && (plugin as any).usage?.activeUsers > 0) {
             throw new Error('Cannot delete plugin that is currently in use')
           }
         }

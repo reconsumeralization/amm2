@@ -31,29 +31,66 @@ export default function AnalyticsWidget() {
       setIsLoading(true);
       setError(null);
 
-      const [paymentRes, apptRes, docsRes] = await Promise.all([
-        fetch('/api/stripe-payments?where[status][equals]=paid'),
-        fetch('/api/appointments?where[status][equals]=confirmed'),
+      // Calculate date ranges for current period (last 30 days) and previous period (30 days before that)
+      const now = new Date();
+      const currentPeriodStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+      const previousPeriodStart = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000); // 60 days ago
+      const previousPeriodEnd = currentPeriodStart;
+
+      // Format dates for API queries
+      const formatDate = (date: Date) => date.toISOString();
+      
+      const currentPeriodQuery = `where[createdAt][greater_than_equal]=${formatDate(currentPeriodStart)}`;
+      const previousPeriodQuery = `where[createdAt][greater_than_equal]=${formatDate(previousPeriodStart)}&where[createdAt][less_than]=${formatDate(previousPeriodEnd)}`;
+
+      const [
+        currentPaymentRes, 
+        currentApptRes, 
+        previousPaymentRes, 
+        previousApptRes,
+        docsRes
+      ] = await Promise.all([
+        // Current period data
+        fetch(`/api/stripe-payments?where[status][equals]=paid&${currentPeriodQuery}`),
+        fetch(`/api/appointments?where[status][equals]=confirmed&${currentPeriodQuery}`),
+        // Previous period data
+        fetch(`/api/stripe-payments?where[status][equals]=paid&${previousPeriodQuery}`),
+        fetch(`/api/appointments?where[status][equals]=confirmed&${previousPeriodQuery}`),
+        // Documentation (no time-based comparison needed)
         fetch('/api/business-documentation')
       ]);
 
-      if (!paymentRes.ok || !apptRes.ok) {
-        throw new Error('Failed to fetch analytics data');
-      }
-
-      const payments = await paymentRes.json();
-      const appointments = await apptRes.json();
+      const currentPayments = currentPaymentRes.ok ? await currentPaymentRes.json() : { docs: [] };
+      const currentAppointments = currentApptRes.ok ? await currentApptRes.json() : { totalDocs: 0 };
+      const previousPayments = previousPaymentRes.ok ? await previousPaymentRes.json() : { docs: [] };
+      const previousAppointments = previousApptRes.ok ? await previousApptRes.json() : { totalDocs: 0 };
       const docs = docsRes.ok ? await docsRes.json() : { totalDocs: 0 };
 
-      const revenue = payments.docs?.reduce((sum: number, p: any) => sum + (p.amount || 0), 0) / 100 || 0;
+      // Calculate revenue for current and previous periods
+      const currentRevenue = currentPayments.docs?.reduce((sum: number, p: any) => sum + (p.amount || 0), 0) / 100 || 0;
+      const previousRevenue = previousPayments.docs?.reduce((sum: number, p: any) => sum + (p.amount || 0), 0) / 100 || 0;
+      
+      // Calculate current and previous bookings
+      const currentBookings = currentAppointments.totalDocs || 0;
+      const previousBookings = previousAppointments.totalDocs || 0;
+
+      // Calculate growth percentages
+      const calculateGrowth = (current: number, previous: number) => {
+        if (previous === 0) {
+          return current > 0 ? 100 : 0; // If no previous data but have current data, show 100% growth
+        }
+        return ((current - previous) / previous) * 100;
+      };
+
+      const revenueGrowth = calculateGrowth(currentRevenue, previousRevenue);
+      const bookingGrowth = calculateGrowth(currentBookings, previousBookings);
 
       setStats({
-        revenue,
-        bookings: appointments.totalDocs || 0,
+        revenue: currentRevenue,
+        bookings: currentBookings,
         contentCount: docs.totalDocs || 0,
-        // TODO: Calculate growth percentages by comparing with previous period
-        revenueGrowth: Math.random() * 20 - 10, // Placeholder
-        bookingGrowth: Math.random() * 15 - 5   // Placeholder
+        revenueGrowth,
+        bookingGrowth
       });
     } catch (err) {
       console.error('Error fetching analytics stats:', err);

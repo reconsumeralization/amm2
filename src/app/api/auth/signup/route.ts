@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
 import { authRateLimiters, getRateLimitIdentifier, createRateLimitResponse } from '@/lib/auth-ratelimit'
 import { logger, getRequestContext } from '@/lib/logger'
+import { emailService } from '@/lib/email-service'
+import { randomBytes } from 'crypto'
 
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
@@ -74,7 +76,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
+    // Generate verification token
+    const verificationToken = randomBytes(32).toString('hex')
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
+    // Create user with unverified email
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([
@@ -83,7 +89,9 @@ export async function POST(request: NextRequest) {
           email: email.toLowerCase().trim(),
           password: hashedPassword,
           role: 'user',
-          emailVerified: new Date().toISOString(), // Auto-verify for now
+          emailVerified: null, // Not verified initially
+          verificationToken,
+          verificationExpires: verificationExpires.toISOString(),
         }
       ])
       .select()
@@ -97,9 +105,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Send verification email if email service is configured
-    if (process.env.EMAIL_SERVER) {
-      console.log('Email verification would be sent here')
+    // Send verification email
+    try {
+      const verificationLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`
+      await emailService.sendVerificationEmail(email, name, verificationLink)
+      console.log('Verification email sent to:', email)
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      // Don't fail the signup if email fails, just log it
     }
 
     logger.authEvent('signup_success', {
@@ -110,11 +123,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Account created successfully',
+        message: 'Account created successfully! Please check your email to verify your account.',
         user: {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
+          emailVerified: false
         }
       },
       { status: 201 }

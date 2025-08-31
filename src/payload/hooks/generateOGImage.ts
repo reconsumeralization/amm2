@@ -138,8 +138,51 @@ async function generateWithTemplate(
     // In production, you'd upload this to your media storage
     const filename = `og-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`;
 
-    // TODO: Convert HTML to image and upload to media collection
-    // For now, return a placeholder
+    try {
+      // Convert HTML to image using puppeteer
+      const puppeteer = await import('puppeteer')
+      const browser = await puppeteer.default.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      })
+      
+      const page = await browser.newPage()
+      await page.setViewport({ width: 1200, height: 630 })
+      await page.setContent(html, { waitUntil: 'networkidle0' })
+      
+      const imageBuffer = await page.screenshot({
+        type: 'png',
+        fullPage: false,
+        clip: { x: 0, y: 0, width: 1200, height: 630 }
+      })
+      
+      await browser.close()
+
+      // Upload image to media collection
+      const payload = req.payload
+      if (payload) {
+        const uploadedImage = await payload.create({
+          collection: 'media',
+          data: {
+            alt: `Open Graph image for ${title}`,
+            filename: filename,
+          },
+          file: {
+            data: imageBuffer,
+            mimetype: 'image/png',
+            name: filename,
+            size: imageBuffer.length
+          } as any
+        })
+
+        console.log('OG Image uploaded:', uploadedImage.url)
+        return uploadedImage.url || uploadedImage.filename
+      }
+    } catch (imageError) {
+      console.error('Failed to generate OG image:', imageError)
+    }
+
+    // Fallback to API endpoint if image generation fails
     return `/api/og-image?title=${encodeURIComponent(title)}&collection=${collectionSlug}`;
   } catch (err) {
     console.error('Template generation failed:', err);

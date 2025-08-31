@@ -99,19 +99,185 @@ export const Reviews: CollectionConfig = {
       },
     ],
     afterChange: [
-      ({ doc, operation, req }) => {
+      async ({ doc, operation, req, previousDoc }) => {
         if (operation === 'create') {
           console.log(`Review created: ${doc.id} (${doc.rating} stars)`);
 
-          // TODO: Send notification to staff about new review
-          // TODO: Update service/staff average ratings
+          // Send notification to staff about new review
+          try {
+            const { emailService } = await import('@/lib/email-service');
+            const payload = req.payload;
+            
+            if (payload) {
+              // Get staff members (managers and barbers) to notify
+              const staffMembers = await payload.find({
+                collection: 'users',
+                where: {
+                  and: [
+                    { tenant: { equals: doc.tenant } },
+                    { role: { in: ['admin', 'manager', 'barber'] } },
+                    { isActive: { equals: true } }
+                  ]
+                }
+              });
+
+              // Get customer details
+              const customer = await payload.findByID({
+                collection: 'users',
+                id: doc.customer
+              });
+
+              // Get service details if available
+              const service = doc.service ? await payload.findByID({
+                collection: 'services',
+                id: doc.service
+              }) : null;
+
+              // Get barber details if specified
+              const barber = doc.barber ? await payload.findByID({
+                collection: 'users',
+                id: doc.barber
+              }) : null;
+
+              // Send notification to each staff member
+              for (const staff of staffMembers.docs) {
+                if (staff.email) {
+                  await emailService.sendEmail({
+                    to: staff.email,
+                    subject: `New Customer Review - ${doc.rating} Stars - ModernMen`,
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #ffc107;">New Customer Review Received</h2>
+                        <p>Hi ${staff.name || staff.email},</p>
+                        <p>A new customer review has been submitted and ${doc.approved ? 'is now live' : 'requires moderation'}.</p>
+                        
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                          <h3>Review Details:</h3>
+                          <p><strong>Rating:</strong> ${'⭐'.repeat(doc.rating)} (${doc.rating}/5 stars)</p>
+                          <p><strong>Customer:</strong> ${customer?.name || customer?.email || 'Anonymous'}</p>
+                          ${service ? `<p><strong>Service:</strong> ${service.name}</p>` : ''}
+                          ${barber ? `<p><strong>Barber:</strong> ${barber.name}</p>` : ''}
+                          ${doc.title ? `<p><strong>Title:</strong> ${doc.title}</p>` : ''}
+                          <div style="border-left: 3px solid #ffc107; padding-left: 15px; margin: 15px 0;">
+                            <p><em>"${doc.text}"</em></p>
+                          </div>
+                          <p><strong>Status:</strong> ${doc.approved ? '✅ Approved' : '⏳ Pending Review'}</p>
+                          ${doc.source ? `<p><strong>Source:</strong> ${doc.source}</p>` : ''}
+                        </div>
+                        
+                        ${!doc.approved ? '<p>Please review and approve/moderate this review in the admin panel.</p>' : ''}
+                        <p>Best regards,<br>ModernMen System</p>
+                      </div>
+                    `,
+                    text: `New customer review: ${doc.rating}/5 stars from ${customer?.name || customer?.email || 'Anonymous'}. Review: "${doc.text}". Status: ${doc.approved ? 'Approved' : 'Pending Review'}.`
+                  });
+                }
+              }
+
+              console.log(`Sent new review notifications to ${staffMembers.totalDocs} staff members`);
+            }
+
+            // Update service/staff average ratings
+            if (doc.approved) {
+              await updateRatingsForReview(doc, payload);
+            }
+
+          } catch (error) {
+            console.error('Error handling new review:', error);
+          }
         }
 
-        if (operation === 'update' && doc.approved && !doc.approvedAt) {
+        if (operation === 'update' && doc.approved && previousDoc && !previousDoc.approved) {
           console.log(`Review approved: ${doc.id}`);
 
-          // TODO: Send notification to customer about approved review
-          // TODO: Recalculate average ratings
+          try {
+            const { emailService } = await import('@/lib/email-service');
+            const payload = req.payload;
+
+            // Send notification to customer about approved review
+            if (payload) {
+              const customer = await payload.findByID({
+                collection: 'users',
+                id: doc.customer
+              });
+
+              if (customer?.email) {
+                // Get service and barber details for the notification
+                const service = doc.service ? await payload.findByID({
+                  collection: 'services',
+                  id: doc.service
+                }) : null;
+
+                const barber = doc.barber ? await payload.findByID({
+                  collection: 'users',
+                  id: doc.barber
+                }) : null;
+
+                await emailService.sendEmail({
+                  to: customer.email,
+                  subject: 'Your Review Has Been Published - ModernMen',
+                  html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                      <h2 style="color: #28a745;">Your Review is Now Live!</h2>
+                      <p>Hi ${customer.name || customer.email},</p>
+                      <p>Thank you for sharing your experience! Your review has been approved and is now published on our website.</p>
+                      
+                      <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                        <h3>Your Published Review:</h3>
+                        <p><strong>Rating:</strong> ${'⭐'.repeat(doc.rating)} (${doc.rating}/5 stars)</p>
+                        ${service ? `<p><strong>Service:</strong> ${service.name}</p>` : ''}
+                        ${barber ? `<p><strong>Barber:</strong> ${barber.name}</p>` : ''}
+                        ${doc.title ? `<p><strong>Title:</strong> ${doc.title}</p>` : ''}
+                        <div style="border-left: 3px solid #28a745; padding-left: 15px; margin: 15px 0;">
+                          <p><em>"${doc.text}"</em></p>
+                        </div>
+                        ${doc.featured ? '<p style="color: #28a745;"><strong>🌟 Featured Review</strong></p>' : ''}
+                      </div>
+                      
+                      <p>Your feedback helps other customers make informed decisions and helps us continue to provide excellent service.</p>
+                      <p>Thank you for choosing ModernMen!</p>
+                      <p>Best regards,<br>The ModernMen Team</p>
+                    </div>
+                  `,
+                  text: `Your review has been published! Rating: ${doc.rating}/5 stars. Review: "${doc.text}". Thank you for your feedback!`
+                });
+
+                console.log(`Sent review approval notification to customer: ${customer.email}`);
+              }
+
+              // Recalculate average ratings now that review is approved
+              await updateRatingsForReview(doc, payload);
+
+              // Set approval timestamp and approver if not already set
+              if (!doc.approvedAt) {
+                await payload.update({
+                  collection: 'reviews',
+                  id: doc.id,
+                  data: {
+                    approvedAt: new Date().toISOString(),
+                    approvedBy: req.user?.id
+                  }
+                });
+              }
+            }
+
+          } catch (error) {
+            console.error('Error handling approved review:', error);
+          }
+        }
+
+        // Handle rating updates for already approved reviews
+        if (operation === 'update' && doc.approved && previousDoc?.approved && doc.rating !== previousDoc.rating) {
+          console.log(`Review rating updated: ${doc.id} (${previousDoc.rating} -> ${doc.rating} stars)`);
+          
+          try {
+            const payload = req.payload;
+            if (payload) {
+              await updateRatingsForReview(doc, payload, previousDoc);
+            }
+          } catch (error) {
+            console.error('Error updating ratings after review change:', error);
+          }
         }
       },
     ],
@@ -493,3 +659,195 @@ export const Reviews: CollectionConfig = {
   ],
   timestamps: true,
 };
+
+/**
+ * Helper function to update average ratings when reviews change
+ */
+async function updateRatingsForReview(doc: any, payload: any, previousDoc?: any) {
+  try {
+    // Update barber/staff average rating
+    if (doc.barber) {
+      await updateBarberRating(doc.barber, payload);
+    }
+
+    // Update service average rating
+    if (doc.service) {
+      await updateServiceRating(doc.service, payload);
+    }
+
+    // Update overall business rating
+    await updateBusinessRating(doc.tenant, payload);
+
+    console.log(`Updated ratings for review ${doc.id}`);
+  } catch (error) {
+    console.error('Error updating ratings:', error);
+  }
+}
+
+/**
+ * Update barber's average rating based on all approved reviews
+ */
+async function updateBarberRating(barberId: string, payload: any) {
+  try {
+    const reviews = await payload.find({
+      collection: 'reviews',
+      where: {
+        and: [
+          { barber: { equals: barberId } },
+          { approved: { equals: true } }
+        ]
+      },
+      limit: 1000 // Should be enough for most barbers
+    });
+
+    if (reviews.totalDocs > 0) {
+      const totalRating = reviews.docs.reduce((sum: number, review: any) => sum + (review.rating || 0), 0);
+      const averageRating = totalRating / reviews.totalDocs;
+
+      // Calculate category averages if available
+      const categoryAverages: any = {};
+      const categoryFields = ['serviceQuality', 'staffFriendliness', 'cleanliness', 'value', 'waitingTime'];
+      
+      categoryFields.forEach(field => {
+        const validRatings = reviews.docs
+          .filter((review: any) => review.categories && review.categories[field])
+          .map((review: any) => review.categories[field]);
+        
+        if (validRatings.length > 0) {
+          categoryAverages[field] = validRatings.reduce((sum: number, rating: number) => sum + rating, 0) / validRatings.length;
+        }
+      });
+
+      await payload.update({
+        collection: 'users',
+        id: barberId,
+        data: {
+          averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+          totalReviews: reviews.totalDocs,
+          categoryRatings: Object.keys(categoryAverages).length > 0 ? categoryAverages : undefined
+        }
+      });
+
+      console.log(`Updated barber ${barberId} rating to ${averageRating.toFixed(1)} stars (${reviews.totalDocs} reviews)`);
+    } else {
+      // No reviews, reset ratings
+      await payload.update({
+        collection: 'users',
+        id: barberId,
+        data: {
+          averageRating: null,
+          totalReviews: 0,
+          categoryRatings: null
+        }
+      });
+
+      console.log(`Reset barber ${barberId} rating - no reviews`);
+    }
+  } catch (error) {
+    console.error(`Error updating barber rating for ${barberId}:`, error);
+  }
+}
+
+/**
+ * Update service's average rating based on all approved reviews
+ */
+async function updateServiceRating(serviceId: string, payload: any) {
+  try {
+    const reviews = await payload.find({
+      collection: 'reviews',
+      where: {
+        and: [
+          { service: { equals: serviceId } },
+          { approved: { equals: true } }
+        ]
+      },
+      limit: 1000
+    });
+
+    if (reviews.totalDocs > 0) {
+      const totalRating = reviews.docs.reduce((sum: number, review: any) => sum + (review.rating || 0), 0);
+      const averageRating = totalRating / reviews.totalDocs;
+
+      await payload.update({
+        collection: 'services',
+        id: serviceId,
+        data: {
+          averageRating: Math.round(averageRating * 10) / 10,
+          totalReviews: reviews.totalDocs
+        }
+      });
+
+      console.log(`Updated service ${serviceId} rating to ${averageRating.toFixed(1)} stars (${reviews.totalDocs} reviews)`);
+    } else {
+      await payload.update({
+        collection: 'services',
+        id: serviceId,
+        data: {
+          averageRating: null,
+          totalReviews: 0
+        }
+      });
+
+      console.log(`Reset service ${serviceId} rating - no reviews`);
+    }
+  } catch (error) {
+    console.error(`Error updating service rating for ${serviceId}:`, error);
+  }
+}
+
+/**
+ * Update business's overall average rating based on all approved reviews
+ */
+async function updateBusinessRating(tenantId: string, payload: any) {
+  try {
+    const reviews = await payload.find({
+      collection: 'reviews',
+      where: {
+        and: [
+          { tenant: { equals: tenantId } },
+          { approved: { equals: true } }
+        ]
+      },
+      limit: 10000 // Large limit for businesses with many reviews
+    });
+
+    if (reviews.totalDocs > 0) {
+      const totalRating = reviews.docs.reduce((sum: number, review: any) => sum + (review.rating || 0), 0);
+      const averageRating = totalRating / reviews.totalDocs;
+
+      // Calculate rating distribution
+      const ratingDistribution = [0, 0, 0, 0, 0]; // [1-star, 2-star, 3-star, 4-star, 5-star]
+      reviews.docs.forEach((review: any) => {
+        if (review.rating && review.rating >= 1 && review.rating <= 5) {
+          ratingDistribution[review.rating - 1]++;
+        }
+      });
+
+      await payload.update({
+        collection: 'tenants',
+        id: tenantId,
+        data: {
+          averageRating: Math.round(averageRating * 10) / 10,
+          totalReviews: reviews.totalDocs,
+          ratingDistribution: ratingDistribution
+        }
+      });
+
+      console.log(`Updated business ${tenantId} rating to ${averageRating.toFixed(1)} stars (${reviews.totalDocs} total reviews)`);
+    } else {
+      await payload.update({
+        collection: 'tenants',
+        id: tenantId,
+        data: {
+          averageRating: null,
+          totalReviews: 0,
+          ratingDistribution: [0, 0, 0, 0, 0]
+        }
+      });
+
+      console.log(`Reset business ${tenantId} rating - no reviews`);
+    }
+  } catch (error) {
+    console.error(`Error updating business rating for ${tenantId}:`, error);
+  }
+}

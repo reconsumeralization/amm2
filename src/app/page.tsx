@@ -54,6 +54,25 @@ const team = [
   }
 ]
 
+const gallery = [
+  {
+    src: "/gallery/1.jpg",
+    alt: "A stylish haircut"
+  },
+  {
+    src: "/gallery/2.jpg",
+    alt: "A man getting a shave"
+  },
+  {
+    src: "/gallery/3.jpg",
+    alt: "A man with a fresh haircut"
+  },
+  {
+    src: "/gallery/4.jpg",
+    alt: "A man with a beard trim"
+  }
+]
+
 export default function Home() {
   const router = useRouter()
   const { data: session } = useSession()
@@ -97,7 +116,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 h-full">
+                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 h-full transform hover:-translate-y-2">
                   <CardHeader className="text-center bg-gradient-to-r from-red-50 to-gray-50 border-b border-gray-100">
                     <CardTitle className="text-2xl font-display font-medium text-black">
                       {service.title}
@@ -215,7 +234,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 text-center h-full">
+                <Card className="bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-red-200 text-center h-full transform hover:-translate-y-2">
                   <CardHeader className="bg-gradient-to-r from-red-50 to-gray-50 border-b border-gray-100">
                     <div className="w-32 h-32 mx-auto mb-4 bg-red-100 rounded-full overflow-hidden flex items-center justify-center">
                       <span className="text-red-600 font-bold text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</span>
@@ -240,6 +259,70 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section id="gallery" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-display font-light text-black mb-6">
+              Our Work
+            </h2>
+            <p className="text-xl font-body text-gray-600 max-w-3xl mx-auto">
+              A glimpse into the quality and style we provide
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {gallery.map((image, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <div className="aspect-w-1 aspect-h-1">
+                  <div className="w-full h-full bg-gray-200">
+                    <img src={image.src} alt={image.alt} className="object-cover w-full h-full" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section id="cta" className="py-20 bg-red-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+              Ready for a Fresh Look?
+            </h2>
+            <p className="text-xl font-body max-w-3xl mx-auto mb-8">
+              Book your appointment today and experience the Modern Men difference.
+            </p>
+            <Button
+              className="bg-white text-red-600 hover:bg-gray-100 border-0 px-8 py-4 text-lg transition-all duration-200"
+              onClick={handleBookNow}
+            >
+              Book Appointment
+            </Button>
+          </motion.div>
         </div>
       </section>
 

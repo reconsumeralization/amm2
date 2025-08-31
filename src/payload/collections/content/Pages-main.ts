@@ -93,5 +93,64 @@ export const Pages: CollectionConfig = {
       admin: { readOnly: true },
     },
   ],
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        // Trigger sitemap regeneration when pages are created/updated/published
+        if (operation === 'create' || operation === 'update') {
+          try {
+            const webhookSecret = process.env.PAYLOAD_WEBHOOK_SECRET || 'dev-webhook-secret';
+            const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            
+            await fetch(`${baseUrl}/api/sitemap/regenerate`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${webhookSecret}`
+              },
+              body: JSON.stringify({
+                collection: 'pages',
+                operation,
+                docId: doc.id,
+                slug: doc.slug,
+                status: doc.status
+              })
+            });
+            
+            console.log(`Triggered sitemap regeneration for page: ${doc.slug}`);
+          } catch (error) {
+            console.error('Failed to trigger sitemap regeneration:', error);
+          }
+        }
+      }
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        // Trigger sitemap regeneration when pages are deleted
+        try {
+          const webhookSecret = process.env.PAYLOAD_WEBHOOK_SECRET || 'dev-webhook-secret';
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+          
+          await fetch(`${baseUrl}/api/sitemap/regenerate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${webhookSecret}`
+            },
+            body: JSON.stringify({
+              collection: 'pages',
+              operation: 'delete',
+              docId: doc.id,
+              slug: doc.slug
+            })
+          });
+          
+          console.log(`Triggered sitemap regeneration after deleting page: ${doc.slug}`);
+        } catch (error) {
+          console.error('Failed to trigger sitemap regeneration after delete:', error);
+        }
+      }
+    ]
+  }
 }
 

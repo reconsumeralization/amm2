@@ -1,366 +1,745 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Icons } from '@/components/ui/icons'
-import { toast } from 'sonner'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  Shield,
+  User,
+  Users,
+  Mail,
+  Phone,
+  Calendar,
+  Settings,
+  Key,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  Download,
+  Upload,
+  Filter
+} from "lucide-react";
+import { toast } from 'sonner';
 
 interface User {
-  id: string
-  name: string
-  email: string
-  role: string
-  phone?: string
-  isActive: boolean
-  createdAt: string
-  lastLogin?: string
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'manager' | 'barber' | 'customer';
+  status: 'active' | 'inactive' | 'suspended';
+  avatar?: string;
+  phone?: string;
+  createdAt: string;
+  lastLogin?: string;
+  permissions: string[];
+  tenantId?: string;
+  stats: {
+    totalAppointments: number;
+    completedAppointments: number;
+    totalSpent: number;
+    averageRating: number;
+  };
 }
 
-interface UserStats {
-  total: number
-  active: number
-  admins: number
-  stylists: number
-  managers: number
-  staff: number
+interface RolePermissions {
+  role: string;
+  permissions: string[];
+  description: string;
 }
 
-export function UserManagement() {
-  const [users, setUsers] = useState<User[]>([])
-  const [stats, setStats] = useState<UserStats | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [roleFilter, setRoleFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [showCreateForm, setShowCreateForm] = useState(false)
+const AVAILABLE_PERMISSIONS = [
+  'view_dashboard',
+  'manage_users',
+  'manage_appointments',
+  'manage_services',
+  'manage_inventory',
+  'view_reports',
+  'manage_content',
+  'manage_settings',
+  'manage_billing',
+  'manage_staff',
+  'view_analytics',
+  'export_data'
+];
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      setLoading(true)
-      const params = new URLSearchParams()
-      if (searchTerm) params.set('search', searchTerm)
-      if (roleFilter !== 'all') params.set('role', roleFilter)
-      if (statusFilter !== 'all') {
-        params.set('isActive', statusFilter === 'active' ? 'true' : 'false')
+const ROLE_PERMISSIONS: RolePermissions[] = [
+  {
+    role: 'admin',
+    permissions: AVAILABLE_PERMISSIONS,
+    description: 'Full access to all system features and settings'
+  },
+  {
+    role: 'manager',
+    permissions: [
+      'view_dashboard',
+      'manage_users',
+      'manage_appointments',
+      'manage_services',
+      'view_reports',
+      'manage_content',
+      'manage_staff',
+      'view_analytics',
+      'export_data'
+    ],
+    description: 'Management access with limited administrative functions'
+  },
+  {
+    role: 'barber',
+    permissions: [
+      'view_dashboard',
+      'manage_appointments',
+      'view_reports'
+    ],
+    description: 'Access to appointment management and basic reporting'
+  },
+  {
+    role: 'customer',
+    permissions: [
+      'manage_appointments'
+    ],
+    description: 'Access to personal appointments and profile management'
+  }
+];
+
+export default function UserManagement() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [showPermissions, setShowPermissions] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  // Mock data
+  const mockUsers: User[] = [
+    {
+      id: '1',
+      name: 'John Admin',
+      email: 'admin@modernmen.com',
+      role: 'admin',
+      status: 'active',
+      phone: '+1 (555) 123-4567',
+      createdAt: '2024-01-01T00:00:00Z',
+      lastLogin: '2024-01-20T14:30:00Z',
+      permissions: ROLE_PERMISSIONS.find(r => r.role === 'admin')?.permissions || [],
+      stats: {
+        totalAppointments: 0,
+        completedAppointments: 0,
+        totalSpent: 0,
+        averageRating: 0
       }
-
-      const response = await fetch(`/api/users?${params.toString()}`)
-      if (!response.ok) throw new Error('Failed to fetch users')
-
-      const data = await response.json()
-      setUsers(data.users)
-
-      // Calculate stats
-      const totalUsers = data.total || data.users.length
-      const activeUsers = data.users.filter((u: User) => u.isActive).length
-      const roleStats = data.users.reduce((acc: any, user: User) => {
-        acc[user.role] = (acc[user.role] || 0) + 1
-        return acc
-      }, {})
-
-      setStats({
-        total: totalUsers,
-        active: activeUsers,
-        admins: roleStats.admin || 0,
-        stylists: roleStats.stylist || 0,
-        managers: roleStats.manager || 0,
-        staff: roleStats.staff || 0
-      })
-    } catch (error) {
-      console.error('Error fetching users:', error)
-      toast.error('Failed to load users')
-    } finally {
-      setLoading(false)
+    },
+    {
+      id: '2',
+      name: 'Sarah Manager',
+      email: 'manager@modernmen.com',
+      role: 'manager',
+      status: 'active',
+      phone: '+1 (555) 234-5678',
+      createdAt: '2024-01-05T00:00:00Z',
+      lastLogin: '2024-01-20T10:15:00Z',
+      permissions: ROLE_PERMISSIONS.find(r => r.role === 'manager')?.permissions || [],
+      stats: {
+        totalAppointments: 0,
+        completedAppointments: 0,
+        totalSpent: 0,
+        averageRating: 0
+      }
+    },
+    {
+      id: '3',
+      name: 'Mike Barber',
+      email: 'mike@modernmen.com',
+      role: 'barber',
+      status: 'active',
+      phone: '+1 (555) 345-6789',
+      createdAt: '2024-01-10T00:00:00Z',
+      lastLogin: '2024-01-20T09:00:00Z',
+      permissions: ROLE_PERMISSIONS.find(r => r.role === 'barber')?.permissions || [],
+      stats: {
+        totalAppointments: 45,
+        completedAppointments: 42,
+        totalSpent: 0,
+        averageRating: 4.8
+      }
+    },
+    {
+      id: '4',
+      name: 'Jane Customer',
+      email: 'jane@example.com',
+      role: 'customer',
+      status: 'active',
+      phone: '+1 (555) 456-7890',
+      createdAt: '2024-01-15T00:00:00Z',
+      lastLogin: '2024-01-19T16:20:00Z',
+      permissions: ROLE_PERMISSIONS.find(r => r.role === 'customer')?.permissions || [],
+      stats: {
+        totalAppointments: 8,
+        completedAppointments: 7,
+        totalSpent: 640,
+        averageRating: 5.0
+      }
     }
-  }, [searchTerm, roleFilter, statusFilter])
+  ];
 
   useEffect(() => {
-    fetchUsers()
-  }, [searchTerm, roleFilter, statusFilter, fetchUsers])
+    // Simulate API call
+    setTimeout(() => {
+      setUsers(mockUsers);
+      setFilteredUsers(mockUsers);
+      setIsLoading(false);
+    }, 1000);
+  }, []);
 
-  const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
+  useEffect(() => {
+    let filtered = users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          user.email.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+
+    setFilteredUsers(filtered);
+  }, [users, searchQuery, roleFilter, statusFilter]);
+
+  const handleCreate = () => {
+    const newUser: User = {
+      id: Date.now().toString(),
+      name: '',
+      email: '',
+      role: 'customer',
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      permissions: ROLE_PERMISSIONS.find(r => r.role === 'customer')?.permissions || [],
+      stats: {
+        totalAppointments: 0,
+        completedAppointments: 0,
+        totalSpent: 0,
+        averageRating: 0
+      }
+    };
+    setSelectedUser(newUser);
+    setIsCreating(true);
+    setIsEditing(true);
+  };
+
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setIsEditing(true);
+    setIsCreating(false);
+  };
+
+  const handleSave = async (user: User) => {
     try {
-      const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: !currentStatus })
-      })
-
-      if (!response.ok) throw new Error('Failed to update user status')
-
-      toast.success(`User ${!currentStatus ? 'activated' : 'deactivated'}`)
-      fetchUsers()
+      if (isCreating) {
+        setUsers(prev => [...prev, user]);
+        toast.success('User created successfully');
+      } else {
+        setUsers(prev => prev.map(existing =>
+          existing.id === user.id ? user : existing
+        ));
+        toast.success('User updated successfully');
+      }
+      setIsEditing(false);
+      setSelectedUser(null);
     } catch (error) {
-      console.error('Error updating user status:', error)
-      toast.error('Failed to update user status')
+      toast.error('Failed to save user');
     }
-  }
+  };
 
-  const handleDeleteUser = async (userId: string, userName: string) => {
-    if (!confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
-      return
+  const handleDelete = async (userId: string) => {
+    if (confirm('Are you sure you want to delete this user?')) {
+      setUsers(prev => prev.filter(user => user.id !== userId));
+      toast.success('User deleted successfully');
     }
+  };
 
-    try {
-      const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE'
-      })
-
-      if (!response.ok) throw new Error('Failed to delete user')
-
-      toast.success('User deleted successfully')
-      fetchUsers()
-    } catch (error) {
-      console.error('Error deleting user:', error)
-      toast.error('Failed to delete user')
+  const handleBulkDelete = async () => {
+    if (confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+      setUsers(prev => prev.filter(user => !selectedUsers.includes(user.id)));
+      setSelectedUsers([]);
+      toast.success(`${selectedUsers.length} users deleted successfully`);
     }
-  }
+  };
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800'
-      case 'manager': return 'bg-blue-100 text-blue-800'
-      case 'stylist': return 'bg-purple-100 text-purple-800'
-      case 'staff': return 'bg-gray-100 text-gray-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  const handleStatusChange = async (userId: string, newStatus: User['status']) => {
+    setUsers(prev => prev.map(user =>
+      user.id === userId ? { ...user, status: newStatus } : user
+    ));
+    toast.success(`User status updated to ${newStatus}`);
+  };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  }
+  const handleRoleChange = async (userId: string, newRole: User['role']) => {
+    const newPermissions = ROLE_PERMISSIONS.find(r => r.role === newRole)?.permissions || [];
+    setUsers(prev => prev.map(user =>
+      user.id === userId ? { ...user, role: newRole, permissions: newPermissions } : user
+    ));
+    toast.success(`User role updated to ${newRole}`);
+  };
 
-  if (loading) {
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      active: 'default',
+      inactive: 'secondary',
+      suspended: 'destructive'
+    } as const;
+    return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>;
+  };
+
+  const getRoleBadge = (role: string) => {
+    const variants = {
+      admin: 'destructive',
+      manager: 'default',
+      barber: 'secondary',
+      customer: 'outline'
+    } as const;
+    return <Badge variant={variants[role as keyof typeof variants]}>{role}</Badge>;
+  };
+
+  if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-4">
-                <div className="h-8 bg-gray-200 rounded mb-2"></div>
-                <div className="h-6 bg-gray-200 rounded"></div>
-              </CardContent>
-            </Card>
-          ))}
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <RefreshCw className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading users...</p>
         </div>
-        <Card className="animate-pulse">
-          <CardContent className="p-6">
-            <div className="h-6 bg-gray-200 rounded mb-4"></div>
-            <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="h-16 bg-gray-200 rounded"></div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
-      {stats && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4"
-        >
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-800">{stats.total}</div>
-              <div className="text-sm text-gray-600">Total Users</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-              <div className="text-sm text-gray-600">Active</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-red-600">{stats.admins}</div>
-              <div className="text-sm text-gray-600">Admins</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-blue-600">{stats.managers}</div>
-              <div className="text-sm text-gray-600">Managers</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-purple-600">{stats.stylists}</div>
-              <div className="text-sm text-gray-600">Stylists</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold text-gray-600">{stats.staff}</div>
-              <div className="text-sm text-gray-600">Staff</div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">User Management</h1>
+          <p className="text-gray-600 mt-1">
+            Manage users, roles, and permissions across your organization
+          </p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Button
+            onClick={() => setShowPermissions(!showPermissions)}
+            variant="outline"
+            size="sm"
+          >
+            <Shield className="h-4 w-4 mr-2" />
+            {showPermissions ? 'Hide' : 'Show'} Permissions
+          </Button>
+          <Button onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add User
+          </Button>
+        </div>
+      </div>
 
-      {/* Controls */}
+      {/* Filters and Search */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search users by name or email..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="barber">Barber</SelectItem>
+                  <SelectItem value="customer">Customer</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {selectedUsers.length > 0 && (
+                <Button
+                  onClick={handleBulkDelete}
+                  variant="destructive"
+                  size="sm"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete ({selectedUsers.length})
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Users Table */}
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <CardTitle>User Management</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="search users..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full sm:w-64"
-                />
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="All roles" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All roles</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="stylist">Stylist</SelectItem>
-                    <SelectItem value="staff">Staff</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-32">
-                    <SelectValue placeholder="All status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button
-                onClick={() => setShowCreateForm(true)}
-                className="bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                <Icons.info className="h-4 w-4 mr-2" />
-                Add User
+          <div className="flex items-center justify-between">
+            <CardTitle>Users ({filteredUsers.length})</CardTitle>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm">
+                <Upload className="h-4 w-4 mr-2" />
+                Import
               </Button>
             </div>
           </div>
         </CardHeader>
-
         <CardContent>
-          {users.length === 0 ? (
-            <div className="text-center py-12">
-              <Icons.users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-800 mb-2">No users found</h3>
-              <p className="text-gray-600 mb-4">
-                {searchTerm || roleFilter !== 'all' || statusFilter !== 'all'
-                  ? 'Try adjusting your filters'
-                  : 'No users have been created yet'
-                }
-              </p>
-              <Button
-                onClick={() => setShowCreateForm(true)}
-                className="bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                Create First User
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {users.map((user, index) => (
-                <motion.div
-                  key={user.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-4 mb-4 sm:mb-0">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                      {user.name ? (
-                        <span className="text-lg font-medium text-gray-700">
-                          {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </span>
-                      ) : (
-                        <Icons.users className="h-6 w-6 text-gray-400" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-800">{user.name || 'Unnamed User'}</h3>
-                      <p className="text-sm text-gray-600">{user.email}</p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Badge className={getRoleColor(user.role)}>
-                          {user.role}
-                        </Badge>
-                        {user.phone && (
-                          <span className="text-xs text-gray-500">{user.phone}</span>
-                        )}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={selectedUsers.length === filteredUsers.length}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedUsers(filteredUsers.map(u => u.id));
+                      } else {
+                        setSelectedUsers([]);
+                      }
+                    }}
+                  />
+                </TableHead>
+                <TableHead>User</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Last Login</TableHead>
+                {showPermissions && <TableHead>Permissions</TableHead>}
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedUsers.includes(user.id)}
+                      onCheckedChange={() => toggleUserSelection(user.id)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback>
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-gray-500">{user.email}</div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                    <div className="text-sm text-gray-500">
-                      <div>Created: {formatDate(user.createdAt)}</div>
-                      {user.lastLogin && (
-                        <div>Last login: {formatDate(user.lastLogin)}</div>
-                      )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      {getRoleBadge(user.role)}
+                      <Select
+                        value={user.role}
+                        onValueChange={(value) => handleRoleChange(user.id, value as User['role'])}
+                      >
+                        <SelectTrigger className="w-24 h-6 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="manager">Manager</SelectItem>
+                          <SelectItem value="barber">Barber</SelectItem>
+                          <SelectItem value="customer">Customer</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      {getStatusBadge(user.status)}
+                      <Select
+                        value={user.status}
+                        onValueChange={(value) => handleStatusChange(user.id, value as User['status'])}
+                      >
+                        <SelectTrigger className="w-24 h-6 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                          <SelectItem value="suspended">Suspended</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {user.lastLogin ? (
+                      <div className="text-sm">
+                        {new Date(user.lastLogin).toLocaleDateString()}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">Never</span>
+                    )}
+                  </TableCell>
+                  {showPermissions && (
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {user.permissions.slice(0, 3).map(permission => (
+                          <Badge key={permission} variant="outline" className="text-xs">
+                            {permission.replace('_', ' ')}
+                          </Badge>
+                        ))}
+                        {user.permissions.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{user.permissions.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
+                  <TableCell>
                     <div className="flex items-center space-x-2">
                       <Button
-                        variant="outline"
+                        onClick={() => handleEdit(user)}
+                        variant="ghost"
                         size="sm"
-                        onClick={() => handleToggleStatus(user.id, user.isActive)}
-                        className={user.isActive
-                          ? 'border-green-500 text-green-600 hover:bg-green-50'
-                          : 'border-red-500 text-red-600 hover:bg-red-50'
-                        }
                       >
-                        {user.isActive ? 'Active' : 'Inactive'}
+                        <Edit className="h-4 w-4" />
                       </Button>
-
                       <Button
-                        variant="outline"
+                        onClick={() => handleDelete(user.id)}
+                        variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          // This would open an edit modal or navigate to edit page
-                          toast.info('Edit functionality coming soon')
-                        }}
+                        className="text-red-600 hover:text-red-700"
                       >
-                        <Icons.edit className="h-4 w-4" />
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user.id, user.name || user.email)}
-                        className="border-red-500 text-red-600 hover:bg-red-50"
-                      >
-                        <Icons.x className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                  </div>
-                </motion.div>
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
-          )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
+
+      {/* Role Permissions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            Role Permissions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {ROLE_PERMISSIONS.map((rolePerm) => (
+              <div key={rolePerm.role} className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold capitalize">{rolePerm.role}</h3>
+                  <Badge variant="outline">{rolePerm.permissions.length} permissions</Badge>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">{rolePerm.description}</p>
+                <div className="flex flex-wrap gap-1">
+                  {rolePerm.permissions.map(permission => (
+                    <Badge key={permission} variant="secondary" className="text-xs">
+                      {permission.replace('_', ' ')}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* User Editor Dialog */}
+      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {isCreating ? 'Create New User' : 'Edit User'}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <UserEditor
+              user={selectedUser}
+              onSave={handleSave}
+              onCancel={() => {
+                setIsEditing(false);
+                setSelectedUser(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
+}
+
+// User Editor Component
+function UserEditor({
+  user,
+  onSave,
+  onCancel
+}: {
+  user: User;
+  onSave: (user: User) => void;
+  onCancel: () => void;
+}) {
+  const [editedUser, setEditedUser] = useState<User>(user);
+
+  const handleSave = () => {
+    // Update permissions based on role
+    const rolePermissions = ROLE_PERMISSIONS.find(r => r.role === editedUser.role)?.permissions || [];
+    const updatedUser = { ...editedUser, permissions: rolePermissions };
+    onSave(updatedUser);
+  };
+
+  const handleRoleChange = (newRole: User['role']) => {
+    const rolePermissions = ROLE_PERMISSIONS.find(r => r.role === newRole)?.permissions || [];
+    setEditedUser(prev => ({
+      ...prev,
+      role: newRole,
+      permissions: rolePermissions
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            value={editedUser.name}
+            onChange={(e) => setEditedUser(prev => ({ ...prev, name: e.target.value }))}
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={editedUser.email}
+            onChange={(e) => setEditedUser(prev => ({ ...prev, email: e.target.value }))}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="phone">Phone</Label>
+          <Input
+            id="phone"
+            value={editedUser.phone || ''}
+            onChange={(e) => setEditedUser(prev => ({ ...prev, phone: e.target.value }))}
+          />
+        </div>
+        <div>
+          <Label htmlFor="role">Role</Label>
+          <Select value={editedUser.role} onValueChange={handleRoleChange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="manager">Manager</SelectItem>
+              <SelectItem value="barber">Barber</SelectItem>
+              <SelectItem value="customer">Customer</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="status">Status</Label>
+        <Select
+          value={editedUser.status}
+          onValueChange={(value: User['status']) => setEditedUser(prev => ({ ...prev, status: value }))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="suspended">Suspended</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label>Permissions</Label>
+        <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+          <div className="flex flex-wrap gap-2">
+            {editedUser.permissions.map(permission => (
+              <Badge key={permission} variant="outline">
+                {permission.replace('_', ' ')}
+              </Badge>
+            ))}
+          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            Permissions are automatically set based on the user's role
+          </p>
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-3 pt-4 border-t">
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave}>
+          <Key className="h-4 w-4 mr-2" />
+          Save User
+        </Button>
+      </div>
+    </div>
+  );
 }
