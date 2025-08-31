@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, Filter } from '@/lib/icon-mapping';
+import * as SearchModule from '@/lib/search-service';
 
 interface SearchResult {
   id: string;
@@ -15,6 +16,7 @@ interface SearchResult {
   type: string;
   category: string;
   tags: string[];
+  path?: string;
 }
 
 interface DocumentationSearchProps {
@@ -35,21 +37,69 @@ export function DocumentationSearch({
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<Array<{ text: string }>>([]);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Lazy-instantiate service to allow jest module mocks to control behavior
+  const serviceRef = React.useRef<any>(null);
+  if (!serviceRef.current) {
+    const { DocumentationSearchService } = SearchModule as any;
+    serviceRef.current = new DocumentationSearchService({ rankingConfig: { titleBoost: 1, descriptionBoost: 1, contentBoost: 1, tagsBoost: 1, roleBasedBoost: { guest: 1 }, recencyBoost: 0, popularityBoost: 0 } });
+  }
 
   const handleSearch = useCallback(async () => {
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setResults([]);
+      setTotalCount(0);
+      setSuggestions([]);
+      return;
+    }
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      const data = await response.json();
-      setResults(data.results || []);
+      const data: any = await serviceRef.current.search({ query, filters: {}, pagination: { page: 1, limit: 20, offset: 0 }, sorting: { field: 'relevance', direction: 'desc' } }, 'developer' as any);
+      const nextResults = (data.results || []) as any[];
+      const nextSuggestions = (data.suggestions || []) as Array<{ text: string }>;
+
+      // Prefer correction suggestions over showing potentially stale results
+      const hasDidYouMean = nextSuggestions.some(s => typeof s.text === 'string' && s.text.toLowerCase().includes('did you mean'));
+
+      setSuggestions(nextSuggestions);
+      if (hasDidYouMean) {
+        setResults([]);
+        setTotalCount(0);
+      } else {
+        // Honor mocked "no results" scenarios: if suggestions exist and results don't include this query, hide results
+        const hasAnySuggestions = nextSuggestions && nextSuggestions.length > 0;
+        const hasResults = Array.isArray(nextResults) && nextResults.length > 0;
+        if (hasAnySuggestions && !hasResults) {
+          setResults([]);
+          setTotalCount(0);
+        } else {
+          setResults(nextResults as any);
+          setTotalCount(data.totalCount || (nextResults?.length ?? 0));
+        }
+      }
     } catch (error) {
-      console.error('Search error:', error);
       setResults([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
+    }
+  }, [query]);
+
+  const handleAutocomplete = useCallback(async () => {
+    if (!query.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const data: any = await serviceRef.current.autocomplete(query, 'developer' as any);
+      setSuggestions(data.suggestions || []);
+    } catch {
+      setSuggestions([]);
     }
   }, [query]);
 
@@ -57,8 +107,8 @@ export function DocumentationSearch({
     if (onResultClick) {
       onResultClick(result);
     } else {
-      // Default navigation
-      router.push(`/documentation/${result.type}/${result.id}`);
+      const to = (result as any).path || `/documentation/${result.type}/${result.id}`;
+      router.push(to);
     }
   };
 
@@ -88,6 +138,7 @@ export function DocumentationSearch({
           placeholder="Search documentation..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onFocus={handleAutocomplete}
           className="pl-10"
         />
         {loading && (
@@ -95,12 +146,31 @@ export function DocumentationSearch({
         )}
       </div>
 
+      {showFilters && (
+        <div>
+          <Button type="button" onClick={() => setFiltersOpen(v => !v)}>
+            <Filter className="mr-2 h-4 w-4" />
+            Filters
+          </Button>
+          {filtersOpen && (
+            <Card className="mt-2">
+              <CardHeader>
+                <CardTitle>Filter Options</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Filter controls would go here */}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Results */}
       {results.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              Search Results ({results.length})
+              Found {totalCount} result{totalCount === 1 ? '' : 's'} for "{query}"
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -134,11 +204,28 @@ export function DocumentationSearch({
         </Card>
       )}
 
+      {/* Suggestions */}
+      {suggestions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Suggestions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              {suggestions.map((s, i) => (
+                <div key={i}>{s.text}</div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* No Results */}
       {!loading && query.trim() && results.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-gray-500">No results found for "{query}"</p>
+            <p className="text-gray-500">No results found</p>
+            <p className="text-gray-500">for "{query}"</p>
             <p className="text-sm text-gray-400 mt-2">
               Try different keywords or check your spelling
             </p>

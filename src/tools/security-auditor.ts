@@ -406,12 +406,11 @@ function applyFix(issue: IssueRecord): boolean {
       updated = sanitizeFn + '\n' + updated;
     }
     updated = updated.replace(/innerHTML\s*=\s*`([^`]+)`/g, (_m, tpl) => {
-      const sanitizedTpl = tpl.replace(/\$\{([^}]+)\}/g, (_m2: string, v: string) => `\${sanitize(${v.trim()})}`);
-      return `innerHTML = sanitize(\`${sanitizedTpl}\`)`;
+      return `innerHTML = sanitize(\`${tpl}\`)`;
     });
     updated = updated.replace(/innerHTML\s*=\s*([^;]+);/g, (_m, expr) => {
-      if (expr.includes('sanitize(')) return `innerHTML = sanitize(sanitize(${expr}));`;
-      return `innerHTML = sanitize(sanitize(${expr}));`;
+      if (expr.trim().startsWith('sanitize(')) return `innerHTML = ${expr};`;
+      return `innerHTML = sanitize(${expr});`;
     });
     if (updated !== content) {
       fs.writeFileSync(file, updated);

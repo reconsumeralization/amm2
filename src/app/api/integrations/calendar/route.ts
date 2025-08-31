@@ -40,7 +40,10 @@ export async function POST(req: Request) {
       googleEventId = appointment.googleEventId;
     } else if (action === 'delete') {
       const appointment = await payload.findByID({ collection: 'appointments', id: appointmentId });
-      await calendar.events.delete({ calendarId: 'primary', eventId: appointment.googleEventId });
+      await calendar.events.delete({
+        calendarId: 'primary',
+        eventId: appointment.googleEventId
+      });
       return NextResponse.json({ success: true });
     }
 

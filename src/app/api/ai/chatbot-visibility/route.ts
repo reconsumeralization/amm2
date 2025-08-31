@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '../../../../payload.config';
-import { OpenAIApi, Configuration } from 'openai';
+import { OpenAI } from 'openai';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 export async function POST(req: NextRequest) {
   try {
@@ -157,7 +155,7 @@ Hour: ${new Date().getHours()}
 
 Should the chatbot be shown? Respond with only "true" or "false".`;
 
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -167,7 +165,7 @@ Should the chatbot be shown? Respond with only "true" or "false".`;
       max_tokens: 10,
     });
 
-    const response = completion.data.choices[0]?.message?.content?.toLowerCase().trim();
+    const response = completion.choices[0]?.message?.content?.toLowerCase().trim();
     
     // Parse response
     if (response === 'true') {

@@ -1,7 +1,7 @@
 // src/app/api/og-regenerate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { universalOGHook } from '../../../payload/hooks/universalOGHook';
-import { getPayload } from 'payload';
+import payload from '../../../payload';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,14 +14,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Initialize payload
-    const payload = await getPayload({ config: (await import('../../../payload.config')).default });
-
     // Get the document
-    const doc = await payload.findByID({
-      collection: collection as any,
-      id,
+    const result = await payload.find({
+      collection,
+      where: { id: { equals: id } },
+      limit: 1,
     });
+    const doc = result.docs[0];
 
     if (!doc) {
       return NextResponse.json(
@@ -33,18 +32,15 @@ export async function POST(req: NextRequest) {
     // Regenerate OG image using the universal hook
     const updatedDoc = await universalOGHook({
       data: { ...doc, regenerateOGImage: true },
-      collection: { slug: collection } as any,
+      collection: { slug: collection, config: {} } as any,
       req: {} as any,
-      operation: 'update' as any,
-      context: {} as any,
-      doc: doc as any,
-      previousDoc: doc as any
+      operation: 'update',
     });
 
     // Update the document with the new OG image
     const result = await payload.update({
-      collection: collection as any,
-      id,
+      collection,
+      where: { id: { equals: id } },
       data: {
         ogImage: updatedDoc.ogImage,
       },
@@ -86,12 +82,9 @@ export async function GET(req: NextRequest) {
         excerpt: excerpt || '',
         regenerateOGImage: true,
       },
-      collection: { slug: collection } as any,
+      collection: { slug: collection, config: {} } as any,
       req: {} as any,
-      operation: 'create' as any,
-      context: {} as any,
-      doc: {} as any,
-      previousDoc: {} as any,
+      operation: 'create',
     });
 
     return NextResponse.json({

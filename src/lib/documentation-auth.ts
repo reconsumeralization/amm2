@@ -59,20 +59,20 @@ function mapSessionRoleToUserRole(sessionRole: any): UserRole {
     case 'developer':
     case 'dev':
       return 'developer'
-    case 'BarberShop_owner':
+    case 'salon_owner':
     case 'owner':
     case 'business_owner':
-      return 'BarberShop_owner'
-    case 'BarberShop_employee':
+      return 'salon_owner'
+    case 'salon_employee':
     case 'employee':
     case 'stylist':
     case 'receptionist':
     case 'staff':
-      return 'BarberShop_employee'
+      return 'salon_employee'
     case 'customer':
-    case 'BarberShop_customer':
+    case 'salon_customer':
     case 'client':
-      return 'BarberShop_customer'
+      return 'salon_customer'
     default:
       return 'guest'
   }
@@ -105,7 +105,7 @@ function getRolePermissions(role: UserRole): string[] {
         'api.test',
         'components.playground'
       ]
-    case 'BarberShop_owner':
+    case 'salon_owner':
       return [
         ...basePermissions,
         'business.owner.access',
@@ -114,14 +114,14 @@ function getRolePermissions(role: UserRole): string[] {
         'analytics.business.view',
         'content.business.edit'
       ]
-    case 'BarberShop_employee':
+    case 'salon_employee':
       return [
         ...basePermissions,
         'business.employee.access',
         'business.customer.view',
         'workflows.access'
       ]
-    case 'BarberShop_customer':
+    case 'salon_customer':
       return [
         ...basePermissions,
         'business.customer.access',
@@ -169,19 +169,19 @@ export function canAccessPath(user: DocumentationUser | null, path: string): boo
              path.startsWith('/documentation/shared') ||
              path === '/documentation'
              
-    case 'BarberShop_owner':
+    case 'salon_owner':
       return path.startsWith('/documentation/business') ||
              path.startsWith('/documentation/shared') ||
              path === '/documentation'
              
-    case 'BarberShop_employee':
+    case 'salon_employee':
       return path.startsWith('/documentation/business/employee') ||
              path.startsWith('/documentation/business/customer') ||
              path.startsWith('/documentation/shared') ||
              path === '/documentation' ||
              path === '/documentation/business'
              
-    case 'BarberShop_customer':
+    case 'salon_customer':
       return path.startsWith('/documentation/business/customer') ||
              path.startsWith('/documentation/shared') ||
              path === '/documentation' ||
@@ -241,11 +241,11 @@ export function getDefaultLandingPage(user: DocumentationUser | null): string {
       return '/documentation/admin'
     case 'developer':
       return '/documentation/developer'
-    case 'BarberShop_owner':
+    case 'salon_owner':
       return '/documentation/business/owner'
-    case 'BarberShop_employee':
+    case 'salon_employee':
       return '/documentation/business/employee'
-    case 'BarberShop_customer':
+    case 'salon_customer':
       return '/documentation/business/customer'
     case 'guest':
     default:

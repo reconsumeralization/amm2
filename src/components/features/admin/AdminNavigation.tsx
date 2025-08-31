@@ -17,7 +17,7 @@ import {
   Camera, 
   Clock, 
   Star,
-  Gift,
+  gift as Gift,
   BookOpen,
   Database,
   LogOut,

@@ -1,284 +1,45 @@
 import { buildConfig } from 'payload'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import postgresAdapter from '@payloadcms/db-postgres'
 import lexicalEditor from '@payloadcms/richtext-lexical'
-import sharp from 'sharp'
 import path from 'path'
-import type { PayloadHandler } from 'payload'
 
-// Import collections
-import { Users } from './collections/system/Users'
-import { Appointments } from './collections/system/Appointments'
-import { Services } from './collections/system/Services'
-import { Stylists } from './collections/staff/Stylists'
-import { Customers } from './collections/crm/Customers'
-import { Products } from './collections/commerce/Products'
-import { Orders } from './collections/commerce/Orders'
-import { Testimonials } from './collections/crm/Testimonials'
-import { Media } from './collections/content/Media'
-import { Content } from './collections/content/Content'
-import { Events } from './collections/system/Events'
-import { BusinessDocumentation } from './collections/system/BusinessDocumentation'
-import { StaffSchedules } from './collections/staff/StaffSchedules'
-import { ClockRecords } from './collections/staff/ClockRecords'
-
-// Import builder collections
-import { Animations } from './collections/builder/Animations'
-import { BlockRevisions } from './collections/builder/BlockRevisions'
-import { Blocks } from './collections/builder/Blocks'
-import { ConditionalRules } from './collections/builder/ConditionalRules'
-import { Drafts } from './collections/builder/Drafts'
-import { DynamicData } from './collections/builder/DynamicData'
-import { Forms } from './collections/builder/Forms'
-import { GlobalStyles } from './collections/builder/GlobalStyles'
-import { Integrations as BuilderIntegrations } from './collections/builder/Integrations'
-import { Layouts } from './collections/builder/Layouts'
-import { PageRevisions } from './collections/builder/PageRevisions'
-import { Pages as BuilderPages } from './collections/builder/Pages'
-import { PublishQueue } from './collections/builder/PublishQueue'
-import { ReusableComponents } from './collections/builder/ReusableComponents'
-import { Sections } from './collections/builder/Sections'
-import { SEO as BuilderSEO } from './collections/builder/SEO'
-import { Templates } from './collections/builder/Templates'
-import { Themes } from './collections/builder/Themes'
-import { Translations } from './collections/builder/Translations'
-
-// Import globals
-import { Settings } from './globals/Settings'
-
-// Import plugins
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
-import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
+import collections from '@/payload/collections'
 
 export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET || 'dev-secret',
+  serverURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   admin: {
     user: 'users',
     meta: {
-      titleSuffix: '- Modern Men Admin',
-      openGraph: {
-        title: 'Modern Men Admin Dashboard',
-        description: 'Professional salon management system',
-        images: [
-          {
-            url: '/og-image.jpg',
-            width: 1200,
-            height: 630,
-            alt: 'Modern Men Admin Dashboard',
-          },
-        ],
-      },
+      titleSuffix: '- ModernMen Admin',
     },
     components: {
       graphics: {
-        Logo: path.resolve(__dirname, 'components/admin/Logo'),
-        Icon: path.resolve(__dirname, 'components/admin/Icon'),
+        Logo: { path: '@/payload/components/Logo' },
+        Icon: { path: '@/payload/components/Icon' },
       },
-      beforeDashboard: [
-        path.resolve(__dirname, 'components/admin/DashboardStats'),
-      ],
-      beforeNavLinks: [
-        path.resolve(__dirname, 'components/admin/QuickActions'),
-      ],
     },
-    dateFormat: 'MM/dd/yyyy',
-    disable: false,
-    livePreview: {
-      breakpoints: [
-        {
-          label: 'Mobile',
-          name: 'mobile',
-          width: 375,
-          height: 667,
-        },
-        {
-          label: 'Tablet',
-          name: 'tablet',
-          width: 768,
-          height: 1024,
-        },
-        {
-          label: 'Desktop',
-          name: 'desktop',
-          width: 1440,
-          height: 900,
-        },
-      ],
-    },
+    autoLogin: process.env.NODE_ENV === 'development' ? {
+      email: 'admin@modernmen.com',
+      password: 'admin123',
+      prefillOnly: true,
+    } : false,
   },
+  collections,
+  endpoints: [],
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/modernmen',
+    },
+  }),
   editor: lexicalEditor({
     features: ({ defaultFeatures }: { defaultFeatures: any }) => [
       ...defaultFeatures,
-      // Add custom lexical features here
     ],
   }),
-  collections: [
-    Users,
-    Appointments,
-    Services,
-    Stylists,
-    Customers,
-    Products,
-    Orders,
-    Testimonials,
-    Media,
-    Content,
-    Events,
-    BusinessDocumentation,
-    StaffSchedules,
-    ClockRecords,
-
-    // Visual Builder Collections
-    Animations,
-    BlockRevisions,
-    Blocks,
-    ConditionalRules,
-    Drafts,
-    DynamicData,
-    Forms,
-    GlobalStyles,
-    BuilderIntegrations,
-    Layouts,
-    PageRevisions,
-    BuilderPages,
-    PublishQueue,
-    ReusableComponents,
-    Sections,
-    BuilderSEO,
-    Templates,
-    Themes,
-    Translations,
-  ],
-  globals: [
-    Settings,
-  ],
-  endpoints: [
-    // Custom API endpoints
-    {
-      path: '/api/appointments/availability',
-      method: 'get',
-      handler: require(path.resolve(__dirname, 'endpoints/availability')) as PayloadHandler,
-    },
-    {
-      path: '/api/reports/dashboard',
-      method: 'get',
-      handler: require(path.resolve(__dirname, 'endpoints/dashboard-stats')) as PayloadHandler,
-    },
-    {
-      path: '/api/notifications/send',
-      method: 'post',
-      handler: require(path.resolve(__dirname, 'endpoints/send-notification')) as PayloadHandler,
-    },
-  ],
-  plugins: [
-    seoPlugin({
-      collections: ['content', 'services', 'events'],
-      uploadsCollection: 'media',
-      generateTitle: ({ doc }: { doc: any }) => `${doc.title} | Modern Men`,
-      generateDescription: ({ doc }: { doc: any }) => doc.excerpt || doc.description,
-    }),
-    ...(process.env.S3_BUCKET ? [
-      cloudStoragePlugin({
-        collections: {
-          media: {
-            adapter: s3Adapter({
-              config: {
-                endpoint: process.env.S3_ENDPOINT,
-                region: process.env.S3_REGION || 'us-east-1',
-                credentials: {
-                  accessKeyId: process.env.S3_ACCESS_KEY_ID!,
-                  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
-                },
-              },
-              bucket: process.env.S3_BUCKET!,
-            }),
-          },
-        },
-      }),
-    ] : []),
-  ],
-  secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
-  serverURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || 'mongodb://localhost:27017/modernmen',
-    connectOptions: {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      bufferCommands: false,
-    },
-  }),
-  upload: {
-    limits: {
-      fileSize: 10000000, // 10MB
-    },
-  },
-  email: nodemailerAdapter({
-    defaultFromAddress: process.env.FROM_EMAIL || 'noreply@modernmen.com',
-    defaultFromName: 'Modern Men',
-    transportOptions: {
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    },
-  }),
-  cors: [
-    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'https://modernmen.vercel.app',
-    ...(process.env.ADDITIONAL_CORS_ORIGINS?.split(',') || []),
-  ],
-  csrf: [
-    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'https://modernmen.vercel.app',
-    ...(process.env.ADDITIONAL_CSRF_ORIGINS?.split(',') || []),
-  ],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
-  graphQL: {
-    schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
-    maxComplexity: 1000,
-    disablePlaygroundInProduction: true,
-  },
-  localization: {
-    locales: [
-      {
-        label: 'English',
-        code: 'en',
-      },
-      {
-        label: 'Español',
-        code: 'es',
-      },
-    ],
-    defaultLocale: 'en',
-    fallback: true,
-  },
-  onInit: async (payload) => {
-    // Initialize default data if needed
-    const existingUsers = await payload.find({
-      collection: 'users',
-      limit: 1,
-    })
-
-    if (existingUsers.totalDocs === 0) {
-      await payload.create({
-        collection: 'users',
-        data: {
-          name: 'Admin User',
-          email: process.env.ADMIN_EMAIL || 'admin@modernmen.com',
-          password: process.env.ADMIN_PASSWORD || 'admin123',
-          role: 'admin',
-        },
-      })
-      console.log('Default admin user created')
-    }
-  },
 })
+
+ 

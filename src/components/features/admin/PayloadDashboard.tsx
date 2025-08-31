@@ -19,7 +19,7 @@ export function PayloadDashboard() {
   const {
     isLoading,
     error,
-    globalSearch,
+    globalSearch: globalrch,
     getBarberShopAnalytics,
     syncAppointments,
     getBusinessDocumentation,
@@ -43,7 +43,7 @@ export function PayloadDashboard() {
 
   const loadAnalytics = async () => {
     try {
-      const result = await getBarberShopAnalytics()
+      const result = await getSalonAnalytics()
       setAnalytics(result)
     } catch (error) {
       console.error('Error loading analytics:', error)
@@ -63,7 +63,7 @@ export function PayloadDashboard() {
     if (!searchQuery.trim()) return
 
     try {
-      const results = await globalSearch(searchQuery)
+      const results = await globalrch(searchQuery)
       setSearchResults(results)
     } catch (error) {
       console.error('Error performing search:', error)

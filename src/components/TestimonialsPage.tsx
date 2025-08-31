@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Star, MessageSquare, ThumbsUp, Heart, MessageSquare as Quote } from '@/lib/icon-mapping';
+import { Star, MessageSquare, thumbsUp as ThumbsUp, Heart, messageSquare as Quote } from '@/lib/icon-mapping';
 
 interface Testimonial {
   id: string;

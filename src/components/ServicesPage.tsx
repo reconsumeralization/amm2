@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, Star, Scissors, Gift as DollarSign, Zap, Bookmark as CreditCard } from '@/lib/icon-mapping';
+import { Clock, Star, Scissors, gift as DollarSign, Zap, bookmark as CreditCard } from '@/lib/icon-mapping';
 
 interface Service {
   id: string;

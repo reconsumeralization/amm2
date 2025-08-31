@@ -4,14 +4,14 @@ import { hasDocumentationPermission, getAccessibleSections, getUserRoleFromSessi
 describe('Documentation Permissions Utilities', () => {
   test('hasDocumentationPermission correctly evaluates read access', () => {
     expect(hasDocumentationPermission('developer', 'developer', 'read')).toBe(true)
-    expect(hasDocumentationPermission('BarberShop_owner', 'developer', 'read')).toBe(false)
+    expect(hasDocumentationPermission('salon_owner', 'developer', 'read')).toBe(false)
     expect(hasDocumentationPermission('system_admin', 'admin', 'read')).toBe(true)
     expect(hasDocumentationPermission('guest', 'shared', 'read')).toBe(true)
   })
 
   test('hasDocumentationPermission correctly evaluates edit access', () => {
     expect(hasDocumentationPermission('developer', 'developer', 'edit')).toBe(true)
-    expect(hasDocumentationPermission('BarberShop_owner', 'developer', 'edit')).toBe(false)
+    expect(hasDocumentationPermission('salon_owner', 'developer', 'edit')).toBe(false)
     expect(hasDocumentationPermission('system_admin', 'admin', 'edit')).toBe(true)
     expect(hasDocumentationPermission('guest', 'shared', 'edit')).toBe(false)
   })
@@ -45,7 +45,7 @@ describe('Documentation Permissions Utilities', () => {
 
     expect(getUserRoleFromSession(sessionAdmin)).toBe('system_admin')
     expect(getUserRoleFromSession(sessionDev)).toBe('developer')
-    expect(getUserRoleFromSession(sessionOwner)).toBe('BarberShop_owner')
+    expect(getUserRoleFromSession(sessionOwner)).toBe('salon_owner')
     expect(getUserRoleFromSession(sessionEmployee)).toBe('BarberShop_employee')
     expect(getUserRoleFromSession(sessionCustomer)).toBe('BarberShop_customer')
     expect(getUserRoleFromSession(sessionGuest)).toBe('guest')
@@ -74,7 +74,7 @@ const guestNav = getRoleBasedNavigation('guest') as any[]
   test('isAdminOrDeveloper identifies admin or developer roles', () => {
     expect(isAdminOrDeveloper('system_admin')).toBe(true)
     expect(isAdminOrDeveloper('developer')).toBe(true)
-    expect(isAdminOrDeveloper('BarberShop_owner')).toBe(false)
+    expect(isAdminOrDeveloper('salon_owner')).toBe(false)
     expect(isAdminOrDeveloper('guest')).toBe(false)
   })
 })

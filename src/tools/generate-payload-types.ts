@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
 // Import collections
-import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram } from '../collections';
+import { Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks } from '../collections';
 // import { productAnalyticsEndpoint, bulkProductOperationsEndpoint } from '../endpoints'; // TODO: Fix endpoint types
 
 const filename = fileURLToPath(import.meta.url);
@@ -36,7 +36,7 @@ const config = buildConfig({
     } as any,
   },
   editor: lexicalEditor(),
-  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram],
+  collections: [Appointments, BusinessDocumentation, Users, Tenants, Media, MediaFolders, StaffSchedules, Events, Products, ClockRecords, Settings, Customers, Services, Stylists, Orders, Testimonials, Content, EditorTemplates, EditorThemes, EditorPlugins, Gallery, Contacts, LoyaltyProgram, Pages, NavigationMenus, Redirects, Blocks],
   endpoints: [], // TODO: Fix endpoint types
   db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || '' } }),
   secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
@@ -53,7 +53,7 @@ const config = buildConfig({
     formBuilderPlugin({
       fields: { text: true, date: true, payment: true },
       formSubmissionOverrides: {
-        access: { create: () => true, read: ({ req }: { req: any }) => !!req.user },
+        access: { create: () => true, read: ({ req }) => !!req.user },
       },
     }),
     stripePlugin({

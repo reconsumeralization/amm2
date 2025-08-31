@@ -24,7 +24,7 @@ describe('BusinessDocumentationService', () => {
     id: 'user-1',
     email: 'owner@example.com',
     name: 'BarberShop Owner',
-    role: 'BarberShop_owner',
+    role: 'salon_owner',
     permissions: ['business.owner.access'],
     preferences: { theme: 'light', language: 'en', compactMode: false }
   }
@@ -32,7 +32,7 @@ describe('BusinessDocumentationService', () => {
   const createRequest: BusinessDocumentationCreateRequest = {
     title: 'Sample Guide',
     type: 'guide' as BusinessDocumentationType,
-    targetRole: 'BarberShop_owner' as UserRole,
+    targetRole: 'salon_owner' as UserRole,
     category: 'BarberShop-operations' as BusinessDocumentationCategory,
     content: 'Sample content',
     tags: ['owner'],
@@ -46,7 +46,7 @@ describe('BusinessDocumentationService', () => {
     title: 'Updated Guide',
     content: 'Updated content',
     type: 'guide' as BusinessDocumentationType,
-    targetRole: 'BarberShop_owner' as UserRole,
+    targetRole: 'salon_owner' as UserRole,
     category: 'BarberShop-operations' as BusinessDocumentationCategory,
     tags: ['owner'],
     difficulty: 'beginner' as DifficultyLevel,
@@ -79,7 +79,7 @@ describe('BusinessDocumentationService', () => {
         responseBody.content = 'Fetched content'
         responseBody.type = 'guide'
         responseBody.category = 'BarberShop-operations'
-        responseBody.targetRole = 'BarberShop_owner'
+        responseBody.targetRole = 'salon_owner'
         responseBody.difficulty = 'beginner'
         responseBody.priority = 'low'
         responseBody.tags = ['owner']
