@@ -13,6 +13,10 @@ interface OGHookOptions {
 
 export const generateOGImageHook = (options: OGHookOptions = {}): CollectionAfterChangeHook => {
   return async ({ doc, req, operation, collection }) => {
+    // Prevent recursive execution when we update the document ourselves
+    if ((req as any)?.context?.skipOG === true) {
+      return doc;
+    }
     // Only run on create/update operations
     // Note: delete operations are handled separately
 
@@ -57,6 +61,11 @@ export const generateOGImageHook = (options: OGHookOptions = {}): CollectionAfte
 
       console.log(`[OG] Generated: ${ogImageUrl}`);
 
+      // If the value is unchanged, avoid another update (and potential hook recursion)
+      if ((doc as any).ogImage === ogImageUrl) {
+        return doc;
+      }
+
       // Update the document with the OG image URL
       const updatedDoc = await req.payload.update({
         collection: collection.slug,
@@ -65,6 +74,8 @@ export const generateOGImageHook = (options: OGHookOptions = {}): CollectionAfte
           ogImage: ogImageUrl,
         },
         req,
+        // Pass a flag to prevent this hook from running again from our own update
+        context: { ...(req as any)?.context, skipOG: true },
       });
 
       return updatedDoc;

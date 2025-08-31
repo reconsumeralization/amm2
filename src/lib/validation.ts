@@ -239,7 +239,8 @@ const paginationSchema = z.object({
 export const apiSchemas: {
   pagination: typeof paginationSchema;
   search: z.ZodObject<any>;
-  dateRange: z.ZodSchema<any>;
+
+  dateRange: z.ZodTypeAny;
 } = {
   pagination: paginationSchema,
 

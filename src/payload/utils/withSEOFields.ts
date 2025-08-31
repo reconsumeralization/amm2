@@ -63,14 +63,17 @@ export const seoFields: Field[] = [
  */
 export const withSEOFields = (collection: CollectionConfig): CollectionConfig => {
   // Only attach if there is a title field (heuristic for content)
-  const hasTitle = collection.fields?.some((f: any) => f.name === 'title');
-  if (!hasTitle) return collection;
+  const fields = collection.fields || []
+  const hasTitle = fields.some((f: any) => f.name === 'title')
+  if (!hasTitle) return collection
 
-  const alreadyHasSEO = collection.fields?.some((f: any) => f.name === 'metaTitle');
-  if (alreadyHasSEO) return collection;
+  // Add only missing SEO fields to avoid DuplicateFieldName errors
+  const existingNames = new Set((fields as any[]).map((f: any) => f.name))
+  const additions = seoFields.filter((f) => !existingNames.has((f as any).name))
+  if (additions.length === 0) return collection
 
   return {
     ...collection,
-    fields: [...(collection.fields || []), ...seoFields],
-  };
-};
+    fields: [...fields, ...additions],
+  }
+}
