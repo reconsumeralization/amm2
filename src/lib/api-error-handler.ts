@@ -10,6 +10,8 @@ export interface APIError {
   code?: string;
   details?: any;
   timestamp: string;
+  requestId?: string;
+  path?: string;
 }
 
 /**
@@ -403,8 +405,8 @@ export function withErrorHandler(handler: (req: any) => Promise<any>) {
  * Create a standardized success response
  */
 export function createSuccessResponse<T = any>(
-  data?: T, 
-  message?: string, 
+  data: T,
+  message?: string,
   status: number = 200,
   meta?: {
     page?: number;
@@ -417,7 +419,7 @@ export function createSuccessResponse<T = any>(
   const response: APISuccess<T> = {
     success: true,
     message: message || 'Operation completed successfully',
-    data: data || null,
+    data,
     timestamp: new Date().toISOString(),
     requestId: requestId || generateRequestId(),
     meta,
