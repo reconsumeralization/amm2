@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
-import { GuideRenderer } from '@/components/documentation/GuideRenderer'
-import { InteractiveExample } from '@/components/documentation/InteractiveExample'
+import { GuideRenderer } from '@/components/features/documentation/GuideRenderer'
+import { InteractiveExample } from '@/components/features/documentation/InteractiveExample'
 import type { GuideContent, UserRole } from '@/types/documentation'
-import { CodeSnippetRenderer } from '@/components/documentation/CodeSnippetRenderer'
+import { CodeSnippetRenderer } from '@/components/features/documentation/CodeSnippetRenderer'
 
 export const metadata: Metadata = {
   title: 'Salon Owner Dashboard Guide - Modern Men barber shop',

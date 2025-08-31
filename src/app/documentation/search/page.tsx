@@ -60,10 +60,9 @@ function searchPageLoading() {
 
 export default function searchPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>}>
+    <Suspense fallback={searchPageLoading()}>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Search Documentation</h1>
-        <p className="text-gray-600">Search functionality coming soon...</p>
+        {searchPageContent()}
       </div>
     </Suspense>
   );

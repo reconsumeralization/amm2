@@ -244,7 +244,8 @@ const rawCollections = [
 const collections = rawCollections.map((collection) => {
   let enhancedCollection = withDefaultHooks(collection);
   enhancedCollection = withSlugField(enhancedCollection);
-  enhancedCollection = withSEOFields(enhancedCollection);
+  // Note: SEO fields are already defined manually in individual collections
+  // enhancedCollection = withSEOFields(enhancedCollection);
 
   // Add OG image field to all collections with title
   const hasTitle = enhancedCollection.fields?.some((f: any) => f.name === 'title');

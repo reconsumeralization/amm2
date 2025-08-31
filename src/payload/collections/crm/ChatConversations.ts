@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload';
 
 export const ChatConversations: CollectionConfig = {
-  slug: 'chat-conversations',
+  slug: 'chatbot-conversations',
   admin: {
     useAsTitle: 'id',
     group: 'CRM',

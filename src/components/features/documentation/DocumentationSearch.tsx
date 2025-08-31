@@ -18,29 +18,33 @@ interface SearchResult {
 }
 
 interface DocumentationSearchProps {
+  initialQuery?: string;
+  showFilters?: boolean;
   compact?: boolean;
   onResultClick?: (result: SearchResult) => void;
   className?: string;
 }
 
 export function DocumentationSearch({
+  initialQuery = '',
+  showFilters = false,
   compact = false,
   onResultClick,
   className = ''
 }: DocumentationSearchProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [results, setResults] = useState<SearchResult[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Array<{ text: string }>>([]);
 
-  const query = searchParams.get('q') || '';
+  // Use initialQuery from props, defaulting to empty string
+  const query = initialQuery;
   const filters = {
-    category: searchParams.get('category')?.split(',') || [],
-    type: searchParams.get('type')?.split(',') || [],
-    difficulty: searchParams.get('difficulty')?.split(',') || [],
-    tags: searchParams.get('tags')?.split(',') || [],
+    category: [],
+    type: [],
+    difficulty: [],
+    tags: [],
   };
 
   const serviceRef = React.useRef<any>(null);
@@ -103,8 +107,9 @@ export function DocumentationSearch({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <SearchInput 
-        initialQuery={query}
+      <SearchInput
+        initialQuery={initialQuery}
+        showFilters={showFilters}
         isLoading={loading}
       />
 

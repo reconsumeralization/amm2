@@ -13,7 +13,7 @@ export async function GET(
     const { id } = await params
 
     const conversation = await payload.findByID({
-      collection: 'chat-conversations',
+      collection: 'chatbot-conversations',
       id,
     })
     if (!conversation) {
@@ -39,7 +39,7 @@ export async function PUT(
 
     // Check if conversation exists
     const existingConversation = await payload.findByID({
-      collection: 'chat-conversations',
+      collection: 'chatbot-conversations',
       id,
     })
 
@@ -49,7 +49,7 @@ export async function PUT(
 
     // Update conversation
     const updatedConversation = await payload.update({
-      collection: 'chat-conversations',
+      collection: 'chatbot-conversations',
       id,
       data: {
         ...body,
@@ -75,7 +75,7 @@ export async function DELETE(
 
     // Check if conversation exists
     const existingConversation = await payload.findByID({
-      collection: 'chat-conversations',
+      collection: 'chatbot-conversations',
       id,
     })
 
@@ -90,7 +90,7 @@ export async function DELETE(
     })
 
     await payload.delete({
-      collection: 'chat-conversations',
+      collection: 'chatbot-conversations',
       id,
     })
 

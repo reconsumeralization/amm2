@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     // Update conversation if conversationId is provided
     if (body.conversationId) {
       const conversations = await payload.find({
-        collection: 'chat-conversations',
+        collection: 'chatbot-conversations',
         where: { conversationId: { equals: body.conversationId } },
         limit: 1,
       })
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
       if (conversation) {
         await payload.update({
-          collection: 'chat-conversations',
+          collection: 'chatbot-conversations',
           id: conversation.id,
           data: {
             lastMessageAt: new Date(),

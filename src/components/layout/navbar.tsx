@@ -120,7 +120,7 @@ export function Navbar() {
                 <span className="text-xl font-bold text-black group-hover:text-gray-800 transition-colors">
                   Modern Men
                 </span>
-                <span className="text-xs text-gray-600 -mt-1">Baarber Shop</span>
+                <span className="text-xs text-gray-600 -mt-1">barber Shop</span>
               </div>
             </Link>
           </motion.div>

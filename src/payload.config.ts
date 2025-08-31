@@ -1,9 +1,9 @@
 import { buildConfig } from 'payload'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import lexicalEditor from '@payloadcms/richtext-lexical'
 import path from 'path'
 
-import collections from '@/payload/collections'
+// Import all collections from the organized structure
+import collections from './payload/collections'
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',
@@ -31,11 +31,6 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URL || 'file:./dev.db',
     },
-  }),
-  editor: lexicalEditor({
-    features: ({ defaultFeatures }: { defaultFeatures: any }) => [
-      ...defaultFeatures,
-    ],
   }),
   typescript: {
     outputFile: path.resolve(process.cwd(), 'src/payload-types.ts'),

@@ -7,7 +7,7 @@ export const Commissions: CollectionConfig = {
     plural: 'Commissions',
   },
   admin: {
-    useAsTitle: 'period.periodName',
+    useAsTitle: 'stylist',
     defaultColumns: ['stylist', 'period.periodName', 'summary.totalSales', 'finalCalculation.finalAmount', 'payment.status', 'tenant'],
     group: 'Staff Management',
     description: 'Track and manage stylist commission calculations and payouts',
