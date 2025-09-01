@@ -7,6 +7,7 @@
     "build:analyze": "ANALYZE=true next build",
     "build:profile": "next build --profile",
     "build:optimized": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build:vercel": "next build --no-lint",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",

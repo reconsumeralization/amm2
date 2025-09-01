@@ -27,11 +27,12 @@ const nextConfig = {
         },
       },
     },
+    // Vercel deployment optimization
+    outputFileTracingRoot: path.resolve(__dirname),
   },
 
   // Build performance optimizations
   trailingSlash: false,
-  output: 'standalone',
 
   // Image optimization settings
   images: {
@@ -56,7 +57,7 @@ const nextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 
-  // Webpack configuration - Optimized for Vercel builds
+  // Webpack configuration - Fixed for Vercel builds
   webpack: (config, { isServer, dev, buildId }) => {
     // Performance optimization: Skip expensive operations in Vercel builds
     if (process.env.VERCEL) {
@@ -89,20 +90,28 @@ const nextConfig = {
       };
     }
 
-    // Only exclude database-related packages from client-side bundling
+    // Fix libsql client webpack issues - exclude entire libsql packages from client bundle
     if (!isServer) {
       config.externals = config.externals || [];
-      // Only exclude SQLite packages when not using DATABASE_URL (development only)
-      if (!process.env.DATABASE_URL) {
-        config.externals.push({
-          '@libsql/client': '@libsql/client',
-          '@libsql/hrana-client': '@libsql/hrana-client',
-          '@libsql/core': '@libsql/core',
-          'libsql': 'libsql',
-          '@payloadcms/db-sqlite': '@payloadcms/db-sqlite'
-        });
-      }
+      config.externals.push({
+        '@libsql/client': 'commonjs @libsql/client',
+        '@libsql/hrana-client': 'commonjs @libsql/hrana-client',
+        '@libsql/core': 'commonjs @libsql/core',
+        '@libsql/isomorphic-fetch': 'commonjs @libsql/isomorphic-fetch',
+        '@libsql/isomorphic-ws': 'commonjs @libsql/isomorphic-ws',
+        'libsql': 'commonjs libsql',
+        '@payloadcms/db-sqlite': 'commonjs @payloadcms/db-sqlite'
+      });
     }
+
+    // Exclude non-JS files from libsql packages
+    config.module.rules.push({
+      test: /\.(md|txt|license)$/i,
+      include: /node_modules\/@libsql/,
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
 
     // Handle .node files for database drivers
     config.module.rules.push({

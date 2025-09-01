@@ -88,25 +88,6 @@ import {
   Grid3X3,
   Mail,
   RefreshCw
-}
-  Database,
-  Minus,
-  CreditCard,
-  Type,
-  AlignLeft,
-  MousePointer,
-  Layout,
-  Trophy,
-  Scissors,
-  Monitor,
-  Tablet,
-  Smartphone,
-  Globe,
-  Layers,
-  Palette,
-  Calculator,
-  Grid3X3,
-  Award
 } from 'lucide-react'
 
 // Icon mapping object for centralized access
@@ -215,6 +196,13 @@ export const iconMap = {
   type: Type,
   alignLeft: AlignLeft
 }
+
+// Export icons with proper names for consistency
+export { Users as UsersIcon }
+export { Search as SearchIcon }
+export { Mail as MailIcon }
+export { Phone as PhoneIcon }
+export { DollarSign as DollarSignIcon }
 
 // Export icons individually to avoid webpack issues
 export { Menu }
