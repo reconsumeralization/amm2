@@ -18,7 +18,14 @@ export async function GET(request: NextRequest) {
   const customerId = searchParams.get("customer_id")
 
   let query = supabase.from("appointments").select(`
-      *,
+      id,
+      appointment_date,
+      status,
+      price,
+      duration,
+      notes,
+      created_at,
+      updated_at,
       customer:customers!customer_id (
         id,
         profiles:id (
@@ -36,6 +43,7 @@ export async function GET(request: NextRequest) {
         )
       ),
       service:services!service_id (
+        id,
         name,
         duration_minutes,
         price
@@ -83,7 +91,14 @@ export async function POST(request: NextRequest) {
     .from("appointments")
     .insert(body)
     .select(`
-      *,
+      id,
+      appointment_date,
+      status,
+      price,
+      duration,
+      notes,
+      created_at,
+      updated_at,
       customer:customers!customer_id (
         id,
         profiles:id (
@@ -101,6 +116,7 @@ export async function POST(request: NextRequest) {
         )
       ),
       service:services!service_id (
+        id,
         name,
         duration_minutes,
         price

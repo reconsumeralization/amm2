@@ -20,7 +20,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     .update(body)
     .eq("id", id)
     .select(`
-      *,
+      id,
+      appointment_date,
+      status,
+      price,
+      duration,
+      notes,
+      created_at,
+      updated_at,
       customer:customers!customer_id (
         id,
         profiles:id (
@@ -38,6 +45,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         )
       ),
       service:services!service_id (
+        id,
         name,
         duration_minutes,
         price
