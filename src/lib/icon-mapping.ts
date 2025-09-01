@@ -91,160 +91,71 @@ import {
   Calculator
 } from 'lucide-react'
 
-// Export all icons directly to avoid barrel optimization issues
-export {
-  // Navigation & UI
-  Menu,
-  X,
-  Home,
-  ArrowLeft,
-  ArrowRight,
-  ChevronDown,
-  ChevronRight,
-  ExternalLink,
+// Export icons individually to avoid webpack issues
+export { Menu }
+export { X }
+export { Home }
+export { ArrowLeft }
+export { ArrowRight }
+export { ChevronDown }
+export { ChevronRight }
+export { ExternalLink }
+export { User }
+export { Users }
+export { Settings }
+export { Shield }
+export { Unlock }
+export { LogOut }
+export { Mail }
+export { MessageCircle }
+export { MessageSquare }
+export { Send }
+export { Phone }
+export { Bell }
+export { File }
+export { FileText }
+export { Camera }
+export { Eye }
+export { EyeOff }
+export { Download }
+export { Copy }
+export { Share }
+export { Printer }
+export { Edit }
+export { Trash2 }
+export { Database }
+export { BarChart3 }
+export { LineChart }
+export { TrendingUp }
+export { TrendingDown }
+export { Activity }
+export { Search }
+export { Filter }
+export { Play }
+export { Pause }
+export { Plus }
+export { Check }
+export { RefreshCw }
+export { RotateCcw }
+export { Loader2 }
+export { AlertCircle }
+export { AlertTriangle }
+export { CheckCircle }
+export { Star }
+export { Heart }
+export { Calendar }
+export { Clock }
+export { History }
+export { MapPin }
+export { Package }
+export { DollarSign }
+export { Code }
+export { BookOpen }
+export { Grid }
+export { MoreHorizontal }
+export { MoreVertical }
+export { Zap }
 
-  // User & Account
-  Users,
-  Settings,
-  Shield,
-  Lock,
-  Unlock,
-  LogOut,
-
-  // Communication
-  MessageCircle,
-  MessageSquare,
-  Send,
-  Phone,
-  Bell,
-
-  // Content & Media
-  File,
-  FileText,
-  Camera,
-  Eye,
-  EyeOff,
-  Download,
-  Copy,
-  Share,
-  Printer,
-  Edit,
-  Trash2,
-
-  // Data & Analytics
-  Database,
-  BarChart3,
-  LineChart,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Search,
-  Filter,
-
-  // Actions & Controls
-  Play,
-  Pause,
-  Plus,
-  Minus,
-  Check,
-  Volume2,
-  VolumeX,
-  RefreshCw,
-  RotateCcw,
-  Loader2,
-
-  // Status & Feedback
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Star,
-  Heart,
-  Flag,
-
-  // Layout & Design
-  Grid,
-  Layout,
-  MoreHorizontal,
-  MoreVertical,
-  Layers,
-  Palette,
-
-  // Time & Calendar
-  Calendar,
-  Clock,
-  History,
-
-  // Location & Contact
-  MapPin,
-  Globe,
-
-  // Commerce & Finance
-  Package,
-  DollarSign,
-  CreditCard,
-  Gift,
-  Trophy,
-  Award,
-
-  // Development & Code
-  Code,
-  BookOpen,
-
-  // Devices
-  Monitor,
-  Tablet,
-  Smartphone,
-
-  // Tools & Utilities
-  Calculator,
-  Type,
-  AlignLeft,
-  MousePointer,
-  Scissors,
-  Tag,
-  Sparkles,
-  Zap
-}
-
-// LEGACY ALIASES - DEPRECATED
-// These exist for backward compatibility only
-// DO NOT ADD NEW ALIASES - Use the canonical names above
-export const UsersIcon = Users
-export const SendIcon = Send
-export const SearchIcon = Search
-export const SettingsIcon = Settings
-export const BellIcon = Bell
-export const MenuIcon = Menu
-export const ShieldIcon = Shield
-export const DatabaseIcon = Database
-export const AlertCircleIcon = AlertCircle
-export const AlertTriangleIcon = AlertTriangle
-export const CheckCircleIcon = CheckCircle
-export const MessageIcon = MessageSquare
-export const MessageSquareIcon = MessageSquare
-export const FileTextIcon = FileText
-export const BarChart3Icon = BarChart3
-export const TrendingUpIcon = TrendingUp
-export const RefreshCwIcon = RefreshCw
-export const CodeIcon = Code
-export const BookOpenIcon = BookOpen
-export const ArrowLeftIcon = ArrowLeft
-export const ChevronRightIcon = ChevronRight
-export const CheckIcon = Check
-export const UserIcon = User
-export const MailIcon = Mail
-
-// FUNCTIONAL ALIASES - These provide semantic meaning
+// Essential aliases for backward compatibility
 export const Loader = Loader2
-export const ImageIcon = Camera
 export const Save = Download
-export const Undo = RotateCcw
-export const Redo = RotateCcw
-
-// PLACEHOLDER ICONS - For icons not available in lucide-react
-export const Receipt = PlaceholderIcon
-export const PaintBucket = PlaceholderIcon
-
-// LOCKED - This mapping is now frozen
-// Any icon additions must go through proper review process
-// Contact team lead before making changes

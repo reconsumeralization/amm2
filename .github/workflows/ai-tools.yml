@@ -1,0 +1,207 @@
+name: AI-Powered Development Tools
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**'
+      - 'app/**'
+      - 'docs/**'
+      - 'README.md'
+  pull_request:
+    branches: [ main, develop ]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'AI Task to perform'
+        required: true
+        default: 'documentation'
+        type: choice
+        options:
+          - documentation
+          - code-review
+          - changelog
+          - release-notes
+          - security-audit
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  ai-documentation:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.task == 'documentation')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate API Documentation
+        uses: vercel/ai-action@v2.1.0
+        with:
+          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          prompt: |
+            You are an expert technical writer. Generate comprehensive API documentation for this Next.js application.
+
+            Analyze the codebase and create:
+            1. **API Endpoints Documentation**: List all API routes with their methods, parameters, and responses
+            2. **Database Schema Documentation**: Document the PayloadCMS collections and their fields
+            3. **Component Documentation**: Generate docs for key React components
+            4. **Usage Examples**: Provide practical examples for common operations
+
+            Focus on:
+            - Authentication endpoints
+            - CRUD operations
+            - Data relationships
+            - Error handling patterns
+            - TypeScript interfaces
+
+            Output in clean markdown format with proper formatting.
+          model: gpt-4-turbo-preview
+          max-tokens: 3000
+
+      - name: Update API Documentation
+        run: |
+          echo "🤖 AI-generated documentation available in workflow logs"
+          # Future: Save documentation to docs/ folder
+
+  ai-changelog:
+    runs-on: ubuntu-22.04
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.event.inputs.task == 'changelog')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Generate Changelog
+        uses: vercel/ai-action@v2.1.0
+        with:
+          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          prompt: |
+            You are a changelog generator. Analyze the recent commits and generate a comprehensive changelog.
+
+            Recent commits to analyze:
+            ${{ github.event.commits }}
+
+            Generate a changelog that includes:
+            1. **Features**: New functionality added
+            2. **Bug Fixes**: Issues resolved
+            3. **Improvements**: Performance and UX enhancements
+            4. **Breaking Changes**: API changes that might affect users
+            5. **Dependencies**: Updated packages and their impact
+
+            Use conventional commit format and semantic versioning principles.
+            Format as clean markdown with proper categorization.
+          model: gpt-4-turbo-preview
+          max-tokens: 2000
+
+      - name: Create Release Notes
+        run: |
+          echo "📝 Changelog generated and available in workflow logs"
+
+  ai-security-audit:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.task == 'security-audit'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: AI Security Analysis
+        uses: vercel/ai-action@v2.1.0
+        with:
+          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          prompt: |
+            You are a cybersecurity expert. Perform a comprehensive security audit of this codebase.
+
+            Analyze for:
+            1. **Authentication Vulnerabilities**: Check auth implementation
+            2. **Authorization Issues**: Review access control
+            3. **Data Validation**: Assess input validation and sanitization
+            4. **API Security**: Review endpoint security
+            5. **Database Security**: Check for SQL injection and data exposure
+            6. **Environment Variables**: Review sensitive data handling
+            7. **Dependencies**: Check for known vulnerabilities
+            8. **Client-side Security**: Assess XSS, CSRF protection
+
+            Provide specific recommendations with code examples where applicable.
+            Prioritize critical and high-risk issues.
+          model: gpt-4-turbo-preview
+          max-tokens: 2500
+
+      - name: Security Recommendations
+        run: |
+          echo "🔒 Security audit completed. Review the workflow logs for detailed findings."
+
+  ai-performance-analysis:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.task == 'performance'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for analysis
+        run: npm run build
+
+      - name: AI Performance Analysis
+        uses: vercel/ai-action@v2.1.0
+        with:
+          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          prompt: |
+            You are a performance optimization expert. Analyze this Next.js application for performance improvements.
+
+            Review:
+            1. **Bundle Size**: Analyze and suggest optimizations
+            2. **Code Splitting**: Identify opportunities for better splitting
+            3. **Image Optimization**: Check image handling and optimization
+            4. **Database Queries**: Review query efficiency
+            5. **Caching Strategy**: Assess caching implementation
+            6. **Runtime Performance**: Identify potential bottlenecks
+
+            Provide specific recommendations with implementation examples.
+            Focus on high-impact optimizations.
+          model: gpt-4-turbo-preview
+          max-tokens: 2500
+
+      - name: Performance Insights
+        run: |
+          echo "⚡ Performance analysis completed. Check workflow logs for optimization recommendations."
