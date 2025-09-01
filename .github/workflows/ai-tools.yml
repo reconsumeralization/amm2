@@ -76,7 +76,6 @@ jobs:
 
             Output in clean markdown format with proper formatting.
           model: gpt-4-turbo-preview
-          temperature: 0.7
 
       - name: Update API Documentation
         run: |
@@ -113,7 +112,6 @@ jobs:
             Use conventional commit format and semantic versioning principles.
             Format as clean markdown with proper categorization.
           model: gpt-4-turbo-preview
-          temperature: 0.7
 
       - name: Create Release Notes
         run: |
@@ -156,7 +154,6 @@ jobs:
             Provide specific recommendations with code examples where applicable.
             Prioritize critical and high-risk issues.
           model: gpt-4-turbo-preview
-          temperature: 0.3
 
       - name: Security Recommendations
         run: |
@@ -200,7 +197,6 @@ jobs:
             Provide specific recommendations with implementation examples.
             Focus on high-impact optimizations.
           model: gpt-4-turbo-preview
-          temperature: 0.7
 
       - name: Performance Insights
         run: |

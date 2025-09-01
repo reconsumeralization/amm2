@@ -7,22 +7,46 @@ import { buildConfig } from 'payload'
 import path from 'path'
 import { withLexicalEditor } from './payload/utils/withLexicalEditor'
 
-// Database adapter configuration - PostgreSQL only for production
+// Database adapter configuration - Optimized for Neon PostgreSQL
 let dbAdapter: any = null;
 
 // Only load database adapter on server-side to prevent webpack bundling issues
 if (typeof window === 'undefined') {
   if (process.env.DATABASE_URL) {
     try {
-      // Use PostgreSQL for production
+      // Use PostgreSQL for production (optimized for Neon)
       const { postgresAdapter } = require('@payloadcms/db-postgres');
+
+      // Detect database provider
+      const isNeonDatabase = process.env.DATABASE_URL?.includes('neon.tech');
+      const isSupabaseDatabase = process.env.DATABASE_URL?.includes('supabase.co');
+
       dbAdapter = postgresAdapter({
         pool: {
           connectionString: process.env.DATABASE_URL,
+          // Database-specific optimizations
+          max: isNeonDatabase ? 10 : 20, // Neon has stricter limits
+          min: 2,  // Minimum number of clients in the pool
+          idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+          connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+          // SSL configuration
+          ssl: (isNeonDatabase || isSupabaseDatabase) ? { rejectUnauthorized: false } : false,
         },
+        // Additional optimizations
+        push: false, // Disable push mode for better compatibility
       });
+
+      if (isNeonDatabase) {
+        console.log('✅ Payload CMS configured for Neon PostgreSQL database');
+      } else if (isSupabaseDatabase) {
+        console.log('✅ Payload CMS configured for Supabase PostgreSQL database');
+      } else {
+        console.log('✅ Payload CMS configured for PostgreSQL database');
+      }
+
     } catch (error) {
-      console.error('Failed to load PostgreSQL adapter:', error);
+      console.error('❌ Failed to load PostgreSQL adapter:', error);
+      console.error('Please ensure @payloadcms/db-postgres is installed: npm install @payloadcms/db-postgres');
       throw error; // Don't fallback, let the build fail so we know there's an issue
     }
   } else {
@@ -34,8 +58,9 @@ if (typeof window === 'undefined') {
           url: 'file:./dev.db',
         },
       });
+      console.log('📝 Using SQLite for development (set DATABASE_URL for PostgreSQL/Neon)');
     } catch (error) {
-      console.error('Failed to load SQLite adapter:', error);
+      console.error('❌ Failed to load SQLite adapter:', error);
       throw error;
     }
   }
