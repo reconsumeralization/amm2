@@ -30,8 +30,8 @@ const nextConfig = {
   },
 
   // Build performance optimizations
-  output: 'standalone',
   trailingSlash: false,
+  output: 'standalone',
 
   // Image optimization settings
   images: {
@@ -89,20 +89,30 @@ const nextConfig = {
       };
     }
 
-    // Exclude problematic files from webpack bundling
+    // Exclude ALL problematic files from libsql packages from webpack bundling
     config.module.rules.push({
-      test: /\.(md|txt|readme|license|LICENSE)$/i,
-      include: /node_modules/,
+      test: /\.(md|txt|readme|license|LICENSE|README\.md|README)$/i,
+      include: [
+        /node_modules\/@libsql/,
+        /node_modules\/libsql/
+      ],
       type: 'javascript/auto',
       use: [{
         loader: 'null-loader'
       }]
     });
 
-    // Additional exclusion for libsql LICENSE files
+    // Exclude ALL files from libsql packages (more aggressive exclusion)
     config.module.rules.push({
-      test: /LICENSE$/,
-      include: /node_modules\/@libsql/,
+      test: /\.(md|txt|readme|license|LICENSE|README\.md|README|json|yaml|yml)$/i,
+      include: [
+        /node_modules\/@libsql\/client/,
+        /node_modules\/@libsql\/hrana-client/,
+        /node_modules\/@libsql\/core/,
+        /node_modules\/@libsql\/isomorphic-fetch/,
+        /node_modules\/@libsql\/isomorphic-ws/,
+        /node_modules\/libsql/
+      ],
       use: [{
         loader: 'null-loader'
       }]
@@ -195,6 +205,27 @@ const nextConfig = {
         /node_modules\/@libsql\/hrana-client/,
         /node_modules\/@libsql\/client/,
         /node_modules\/libsql/
+      ],
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Ultimate catch-all for libsql packages - exclude EVERYTHING that's not JS
+    config.module.rules.push({
+      test: /.*$/,
+      include: [
+        /node_modules\/@libsql\/client\/README\.md$/,
+        /node_modules\/@libsql\/hrana-client\/README\.md$/,
+        /node_modules\/@libsql\/hrana-client\/LICENSE$/,
+        /node_modules\/@libsql\/isomorphic-fetch\/README\.md$/,
+        /node_modules\/@libsql\/isomorphic-ws\/README\.md$/,
+        /node_modules\/libsql\/.*\.md$/,
+        /node_modules\/libsql\/.*LICENSE$/,
+        /node_modules\/@libsql\/.*\/README$/,
+        /node_modules\/@libsql\/.*\/LICENSE$/,
+        /node_modules\/libsql\/.*\/README$/,
+        /node_modules\/libsql\/.*\/LICENSE$/
       ],
       use: [{
         loader: 'null-loader'
