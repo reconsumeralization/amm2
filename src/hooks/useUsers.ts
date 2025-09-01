@@ -325,7 +325,7 @@ export function useUsers() {
 
       const updatedUser = await response.json()
       setUsers(prev =>
-        prev.map(user =>
+        prev.map((user: User) =>
           user.id === id ? updatedUser : user
         )
       )
@@ -444,7 +444,7 @@ export function useUsers() {
         throw new Error('Failed to bulk delete users')
       }
 
-      setUsers(prev => prev.filter(user => !userIds.includes(user.id)))
+      setUsers(prev => prev.filter((user: User) => !userIds.includes(user.id)))
       return true
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to bulk delete users'

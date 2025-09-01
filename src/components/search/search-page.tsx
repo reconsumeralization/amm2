@@ -8,8 +8,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrendingUp, Clock, Users, Target, Zap, Search, Filter, Star, Calendar, MapPin, BookOpen, Scissors, Brush } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
-import { SearchResult } from '@/types/search'
 import { searchService } from '@/lib/search-service'
+
+interface SearchResult {
+  id: string
+  title: string
+  description: string
+  type: 'service' | 'stylist' | 'page'
+  category: string
+  tags: string[]
+  relevanceScore: number
+}
 
 interface SearchPageProps {
   initialQuery?: string
@@ -43,7 +52,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
     setQuery(searchQuery)
 
     try {
-      const seaSearchResult = await searchService.search(
+      const searchResult = await searchService.search(
         {
           query: searchQuery,
           pagination: { page: 1, limit: 20 }
@@ -51,14 +60,14 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
         'guest'
       )
 
-      setResults(seaSearchResult.results)
+      setResults(searchResult.results)
 
       // Update search stats
       setSearchStats(prev => ({
         ...prev,
         totalSearches: prev.totalSearches + 1,
-        averageResponseTime: seaSearchResult.executionTime,
-        noResultsRate: seaSearchResult.totalCount === 0 ? 100 : 0
+        averageResponseTime: searchResult.executionTime,
+        noResultsRate: searchResult.totalCount === 0 ? 100 : 0
       }))
     } catch (error) {
       console.error('search failed:', error)
