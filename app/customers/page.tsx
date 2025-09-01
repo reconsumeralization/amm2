@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,116 +10,37 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, TrendingUp } from "lucide-react"
+import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, TrendingUp, Loader2, AlertCircle } from "@/lib/icon-mapping"
 import { AddCustomerDialog } from "@/components/add-customer-dialog"
 import { CustomerFilters } from "@/components/customer-filters"
 import { CustomerProfile } from "@/components/customer-profile"
-
-const customers = [
-  {
-    id: 1,
-    name: "John Smith",
-    email: "john@email.com",
-    phone: "(555) 123-4567",
-    address: "123 Main St, City, State 12345",
-    joinDate: "2023-01-15",
-    lastVisit: "2024-12-10",
-    totalVisits: 24,
-    totalSpent: 1680,
-    averageSpent: 70,
-    preferredBarber: "Mike Johnson",
-    preferredServices: ["Haircut & Beard Trim", "Premium Shave"],
-    loyaltyPoints: 240,
-    status: "vip",
-    notes: "Regular customer, prefers short sides, allergic to certain products",
-    avatar: "/customer-john.jpg",
-    appointmentHistory: [
-      { date: "2024-12-10", service: "Haircut & Beard Trim", barber: "Mike Johnson", price: 65 },
-      { date: "2024-11-25", service: "Premium Shave", barber: "Mike Johnson", price: 45 },
-      { date: "2024-11-10", service: "Full Service", barber: "Mike Johnson", price: 85 },
-    ],
-  },
-  {
-    id: 2,
-    name: "David Wilson",
-    email: "david@email.com",
-    phone: "(555) 234-5678",
-    address: "456 Oak Ave, City, State 12345",
-    joinDate: "2023-06-20",
-    lastVisit: "2024-12-08",
-    totalVisits: 18,
-    totalSpent: 990,
-    averageSpent: 55,
-    preferredBarber: "Sarah Davis",
-    preferredServices: ["Modern Fade", "Beard Styling"],
-    loyaltyPoints: 180,
-    status: "regular",
-    notes: "Prefers modern styles, usually books evening appointments",
-    avatar: "/customer-david.jpg",
-    appointmentHistory: [
-      { date: "2024-12-08", service: "Modern Fade", barber: "Sarah Davis", price: 55 },
-      { date: "2024-11-20", service: "Haircut", barber: "Sarah Davis", price: 35 },
-      { date: "2024-11-05", service: "Beard Styling", barber: "Sarah Davis", price: 35 },
-    ],
-  },
-  {
-    id: 3,
-    name: "Robert Brown",
-    email: "robert@email.com",
-    phone: "(555) 345-6789",
-    address: "789 Pine St, City, State 12345",
-    joinDate: "2024-03-10",
-    lastVisit: "2024-12-15",
-    totalVisits: 8,
-    totalSpent: 520,
-    averageSpent: 65,
-    preferredBarber: "Alex Rodriguez",
-    preferredServices: ["Full Service"],
-    loyaltyPoints: 80,
-    status: "new",
-    notes: "New customer, interested in premium services",
-    avatar: "/customer-robert.jpg",
-    appointmentHistory: [
-      { date: "2024-12-15", service: "Full Service", barber: "Alex Rodriguez", price: 85 },
-      { date: "2024-11-30", service: "Haircut & Beard Trim", barber: "Alex Rodriguez", price: 65 },
-      { date: "2024-11-15", service: "Premium Shave", barber: "Alex Rodriguez", price: 45 },
-    ],
-  },
-  {
-    id: 4,
-    name: "Michael Davis",
-    email: "michael@email.com",
-    phone: "(555) 456-7890",
-    address: "321 Elm St, City, State 12345",
-    joinDate: "2022-08-05",
-    lastVisit: "2024-12-12",
-    totalVisits: 36,
-    totalSpent: 2160,
-    averageSpent: 60,
-    preferredBarber: "Mike Johnson",
-    preferredServices: ["Haircut", "Beard Styling"],
-    loyaltyPoints: 360,
-    status: "vip",
-    notes: "Long-time customer, very loyal, refers friends frequently",
-    avatar: "/customer-michael.jpg",
-    appointmentHistory: [
-      { date: "2024-12-12", service: "Haircut", barber: "Mike Johnson", price: 35 },
-      { date: "2024-11-28", service: "Beard Styling", barber: "Mike Johnson", price: 35 },
-      { date: "2024-11-14", service: "Haircut & Beard Trim", barber: "Mike Johnson", price: 65 },
-    ],
-  },
-]
+import { useCustomers } from "@/hooks/useCustomers"
+import type { SimpleCustomer } from "@/hooks"
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
-  const filteredCustomers = customers.filter((customer) => {
+  // Use the customers API hook
+  const {
+    customers,
+    loading,
+    error,
+    fetchCustomers
+  } = useCustomers()
+
+  // Fetch customers on component mount
+  useEffect(() => {
+    fetchCustomers()
+  }, [fetchCustomers])
+
+  const filteredCustomers = customers.filter((customer: Customer) => {
+    const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
     const matchesSearch =
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone.includes(searchTerm)
+      customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.phone || '').includes(searchTerm)
 
     const matchesStatus = statusFilter === "all" || customer.status === statusFilter
 
@@ -140,9 +61,52 @@ export default function CustomersPage() {
   }
 
   const totalCustomers = customers.length
-  const vipCustomers = customers.filter((c) => c.status === "vip").length
-  const totalRevenue = customers.reduce((sum, c) => sum + c.totalSpent, 0)
-  const averageSpent = totalRevenue / totalCustomers
+  const vipCustomers = customers.filter((c: Customer) => c.status === "vip").length
+  const totalRevenue = customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyProgram?.totalSpent || 0), 0)
+  const averageSpent = totalCustomers > 0 ? totalRevenue / totalCustomers : 0
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex h-screen bg-background">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <DashboardHeader />
+          <main className="flex-1 overflow-y-auto p-6">
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <p className="text-muted-foreground">Loading customers...</p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex h-screen bg-background">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <DashboardHeader />
+          <main className="flex-1 overflow-y-auto p-6">
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+                <p className="text-red-600 mb-4">Failed to load customers</p>
+                <Button onClick={() => fetchCustomers()}>
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -200,10 +164,10 @@ export default function CustomersPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Loyalty Points</CardTitle>
-                  <Gift className="h-4 w-4 text-muted-foreground" />
+                  <Star className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{customers.reduce((sum, c) => sum + c.loyaltyPoints, 0)}</div>
+                  <div className="text-2xl font-bold">{customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0)}</div>
                   <p className="text-xs text-green-600">Total points issued</p>
                 </CardContent>
               </Card>
@@ -255,63 +219,69 @@ export default function CustomersPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredCustomers.map((customer) => (
-                          <TableRow key={customer.id}>
-                            <TableCell>
-                              <div className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8">
-                                  <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customer.name} />
-                                  <AvatarFallback>
-                                    {customer.name
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("")}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium">{customer.name}</div>
-                                  <div className="text-sm text-muted-foreground">
-                                    Joined {new Date(customer.joinDate).toLocaleDateString()}
+                        {filteredCustomers.map((customer: SimpleCustomer) => {
+                          const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
+                          const avatarInitials = customerName
+                            .split(" ")
+                            .map((n: string) => n[0])
+                            .join("")
+                            .toUpperCase()
+
+                          return (
+                            <TableRow key={customer.id}>
+                              <TableCell>
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customerName} />
+                                    <AvatarFallback>
+                                      {avatarInitials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <div className="font-medium">{customerName}</div>
+                                    <div className="text-sm text-muted-foreground">
+                                      Joined {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'N/A'}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1 text-sm">
-                                  <Mail className="h-3 w-3" />
-                                  {customer.email}
+                              </TableCell>
+                              <TableCell>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-1 text-sm">
+                                    <Mail className="h-3 w-3" />
+                                    {customer.email || 'N/A'}
+                                  </div>
+                                  <div className="flex items-center gap-1 text-sm">
+                                    <Phone className="h-3 w-3" />
+                                    {customer.phone || 'N/A'}
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1 text-sm">
-                                  <Phone className="h-3 w-3" />
-                                  {customer.phone}
+                              </TableCell>
+                              <TableCell>{customer.lastVisit ? new Date(customer.lastVisit).toLocaleDateString() : 'N/A'}</TableCell>
+                              <TableCell>{customer.totalVisits || 0}</TableCell>
+                              <TableCell>${customer.totalSpent || 0}</TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-3 w-3 text-yellow-500" />
+                                  {customer.loyaltyPoints || 0}
                                 </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>{new Date(customer.lastVisit).toLocaleDateString()}</TableCell>
-                            <TableCell>{customer.totalVisits}</TableCell>
-                            <TableCell>${customer.totalSpent}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Gift className="h-3 w-3 text-yellow-500" />
-                                {customer.loyaltyPoints}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={getStatusColor(customer.status)}>{customer.status.toUpperCase()}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-2">
-                                <Button size="sm" variant="outline" onClick={() => setSelectedCustomer(customer)}>
-                                  View
-                                </Button>
-                                <Button size="sm" variant="outline">
-                                  <MessageCircle className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant={getStatusColor(customer.status || 'regular')}>{(customer.status || 'regular').toUpperCase()}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline" onClick={() => setSelectedCustomer(customer)}>
+                                    View
+                                  </Button>
+                                  <Button size="sm" variant="outline">
+                                    <div className="h-3 w-3 bg-muted rounded-full" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
                       </TableBody>
                     </Table>
                   </CardContent>
@@ -321,62 +291,68 @@ export default function CustomersPage() {
               <TabsContent value="vip" className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {customers
-                    .filter((c) => c.status === "vip")
-                    .map((customer) => (
-                      <Card key={customer.id}>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-12 w-12">
-                                <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customer.name} />
-                                <AvatarFallback>
-                                  {customer.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <h3 className="font-semibold">{customer.name}</h3>
-                                <p className="text-sm text-muted-foreground">VIP Customer</p>
+                    .filter((c: SimpleCustomer) => c.status === "vip")
+                    .map((customer: SimpleCustomer) => {
+                      const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
+                      const avatarInitials = customerName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+
+                      return (
+                        <Card key={customer.id}>
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-12 w-12">
+                                  <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customerName} />
+                                  <AvatarFallback>
+                                    {avatarInitials}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <h3 className="font-semibold">{customerName}</h3>
+                                  <p className="text-sm text-muted-foreground">VIP Customer</p>
+                                </div>
+                              </div>
+                              <Badge variant="default">VIP</Badge>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span>Total Visits:</span>
+                                <span className="font-medium">{customer.totalVisits || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Total Spent:</span>
+                                <span className="font-medium">${customer.totalSpent || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Loyalty Points:</span>
+                                <span className="font-medium flex items-center gap-1">
+                                  <Star className="h-3 w-3 text-yellow-500" />
+                                  {customer.loyaltyPoints || 0}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Preferred Barber:</span>
+                                <span className="font-medium">{customer.preferredBarber || 'N/A'}</span>
                               </div>
                             </div>
-                            <Badge variant="default">VIP</Badge>
-                          </div>
 
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Total Visits:</span>
-                              <span className="font-medium">{customer.totalVisits}</span>
+                            <div className="mt-4 flex gap-2">
+                              <Button size="sm" className="flex-1">
+                                Book Appointment
+                              </Button>
+                              <Button size="sm" variant="outline">
+                                <MessageCircle className="h-3 w-3" />
+                              </Button>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Total Spent:</span>
-                              <span className="font-medium">${customer.totalSpent}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Loyalty Points:</span>
-                              <span className="font-medium flex items-center gap-1">
-                                <Gift className="h-3 w-3 text-yellow-500" />
-                                {customer.loyaltyPoints}
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Preferred Barber:</span>
-                              <span className="font-medium">{customer.preferredBarber}</span>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 flex gap-2">
-                            <Button size="sm" className="flex-1">
-                              Book Appointment
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <MessageCircle className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                 </div>
               </TabsContent>
 
@@ -391,10 +367,10 @@ export default function CustomersPage() {
                       <Card>
                         <CardContent className="p-4">
                           <div className="text-center">
-                            <Gift className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
-                            <div className="text-2xl font-bold">
-                              {customers.reduce((sum, c) => sum + c.loyaltyPoints, 0)}
-                            </div>
+                            <Star className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
+                                                      <div className="text-2xl font-bold">
+                            {customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0)}
+                          </div>
                             <p className="text-sm text-muted-foreground">Total Points Issued</p>
                           </div>
                         </CardContent>
@@ -415,7 +391,7 @@ export default function CustomersPage() {
                           <div className="text-center">
                             <TrendingUp className="h-8 w-8 mx-auto text-green-500 mb-2" />
                             <div className="text-2xl font-bold">
-                              {Math.round(customers.reduce((sum, c) => sum + c.loyaltyPoints, 0) / customers.length)}
+                              {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0) / totalCustomers) : 0}
                             </div>
                             <p className="text-sm text-muted-foreground">Avg Points per Customer</p>
                           </div>
@@ -442,7 +418,7 @@ export default function CustomersPage() {
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Average Visits per Customer:</span>
                           <span className="font-medium">
-                            {Math.round(customers.reduce((sum, c) => sum + c.totalVisits, 0) / customers.length)}
+                            {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.totalVisits || 0), 0) / totalCustomers) : 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -465,28 +441,34 @@ export default function CustomersPage() {
                     <CardContent>
                       <div className="space-y-3">
                         {customers
-                          .sort((a, b) => b.totalSpent - a.totalSpent)
+                          .sort((a: SimpleCustomer, b: SimpleCustomer) => (b.totalSpent || 0) - (a.totalSpent || 0))
                           .slice(0, 5)
-                          .map((customer, index) => (
-                            <div key={customer.id} className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
-                                  {index + 1}
+                          .map((customer: SimpleCustomer, index: number) => {
+                            const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
+                            const avatarInitials = customerName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
+
+                            return (
+                              <div key={customer.id} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
+                                    {index + 1}
+                                  </div>
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customerName} />
+                                    <AvatarFallback className="text-xs">
+                                      {avatarInitials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="text-sm font-medium">{customerName}</span>
                                 </div>
-                                <Avatar className="h-6 w-6">
-                                  <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customer.name} />
-                                  <AvatarFallback className="text-xs">
-                                    {customer.name
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("")}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <span className="text-sm font-medium">{customer.name}</span>
+                                <span className="text-sm font-medium">${customer.totalSpent || 0}</span>
                               </div>
-                              <span className="text-sm font-medium">${customer.totalSpent}</span>
-                            </div>
-                          ))}
+                            )
+                          })}
                       </div>
                     </CardContent>
                   </Card>

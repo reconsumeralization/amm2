@@ -2,7 +2,7 @@ import { webpackBundler } from '@payloadcms/bundler-webpack'
 import postgresAdapter from '@payloadcms/db-postgres'
 import lexicalEditor from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
-import type { Config } from 'payload'
+import type { Config, CollectionConfig } from 'payload'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -13,7 +13,7 @@ const dirname = path.dirname(filename)
 const Users = {
   slug: 'users',
   admin: {
-    usTitle: 'name',
+    useAsTitle: 'name',
     description: 'User accounts',
   },
   auth: true,
@@ -38,9 +38,9 @@ const Users = {
         { label: 'Admin', value: 'admin' },
         { label: 'Manager', value: 'manager' },
         { label: 'Staff', value: 'staff' },
-      ] as const,
+      ],
     },
-  ] as any,
+  ],
   timestamps: true,
 }
 

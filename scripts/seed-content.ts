@@ -39,7 +39,7 @@ async function createDocument(collection: string, data: any): Promise<SeedResult
     const result = await response.json();
     
     if (!response.ok) {
-      logger.error(`Failed to seed ${collection}:`, result);
+      logger.error(`Failed to seed ${collection}:`, {}, result);
       return {
         collection,
         id: '',
@@ -54,7 +54,7 @@ async function createDocument(collection: string, data: any): Promise<SeedResult
       success: true,
     };
   } catch (error) {
-    logger.error(`Error seeding ${collection}:`, error as Error);
+    logger.error(`Error seeding ${collection}:`, {}, error as Error);
     return {
       collection,
       id: '',
@@ -313,7 +313,7 @@ async function run(): Promise<void> {
     // Validate environment first
     const envValidation = validateEnvironmentVariables();
     if (!envValidation.isValid) {
-      logger.error('Environment validation failed:', envValidation.errors);
+      logger.error('Environment validation failed:', { errors: envValidation.errors });
       process.exit(1);
     }
 
@@ -352,7 +352,7 @@ async function run(): Promise<void> {
     logger.info('\n🚀 Ready for production!');
 
   } catch (error) {
-    logger.error('Seeding failed:', error as Error);
+    logger.error('Seeding failed:', {}, error as Error);
     process.exit(1);
   }
 }
@@ -360,7 +360,7 @@ async function run(): Promise<void> {
 // Run the seeding script
 if (require.main === module) {
   run().catch((error) => {
-    logger.error('Unhandled error:', error as Error);
+    logger.error('Unhandled error:', {}, error as Error);
     process.exit(1);
   });
 }

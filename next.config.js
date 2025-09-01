@@ -2,41 +2,36 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Note: ESLint and TypeScript error ignoring moved to package.json scripts for better control
+  // This fixes Vercel deployment issues with Next.js 14+
   // Vercel-specific optimizations
-  outputFileTracingRoot: __dirname,
   transpilePackages: ['payload'],
-
-  // Development and production settings
-  eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'production',
-  },
-  typescript: {
-    ignoreBuildErrors: process.env.NODE_ENV === 'production',
-  },
 
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // External packages for server-side rendering
-  serverExternalPackages: [
-    '@payloadcms/db-postgres',
-    '@payloadcms/db-sqlite',
-    '@libsql/client',
-    'sqlite3',
-    'better-sqlite3',
-    'pg',
-    'bcryptjs',
-    'sharp'
-  ],
-
-  // Experimental features for better performance
+  // Experimental features for better performance and faster builds
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
     webVitalsAttribution: ['CLS', 'LCP'],
+    // Optimize build performance
+    webpackBuildWorker: true,
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
+
+  // Build performance optimizations
+  output: 'standalone',
+  trailingSlash: false,
 
   // Image optimization settings
   images: {
@@ -61,8 +56,21 @@ const nextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 
-  // Webpack configuration
-  webpack: (config, { isServer, dev }) => {
+  // Webpack configuration - Optimized for Vercel builds
+  webpack: (config, { isServer, dev, buildId }) => {
+    // Performance optimization: Skip expensive operations in Vercel builds
+    if (process.env.VERCEL) {
+      // Disable webpack cache serialization warnings
+      config.cache = false;
+
+      // Optimize for build speed
+      config.optimization = {
+        ...config.optimization,
+        emitOnErrors: false,
+        moduleIds: 'deterministic',
+      };
+    }
+
     // Handle Payload CMS and other server-only packages
     if (!isServer) {
       config.resolve.fallback = {
@@ -81,21 +89,116 @@ const nextConfig = {
       };
     }
 
-    // Optimize bundle size in production
-    if (!dev && !isServer) {
-      config.optimization.splitChunks.cacheGroups = {
-        ...config.optimization.splitChunks.cacheGroups,
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: 10,
+    // Exclude problematic files from webpack bundling
+    config.module.rules.push({
+      test: /\.(md|txt|readme|license|LICENSE)$/i,
+      include: /node_modules/,
+      type: 'javascript/auto',
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Additional exclusion for libsql LICENSE files
+    config.module.rules.push({
+      test: /LICENSE$/,
+      include: /node_modules\/@libsql/,
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Handle .node files properly for SQLite
+    config.module.rules.push({
+      test: /\.node$/,
+      include: /node_modules/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          publicPath: '/_next/static/chunks/',
+          outputPath: 'static/chunks/',
         },
-        payload: {
-          test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
-          name: 'payload',
-          chunks: 'all',
-          priority: 20,
+      }],
+    });
+
+    // Fix for libsql client-side imports - use stubs instead of externals
+    if (!isServer) {
+      // Use stubs for client-side to prevent bundling issues
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@libsql/client': path.resolve(__dirname, 'src/lib/stubs/libsql-client.js'),
+        '@libsql/hrana-client': path.resolve(__dirname, 'src/lib/stubs/libsql-hrana-client.js'),
+        '@libsql/core': false,
+        'libsql': path.resolve(__dirname, 'src/lib/stubs/libsql.js'),
+      };
+    }
+
+    // Exclude all libsql TypeScript definition files from webpack processing
+    config.module.rules.push({
+      test: /\.d\.ts$/,
+      include: [
+        /node_modules\/@libsql/,
+        /node_modules\/libsql/,
+        /node_modules\/@payloadcms\/db-sqlite/
+      ],
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Handle ESM imports from libsql packages - exclude all problematic files
+    config.module.rules.push({
+      test: /\.js$/,
+      include: [
+        /node_modules\/@libsql\/.*\/lib-esm/,
+        /node_modules\/libsql\/.*\/lib-esm/,
+        /node_modules\/@payloadcms\/db-sqlite\/.*\/lib-esm/
+      ],
+      type: 'javascript/auto',
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Exclude libsql core files from bundling
+    config.module.rules.push({
+      test: /\.(js|mjs|ts)$/,
+      include: /node_modules\/@libsql\/core/,
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Handle any remaining libsql files
+    config.module.rules.push({
+      test: /\.(js|mjs|ts)$/,
+      include: [
+        /node_modules\/@libsql\/hrana-client/,
+        /node_modules\/@libsql\/client/,
+        /node_modules\/libsql/
+      ],
+      use: [{
+        loader: 'null-loader'
+      }]
+    });
+
+    // Optimize bundle size in production - simplified for faster builds
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](?!@payloadcms)/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 10,
+          },
+          payload: {
+            test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
+            name: 'payload',
+            chunks: 'all',
+            priority: 20,
+          },
         },
       };
     }

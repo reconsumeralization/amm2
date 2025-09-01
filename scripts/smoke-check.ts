@@ -72,7 +72,7 @@ async function runSmokeTests(): Promise<void> {
     // Validate environment first
     const envValidation = validateEnvironmentVariables();
     if (!envValidation.isValid) {
-      logger.error('Environment validation failed:', envValidation.errors);
+      logger.error('Environment validation failed:', { errors: envValidation.errors });
       process.exit(1);
     }
 
@@ -184,7 +184,7 @@ async function runSmokeTests(): Promise<void> {
     }
 
   } catch (error) {
-    logger.error('Smoke test runner failed:', error as Error);
+    logger.error('Smoke test runner failed:', {}, error as Error);
     process.exit(1);
   }
 }
@@ -192,7 +192,7 @@ async function runSmokeTests(): Promise<void> {
 // Run the smoke tests
 if (require.main === module) {
   runSmokeTests().catch((error) => {
-    logger.error('Unhandled error:', error as Error);
+    logger.error('Unhandled error:', {}, error as Error);
     process.exit(1);
   });
 }

@@ -47,6 +47,29 @@ docker-compose up
 8. Access the admin panel: `http://localhost:3000/admin/payload`
 9. Access the customer portal: `http://localhost:3000/portal`
 
+## 🤖 AI-Powered Development
+
+This project includes advanced AI-powered development tools and automation:
+
+### AI Features
+- **Automated Code Review**: AI analyzes pull requests for quality, security, and performance
+- **Documentation Generation**: Automatically generates comprehensive API and component documentation
+- **Security Auditing**: AI-powered security analysis and vulnerability detection
+- **Performance Analysis**: Bundle size optimization and performance recommendations
+- **Changelog Generation**: Automated changelog creation from commits
+
+### AI Workflow Integration
+- **GitHub Actions**: Fully integrated with CI/CD pipeline
+- **OpenAI GPT-4**: Uses OpenAI for advanced AI analysis
+- **Automated PR Comments**: AI provides feedback directly on pull requests
+- **Security Monitoring**: Continuous security scanning and alerts
+
+### Getting Started with AI Features
+1. Configure OpenAI API key in GitHub secrets
+2. Push changes to trigger automated code review
+3. Use manual workflows for documentation and security audits
+4. Review AI-generated insights in workflow logs and PR comments
+
 ### Development Tools
 - **pgAdmin**: http://localhost:8080 (PostgreSQL admin interface)
 - **Redis Commander**: http://localhost:8081 (Redis admin interface)

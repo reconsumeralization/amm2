@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Trash2 } from "lucide-react"
+import { Trash2 } from "@/lib/icon-mapping"
 import type { PageComponent } from "@/app/builder/page"
 
 interface PropertiesPanelProps {

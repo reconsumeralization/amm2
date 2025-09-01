@@ -1,152 +1,116 @@
-/**
- * Authentication Utilities
- *
- * Centralized authentication and authorization utilities
- * for consistent access control across the application.
- */
+// src/lib/auth-utils.ts
+import { createClient } from '@/lib/supabase/client'
 
-import { NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from './auth'
-import { getToken } from 'next-auth/jwt'
-import { 
-  ROLES, 
-  PERMISSIONS, 
-  ROLE_PERMISSIONS, 
-  ROUTE_ACCESS, 
-  UserRole, 
-  Permission,
-  getRolePermissions,
-  hasPermission,
-  canAccessRoute,
-  getUnauthorizedRedirect,
-  validateTenantAccess 
-} from './auth-constants'
-
-// Re-export everything for backward compatibility
-export {
-  ROLES,
-  PERMISSIONS,
-  ROLE_PERMISSIONS,
-  ROUTE_ACCESS,
-  getRolePermissions,
-  hasPermission,
-  canAccessRoute,
-  getUnauthorizedRedirect,
-  validateTenantAccess
-}
-export type { UserRole, Permission }
-
-/**
- * Validate user session on server side
- */
-export async function validateServerSession(request: NextRequest) {
-  const session = await getServerSession(authOptions)
-
-  if (!(session as any)?.user) {
-    return { isValid: false, user: null, error: 'No session' }
-  }
-
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET
-  })
-
-  if (!token) {
-    return { isValid: false, user: null, error: 'No token' }
-  }
-
-  return {
-    isValid: true,
-    user: {
-      ...(session as any).user,
-      id: token.sub!,
-      role: token.role as UserRole,
-      permissions: getRolePermissions(token.role as UserRole)
-    },
-    error: null
-  }
+// Authentication interfaces
+export interface SignInCredentials {
+  email: string
+  password: string
 }
 
+export interface SignUpData {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  phone?: string
+  acceptMarketing?: boolean
+}
 
-/**
- * Create consistent error responses
- */
-export function createAuthError(message: string, status: number = 401) {
-  return {
-    error: message,
-    status,
-    timestamp: new Date().toISOString()
-  }
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  role: 'customer' | 'stylist' | 'manager' | 'admin'
+  firstName?: string
+  lastName?: string
+  phone?: string
+  avatar?: string
+  isActive: boolean
+  emailVerified?: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AuthResponse {
+  user: AuthUser
+  session?: any
+  message: string
 }
 
 /**
- * Log authentication events
+ * Get current authenticated user
  */
-export function logAuthEvent(event: string, data: Record<string, any>) {
-  const timestamp = new Date().toISOString()
-  console.log(`[AUTH:${event.toUpperCase()}] ${timestamp}`, data)
+export async function getCurrentUser(): Promise<AuthUser | null> {
+  try {
+    const supabase = createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
 
-  // In production, you might want to send this to a logging service
-  // or store in database for audit trails
+    if (error || !user) {
+      return null
+    }
+
+    // Fetch profile data
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError && profileError.code !== 'PGRST116') {
+      console.warn('Failed to fetch user profile:', profileError)
+    }
+
+    return {
+      id: user.id,
+      email: user.email || '',
+      name: profile?.full_name || user.user_metadata?.full_name || '',
+      role: profile?.role || 'customer',
+      firstName: profile?.first_name || user.user_metadata?.first_name,
+      lastName: profile?.last_name || user.user_metadata?.last_name,
+      phone: profile?.phone || user.user_metadata?.phone,
+      avatar: profile?.avatar_url || user.user_metadata?.avatar_url,
+      isActive: profile?.is_active ?? true,
+      emailVerified: user.email_confirmed_at ? true : false,
+      createdAt: user.created_at,
+      updatedAt: profile?.updated_at || user.updated_at,
+    }
+  } catch (error) {
+    console.error('Failed to get current user:', error)
+    return null
+  }
 }
 
 /**
- * Validate password strength
+ * Check if user has specific role
  */
-export function validatePasswordStrength(password: string): {
-  isValid: boolean
-  errors: string[]
-  strength: 'weak' | 'medium' | 'strong'
-} {
-  const errors: string[] = []
-
-  if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long')
-  }
-
-  if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter')
-  }
-
-  if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter')
-  }
-
-  if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number')
-  }
-
-  if (!/[!@#$%^&*]/.test(password)) {
-    errors.push('Password must contain at least one special character')
-  }
-
-  const isValid = errors.length === 0
-  let strength: 'weak' | 'medium' | 'strong' = 'weak'
-
-  if (password.length >= 12 && errors.length <= 1) {
-    strength = 'strong'
-  } else if (password.length >= 10 && errors.length <= 2) {
-    strength = 'medium'
-  }
-
-  return { isValid, errors, strength }
+export function hasRole(user: AuthUser | null, role: string): boolean {
+  if (!user) return false
+  return user.role === role
 }
 
-const authUtils = {
-  ROLES,
-  PERMISSIONS,
-  ROLE_PERMISSIONS,
-  ROUTE_ACCESS,
-  getRolePermissions,
-  hasPermission,
-  canAccessRoute,
-  validateServerSession,
-  getUnauthorizedRedirect,
-  validateTenantAccess,
-  createAuthError,
-  logAuthEvent,
-  validatePasswordStrength
+/**
+ * Check if user has any of the specified roles
+ */
+export function hasAnyRole(user: AuthUser | null, roles: string[]): boolean {
+  if (!user) return false
+  return roles.includes(user.role)
 }
 
-export default authUtils
+/**
+ * Check if user has required role or higher
+ */
+export function hasRoleOrHigher(user: AuthUser | null, role: string): boolean {
+  if (!user) return false
+
+  const roleHierarchy = {
+    customer: 1,
+    stylist: 2,
+    manager: 3,
+    admin: 4,
+  }
+
+  const userLevel = roleHierarchy[user.role as keyof typeof roleHierarchy] || 0
+  const requiredLevel = roleHierarchy[role as keyof typeof roleHierarchy] || 0
+
+  return userLevel >= requiredLevel
+}

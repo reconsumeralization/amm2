@@ -1,8 +1,44 @@
 import { buildConfig } from 'payload'
-import postgresAdapter from '@payloadcms/db-postgres'
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 import { withLexicalEditor } from './payload/utils/withLexicalEditor'
+
+// Database adapter configuration for Vercel compatibility
+let dbAdapter;
+
+if (typeof window === 'undefined') {
+  // Use PostgreSQL in production (Vercel), SQLite for development
+  if (process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+    try {
+      const { postgresAdapter } = require('@payloadcms/db-postgres');
+      dbAdapter = postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URL,
+        },
+      });
+    } catch (error) {
+      console.warn('PostgreSQL adapter not available, falling back to SQLite:', error);
+      const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+      dbAdapter = sqliteAdapter({
+        client: {
+          url: 'file:./dev.db',
+        },
+      });
+    }
+  } else {
+    // Development fallback to SQLite
+    try {
+      const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+      dbAdapter = sqliteAdapter({
+        client: {
+          url: 'file:./dev.db',
+        },
+      });
+    } catch (error) {
+      console.error('SQLite adapter not available:', error);
+      dbAdapter = null;
+    }
+  }
+}
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',
@@ -213,17 +249,7 @@ export default buildConfig({
     }),
   ],
   endpoints: [],
-  db: process.env.NODE_ENV === 'production'
-    ? postgresAdapter({
-        pool: {
-          connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
-        },
-      })
-    : sqliteAdapter({
-        client: {
-          url: process.env.DATABASE_URL || 'file:./dev.db',
-        },
-      }),
+  db: dbAdapter,
   typescript: {
     outputFile: path.resolve(process.cwd(), 'src/payload-types.ts'),
   },

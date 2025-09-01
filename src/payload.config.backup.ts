@@ -1,7 +1,7 @@
 import postgresAdapter from '@payloadcms/db-postgres'
 import lexicalEditor from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
-import type { Config } from 'payload'
+import type { Config, PayloadRequest } from 'payload'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -14,7 +14,7 @@ import { Stylists } from './collections/Stylists'
 import { Media } from './collections/Media'
 import { Commissions } from './payload/collections/Commissions'
 import { ServicePackages } from './payload/collections/ServicePackages'
-import { Inventory } from './payload/collections/Inventory'
+import { Inventory } from './payload/collections/system/Inventory'
 import { WaitList } from './payload/collections/WaitList'
 import { Notifications } from './payload/collections/Notifications'
 import { Documentation } from './payload/collections/Documentation'
@@ -73,9 +73,9 @@ export default buildConfig({
     {
       path: '/api/auth/check',
       method: 'get',
-      handler: async (req: any) => {
+      handler: async (req: PayloadRequest) => {
         // Check if user is authenticated via our existing system
-        const session = req.headers?.get?.('x-user-id') || req.headers?.['x-user-id']
+        const session = req.headers.get('x-user-id')
         if (!session) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
@@ -92,10 +92,11 @@ export default buildConfig({
     {
       path: '/api/rch',
       method: 'get',
-      handler: async (req: any) => {
+      handler: async (req: PayloadRequest) => {
         try {
           const payload = await getPayloadClient()
-          const { searchParams } = new URL(req.url)
+          const url = new URL(req.url || '', process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000')
+          const { searchParams } = url
 
           const query = searchParams.get('q') || ''
           const collection = searchParams.get('collection') || 'all'
@@ -174,7 +175,7 @@ export default buildConfig({
     {
       path: '/api/analytics',
       method: 'get',
-      handler: async (req: any) => {
+      handler: async (req: PayloadRequest) => {
         try {
           const payload = await getPayloadClient()
 

@@ -1,8 +1,9 @@
 "use client"
 import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Type, ImageIcon, MousePointer, Layout, Star, Phone, Scissors, AlignLeft } from "lucide-react"
+import { Type, ImageIcon, MousePointer, Layout, Star, Phone, Scissors, AlignLeft } from "@/lib/icon-mapping"
 import type { PageComponent } from "@/app/builder/page"
+import { useState } from "react"
 
 interface ComponentLibraryProps {
   onAddComponent: (type: PageComponent["type"]) => void
@@ -70,6 +71,18 @@ const componentTypes = [
 const categories = ["All", "Text", "Media", "Interactive", "Sections", "Barbershop", "Social", "Information"]
 
 export function ComponentLibrary({ onAddComponent }: ComponentLibraryProps) {
+  const [draggedComponent, setDraggedComponent] = useState<PageComponent["type"] | null>(null)
+
+  const handleDragStart = (e: React.DragEvent, componentType: PageComponent["type"]) => {
+    setDraggedComponent(componentType)
+    e.dataTransfer.setData('text/plain', componentType)
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+
+  const handleDragEnd = () => {
+    setDraggedComponent(null)
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className="mb-4">
@@ -92,7 +105,14 @@ export function ComponentLibrary({ onAddComponent }: ComponentLibraryProps) {
                   {categoryComponents.map((component) => (
                     <Card
                       key={component.type}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, component.type)}
+                      onDragEnd={handleDragEnd}
+                      className={`cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 ${
+                        draggedComponent === component.type
+                          ? 'opacity-50 scale-95 shadow-lg ring-2 ring-primary'
+                          : 'hover:scale-105'
+                      }`}
                       onClick={() => onAddComponent(component.type)}
                     >
                       <CardContent className="p-3">
@@ -103,6 +123,9 @@ export function ComponentLibrary({ onAddComponent }: ComponentLibraryProps) {
                           <div className="flex-1">
                             <div className="font-medium text-sm">{component.name}</div>
                             <div className="text-xs text-muted-foreground">{component.description}</div>
+                          </div>
+                          <div className="text-xs text-muted-foreground opacity-60">
+                            ↗
                           </div>
                         </div>
                       </CardContent>

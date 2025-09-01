@@ -74,6 +74,9 @@ import { Inventory } from './system/Inventory';
 import { Locations } from './system/Locations';
 import { MaintenanceRequests } from './system/MaintenanceRequests';
 import { Notifications } from './system/Notifications';
+import { OnboardingAnalytics } from './system/OnboardingAnalytics';
+import { OnboardingProgress } from './system/OnboardingProgress';
+import { OnboardingSteps } from './system/OnboardingSteps';
 import { PageViews } from './system/PageViews';
 import { PushNotifications } from './system/PushNotifications';
 import { RecurringAppointments } from './system/RecurringAppointments';
@@ -186,6 +189,9 @@ const rawCollections = [
   Locations,
   MaintenanceRequests,
   Notifications,
+  OnboardingAnalytics,
+  OnboardingProgress,
+  OnboardingSteps,
   PageViews,
   PushNotifications,
   RecurringAppointments,
