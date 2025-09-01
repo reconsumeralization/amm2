@@ -42,8 +42,8 @@ export async function GET(request: NextRequest) {
     // Get stats
     const employees = employeesResult.docs
     const totalEmployees = employees.length
-    const activeEmployees = employees.filter((emp: any) => emp.isActive === true).length
-    const clockedInToday = employees.filter((emp: any) => emp.isClockedIn === true).length
+    const activeEmployees = employees.filter((emp: any) => emp.isActive).length
+    const clockedInToday = employees.filter((emp: any) => emp.isClockedIn).length
 
     // Calculate new hires this month
     const now = new Date()
