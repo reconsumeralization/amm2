@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const todaysHours = allTodaysEntries.docs.reduce((total: number, entry) => {
+    const todaysHours = allTodaysEntries.docs.reduce((total: number, entry: { totalHours?: number }) => {
       return total + (entry.totalHours || 0)
     }, 0)
 

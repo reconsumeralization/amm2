@@ -1,15 +1,15 @@
 // Icon mapping system for consistent icon usage across the app
 import * as React from 'react'
 
-// Import all icons from lucide-react
+// Import available icons from lucide-react
 import {
   X,
-  CalendarDays as Calendar,
+  Calendar,
   Clock,
   Eye,
   Star,
   Filter,
-  Loader2,
+  Loader,
   Copy,
   Download,
   Play,
@@ -26,7 +26,7 @@ import {
   Volume2,
   VolumeX,
   Pause,
-  Grid3X3 as Grid,
+  Grid3x3 as Grid,
   MoreHorizontal,
   MoreVertical,
   Lock,
@@ -137,7 +137,7 @@ export { Plus }
 export { Check }
 export { RefreshCw }
 export { RotateCcw }
-export { Loader2 }
+export { Loader }
 export { AlertCircle }
 export { AlertTriangle }
 export { CheckCircle }
@@ -157,5 +157,5 @@ export { MoreVertical }
 export { Zap }
 
 // Essential aliases for backward compatibility
-export const Loader = Loader2
+export const Loader2 = Loader
 export const Save = Download

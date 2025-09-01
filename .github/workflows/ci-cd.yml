@@ -117,17 +117,13 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Deploy on Vercel (Staging)
-        uses: UnlyEd/github-action-deploy-on-vercel@v1.2.7
+        uses: amondnet/vercel-action@v25
         with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
-          production: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          working_directory: ./
-          build_script: npm run build
-          vercel_args: --prod=false
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: --prod=false
         env:
           NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL || 'http://localhost:3000' }}
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_staging' }}
@@ -143,17 +139,13 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Deploy on Vercel (Production)
-        uses: UnlyEd/github-action-deploy-on-vercel@v1.2.7
+        uses: amondnet/vercel-action@v25
         with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
-          production: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          working_directory: ./
-          build_script: npm run build
-          vercel_args: --prod=true
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: --prod=true
         env:
           NEXT_PUBLIC_APP_URL: ${{ secrets.PRODUCTION_APP_URL || 'https://your-domain.com' }}
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_prod' }}
@@ -240,7 +232,7 @@ jobs:
       - name: Vercel AI Code Review
         uses: vercel/ai-action@v2.1.0
         with:
-          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt: |
             You are an expert code reviewer. Analyze the changes in this pull request and provide:
 
@@ -260,7 +252,6 @@ jobs:
             Base branch: ${{ github.base_ref }}
             Head branch: ${{ github.head_ref }}
           model: gpt-4-turbo-preview
-          max-tokens: 2000
 
       - name: Comment PR with AI Review
         uses: actions/github-script@v7

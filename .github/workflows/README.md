@@ -42,10 +42,10 @@ Specialized AI workflows for documentation, security, and performance analysis.
 Add these secrets to your GitHub repository:
 
 ```bash
-# Vercel AI API Key (get from Vercel dashboard)
-VERCEL_AI_API_KEY=your_vercel_ai_api_key_here
+# OpenAI API Key (for AI-powered code reviews)
+OPENAI_API_KEY=your_openai_api_key_here
 
-# Vercel Deployment (using UnlyEd/github-action-deploy-on-vercel)
+# Vercel Deployment (using amondnet/vercel-action)
 VERCEL_TOKEN=your_vercel_token_here
 VERCEL_ORG_ID=your_vercel_org_id_here
 VERCEL_PROJECT_ID=your_vercel_project_id_here
@@ -63,11 +63,11 @@ PRODUCTION_APP_URL=https://your-project.vercel.app
 PAYLOAD_SECRET=your_payload_secret_here
 ```
 
-#### How to Get Vercel AI API Key
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Navigate to your project settings
-3. Go to "Integrations" → "AI"
-4. Generate and copy your API key
+#### How to Get OpenAI API Key
+1. Go to [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Sign in to your OpenAI account
+3. Click "Create new secret key"
+4. Copy the generated API key (save it securely!)
 
 #### How to Get Vercel Token
 1. Go to [Vercel Account Settings](https://vercel.com/account/tokens)

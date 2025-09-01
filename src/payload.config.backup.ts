@@ -95,7 +95,8 @@ export default buildConfig({
       handler: async (req: PayloadRequest) => {
         try {
           const payload = await getPayloadClient()
-          const { searchParams } = new URL(req.url)
+          const url = new URL(req.url || '', process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000')
+          const { searchParams } = url
 
           const query = searchParams.get('q') || ''
           const collection = searchParams.get('collection') || 'all'

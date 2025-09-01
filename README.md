@@ -60,12 +60,12 @@ This project includes advanced AI-powered development tools and automation:
 
 ### AI Workflow Integration
 - **GitHub Actions**: Fully integrated with CI/CD pipeline
-- **Vercel AI**: Uses Vercel AI Action for advanced analysis
+- **OpenAI GPT-4**: Uses OpenAI for advanced AI analysis
 - **Automated PR Comments**: AI provides feedback directly on pull requests
 - **Security Monitoring**: Continuous security scanning and alerts
 
 ### Getting Started with AI Features
-1. Configure Vercel AI API key in GitHub secrets
+1. Configure OpenAI API key in GitHub secrets
 2. Push changes to trigger automated code review
 3. Use manual workflows for documentation and security audits
 4. Review AI-generated insights in workflow logs and PR comments

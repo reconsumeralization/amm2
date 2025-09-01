@@ -57,7 +57,7 @@ jobs:
       - name: Generate API Documentation
         uses: vercel/ai-action@v2.1.0
         with:
-          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt: |
             You are an expert technical writer. Generate comprehensive API documentation for this Next.js application.
 
@@ -76,7 +76,6 @@ jobs:
 
             Output in clean markdown format with proper formatting.
           model: gpt-4-turbo-preview
-          max-tokens: 3000
 
       - name: Update API Documentation
         run: |
@@ -96,7 +95,7 @@ jobs:
       - name: Generate Changelog
         uses: vercel/ai-action@v2.1.0
         with:
-          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt: |
             You are a changelog generator. Analyze the recent commits and generate a comprehensive changelog.
 
@@ -113,7 +112,6 @@ jobs:
             Use conventional commit format and semantic versioning principles.
             Format as clean markdown with proper categorization.
           model: gpt-4-turbo-preview
-          max-tokens: 2000
 
       - name: Create Release Notes
         run: |
@@ -139,7 +137,7 @@ jobs:
       - name: AI Security Analysis
         uses: vercel/ai-action@v2.1.0
         with:
-          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt: |
             You are a cybersecurity expert. Perform a comprehensive security audit of this codebase.
 
@@ -156,7 +154,6 @@ jobs:
             Provide specific recommendations with code examples where applicable.
             Prioritize critical and high-risk issues.
           model: gpt-4-turbo-preview
-          max-tokens: 2500
 
       - name: Security Recommendations
         run: |
@@ -185,7 +182,7 @@ jobs:
       - name: AI Performance Analysis
         uses: vercel/ai-action@v2.1.0
         with:
-          api-key: ${{ secrets.VERCEL_AI_API_KEY }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt: |
             You are a performance optimization expert. Analyze this Next.js application for performance improvements.
 
@@ -200,7 +197,6 @@ jobs:
             Provide specific recommendations with implementation examples.
             Focus on high-impact optimizations.
           model: gpt-4-turbo-preview
-          max-tokens: 2500
 
       - name: Performance Insights
         run: |

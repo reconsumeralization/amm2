@@ -18,9 +18,9 @@ Write-Host ""
 Write-Host "📋 Required GitHub Secrets:" -ForegroundColor Yellow
 Write-Host "==========================" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "1. VERCEL_AI_API_KEY" -ForegroundColor Green
-Write-Host "   - Get from: https://vercel.com/dashboard → Your Project → Settings → Integrations → AI"
-Write-Host "   - Description: API key for Vercel AI services"
+Write-Host "1. OPENAI_API_KEY" -ForegroundColor Green
+Write-Host "   - Get from: https://platform.openai.com/api-keys"
+Write-Host "   - Description: OpenAI API key for AI-powered code reviews"
 Write-Host ""
 Write-Host "2. VERCEL_TOKEN" -ForegroundColor Green
 Write-Host "   - Get from: https://vercel.com/account/tokens"
@@ -64,11 +64,11 @@ if ($Interactive) {
             Write-Host "🔑 Setting up GitHub secrets..." -ForegroundColor Yellow
             Write-Host "================================" -ForegroundColor Yellow
 
-            # VERCEL_AI_API_KEY
-            $vercelAiKey = Read-Host "Enter your Vercel AI API Key"
-            if ($vercelAiKey) {
-                $vercelAiKey | gh secret set VERCEL_AI_API_KEY
-                Write-Host "✅ VERCEL_AI_API_KEY set" -ForegroundColor Green
+            # OPENAI_API_KEY
+            $openAiKey = Read-Host "Enter your OpenAI API Key"
+            if ($openAiKey) {
+                $openAiKey | gh secret set OPENAI_API_KEY
+                Write-Host "✅ OPENAI_API_KEY set" -ForegroundColor Green
             }
 
             # VERCEL_TOKEN
