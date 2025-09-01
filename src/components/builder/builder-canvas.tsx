@@ -2,7 +2,7 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { Trash2, Edit } from "lucide-react"
+import { Trash2, Edit } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 import type { Page, PageComponent } from "@/app/builder/page"
 

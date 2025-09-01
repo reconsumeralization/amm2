@@ -420,31 +420,33 @@ router.get('/health', (req: Request, res: Response) => {
 router.get('/sse', (req: Request, res: Response) => {
   const nativeRes = res as unknown as ServerResponse
   const nativeReq = req as unknown as IncomingMessage
-  
-  nativeRes.setHeader('Content-Type', 'text/event-stream')
-  nativeRes.setHeader('Cache-Control', 'no-cache')
-  nativeRes.setHeader('Connection', 'keep-alive')
-  nativeRes.setHeader('Access-Control-Allow-Origin', '*')
-  nativeRes.setHeader('Access-Control-Allow-Headers', 'Cache-Control')
+
+  // Set headers using proper Express response methods
+  res.setHeader('Content-Type', 'text/event-stream')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('Connection', 'keep-alive')
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Headers', 'Cache-Control')
 
   // Send initial tools list
   const toolList = Array.from(tools.entries()).map(([name, { schema }]) => ({
     name,
     schema: schema._def
   }))
-  
-  nativeRes.write(`data: ${JSON.stringify({ type: 'tools', tools: toolList })}\n\n`)
+
+  res.write(`data: ${JSON.stringify({ type: 'tools', tools: toolList })}\n\n`)
 
   // Keep connection alive
   const interval = setInterval(() => {
-    nativeRes.write(': keepalive\n\n')
+    res.write(': keepalive\n\n')
   }, 30000)
 
-  nativeReq.on('close', () => {
+  // Handle connection close
+  req.on('close', () => {
     clearInterval(interval)
   })
-  
-  nativeReq.on('error', (error) => {
+
+  req.on('error', (error) => {
     console.error('SSE connection error:', error)
     clearInterval(interval)
   })

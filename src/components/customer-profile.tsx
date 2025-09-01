@@ -8,10 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Mail, Phone, MapPin, Calendar, DollarSign, Gift, Star, MessageCircle, Edit } from "lucide-react"
-import { EditCustomerDialog } from "@/components/customer/edit-customer-dialog"
-import { CustomerCommunication } from "@/components/customer/customer-communication"
-import { LoyaltyRewards } from "@/components/customer/loyalty-rewards"
+import { Mail, Phone, MapPin, Calendar, DollarSign, Gift, Star, MessageCircle, Edit } from "@/lib/icon-mapping"
+import { EditCustomerDialog } from "@/components/customer-components/edit-customer-dialog"
+import { CustomerCommunication } from "@/components/customer-components/customer-communication"
+import { LoyaltyRewards } from "@/components/customer-components/loyalty-rewards"
 
 interface Customer {
   id: number

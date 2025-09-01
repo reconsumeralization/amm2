@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Gift, Star, Trophy, Zap } from "lucide-react"
+import { Gift, Star, Trophy, Zap } from "@/lib/icon-mapping"
 
 interface LoyaltyRewardsProps {
   customerId: string

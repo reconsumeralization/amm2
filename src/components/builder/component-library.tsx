@@ -1,7 +1,7 @@
 "use client"
 import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Type, ImageIcon, MousePointer, Layout, Star, Phone, Scissors, AlignLeft } from "lucide-react"
+import { Type, ImageIcon, MousePointer, Layout, Star, Phone, Scissors, AlignLeft } from "@/lib/icon-mapping"
 import type { PageComponent } from "@/app/builder/page"
 
 interface ComponentLibraryProps {

@@ -1,5 +1,6 @@
 import { MCPHandler, MCPRequest, MCPResponse } from './types';
 import { WebSocketServer, WebSocket } from 'ws';
+import { appController } from './comprehensive-app-controller';
 
 export class MCPServer {
   private wss: WebSocketServer;
@@ -7,6 +8,9 @@ export class MCPServer {
 
   constructor(port: number) {
     this.wss = new WebSocketServer({ port });
+
+    // Register the comprehensive app controller
+    this.registerHandler('app', appController);
 
     this.wss.on('connection', (ws: WebSocket) => {
       console.log('New MCP client connected');

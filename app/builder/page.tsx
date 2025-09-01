@@ -28,8 +28,8 @@ import {
   BarChart3,
   Layers,
   ImageIcon,
-} from "lucide-react"
-import { Palette } from "lucide-react" // Import Palette here
+  Palette,
+} from "@/lib/icon-mapping"
 
 export interface PageComponent {
   id: string

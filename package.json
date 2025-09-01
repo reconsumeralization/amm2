@@ -6,7 +6,13 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "mcp:start": "tsx scripts/start-mcp-server.ts",
+    "mcp:dev": "tsx watch scripts/start-mcp-server.ts",
+    "mcp:test": "jest --config jest.config.mcp.js",
+    "mcp:test:unit": "npm run mcp:test -- --testPathPattern=unit",
+    "mcp:test:integration": "npm run mcp:test -- --testPathPattern=integration",
+    "mcp:test:load": "artillery run tests/load/mcp-load-test.yml"
   },
   "dependencies": {
     "@dnd-kit/core": "latest",
@@ -66,7 +72,9 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.2",
     "vaul": "^0.9.9",
+    "ws": "^8.18.0",
     "zod": "3.25.67"
   },
   "devDependencies": {

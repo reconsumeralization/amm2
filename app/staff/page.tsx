@@ -10,95 +10,61 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Users, Search, Clock, DollarSign, Star, Phone, Mail, Edit, Trash2 } from "lucide-react"
+import { Users, Search, Clock, DollarSign, Star, Phone, Mail, Edit, Trash2, Loader2, AlertCircle } from "@/lib/icon-mapping"
 import { AddStaffDialog } from "@/components/add-staff-dialog"
 import { StaffSchedule } from "@/components/staff-schedule"
-import { EditStaffDialog } from "@/components/staff/edit-staff-dialog"
-import { DeleteStaffDialog } from "@/components/staff/delete-staff-dialog"
+import { EditStaffDialog } from "@/components/staff-management/edit-staff-dialog"
+import { DeleteStaffDialog } from "@/components/staff-management/delete-staff-dialog"
 import { ClockInOut } from "@/components/time-tracking/clock-in-out"
-import { createClient } from "@/lib/supabase/client"
-
-const staffMembers = [
-  {
-    id: 1,
-    name: "Mike Johnson",
-    role: "Senior Barber",
-    email: "mike@barberpro.com",
-    phone: "(555) 123-4567",
-    status: "active",
-    rating: 4.9,
-    experience: "8 years",
-    specialties: ["Classic Cuts", "Beard Styling"],
-    hourlyRate: 35,
-    hoursThisWeek: 38,
-    avatar: "/staff-mike.jpg",
-  },
-  {
-    id: 2,
-    name: "Sarah Davis",
-    role: "Master Barber",
-    email: "sarah@barberpro.com",
-    phone: "(555) 234-5678",
-    status: "active",
-    rating: 4.8,
-    experience: "12 years",
-    specialties: ["Precision Cuts", "Color"],
-    hourlyRate: 42,
-    hoursThisWeek: 40,
-    avatar: "/staff-sarah.jpg",
-  },
-  {
-    id: 3,
-    name: "Alex Rodriguez",
-    role: "Junior Barber",
-    email: "alex@barberpro.com",
-    phone: "(555) 345-6789",
-    status: "active",
-    rating: 4.6,
-    experience: "2 years",
-    specialties: ["Modern Styles", "Fades"],
-    hourlyRate: 25,
-    hoursThisWeek: 35,
-    avatar: "/staff-alex.jpg",
-  },
-  {
-    id: 4,
-    name: "Emma Wilson",
-    role: "Receptionist",
-    email: "emma@barberpro.com",
-    phone: "(555) 456-7890",
-    status: "active",
-    rating: 4.7,
-    experience: "3 years",
-    specialties: ["Customer Service", "Scheduling"],
-    hourlyRate: 18,
-    hoursThisWeek: 40,
-    avatar: "/staff-emma.jpg",
-  },
-]
-
-const payrollData = [
-  { name: "Mike Johnson", hoursWorked: 38, hourlyRate: 35, grossPay: 1330, tips: 245, total: 1575 },
-  { name: "Sarah Davis", hoursWorked: 40, hourlyRate: 42, grossPay: 1680, tips: 320, total: 2000 },
-  { name: "Alex Rodriguez", hoursWorked: 35, hourlyRate: 25, grossPay: 875, tips: 180, total: 1055 },
-  { name: "Emma Wilson", hoursWorked: 40, hourlyRate: 18, grossPay: 720, tips: 85, total: 805 },
-]
+import { useUsers } from "@/hooks/useUsers"
+import { useStylists } from "@/hooks/useStylists"
+import { createSupabaseClient } from "@/lib/supabase"
 
 export default function StaffPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStaff, setSelectedStaff] = useState<(typeof staffMembers)[0] | null>(null)
+  const [selectedStaff, setSelectedStaff] = useState<any>(null)
   const [editStaff, setEditStaff] = useState<any>(null)
   const [deleteStaff, setDeleteStaff] = useState<any>(null)
-  const [staffData, setStaffData] = useState(staffMembers)
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [staffData, setStaffData] = useState<any[]>([])
 
+  // Use the API hooks
+  const {
+    users: staffMembers,
+    loading: usersLoading,
+    error: usersError,
+    fetchUsers
+  } = useUsers()
+
+  const {
+    stylists,
+    loading: stylistsLoading,
+    error: stylistsError,
+    fetchStylists
+  } = useStylists()
+
+  // Filter for staff roles (barber, manager, admin)
+  const staffUsers = staffMembers.filter((user: any) =>
+    ['barber', 'manager', 'admin'].includes(user.role)
+  )
+
+  // Mock payroll data
+  const payrollData = [
+    { name: "John Doe", hoursWorked: 40, hourlyRate: 25, grossPay: 1000, tips: 150, total: 1150 },
+    { name: "Jane Smith", hoursWorked: 38, hourlyRate: 22, grossPay: 836, tips: 120, total: 956 },
+    { name: "Mike Johnson", hoursWorked: 35, hourlyRate: 20, grossPay: 700, tips: 95, total: 795 },
+  ]
+
+  // Fetch data on component mount
   useEffect(() => {
+    fetchUsers({ role: ['barber', 'manager', 'admin'] })
+    fetchStylists()
     fetchCurrentUser()
     fetchStaffData()
-  }, [])
+  }, [fetchUsers, fetchStylists])
 
   const fetchCurrentUser = async () => {
-    const supabase = createClient()
+    const supabase = createSupabaseClient()
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -109,7 +75,7 @@ export default function StaffPage() {
   }
 
   const fetchStaffData = async () => {
-    const supabase = createClient()
+    const supabase = createSupabaseClient()
     const { data } = await supabase
       .from("staff")
       .select(`
@@ -125,7 +91,7 @@ export default function StaffPage() {
       .eq("is_active", true)
 
     if (data) {
-      const formattedData = data.map((staff) => ({
+      const formattedData = data.map((staff: any) => ({
         id: staff.id,
         name: `${staff.profiles.first_name} ${staff.profiles.last_name}`,
         role: staff.employee_id || "Staff Member",
@@ -261,7 +227,7 @@ export default function StaffPage() {
                                   <AvatarFallback>
                                     {staff.name
                                       .split(" ")
-                                      .map((n) => n[0])
+                                      .map((n: string) => n[0])
                                       .join("")}
                                   </AvatarFallback>
                                 </Avatar>
