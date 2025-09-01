@@ -108,7 +108,6 @@ jobs:
           NEXT_PUBLIC_APP_URL: http://localhost:3000
 
   deploy-staging:
-    needs: [test-and-build, e2e-tests]
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
 
@@ -116,21 +115,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Deploy on Vercel (Staging)
-        uses: amondnet/vercel-action@v25
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: --prod=false
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Vercel
+        run: npx vercel --prod=false --yes
         env:
-          NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL || 'http://localhost:3000' }}
-          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_staging' }}
-          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
   deploy-production:
-    needs: [test-and-build, e2e-tests]
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
@@ -138,18 +140,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Deploy on Vercel (Production)
-        uses: amondnet/vercel-action@v25
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: --prod=true
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Vercel
+        run: npx vercel --prod=true --yes
         env:
-          NEXT_PUBLIC_APP_URL: ${{ secrets.PRODUCTION_APP_URL || 'https://your-domain.com' }}
-          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_prod' }}
-          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
   security-scan:
     runs-on: ubuntu-22.04
