@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrendingUp, Clock, Users, Target, Zap, Search, Filter, Star, Calendar, MapPin, BookOpen, Scissors, Brush } from '@/lib/icon-mapping'
 import { useMonitoring } from '@/hooks/useMonitoring'
-import { searchService, SearchResult } from '@/lib/search-service'
+import { SearchResult } from '@/types/search'
+import { searchService } from '@/lib/search-service'
 
 interface SearchPageProps {
   initialQuery?: string
@@ -315,7 +316,7 @@ export function SearchPage({ initialQuery = '', showStats = true }: SearchPagePr
                             <Badge variant="outline" className="text-xs">
                               {result.category}
                             </Badge>
-                            {result.tags.slice(0, 3).map(tag => (
+                            {result.tags.slice(0, 3).map((tag: string) => (
                               <Badge key={tag} variant="secondary" className="text-xs bg-amber-100 text-amber-800">
                                 {tag}
                               </Badge>

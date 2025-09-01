@@ -1,19 +1,23 @@
 // Payload CMS helper functions and utilities
 // This file provides common utilities and type-safe wrappers for Payload operations
 
-import type { 
-  ExtendedUser, 
-  ExtendedPayloadRequest, 
-  ExtendedCollectionSlug 
-} from '@/types/payload-overrides';
+// Define basic types for user and request
+interface BasicUser {
+  role?: string;
+  tenant?: { id?: string };
+}
+
+interface BasicPayloadRequest {
+  user?: BasicUser;
+}
 
 // Type-safe user role checking
 export function getUserRole(user: any): string | null {
-  return (user as ExtendedUser)?.role || null;
+  return (user as BasicUser)?.role || null;
 }
 
 export function getUserTenant(user: any): string | null {
-  return (user as ExtendedUser)?.tenant?.id || null;
+  return (user as BasicUser)?.tenant?.id || null;
 }
 
 export function isUserAdmin(user: any): boolean {
@@ -74,26 +78,26 @@ export async function deleteDocument(payload: any, collection: string, id: strin
 // Access control helpers
 export function createAccessControl() {
   return {
-    adminOnly: ({ req }: { req: ExtendedPayloadRequest }) => {
+    adminOnly: ({ req }: { req: BasicPayloadRequest }) => {
       return isUserAdmin(req.user);
     },
 
-    adminOrManager: ({ req }: { req: ExtendedPayloadRequest }) => {
+    adminOrManager: ({ req }: { req: BasicPayloadRequest }) => {
       return isUserManagerOrAdmin(req.user);
     },
 
-    adminOrOwner: ({ req }: { req: ExtendedPayloadRequest }) => {
+    adminOrOwner: ({ req }: { req: BasicPayloadRequest }) => {
       if (isUserAdmin(req.user)) return true;
       return { id: { equals: req.user?.id } };
     },
 
-    tenantFiltered: ({ req }: { req: ExtendedPayloadRequest }) => {
+    tenantFiltered: ({ req }: { req: BasicPayloadRequest }) => {
       if (isUserAdmin(req.user)) return true;
       const tenantId = getUserTenant(req.user);
       return tenantId ? { tenant: { equals: tenantId } } : false;
     },
 
-    staffOnly: ({ req }: { req: ExtendedPayloadRequest }) => {
+    staffOnly: ({ req }: { req: BasicPayloadRequest }) => {
       return isUserStaff(req.user);
     }
   };

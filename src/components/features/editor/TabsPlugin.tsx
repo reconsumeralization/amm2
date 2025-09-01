@@ -1,14 +1,14 @@
 'use client';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { INSERT_TABS_COMMAND } from 'lexical';
+import { INSERT_TAB_COMMAND, COMMAND_PRIORITY_EDITOR } from 'lexical';
 import { $createTabsNode, TabsNode } from '../../../nodes/TabsNode';
 
 export default function TabsPlugin() {
   const [editor] = useLexicalComposerContext();
 
   const onClick = (payload: any) => {
-    editor.dispatchCommand(INSERT_COMMAND, payload);
+    editor.dispatchCommand(INSERT_TAB_COMMAND, payload);
   };
 
   return (

@@ -128,7 +128,7 @@ jobs:
       - name: Build for staging
         run: npm run build
         env:
-          NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_APP_URL || 'http://localhost:3000' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL || 'http://localhost:3000' }}
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_staging' }}
 
       - name: Install Vercel CLI
@@ -164,7 +164,7 @@ jobs:
       - name: Build for production
         run: npm run build
         env:
-          NEXT_PUBLIC_APP_URL: ${{ vars.PRODUCTION_APP_URL || 'https://your-domain.com' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.PRODUCTION_APP_URL || 'https://your-domain.com' }}
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_prod' }}
 
       - name: Install Vercel CLI

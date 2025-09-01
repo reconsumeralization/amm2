@@ -6,18 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { 
-  MapPin, 
-  Clock, 
-  Star, 
-  Scissors, 
-  Award, 
-  Calendar,
-  Phone,
-  Mail,
-  Instagram,
-  Facebook
-} from 'lucide-react'
+import {
+  MapPinIcon as MapPin,
+  ClockIcon as Clock,
+  StarIcon as Star,
+  ScissorsIcon as Scissors,
+  TrophyIcon as Award,
+  CalendarIcon as Calendar,
+  PhoneIcon as Phone,
+  EnvelopeIcon as Mail,
+  CameraIcon as Camera,
+  GlobeAltIcon as Globe
+} from '@heroicons/react/24/outline'
 
 interface BarberProfileProps {
   barber: {
@@ -105,7 +105,7 @@ export function BarberProfile({
       <Card className="w-full max-w-sm">
         <CardContent className="p-4">
           <div className="flex items-center space-x-4">
-            {barber.profileImage && (
+            {barber.profileImage ? (
               <div className="relative w-16 h-16 rounded-full overflow-hidden">
                 <Image
                   src={barber.profileImage.url}
@@ -113,6 +113,12 @@ export function BarberProfile({
                   fill
                   className="object-cover"
                 />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-2xl font-semibold text-gray-600">
+                  {barber.name.charAt(0).toUpperCase()}
+                </span>
               </div>
             )}
             <div className="flex-1">
@@ -146,7 +152,7 @@ export function BarberProfile({
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-6">
-            {barber.profileImage && (
+            {barber.profileImage ? (
               <div className="relative w-48 h-48 rounded-lg overflow-hidden mx-auto md:mx-0">
                 <Image
                   src={barber.profileImage.url}
@@ -154,6 +160,12 @@ export function BarberProfile({
                   fill
                   className="object-cover"
                 />
+              </div>
+            ) : (
+              <div className="w-48 h-48 rounded-lg bg-gray-200 flex items-center justify-center mx-auto md:mx-0">
+                <span className="text-6xl font-semibold text-gray-600">
+                  {barber.name.charAt(0).toUpperCase()}
+                </span>
               </div>
             )}
             
@@ -198,7 +210,7 @@ export function BarberProfile({
                 </div>
                 {barber.socialMedia?.instagram && (
                   <div className="flex items-center space-x-1">
-                    <Instagram className="w-4 h-4" />
+                    <Camera className="w-4 h-4" />
                     <span>{barber.socialMedia.instagram}</span>
                   </div>
                 )}

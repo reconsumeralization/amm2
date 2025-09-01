@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
-import { RevenueChart } from '@/components/features/charts/RevenueChart'
-import { ServicePerformanceChart } from '@/components/features/charts/ServicePerformanceChart'
-import { EmployeeAnalyticsChart } from '@/components/features/charts/EmployeeAnalyticsChart'
+// Temporarily disabled chart components due to es-toolkit compatibility issues
+// import { RevenueChart } from '@/components/features/charts/RevenueChart'
+// import { ServicePerformanceChart } from '@/components/features/charts/ServicePerformanceChart'
+// import { EmployeeAnalyticsChart } from '@/components/features/charts/EmployeeAnalyticsChart'
 import { motion } from 'framer-motion'
 
 interface DashboardStats {
@@ -319,10 +320,25 @@ Generated on: ${new Date().toLocaleDateString()}`
               animate={{ opacity: 1, y: 0 }}
               className="space-y-8"
             >
-              <RevenueChart data={revenueData} title="Revenue Overview" />
+              <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-700">Revenue Overview</h3>
+                  <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                </div>
+              </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <ServicePerformanceChart data={serviceData} />
-                <EmployeeAnalyticsChart data={employeeData} />
+                <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-gray-700">Service Performance</h3>
+                    <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                  </div>
+                </div>
+                <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-gray-700">Employee Analytics</h3>
+                    <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -332,7 +348,12 @@ Generated on: ${new Date().toLocaleDateString()}`
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <RevenueChart data={revenueData} title="Revenue Analysis" />
+              <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-700">Revenue Analysis</h3>
+                  <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                </div>
+              </div>
             </motion.div>
           )}
 
@@ -341,7 +362,12 @@ Generated on: ${new Date().toLocaleDateString()}`
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <ServicePerformanceChart data={serviceData} />
+              <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-700">Service Performance Analysis</h3>
+                  <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                </div>
+              </div>
             </motion.div>
           )}
 
@@ -350,7 +376,12 @@ Generated on: ${new Date().toLocaleDateString()}`
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <EmployeeAnalyticsChart data={employeeData} />
+              <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-700">Employee Performance Analysis</h3>
+                  <p className="text-gray-500 text-sm">Chart temporarily disabled</p>
+                </div>
+              </div>
             </motion.div>
           )}
         </div>

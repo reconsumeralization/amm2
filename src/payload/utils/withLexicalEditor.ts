@@ -1,6 +1,6 @@
 /// src/payload/utils/withLexicalEditor.ts
 import type { CollectionConfig, Field, RichTextField, GroupField, ArrayField, BlocksField, Block, TabsField, CollapsibleField, RowField, GlobalConfig } from 'payload'
-import lexicalEditor from '@payloadcms/richtext-lexical'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 const lexical = lexicalEditor({
   features: ({ defaultFeatures }: { defaultFeatures: any[] }) => [

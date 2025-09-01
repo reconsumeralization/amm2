@@ -97,7 +97,7 @@ export function useMedia() {
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              value.forEach(v => queryParams.append(key, v.toString()))
+              value.forEach((v: any) => queryParams.append(key, v.toString()))
             } else {
               queryParams.append(key, value.toString())
             }
@@ -113,7 +113,7 @@ export function useMedia() {
       const data = await response.json()
       setMedia(data.media || data)
       return data
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch media'
       setError(errorMessage)
       throw err
@@ -135,7 +135,7 @@ export function useMedia() {
 
       const mediaItem = await response.json()
       return mediaItem
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch media item'
       setError(errorMessage)
       throw err

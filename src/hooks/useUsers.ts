@@ -135,7 +135,7 @@ export function useUsers() {
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              value.forEach(v => queryParams.append(key, v.toString()))
+              value.forEach((v: any) => queryParams.append(key, v.toString()))
             } else {
               queryParams.append(key, value.toString())
             }
@@ -232,7 +232,7 @@ export function useUsers() {
 
       const updatedUser = await response.json()
       setUsers(prev =>
-        prev.map(user =>
+        prev.map((user: User) =>
           user.id === userData.id ? updatedUser : user
         )
       )
@@ -291,7 +291,7 @@ export function useUsers() {
 
       const updatedUser = await response.json()
       setUsers(prev =>
-        prev.map(user =>
+        prev.map((user: User) =>
           user.id === id ? updatedUser : user
         )
       )

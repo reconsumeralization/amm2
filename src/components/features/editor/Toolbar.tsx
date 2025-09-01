@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { FORMAT_TEXT_COMMAND } from 'lexical';
-import { INSERT_IMAGE_COMMAND } from '@/nodes/ImageNode';
+import { FORMAT_TEXT_COMMAND, INSERT_TAB_COMMAND, COMMAND_PRIORITY_EDITOR } from 'lexical';
 
 export default function Toolbar() {
   const [editor] = useLexicalComposerContext();
@@ -40,7 +39,7 @@ export default function Toolbar() {
       
       if (result.success && result.file) {
         // Insert image into editor
-        editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+        editor.dispatchCommand(INSERT_TAB_COMMAND, {
           src: result.file.url,
           alt: result.file.alt || result.file.filename,
           width: result.file.width || 300,

@@ -56,7 +56,7 @@ class EmailService {
 
   private async getTransporter() {
     if (!this.transporter) {
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: this.config.smtp.host,
         port: this.config.smtp.port,
         secure: this.config.smtp.secure,

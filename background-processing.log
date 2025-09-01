@@ -1,0 +1,139 @@
+≡ƒÄ¿ Starting barbershop background image processing...
+
+≡ƒôü Created output directory: C:\Users\recon\Desktop\modernmen\modernmen-yolo\public\media\backgrounds
+
+≡ƒû╝∩╕Å Processing: Showroom
+   ≡ƒô¥ Description: Modern barbershop showroom with reception area
+   ≡ƒÄ» Usage: hero-sections, landing-page, about-page
+   ≡ƒôÅ Original: 1184x864 (0KB)
+   Γ£à hero (1920x1080):
+      WebP: 201KB
+      JPEG: 321KB
+      AVIF: 279KB
+   Γ£à large (1200x675):
+      WebP: 122KB
+      JPEG: 166KB
+      AVIF: 175KB
+   Γ£à medium (800x450):
+      WebP: 71KB
+      JPEG: 91KB
+      AVIF: 102KB
+   Γ£à small (400x225):
+      WebP: 25KB
+      JPEG: 30KB
+      AVIF: 36KB
+   ≡ƒî½∩╕Å Blur placeholder created
+   ≡ƒÄ¿ CSS variables generated
+
+≡ƒû╝∩╕Å Processing: Front Entrance
+   ≡ƒô¥ Description: Front entrance and exterior view of the barbershop
+   ≡ƒÄ» Usage: contact-page, location-sections, about-us
+   ≡ƒôÅ Original: 1184x864 (0KB)
+   Γ£à hero (1920x1080):
+      WebP: 146KB
+      JPEG: 267KB
+      AVIF: 196KB
+   Γ£à large (1200x675):
+      WebP: 84KB
+      JPEG: 138KB
+      AVIF: 125KB
+   Γ£à medium (800x450):
+      WebP: 54KB
+      JPEG: 77KB
+      AVIF: 79KB
+   Γ£à small (400x225):
+      WebP: 21KB
+      JPEG: 27KB
+      AVIF: 31KB
+   ≡ƒî½∩╕Å Blur placeholder created
+   ≡ƒÄ¿ CSS variables generated
+
+≡ƒû╝∩╕Å Processing: Barbers Working
+   ≡ƒô¥ Description: Barbers actively working with clients in the shop
+   ≡ƒÄ» Usage: services-page, team-sections, gallery
+   ≡ƒôÅ Original: 1184x864 (0KB)
+   Γ£à hero (1920x1080):
+      WebP: 204KB
+      JPEG: 321KB
+      AVIF: 280KB
+   Γ£à large (1200x675):
+      WebP: 118KB
+      JPEG: 163KB
+      AVIF: 173KB
+   Γ£à medium (800x450):
+      WebP: 67KB
+      JPEG: 87KB
+      AVIF: 98KB
+   Γ£à small (400x225):
+      WebP: 23KB
+      JPEG: 28KB
+      AVIF: 33KB
+   ≡ƒî½∩╕Å Blur placeholder created
+   ≡ƒÄ¿ CSS variables generated
+
+≡ƒû╝∩╕Å Processing: Back House
+   ≡ƒô¥ Description: Back area and private sections of the barbershop
+   ≡ƒÄ» Usage: staff-areas, premium-services, private-sections
+   ≡ƒôÅ Original: 1184x864 (0KB)
+   Γ£à hero (1920x1080):
+      WebP: 103KB
+      JPEG: 207KB
+      AVIF: 134KB
+   Γ£à large (1200x675):
+      WebP: 57KB
+      JPEG: 105KB
+      AVIF: 85KB
+   Γ£à medium (800x450):
+      WebP: 32KB
+      JPEG: 56KB
+      AVIF: 51KB
+   Γ£à small (400x225):
+      WebP: 13KB
+      JPEG: 19KB
+      AVIF: 18KB
+   ≡ƒî½∩╕Å Blur placeholder created
+   ≡ƒÄ¿ CSS variables generated
+
+≡ƒû╝∩╕Å Processing: Modern Men Logo
+   ≡ƒô¥ Description: Modern Men brand logo and branding elements
+   ≡ƒÄ» Usage: headers, footers, branding, overlays
+   ≡ƒôÅ Original: 1184x864 (0KB)
+   Γ£à hero (1920x1080):
+      WebP: 191KB
+      JPEG: 315KB
+      AVIF: 269KB
+   Γ£à large (1200x675):
+      WebP: 111KB
+      JPEG: 160KB
+      AVIF: 164KB
+   Γ£à medium (800x450):
+      WebP: 64KB
+      JPEG: 85KB
+      AVIF: 92KB
+   Γ£à small (400x225):
+      WebP: 23KB
+      JPEG: 28KB
+      AVIF: 31KB
+   Γ£à thumbnail (200x113):
+      WebP: 6KB
+      JPEG: 8KB
+      AVIF: 9KB
+   ≡ƒî½∩╕Å Blur placeholder created
+   ≡ƒÄ¿ CSS variables generated
+
+≡ƒÄ¿ Master CSS file generated: C:\Users\recon\Desktop\modernmen\modernmen-yolo\public\media\backgrounds\backgrounds.css
+ΓÜ¢∩╕Å React component generated: C:\Users\recon\Desktop\modernmen\modernmen-yolo\public\media\backgrounds\BackgroundImage.tsx
+
+≡ƒÄë Background processing complete!
+
+≡ƒôï Generated Files:
+   ≡ƒôü /public/media/backgrounds/ - All optimized images
+   ≡ƒÄ¿ backgrounds.css - Master CSS file with all backgrounds
+   ΓÜ¢∩╕Å BackgroundImage.tsx - React component for easy usage
+
+≡ƒÜÇ Usage Examples:
+   CSS: background-image: var(--bg-showroom-hero);
+   React: <BackgroundImage name="showroom" size="hero" />
+   Next.js: <Image src="/media/backgrounds/showroom/showroom-hero-1920x1080.webp" />
+
+Γ£à Background optimization completed successfully!

@@ -331,13 +331,13 @@ export default function ContentManager() {
                 <Input
                   placeholder="Search content..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
             <div className="flex gap-2">
-              <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+              <Select value={filters.type} onValueChange={(value: string) => setFilters(prev => ({ ...prev, type: value }))}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
@@ -350,7 +350,7 @@ export default function ContentManager() {
                 </SelectContent>
               </Select>
 
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+              <Select value={filters.status} onValueChange={(value: string) => setFilters(prev => ({ ...prev, status: value }))}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -466,7 +466,7 @@ function ContentEditor({
           <label className="block text-sm font-medium mb-2">Title</label>
           <Input
             value={editedItem.title}
-            onChange={(e) => setEditedItem(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedItem(prev => ({ ...prev, title: e.target.value }))}
           />
         </div>
         <div>
@@ -494,7 +494,7 @@ function ContentEditor({
         <label className="block text-sm font-medium mb-2">Content</label>
         <Textarea
           value={editedItem.content}
-          onChange={(e) => setEditedItem(prev => ({ ...prev, content: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditedItem(prev => ({ ...prev, content: e.target.value }))}
           rows={10}
           placeholder="Enter your content here..."
         />
@@ -521,7 +521,7 @@ function ContentEditor({
           <label className="block text-sm font-medium mb-2">Slug</label>
           <Input
             value={editedItem.slug}
-            onChange={(e) => setEditedItem(prev => ({ ...prev, slug: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedItem(prev => ({ ...prev, slug: e.target.value }))}
           />
         </div>
       </div>
@@ -530,7 +530,7 @@ function ContentEditor({
         <label className="block text-sm font-medium mb-2">Excerpt</label>
         <Textarea
           value={editedItem.excerpt || ''}
-          onChange={(e) => setEditedItem(prev => ({ ...prev, excerpt: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditedItem(prev => ({ ...prev, excerpt: e.target.value }))}
           rows={3}
           placeholder="Brief description..."
         />
@@ -540,9 +540,9 @@ function ContentEditor({
         <label className="block text-sm font-medium mb-2">Tags</label>
         <Input
           value={editedItem.tags.join(', ')}
-          onChange={(e) => setEditedItem(prev => ({
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedItem(prev => ({
             ...prev,
-            tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+            tags: e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0)
           }))}
           placeholder="Enter tags separated by commas"
         />
@@ -559,7 +559,7 @@ function ContentEditor({
             <label className="block text-sm font-medium mb-2">SEO Title</label>
             <Input
               value={editedItem.metadata.seoTitle || ''}
-              onChange={(e) => setEditedItem(prev => ({
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedItem(prev => ({
                 ...prev,
                 metadata: { ...prev.metadata, seoTitle: e.target.value }
               }))}
@@ -569,7 +569,7 @@ function ContentEditor({
             <label className="block text-sm font-medium mb-2">SEO Description</label>
             <Textarea
               value={editedItem.metadata.seoDescription || ''}
-              onChange={(e) => setEditedItem(prev => ({
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditedItem(prev => ({
                 ...prev,
                 metadata: { ...prev.metadata, seoDescription: e.target.value }
               }))}
@@ -583,7 +583,7 @@ function ContentEditor({
             <label className="block text-sm font-medium mb-2">Featured Image URL</label>
             <Input
               value={editedItem.featuredImage || ''}
-              onChange={(e) => setEditedItem(prev => ({ ...prev, featuredImage: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedItem(prev => ({ ...prev, featuredImage: e.target.value }))}
             />
           </div>
         </TabsContent>

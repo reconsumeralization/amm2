@@ -1,0 +1,582 @@
+---
+alwaysApply: true
+description: Supabase and Payload CMS integration patterns, authentication flows, data synchronization, and deployment strategies
+globs: src/**/*.ts,src/**/*.tsx,src/payload/**/*.ts,supabase/**/*.sql,scripts/**/*.sh
+---
+
+# 🔗 Supabase + Payload CMS Integration Guide
+
+This comprehensive guide covers the integration patterns between **Supabase** (PostgreSQL database + real-time features + authentication) and **Payload CMS** (headless CMS with admin interface) in the Modern Men Hair BarberShop project.
+
+## 🏗️ Architecture Overview
+
+### **Dual Database Strategy**
+```
+┌─────────────────┐    ┌─────────────────┐
+│   Payload CMS   │    │    Supabase     │
+│   (SQLite)      │    │  (PostgreSQL)   │
+│                 │    │                 │
+│ • Admin Content │    │ • User Auth     │
+│ • Page Builder  │    │ • Appointments  │
+│ • Static Data   │    │ • Real-time     │
+│ • SEO Content   │    │ • Live Updates  │
+└─────────────────┘    └─────────────────┘
+         │                       │
+         └───────── Sync ─────────┘
+```
+
+### **Data Flow Patterns**
+1. **Payload → Supabase**: Static content, page templates, SEO data
+2. **Supabase → Payload**: User data, dynamic content, real-time updates
+3. **Bidirectional**: Appointments, services, customer data
+
+## 🔐 Authentication Integration
+
+### **Dual Auth System**
+```typescript
+// src/lib/auth-integration.ts
+import { supabase } from '@/lib/supabase'
+import payload from 'payload'
+
+export class AuthIntegration {
+  // Payload user authentication
+  static async authenticateWithPayload(email: string, password: string) {
+    const result = await payload.login({
+      collection: 'users',
+      data: { email, password }
+    })
+    return result
+  }
+
+  // Supabase user authentication
+  static async authenticateWithSupabase(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+    return { data, error }
+  }
+
+  // Unified authentication
+  static async authenticateUnified(email: string, password: string) {
+    // Try Payload first (admin/staff)
+    try {
+      const payloadUser = await this.authenticateWithPayload(email, password)
+      return { user: payloadUser, source: 'payload' }
+    } catch {
+      // Fall back to Supabase (customers)
+      const { data, error } = await this.authenticateWithSupabase(email, password)
+      if (error) throw error
+      return { user: data.user, source: 'supabase' }
+    }
+  }
+}
+```
+
+### **User Synchronization**
+```typescript
+// src/lib/user-sync.ts
+export class UserSync {
+  static async syncPayloadToSupabase(payloadUser: any) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert({
+        id: payloadUser.id,
+        email: payloadUser.email,
+        full_name: payloadUser.name,
+        role: payloadUser.role,
+        created_at: payloadUser.createdAt,
+        updated_at: payloadUser.updatedAt
+      })
+    return { data, error }
+  }
+
+  static async syncSupabaseToPayload(supabaseUser: any) {
+    await payload.update({
+      collection: 'users',
+      id: supabaseUser.id,
+      data: {
+        email: supabaseUser.email,
+        name: supabaseUser.full_name,
+        role: supabaseUser.role
+      }
+    })
+  }
+}
+```
+
+## 📊 Database Schema Management
+
+### **Shared Schema Strategy**
+```sql
+-- supabase/migrations/001_initial_schema.sql
+-- Tables that sync between Payload and Supabase
+CREATE TABLE services (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  duration_minutes INTEGER NOT NULL,
+  category TEXT,
+  is_active BOOLEAN DEFAULT TRUE,
+  image_url TEXT,
+  features JSONB DEFAULT '[]',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Payload collection that mirrors Supabase
+// src/payload/collections/Services.ts
+import { CollectionConfig } from 'payload/types'
+
+const Services: CollectionConfig = {
+  slug: 'services',
+  admin: {
+    useAsTitle: 'name',
+    group: 'Commerce'
+  },
+  fields: [
+    { name: 'name', type: 'text', required: true },
+    { name: 'description', type: 'textarea' },
+    { name: 'price', type: 'number', required: true },
+    { name: 'duration', type: 'number', required: true },
+    { name: 'category', type: 'text' },
+    { name: 'isActive', type: 'checkbox', defaultValue: true },
+    { name: 'image', type: 'relationship', relationTo: 'media' },
+    { name: 'features', type: 'json' }
+  ],
+  hooks: {
+    afterChange: [syncToSupabase]
+  }
+}
+```
+
+### **Migration Strategy**
+```typescript
+// scripts/sync-databases.ts
+import { supabase } from '@/lib/supabase'
+import payload from 'payload'
+
+export class DatabaseSync {
+  static async syncServicesFromPayloadToSupabase() {
+    const payloadServices = await payload.find({
+      collection: 'services',
+      limit: 1000
+    })
+
+    for (const service of payloadServices.docs) {
+      await supabase.from('services').upsert({
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        duration_minutes: service.duration,
+        category: service.category,
+        is_active: service.isActive,
+        features: service.features
+      })
+    }
+  }
+
+  static async syncAppointmentsFromSupabaseToPayload() {
+    const { data: supabaseAppointments } = await supabase
+      .from('appointments')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+
+    for (const appointment of supabaseAppointments) {
+      await payload.update({
+        collection: 'appointments',
+        id: appointment.id,
+        data: {
+          customer: appointment.customer_id,
+          service: appointment.service_id,
+          stylist: appointment.stylist_id,
+          date: appointment.appointment_date,
+          status: appointment.status
+        }
+      })
+    }
+  }
+}
+```
+
+## 🔄 Real-time Synchronization
+
+### **Live Data Updates**
+```typescript
+// src/hooks/useRealtimeSync.ts
+import { useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { realtime } from '@/lib/supabase'
+
+export function useRealtimeSync(collection: string, callback: (payload: any) => void) {
+  useEffect(() => {
+    const channel = supabase
+      .channel(`${collection}_changes`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: collection
+        },
+        callback
+      )
+      .subscribe()
+
+    return () => {
+      channel.unsubscribe()
+    }
+  }, [collection, callback])
+}
+
+// Usage in components
+export function AppointmentsList() {
+  const [appointments, setAppointments] = useState([])
+
+  useRealtimeSync('appointments', (payload) => {
+    if (payload.eventType === 'INSERT') {
+      setAppointments(prev => [payload.new, ...prev])
+    } else if (payload.eventType === 'UPDATE') {
+      setAppointments(prev =>
+        prev.map(apt => apt.id === payload.new.id ? payload.new : apt)
+      )
+    }
+  })
+
+  return (
+    <div>
+      {appointments.map(appointment => (
+        <AppointmentCard key={appointment.id} appointment={appointment} />
+      ))}
+    </div>
+  )
+}
+```
+
+### **Payload Webhooks for Sync**
+```typescript
+// src/payload/hooks/sync-webhook.ts
+import { supabase } from '@/lib/supabase'
+
+export const syncToSupabase = async ({ doc, operation }) => {
+  if (operation === 'create' || operation === 'update') {
+    const { error } = await supabase
+      .from(doc.collection)
+      .upsert(doc)
+
+    if (error) {
+      console.error('Sync to Supabase failed:', error)
+    }
+  } else if (operation === 'delete') {
+    const { error } = await supabase
+      .from(doc.collection)
+      .delete()
+      .eq('id', doc.id)
+
+    if (error) {
+      console.error('Delete sync to Supabase failed:', error)
+    }
+  }
+
+  return doc
+}
+```
+
+## 🚀 API Integration Patterns
+
+### **Unified API Layer**
+```typescript
+// src/lib/unified-api.ts
+import { supabase } from '@/lib/supabase'
+import payload from 'payload'
+
+export class UnifiedAPI {
+  // Get services (from Supabase for real-time data)
+  static async getServices() {
+    const { data, error } = await supabase
+      .from('services')
+      .select('*')
+      .order('name')
+
+    if (error) throw error
+    return data
+  }
+
+  // Get pages (from Payload for CMS content)
+  static async getPages() {
+    return await payload.find({
+      collection: 'pages',
+      where: {
+        status: { equals: 'published' }
+      }
+    })
+  }
+
+  // Create appointment (Supabase for real-time booking)
+  static async createAppointment(appointmentData: any) {
+    const { data, error } = await supabase
+      .from('appointments')
+      .insert(appointmentData)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  }
+
+  // Get user profile (hybrid approach)
+  static async getUserProfile(userId: string, userType: 'payload' | 'supabase') {
+    if (userType === 'payload') {
+      return await payload.findByID({
+        collection: 'users',
+        id: userId
+      })
+    } else {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) throw error
+      return data
+    }
+  }
+}
+```
+
+### **API Route Patterns**
+```typescript
+// src/app/api/services/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { UnifiedAPI } from '@/lib/unified-api'
+
+export async function GET(request: NextRequest) {
+  try {
+    const services = await UnifiedAPI.getServices()
+    return NextResponse.json({ success: true, data: services })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const service = await UnifiedAPI.createService(body)
+    return NextResponse.json({ success: true, data: service }, { status: 201 })
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    )
+  }
+}
+```
+
+## 🛠️ Development Workflow
+
+### **Local Development Setup**
+```bash
+# 1. Start Payload CMS
+npm run payload:dev
+
+# 2. Start Supabase locally
+npm run supabase:start
+
+# 3. Run migrations
+npm run supabase:migrate
+
+# 4. Seed data
+npm run supabase:seed
+
+# 5. Sync databases (if needed)
+npm run sync:databases
+```
+
+### **Environment Configuration**
+```env
+# Payload CMS
+PAYLOAD_SECRET=your-payload-secret
+PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-local-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-local-service-role-key
+
+# Sync Configuration
+SYNC_ENABLED=true
+SYNC_INTERVAL=300000  # 5 minutes
+```
+
+### **Deployment Strategy**
+```typescript
+// scripts/deploy-integration.ts
+import { execSync } from 'child_process'
+
+export class DeployIntegration {
+  static async deployToVercel() {
+    // 1. Build Payload admin
+    execSync('npm run payload:build', { stdio: 'inherit' })
+
+    // 2. Deploy Supabase migrations
+    execSync('npm run supabase:deploy', { stdio: 'inherit' })
+
+    // 3. Sync data between systems
+    await this.syncDatabases()
+
+    // 4. Deploy to Vercel
+    execSync('npx vercel --prod', { stdio: 'inherit' })
+  }
+
+  static async syncDatabases() {
+    // Sync critical data before deployment
+    await DatabaseSync.syncServicesFromPayloadToSupabase()
+    await DatabaseSync.syncUsersBetweenSystems()
+  }
+}
+```
+
+## 🔧 Configuration Patterns
+
+### **Payload Configuration**
+```typescript
+// src/payload.config.ts
+import { buildConfig } from 'payload'
+import postgresAdapter from '@payloadcms/db-postgres'
+
+export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET,
+  serverURL: process.env.NEXT_PUBLIC_APP_URL,
+
+  // Use PostgreSQL adapter for Payload
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URL
+    }
+  }),
+
+  collections: [
+    // Core collections
+    Users,
+    Services,
+    Appointments,
+
+    // CMS collections
+    Pages,
+    Media,
+    Settings
+  ],
+
+  // Enable CORS for Supabase integration
+  cors: [
+    process.env.NEXT_PUBLIC_SUPABASE_URL
+  ].filter(Boolean),
+
+  // Webhooks for real-time sync
+  hooks: {
+    afterChange: [syncToSupabase]
+  }
+})
+```
+
+### **Supabase Configuration**
+```toml
+# supabase/config.toml
+project_id = "your-project-id"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+shadow_port = 54320
+
+[auth]
+enabled = true
+port = 54324
+
+[realtime]
+enabled = true
+
+# Custom RLS policies for Payload integration
+[auth.rls_policies]
+enabled = true
+```
+
+## 📋 Best Practices
+
+### **Data Consistency**
+1. **Single Source of Truth**: Decide which system owns each data type
+2. **Sync Hooks**: Use Payload hooks to sync to Supabase
+3. **Conflict Resolution**: Implement merge strategies for conflicts
+4. **Audit Trail**: Log all sync operations for debugging
+
+### **Performance Optimization**
+1. **Lazy Loading**: Load Payload content on-demand
+2. **Caching**: Cache Supabase queries appropriately
+3. **Batch Operations**: Use batch updates for bulk sync
+4. **Connection Pooling**: Configure proper connection limits
+
+### **Security Considerations**
+1. **RLS Policies**: Implement Row Level Security in Supabase
+2. **API Keys**: Use different keys for different operations
+3. **CORS**: Configure proper CORS policies
+4. **Rate Limiting**: Implement rate limiting on sync operations
+
+### **Monitoring & Debugging**
+1. **Sync Logs**: Log all sync operations with timestamps
+2. **Error Handling**: Implement retry logic for failed syncs
+3. **Health Checks**: Monitor both systems' health
+4. **Metrics**: Track sync performance and success rates
+
+## 🎯 Quick Reference
+
+### **Common Integration Patterns**
+```typescript
+// 1. Payload → Supabase sync
+const syncPayloadToSupabase = async (doc) => {
+  await supabase.from(doc.collection).upsert(doc)
+}
+
+// 2. Supabase → Payload sync
+const syncSupabaseToPayload = async (payload) => {
+  await payload.update({
+    collection: payload.table,
+    id: payload.new.id,
+    data: payload.new
+  })
+}
+
+// 3. Real-time subscriptions
+const subscription = supabase
+  .channel('realtime_updates')
+  .on('postgres_changes', { event: '*', schema: 'public' }, callback)
+  .subscribe()
+```
+
+### **Environment Variables**
+```env
+# Payload
+PAYLOAD_SECRET=secret
+PAYLOAD_PUBLIC_SERVER_URL=url
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=key
+SUPABASE_SERVICE_ROLE_KEY=key
+
+# Sync
+SYNC_ENABLED=true
+SYNC_INTERVAL=300000
+```
+
+This integration guide ensures seamless operation between Supabase and Payload CMS, providing a robust foundation for your Modern Men Hair BarberShop application! 🚀
