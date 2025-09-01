@@ -89,36 +89,22 @@ const nextConfig = {
       };
     }
 
-    // Exclude ALL problematic files from libsql packages from webpack bundling
-    config.module.rules.push({
-      test: /\.(md|txt|readme|license|LICENSE|README\.md|README)$/i,
-      include: [
-        /node_modules\/@libsql/,
-        /node_modules\/libsql/
-      ],
-      type: 'javascript/auto',
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
+    // Only exclude database-related packages from client-side bundling
+    if (!isServer) {
+      config.externals = config.externals || [];
+      // Only exclude SQLite packages when not using DATABASE_URL (development only)
+      if (!process.env.DATABASE_URL) {
+        config.externals.push({
+          '@libsql/client': '@libsql/client',
+          '@libsql/hrana-client': '@libsql/hrana-client',
+          '@libsql/core': '@libsql/core',
+          'libsql': 'libsql',
+          '@payloadcms/db-sqlite': '@payloadcms/db-sqlite'
+        });
+      }
+    }
 
-    // Exclude ALL files from libsql packages (more aggressive exclusion)
-    config.module.rules.push({
-      test: /\.(md|txt|readme|license|LICENSE|README\.md|README|json|yaml|yml)$/i,
-      include: [
-        /node_modules\/@libsql\/client/,
-        /node_modules\/@libsql\/hrana-client/,
-        /node_modules\/@libsql\/core/,
-        /node_modules\/@libsql\/isomorphic-fetch/,
-        /node_modules\/@libsql\/isomorphic-ws/,
-        /node_modules\/libsql/
-      ],
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
-
-    // Handle .node files properly for SQLite
+    // Handle .node files for database drivers
     config.module.rules.push({
       test: /\.node$/,
       include: /node_modules/,
@@ -129,36 +115,6 @@ const nextConfig = {
           outputPath: 'static/chunks/',
         },
       }],
-    });
-
-    // Fix for libsql client-side imports - use stubs instead of externals
-    if (!isServer) {
-      // Use stubs for client-side to prevent bundling issues
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@libsql/client': path.resolve(__dirname, 'src/lib/stubs/libsql-client.js'),
-        '@libsql/hrana-client': path.resolve(__dirname, 'src/lib/stubs/libsql-hrana-client.js'),
-        '@libsql/core': false,
-        'libsql': path.resolve(__dirname, 'src/lib/stubs/libsql.js'),
-        '@/payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
-        '../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
-        '../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
-        '../../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
-        '../../../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
-      };
-    }
-
-    // Exclude all libsql TypeScript definition files from webpack processing
-    config.module.rules.push({
-      test: /\.d\.ts$/,
-      include: [
-        /node_modules\/@libsql/,
-        /node_modules\/libsql/,
-        /node_modules\/@payloadcms\/db-sqlite/
-      ],
-      use: [{
-        loader: 'null-loader'
-      }]
     });
 
     // Exclude payload.config.ts from client-side bundling
@@ -174,63 +130,6 @@ const nextConfig = {
         }]
       });
     }
-
-    // Handle ESM imports from libsql packages - exclude all problematic files
-    config.module.rules.push({
-      test: /\.js$/,
-      include: [
-        /node_modules\/@libsql\/.*\/lib-esm/,
-        /node_modules\/libsql\/.*\/lib-esm/,
-        /node_modules\/@payloadcms\/db-sqlite\/.*\/lib-esm/
-      ],
-      type: 'javascript/auto',
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
-
-    // Exclude libsql core files from bundling
-    config.module.rules.push({
-      test: /\.(js|mjs|ts)$/,
-      include: /node_modules\/@libsql\/core/,
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
-
-    // Handle any remaining libsql files
-    config.module.rules.push({
-      test: /\.(js|mjs|ts)$/,
-      include: [
-        /node_modules\/@libsql\/hrana-client/,
-        /node_modules\/@libsql\/client/,
-        /node_modules\/libsql/
-      ],
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
-
-    // Ultimate catch-all for libsql packages - exclude EVERYTHING that's not JS
-    config.module.rules.push({
-      test: /.*$/,
-      include: [
-        /node_modules\/@libsql\/client\/README\.md$/,
-        /node_modules\/@libsql\/hrana-client\/README\.md$/,
-        /node_modules\/@libsql\/hrana-client\/LICENSE$/,
-        /node_modules\/@libsql\/isomorphic-fetch\/README\.md$/,
-        /node_modules\/@libsql\/isomorphic-ws\/README\.md$/,
-        /node_modules\/libsql\/.*\.md$/,
-        /node_modules\/libsql\/.*LICENSE$/,
-        /node_modules\/@libsql\/.*\/README$/,
-        /node_modules\/@libsql\/.*\/LICENSE$/,
-        /node_modules\/libsql\/.*\/README$/,
-        /node_modules\/libsql\/.*\/LICENSE$/
-      ],
-      use: [{
-        loader: 'null-loader'
-      }]
-    });
 
     // Optimize bundle size in production - simplified for faster builds
     if (!dev && !isServer) {

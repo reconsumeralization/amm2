@@ -7,39 +7,38 @@ import { buildConfig } from 'payload'
 import path from 'path'
 import { withLexicalEditor } from './payload/utils/withLexicalEditor'
 
-// Database adapter configuration - Build-time conditional loading
+// Database adapter configuration - PostgreSQL only for production
 let dbAdapter: any = null;
 
-// Use build-time conditional to avoid webpack bundling issues
-if (process.env.DATABASE_URL && typeof window === 'undefined') {
-  try {
-    // Only import PostgreSQL adapter in server-side environment with DATABASE_URL
-    const { postgresAdapter } = require('@payloadcms/db-postgres');
-    dbAdapter = postgresAdapter({
-      pool: {
-        connectionString: process.env.DATABASE_URL,
-      },
-    });
-  } catch (error) {
-    console.warn('PostgreSQL adapter not available, using fallback:', error);
+// Only load database adapter on server-side to prevent webpack bundling issues
+if (typeof window === 'undefined') {
+  if (process.env.DATABASE_URL) {
+    try {
+      // Use PostgreSQL for production
+      const { postgresAdapter } = require('@payloadcms/db-postgres');
+      dbAdapter = postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URL,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to load PostgreSQL adapter:', error);
+      throw error; // Don't fallback, let the build fail so we know there's an issue
+    }
+  } else {
+    // Development fallback - minimal SQLite setup
+    try {
+      const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+      dbAdapter = sqliteAdapter({
+        client: {
+          url: 'file:./dev.db',
+        },
+      });
+    } catch (error) {
+      console.error('Failed to load SQLite adapter:', error);
+      throw error;
+    }
   }
-}
-
-// Fallback mock adapter for builds without database or when PostgreSQL fails
-if (!dbAdapter) {
-  dbAdapter = {
-    // Mock implementation that satisfies Payload's adapter interface
-    init: async () => Promise.resolve(),
-    connect: async () => Promise.resolve(),
-    close: async () => Promise.resolve(),
-    query: async () => Promise.resolve([]),
-    transaction: async (fn: Function) => fn(),
-    migrate: async () => Promise.resolve(),
-    // Add other required methods
-    beginTransaction: async () => Promise.resolve(),
-    rollback: async () => Promise.resolve(),
-    commit: async () => Promise.resolve(),
-  };
 }
 
 export default buildConfig({
