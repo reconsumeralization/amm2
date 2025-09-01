@@ -24,21 +24,33 @@ Write-Host "   - Description: API key for Vercel AI services"
 Write-Host ""
 Write-Host "2. VERCEL_TOKEN" -ForegroundColor Green
 Write-Host "   - Get from: https://vercel.com/account/tokens"
-Write-Host "   - Description: Vercel CLI token for deployments"
+Write-Host "   - Description: Vercel token for deployments and API access"
 Write-Host ""
-Write-Host "3. STAGING_DATABASE_URL" -ForegroundColor Green
+Write-Host "3. VERCEL_ORG_ID" -ForegroundColor Green
+Write-Host "   - Get from: https://vercel.com/dashboard → Settings → General → Team ID"
+Write-Host "   - Description: Your Vercel organization/team ID"
+Write-Host ""
+Write-Host "4. VERCEL_PROJECT_ID" -ForegroundColor Green
+Write-Host "   - Get from: https://vercel.com/dashboard → Your Project → Settings → General"
+Write-Host "   - Description: Your Vercel project ID (not the project name)"
+Write-Host ""
+Write-Host "5. VERCEL_TEAM_ID (Optional)" -ForegroundColor Green
+Write-Host "   - Same as VERCEL_ORG_ID if using team features"
+Write-Host "   - Description: Team ID if deploying to a team account"
+Write-Host ""
+Write-Host "6. STAGING_DATABASE_URL" -ForegroundColor Green
 Write-Host "   - Your staging database connection string"
 Write-Host "   - Description: Database URL for staging environment"
 Write-Host ""
-Write-Host "4. PRODUCTION_DATABASE_URL" -ForegroundColor Green
+Write-Host "7. PRODUCTION_DATABASE_URL" -ForegroundColor Green
 Write-Host "   - Your production database connection string"
 Write-Host "   - Description: Database URL for production environment"
 Write-Host ""
-Write-Host "5. STAGING_APP_URL" -ForegroundColor Green
+Write-Host "8. STAGING_APP_URL" -ForegroundColor Green
 Write-Host "   - Your Vercel staging domain (e.g., https://your-project-staging.vercel.app)"
 Write-Host "   - Description: App URL for staging environment"
 Write-Host ""
-Write-Host "6. PRODUCTION_APP_URL" -ForegroundColor Green
+Write-Host "9. PRODUCTION_APP_URL" -ForegroundColor Green
 Write-Host "   - Your Vercel production domain (e.g., https://your-project.vercel.app)"
 Write-Host "   - Description: App URL for production environment"
 Write-Host ""
@@ -64,6 +76,27 @@ if ($Interactive) {
             if ($vercelToken) {
                 $vercelToken | gh secret set VERCEL_TOKEN
                 Write-Host "✅ VERCEL_TOKEN set" -ForegroundColor Green
+            }
+
+            # VERCEL_ORG_ID
+            $vercelOrgId = Read-Host "Enter your Vercel Organization ID"
+            if ($vercelOrgId) {
+                $vercelOrgId | gh secret set VERCEL_ORG_ID
+                Write-Host "✅ VERCEL_ORG_ID set" -ForegroundColor Green
+            }
+
+            # VERCEL_PROJECT_ID
+            $vercelProjectId = Read-Host "Enter your Vercel Project ID"
+            if ($vercelProjectId) {
+                $vercelProjectId | gh secret set VERCEL_PROJECT_ID
+                Write-Host "✅ VERCEL_PROJECT_ID set" -ForegroundColor Green
+            }
+
+            # VERCEL_TEAM_ID (Optional)
+            $vercelTeamId = Read-Host "Enter your Vercel Team ID (optional, press Enter to skip)"
+            if ($vercelTeamId) {
+                $vercelTeamId | gh secret set VERCEL_TEAM_ID
+                Write-Host "✅ VERCEL_TEAM_ID set" -ForegroundColor Green
             }
 
             # Database URLs

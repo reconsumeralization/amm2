@@ -116,32 +116,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Deploy on Vercel (Staging)
+        uses: UnlyEd/github-action-deploy-on-vercel@v1.2.7
         with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for staging
-        run: npm run build
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
+          production: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          working_directory: ./
+          build_script: npm run build
+          vercel_args: --prod=false
         env:
           NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL || 'http://localhost:3000' }}
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_staging' }}
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Vercel Environment Information (Staging)
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts (Staging)
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (Staging)
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
   deploy-production:
     needs: [test-and-build, e2e-tests]
@@ -152,32 +142,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Deploy on Vercel (Production)
+        uses: UnlyEd/github-action-deploy-on-vercel@v1.2.7
         with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for production
-        run: npm run build
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
+          production: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          working_directory: ./
+          build_script: npm run build
+          vercel_args: --prod=true
         env:
           NEXT_PUBLIC_APP_URL: ${{ secrets.PRODUCTION_APP_URL || 'https://your-domain.com' }}
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_prod' }}
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Vercel Environment Information (Production)
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts (Production)
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (Production)
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
   security-scan:
     runs-on: ubuntu-22.04

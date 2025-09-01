@@ -45,8 +45,11 @@ Add these secrets to your GitHub repository:
 # Vercel AI API Key (get from Vercel dashboard)
 VERCEL_AI_API_KEY=your_vercel_ai_api_key_here
 
-# Vercel Deployment Token (for CLI deployments)
+# Vercel Deployment (using UnlyEd/github-action-deploy-on-vercel)
 VERCEL_TOKEN=your_vercel_token_here
+VERCEL_ORG_ID=your_vercel_org_id_here
+VERCEL_PROJECT_ID=your_vercel_project_id_here
+VERCEL_TEAM_ID=your_vercel_team_id_here  # Optional
 
 # Database URLs for different environments
 STAGING_DATABASE_URL=your_staging_db_url
@@ -55,6 +58,9 @@ PRODUCTION_DATABASE_URL=your_production_db_url
 # App URLs
 STAGING_APP_URL=https://your-project-staging.vercel.app
 PRODUCTION_APP_URL=https://your-project.vercel.app
+
+# Payload CMS
+PAYLOAD_SECRET=your_payload_secret_here
 ```
 
 #### How to Get Vercel AI API Key
@@ -67,6 +73,17 @@ PRODUCTION_APP_URL=https://your-project.vercel.app
 1. Go to [Vercel Account Settings](https://vercel.com/account/tokens)
 2. Generate a new token with appropriate permissions
 3. Copy the token value
+
+#### How to Get Vercel Organization and Project IDs
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. For **Organization ID**:
+   - Click on your profile picture (top right)
+   - Go to "Settings" → "General"
+   - Copy the "Team ID" value
+3. For **Project ID**:
+   - Select your project from the dashboard
+   - Go to "Settings" → "General"
+   - Copy the "Project ID" value (not the project name)
 
 ### 2. Environment Variables
 
