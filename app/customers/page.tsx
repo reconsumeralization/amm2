@@ -15,12 +15,12 @@ import { AddCustomerDialog } from "@/components/add-customer-dialog"
 import { CustomerFilters } from "@/components/customer-filters"
 import { CustomerProfile } from "@/components/customer-profile"
 import { useCustomers } from "@/hooks/useCustomers"
-import type { Customer } from "@/hooks/useCustomers"
+import type { SimpleCustomer } from "@/hooks"
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedCustomer, setSelectedCustomer] = useState<git add  | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
   // Use the customers API hook
   const {
@@ -167,7 +167,7 @@ export default function CustomersPage() {
                   <Star className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0)}</div>
+                  <div className="text-2xl font-bold">{customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0)}</div>
                   <p className="text-xs text-green-600">Total points issued</p>
                 </CardContent>
               </Card>
@@ -219,7 +219,7 @@ export default function CustomersPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredCustomers.map((customer: Customer) => {
+                        {filteredCustomers.map((customer: SimpleCustomer) => {
                           const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
                           const avatarInitials = customerName
                             .split(" ")
@@ -291,8 +291,8 @@ export default function CustomersPage() {
               <TabsContent value="vip" className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {customers
-                    .filter((c: Customer) => c.status === "vip")
-                    .map((customer: Customer) => {
+                    .filter((c: SimpleCustomer) => c.status === "vip")
+                    .map((customer: SimpleCustomer) => {
                       const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
                       const avatarInitials = customerName
                         .split(" ")
@@ -369,7 +369,7 @@ export default function CustomersPage() {
                           <div className="text-center">
                             <Star className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
                                                       <div className="text-2xl font-bold">
-                            {customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0)}
+                            {customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0)}
                           </div>
                             <p className="text-sm text-muted-foreground">Total Points Issued</p>
                           </div>
@@ -391,7 +391,7 @@ export default function CustomersPage() {
                           <div className="text-center">
                             <TrendingUp className="h-8 w-8 mx-auto text-green-500 mb-2" />
                             <div className="text-2xl font-bold">
-                              {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0) / totalCustomers) : 0}
+                              {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.loyaltyPoints || 0), 0) / totalCustomers) : 0}
                             </div>
                             <p className="text-sm text-muted-foreground">Avg Points per Customer</p>
                           </div>
@@ -418,7 +418,7 @@ export default function CustomersPage() {
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Average Visits per Customer:</span>
                           <span className="font-medium">
-                            {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.totalVisits || 0), 0) / totalCustomers) : 0}
+                            {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: SimpleCustomer) => sum + (c.totalVisits || 0), 0) / totalCustomers) : 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -441,9 +441,9 @@ export default function CustomersPage() {
                     <CardContent>
                       <div className="space-y-3">
                         {customers
-                          .sort((a: Customer, b: Customer) => (b.totalSpent || 0) - (a.totalSpent || 0))
+                          .sort((a: SimpleCustomer, b: SimpleCustomer) => (b.totalSpent || 0) - (a.totalSpent || 0))
                           .slice(0, 5)
-                          .map((customer: Customer, index: number) => {
+                          .map((customer: SimpleCustomer, index: number) => {
                             const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
                             const avatarInitials = customerName
                               .split(" ")

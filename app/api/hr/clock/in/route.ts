@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import payload from '@/lib/payload'
 
 export async function POST(request: NextRequest) {
@@ -6,10 +7,25 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { location } = body
 
-    // Get current user from session
-    const user = request.user // This would come from your auth middleware
+    // Get current user from Supabase auth
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll() {
+            // No-op for API routes
+          },
+        },
+      }
+    )
 
-    if (!user) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

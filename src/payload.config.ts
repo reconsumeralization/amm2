@@ -2,24 +2,41 @@ import { buildConfig } from 'payload'
 import path from 'path'
 import { withLexicalEditor } from './payload/utils/withLexicalEditor'
 
-// Conditionally import database adapters to avoid client-side build issues
+// Database adapter configuration for Vercel compatibility
 let dbAdapter;
+
 if (typeof window === 'undefined') {
-  try {
-    const { postgresAdapter } = require('@payloadcms/db-postgres');
-    dbAdapter = postgresAdapter({
-      pool: {
-        connectionString: process.env.DATABASE_URL,
-      },
-    });
-  } catch (error) {
-    // Fallback for development
-    const { sqliteAdapter } = require('@payloadcms/db-sqlite');
-    dbAdapter = sqliteAdapter({
-      client: {
-        url: 'file:./dev.db',
-      },
-    });
+  // Use PostgreSQL in production (Vercel), SQLite for development
+  if (process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+    try {
+      const { postgresAdapter } = require('@payloadcms/db-postgres');
+      dbAdapter = postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URL,
+        },
+      });
+    } catch (error) {
+      console.warn('PostgreSQL adapter not available, falling back to SQLite:', error);
+      const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+      dbAdapter = sqliteAdapter({
+        client: {
+          url: 'file:./dev.db',
+        },
+      });
+    }
+  } else {
+    // Development fallback to SQLite
+    try {
+      const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+      dbAdapter = sqliteAdapter({
+        client: {
+          url: 'file:./dev.db',
+        },
+      });
+    } catch (error) {
+      console.error('SQLite adapter not available:', error);
+      dbAdapter = null;
+    }
   }
 }
 
