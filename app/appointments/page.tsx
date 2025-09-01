@@ -340,7 +340,35 @@ export default function AppointmentsPage() {
               </TabsContent>
 
               <TabsContent value="calendar" className="space-y-4">
-                <AppointmentCalendar appointments={appointments} />
+                <AppointmentCalendar
+                  appointments={appointments.map((apt: any) => ({
+                    id: apt.id,
+                    customer: apt.customer || {
+                      id: typeof apt.user === 'object' ? apt.user.id : String(apt.user || ''),
+                      name: typeof apt.user === 'object' ? (apt.user.name || `${apt.user.firstName || ''} ${apt.user.lastName || ''}`.trim()) : String(apt.user || ''),
+                      email: typeof apt.user === 'object' ? (apt.user.email || '') : '',
+                      phone: typeof apt.user === 'object' ? (apt.user.phone || '') : ''
+                    },
+                    service: apt.service && typeof apt.service === 'object' ? {
+                      id: apt.service.id || '',
+                      name: apt.service.name || '',
+                      duration: apt.service.duration || apt.duration || 0,
+                      price: apt.service.price || apt.price || 0,
+                    } : { id: '', name: String(apt.service || ''), duration: apt.duration || 0, price: apt.price || 0 },
+                    stylist: apt.stylist && typeof apt.stylist === 'object' ? {
+                      id: apt.stylist.id || '',
+                      name: apt.stylist.name || `${apt.stylist.firstName || ''} ${apt.stylist.lastName || ''}`.trim(),
+                    } : { id: '', name: String(apt.stylist || apt.barber || '') },
+                    date: new Date(apt.date).toISOString().split('T')[0],
+                    time: apt.time || new Date(apt.date).toLocaleTimeString(),
+                    duration: apt.duration || (apt.service && typeof apt.service === 'object' ? (apt.service.duration || 0) : 0),
+                    price: apt.price || (apt.service && typeof apt.service === 'object' ? (apt.service.price || 0) : 0),
+                    status: (apt.status || 'pending'),
+                    notes: apt.notes,
+                    createdAt: apt.createdAt || apt.created_at || new Date(apt.date).toISOString(),
+                    updatedAt: apt.updatedAt || apt.updated_at || new Date(apt.date).toISOString(),
+                  }))}
+                />
               </TabsContent>
 
               <TabsContent value="today" className="space-y-4">

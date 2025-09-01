@@ -162,7 +162,117 @@ export function useAppointments() {
       }
 
       const data = await response.json()
-      setAppointments(data.appointments || data)
+
+      // Normalize API response into a consistent Appointment shape for the UI
+      const rawAppointments: any[] = (data && (data.appointments || data)) || []
+      const normalized = rawAppointments.map((item: any) => {
+        const appointmentDate: string | undefined = item.appointment_date || item.date
+        const dateObj = appointmentDate ? new Date(appointmentDate) : null
+
+        // Customer/user
+        const customerProfile = item?.customer?.profiles || item?.customer || item?.user || {}
+        const customerFirst = customerProfile.first_name || customerProfile.firstName || ''
+        const customerLast = customerProfile.last_name || customerProfile.lastName || ''
+        const customerEmail = customerProfile.email || ''
+        const customerPhone = customerProfile.phone || ''
+
+        // Barber/stylist
+        const barberProfile = item?.barber?.profiles || item?.barber || item?.stylist || {}
+        const barberFirst = barberProfile.first_name || barberProfile.firstName || ''
+        const barberLast = barberProfile.last_name || barberProfile.lastName || ''
+
+        // Service
+        const service = item?.service || {}
+        const serviceName = service.name || item?.service_name || ''
+        const serviceDuration = service.duration_minutes || service.duration || item?.duration || undefined
+        const servicePrice = service.price ?? item?.price ?? undefined
+
+        // Status mapping fallback
+        const rawStatus: string = item.status || item.appointment_status || 'pending'
+        const statusMap: Record<string, string> = {
+          scheduled: 'pending',
+          'in-progress': 'pending',
+          confirmed: 'confirmed',
+          completed: 'completed',
+          cancelled: 'cancelled',
+          'no-show': 'cancelled',
+        }
+        const status = (statusMap[rawStatus] || rawStatus) as Appointment['status']
+
+        const timeStr = dateObj ? dateObj.toLocaleTimeString() : undefined
+        const isoDate = dateObj ? dateObj.toISOString() : (appointmentDate || '')
+
+        const firstName = customerFirst
+        const lastName = customerLast
+        const stylistFirstName = barberFirst
+        const stylistLastName = barberLast
+
+        return {
+          id: String(item.id ?? ''),
+          title: item.title || serviceName || 'Appointment',
+          // Keep original user type from this hook's interface
+          user: {
+            id: String(customerProfile.id ?? item.customer_id ?? item.user_id ?? ''),
+            name: [firstName, lastName].filter(Boolean).join(' ').trim(),
+            // Add fields expected by the Appointments page
+            firstName,
+            lastName,
+            email: customerEmail,
+            phone: customerPhone,
+          },
+          // Add customer object for calendar component compatibility
+          // @ts-ignore - extra field for UI convenience
+          customer: {
+            id: String(customerProfile.id ?? item.customer_id ?? item.user_id ?? ''),
+            name: [firstName, lastName].filter(Boolean).join(' ').trim(),
+            email: customerEmail,
+            phone: customerPhone,
+          },
+          tenant: item.tenant || item.tenant_id || '',
+          date: isoDate,
+          service: {
+            id: String(service.id ?? item.service_id ?? ''),
+            name: serviceName,
+            category: service.category || '',
+            price: typeof servicePrice === 'number' ? servicePrice : Number(servicePrice) || 0,
+            duration: typeof serviceDuration === 'number' ? serviceDuration : Number(serviceDuration) || 0,
+          },
+          stylist: {
+            id: String(barberProfile.id ?? item.barber_id ?? item.stylist_id ?? ''),
+            name: [stylistFirstName, stylistLastName].filter(Boolean).join(' ').trim(),
+            // Add fields expected by the Appointments page
+            firstName: stylistFirstName,
+            lastName: stylistLastName,
+            specializations: barberProfile.specializations || [],
+          },
+          status,
+          paymentStatus: (item.payment_status || 'unpaid') as Appointment['paymentStatus'],
+          notes: item.notes || undefined,
+          internalNotes: item.internalNotes || undefined,
+          duration: typeof item.duration === 'number' ? item.duration : (typeof serviceDuration === 'number' ? serviceDuration : undefined),
+          price: typeof item.price === 'number' ? item.price : (typeof servicePrice === 'number' ? servicePrice : undefined),
+          tips: item.tips || undefined,
+          totalAmount: item.totalAmount || undefined,
+          remindersSent: item.remindersSent || false,
+          checkInTime: item.checkInTime || undefined,
+          checkOutTime: item.checkOutTime || undefined,
+          customerRating: item.customerRating || undefined,
+          customerFeedback: item.customerFeedback || undefined,
+          stylistNotes: item.stylistNotes || undefined,
+          createdAt: item.created_at || item.createdAt || isoDate,
+          updatedAt: item.updated_at || item.updatedAt || isoDate,
+          // Extras to help UI components without enforcing types
+          // These will be ignored by TS but available at runtime
+          // @ts-ignore
+          time: timeStr,
+          // @ts-ignore
+          customer: [firstName, lastName].filter(Boolean).join(' ').trim(),
+          // @ts-ignore
+          barber: [barberFirst, barberLast].filter(Boolean).join(' ').trim(),
+        } as Appointment as unknown as any
+      })
+
+      setAppointments(normalized)
       return data
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch appointments'
