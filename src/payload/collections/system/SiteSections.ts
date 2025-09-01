@@ -1,7 +1,8 @@
 // src/payload/collections/SiteSections.ts
 import type { CollectionConfig } from 'payload'
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor'
 
-const SiteSections: CollectionConfig = {
+const SiteSections: CollectionConfig = withLexicalEditor({
   slug: 'site-sections',
   labels: {
     singular: 'Site Section',
@@ -176,6 +177,6 @@ const SiteSections: CollectionConfig = {
       },
     },
   ],
-}
+})
 
 export { SiteSections }

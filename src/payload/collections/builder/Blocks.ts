@@ -1,8 +1,9 @@
 // src/payload/collections/BuilderBlocks.ts
 import type { CollectionConfig } from 'payload';
 import { withDefaultHooks } from '../../utils';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const Blocks: CollectionConfig = withDefaultHooks({
+export const Blocks: CollectionConfig = withLexicalEditor(withDefaultHooks({
   slug: 'builder-blocks',
   admin: {
     useAsTitle: 'name',
@@ -375,4 +376,4 @@ export const Blocks: CollectionConfig = withDefaultHooks({
     ],
   },
   timestamps: true,
-});
+}));

@@ -1,8 +1,9 @@
 // src/payload/collections/BuilderReusableComponents.ts
 import type { CollectionConfig } from 'payload';
 import { withDefaultHooks } from '../../utils';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const ReusableComponents: CollectionConfig = withDefaultHooks({
+export const ReusableComponents: CollectionConfig = withLexicalEditor(withDefaultHooks({
   slug: 'builder-reusable-components',
   admin: {
     useAsTitle: 'name',
@@ -454,4 +455,4 @@ export const ReusableComponents: CollectionConfig = withDefaultHooks({
     ],
   },
   timestamps: true,
-});
+}));

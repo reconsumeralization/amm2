@@ -1,0 +1,297 @@
+{
+  "timestamp": "2025-09-01T00:18:34.294Z",
+  "results": [
+    {
+      "url": "/",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/about",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/services",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/products",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/team",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/gallery",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/contact",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/book",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/gift-cards",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/faq",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/testimonials",
+      "status": 200,
+      "title": "Testimonials - Modern Men barber",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/blog",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/careers",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/auth/signin",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/auth/signup",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/auth/forgot-password",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/dashboard",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/users",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/content",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/barbers",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/editor",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/admin/settings",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/crm",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/crm/dashboard",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/crm/customers",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/portal",
+      "status": 200,
+      "title": "Client Portal - ModernMen BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/portal/login",
+      "status": 200,
+      "title": "Client Portal - ModernMen BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/portal/profile",
+      "status": 200,
+      "title": "Client Portal - ModernMen BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/editor",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/image-editor",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/text-editor",
+      "status": 200,
+      "title": "Text Editor - Modern Men BarberShop",
+      "hasContent": true,
+      "hasErrors": true,
+      "success": false
+    },
+    {
+      "url": "/demo",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/search",
+      "status": 200,
+      "title": "Search - {{companyName}} BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/offline",
+      "status": 200,
+      "title": "ModernMen Hair BarberShop",
+      "hasContent": true,
+      "hasErrors": false,
+      "success": true
+    },
+    {
+      "url": "/preview",
+      "status": "TIMEOUT",
+      "error": "timeout of 10000ms exceeded",
+      "success": false
+    }
+  ],
+  "summary": {
+    "total": 36,
+    "successful": 26,
+    "failed": 10,
+    "successRate": "72.2%"
+  }
+}

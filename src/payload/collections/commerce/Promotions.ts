@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const Promotions: CollectionConfig = {
+export const Promotions: CollectionConfig = withLexicalEditor({
   slug: 'promotions',
   labels: {
     singular: 'Promotion',
@@ -289,4 +290,4 @@ export const Promotions: CollectionConfig = {
       },
     },
   ],
-};
+});

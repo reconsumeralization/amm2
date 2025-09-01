@@ -1,0 +1,97 @@
+# SELinux policy for Modern Men Hair BarberShop container
+# This policy provides strict confinement for the application container
+
+policy_module(modernmen_app, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+type modernmen_app_t;
+type modernmen_app_exec_t;
+domain_type(modernmen_app_t)
+domain_entry_file(modernmen_app_t, modernmen_app_exec_t)
+
+type modernmen_app_log_t;
+logging_log_file(modernmen_app_log_t)
+
+type modernmen_app_tmp_t;
+tmpfile_type(modernmen_app_tmp_t)
+
+########################################
+#
+# modernmen_app local policy
+#
+
+allow modernmen_app_t self:fifo_file rw_fifo_file_perms;
+allow modernmen_app_t self:unix_stream_socket create_stream_socket_perms;
+allow modernmen_app_t self:tcp_socket create_stream_socket_perms;
+allow modernmen_app_t self:udp_socket create_socket_perms;
+
+# Allow network access
+corenet_tcp_sendrecv_all_if(modernmen_app_t)
+corenet_tcp_sendrecv_all_packets(modernmen_app_t)
+corenet_tcp_sendrecv_all_ports(modernmen_app_t)
+corenet_tcp_bind_all_ports(modernmen_app_t)
+
+# Allow DNS
+corenet_tcp_sendrecv_generic_if(modernmen_app_t)
+corenet_tcp_sendrecv_generic_node(modernmen_app_t)
+corenet_udp_sendrecv_generic_if(modernmen_app_t)
+corenet_udp_sendrecv_generic_node(modernmen_app_t)
+
+# Allow reading system information
+kernel_read_system_state(modernmen_app_t)
+kernel_read_network_state(modernmen_app_t)
+
+# Allow application file access
+files_read_etc_files(modernmen_app_t)
+files_read_usr_files(modernmen_app_t)
+
+# Allow temporary file access
+manage_files_pattern(modernmen_app_t, modernmen_app_tmp_t, modernmen_app_tmp_t)
+manage_dirs_pattern(modernmen_app_t, modernmen_app_tmp_t, modernmen_app_tmp_t)
+manage_lnk_files_pattern(modernmen_app_t, modernmen_app_tmp_t, modernmen_app_tmp_t)
+files_tmp_filetrans(modernmen_app_t, modernmen_app_tmp_t, { file dir lnk_file })
+
+# Allow logging
+manage_files_pattern(modernmen_app_t, modernmen_app_log_t, modernmen_app_log_t)
+manage_dirs_pattern(modernmen_app_t, modernmen_app_log_t, modernmen_app_log_t)
+logging_log_filetrans(modernmen_app_t, modernmen_app_log_t, { file dir })
+
+# Allow executing Node.js
+corecmd_exec_bin(modernmen_app_t)
+corecmd_exec_shell(modernmen_app_t)
+
+# Allow access to application directory
+files_manage_generic_files(modernmen_app_t)
+files_manage_generic_dirs(modernmen_app_t)
+
+# Database access (SQLite)
+files_manage_generic_db_files(modernmen_app_t)
+
+# Restrict dangerous operations
+# deny modernmen_app_t self:capability { sys_admin sys_ptrace sys_module dac_override };
+# deny modernmen_app_t self:capability chown;
+# deny modernmen_app_t self:capability fsetid;
+# deny modernmen_app_t self:capability kill;
+# deny modernmen_app_t self:capability setgid;
+# deny modernmen_app_t self:capability setuid;
+# deny modernmen_app_t self:capability sys_chroot;
+# deny modernmen_app_t self:capability sys_resource;
+# deny modernmen_app_t self:capability sys_time;
+
+# Allow basic capabilities needed for the application
+allow modernmen_app_t self:capability net_bind_service;
+allow modernmen_app_t self:capability net_raw;
+
+########################################
+#
+# modernmen_app_admin local policy
+#
+
+# Allow administration of modernmen_app_t domain
+allow modernmen_app_admin_t modernmen_app_t:process { ptrace signal_perms };
+allow modernmen_app_admin_t modernmen_app_log_t:file manage_file_perms;
+allow modernmen_app_admin_t modernmen_app_tmp_t:file manage_file_perms;

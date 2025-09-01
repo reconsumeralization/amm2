@@ -1,0 +1,67 @@
+---
+inclusion: always
+---
+# Modern Men barber Project Guidelines
+
+## Project Overview
+This is a Next.js application for a men's hair barber management system with Payload CMS integration.
+
+## Architecture
+- **Frontend**: Next.js 15.5.2 with App Router
+- **CMS**: Payload CMS with SQLite database
+- **Styling**: Tailwind CSS with custom blue/indigo theme
+- **Icons**: Custom icon mapping system to avoid lucide-react issues
+- **Rich Text**: Lexical editor integration
+
+## Key Files and Directories
+- `src/app/` - Next.js pages and API routes
+- `src/collections/` - Payload CMS collections
+- `src/components/` - Reusable React components
+- `src/lib/` - Utility functions and configurations
+- `src/lib/icon-mapping.ts` - Custom icon mapping system
+
+## Frontend Pages Created
+- `/services` - barber services and pricing
+- `/team` - Staff profiles and information
+- `/gallery` - Before/after photos and work showcase
+- `/about` - barber story and mission
+- `/contact` - Contact information and form
+- `/testimonials` - Customer reviews and feedback
+- `/book` - Appointment booking with chatbot
+- `/editor` - Rich text editor demo
+
+## Chatbot Integration
+- Booking chatbot component for appointment scheduling
+- Integrates with Payload CMS appointments collection
+- Uses conversational flow for service selection and booking
+
+## Styling Guidelines
+- Use the blue/indigo gradient theme consistently
+- Follow the established card and button patterns
+- Include proper responsive design for mobile
+- Use Tailwind CSS utilities for styling
+
+## SEO and Metadata
+- Include proper metadata for all pages
+- Use descriptive titles and keywords
+- Optimize for local search (Regina, SK)
+
+## Database Collections
+- Users - Staff and admin accounts
+- Services - Available barber services
+- Customers - Client information
+- Appointments - Booking records
+- Stylists - Staff profiles
+- Media - Image and file uploads
+- BusinessDocumentation - Content management
+
+## Development Workflow
+- Use pnpm for package management
+- Follow TypeScript best practices
+- Test builds before deployment
+- Use the custom icon mapping system
+- Maintain consistent code formatting
+description:
+globs:
+alwaysApply: true
+---

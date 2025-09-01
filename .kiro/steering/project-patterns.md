@@ -1,0 +1,685 @@
+---
+inclusion: always
+---
+
+# Project Patterns & Conventions
+
+This comprehensive guide covers the development patterns, conventions, and best practices for the Modern Men Hair BarberShop project:
+
+## 🏗️ Architecture Overview
+
+### **Technology Stack:**
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Backend**: PayloadCMS 3.0 (MongoDB)
+- **Authentication**: NextAuth.js
+- **Database**: MongoDB with Mongoose
+- **Deployment**: Vercel
+- **Testing**: Jest, React Testing Library, Playwright
+
+### **Project Structure:**
+```
+├── src/
+│   ├── app/           # Next.js App Router
+│   ├── components/    # React components
+│   ├── lib/           # Utilities & shared logic
+│   ├── hooks/         # Custom React hooks
+│   ├── types/         # TypeScript definitions
+│   ├── payload/       # CMS configuration
+│   └── utils/         # Helper functions
+├── docs/              # Documentation
+├── scripts/           # Build & deployment scripts
+└── public/            # Static assets
+```
+
+## 📋 Development Conventions
+
+### **Code Style:**
+```typescript
+// ✅ Good: Consistent formatting
+interface User {
+  id: string
+  name: string
+  email: string
+  role: UserRole
+}
+
+function createUser(data: CreateUserInput): Promise<User> {
+  // Implementation
+}
+
+// ❌ Bad: Inconsistent formatting
+interface User{id:string;name:string;email:string;role:UserRole}
+function createUser(data:CreateUserInput):Promise<User>{/* code */}
+```
+
+### **Naming Conventions:**
+```typescript
+// Components: PascalCase
+function UserProfile() { /* ... */ }
+
+// Hooks: camelCase with 'use' prefix
+function useUserProfile() { /* ... */ }
+
+// Files: kebab-case
+// user-profile.tsx, use-auth.ts
+
+// Types: PascalCase
+interface UserProfile { /* ... */ }
+type UserRole = 'admin' | 'user' | 'guest'
+
+// Constants: UPPER_SNAKE_CASE
+const MAX_RETRY_ATTEMPTS = 3
+const API_BASE_URL = '/api'
+```
+
+### **Import Organization:**
+```typescript
+// 1. React imports
+import React, { useState, useEffect } from 'react'
+
+// 2. Third-party libraries
+import { useRouter } from 'next/navigation'
+import { format } from 'date-fns'
+
+// 3. Internal modules (@ alias)
+import { Button } from '@/components/ui/button'
+import { api } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
+
+// 4. Relative imports (avoid when possible)
+import { utils } from '../utils'
+import type { User } from './types'
+```
+
+## 🔧 Core Patterns
+
+### **Component Patterns:**
+```typescript
+// Function component with TypeScript
+interface ComponentProps {
+  title: string
+  onAction?: () => void
+  variant?: 'primary' | 'secondary'
+  children: React.ReactNode
+}
+
+export function Component({
+  title,
+  onAction,
+  variant = 'primary',
+  children
+}: ComponentProps) {
+  return (
+    <div className="component-wrapper">
+      <h2>{title}</h2>
+      {children}
+    </div>
+  )
+}
+
+// Component with forwardRef
+const ComponentWithRef = forwardRef<HTMLDivElement, ComponentProps>(
+  ({ children, ...props }, ref) => (
+    <div ref={ref} {...props}>
+      {children}
+    </div>
+  )
+)
+
+ComponentWithRef.displayName = 'ComponentWithRef'
+```
+
+### **Custom Hook Patterns:**
+```typescript
+// Basic hook
+function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue)
+
+  const increment = useCallback(() => {
+    setCount(c => c + 1)
+  }, [])
+
+  const decrement = useCallback(() => {
+    setCount(c => c - 1)
+  }, [])
+
+  return { count, increment, decrement }
+}
+
+// Async hook with loading states
+function useApiData(endpoint: string) {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await api.get(endpoint)
+      setData(response.data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [endpoint])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  return { data, loading, error, refetch: fetchData }
+}
+```
+
+### **API Route Patterns:**
+```typescript
+// GET route with error handling
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return createErrorResponse('ID is required', 'VALIDATION_ERROR', 400)
+    }
+
+    const data = await getDataById(id)
+    return createSuccessResponse(data, 'Data retrieved successfully')
+  } catch (error) {
+    console.error('GET /api/data error:', error)
+    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500)
+  }
+}
+
+// POST route with validation
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validatedData = createDataSchema.parse(body)
+
+    const newData = await createData(validatedData)
+    return createSuccessResponse(newData, 'Data created successfully', 201)
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return createErrorResponse('Validation failed', 'VALIDATION_ERROR', 400, {
+        errors: error.errors
+      })
+    }
+
+    console.error('POST /api/data error:', error)
+    return createErrorResponse('Internal server error', 'INTERNAL_ERROR', 500)
+  }
+}
+```
+
+## 🎨 Styling Patterns
+
+### **Tailwind CSS Classes:**
+```tsx
+// Utility-first approach
+function Card({ children, variant = 'default' }: CardProps) {
+  return (
+    <div className={cn(
+      // Base styles
+      "rounded-lg border bg-card text-card-foreground shadow-sm",
+
+      // Variants
+      variant === 'elevated' && "shadow-lg",
+      variant === 'outlined' && "border-2",
+
+      // Responsive
+      "p-4 sm:p-6"
+    )}>
+      {children}
+    </div>
+  )
+}
+
+// Custom CSS variables
+<div className="bg-[var(--primary)] text-[var(--primary-foreground)]">
+  Themed content
+</div>
+```
+
+### **Theme Integration:**
+```tsx
+// Using CSS custom properties
+function ThemedComponent() {
+  return (
+    <div className="
+      bg-[var(--background)]
+      text-[var(--foreground)]
+      border-[var(--border)]
+    ">
+      Content
+    </div>
+  )
+}
+
+// Using Tailwind theme function
+<div className="bg-primary text-primary-foreground">
+  Themed with Tailwind
+</div>
+```
+
+## 🔐 Security Patterns
+
+### **Authentication:**
+```typescript
+// Protected route
+import { getServerSession } from 'next-auth'
+
+export default async function ProtectedPage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    redirect('/auth/signin')
+  }
+
+  return <Dashboard user={session.user} />
+}
+
+// API route protection
+export async function GET() {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401)
+  }
+
+  // Continue with authenticated logic
+}
+```
+
+### **Input Validation:**
+```typescript
+import { z } from 'zod'
+
+const userSchema = z.object({
+  name: z.string().min(2).max(50),
+  email: z.string().email(),
+  role: z.enum(['admin', 'user', 'guest'])
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validatedData = userSchema.parse(body)
+
+    // Use validated data
+    const user = await createUser(validatedData)
+    return createSuccessResponse(user)
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return createErrorResponse('Validation failed', 'VALIDATION_ERROR', 400, {
+        errors: error.errors
+      })
+    }
+    // Handle other errors
+  }
+}
+```
+
+## 📊 Data Management
+
+### **React Query Patterns:**
+```typescript
+// Query hook
+function useUsers() {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: () => api.get('/api/users'),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+
+// Mutation hook
+function useCreateUser() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (userData) => api.post('/api/users', userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+    },
+  })
+}
+
+// Usage in component
+function UsersList() {
+  const { data: users, isLoading } = useUsers()
+  const createUser = useCreateUser()
+
+  if (isLoading) return <div>Loading...</div>
+
+  return (
+    <div>
+      {users?.map(user => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  )
+}
+```
+
+### **Zustand Store Patterns:**
+```typescript
+// Store definition
+interface AppState {
+  user: User | null
+  theme: 'light' | 'dark'
+  notifications: Notification[]
+}
+
+interface AppActions {
+  setUser: (user: User) => void
+  toggleTheme: () => void
+  addNotification: (notification: Notification) => void
+}
+
+export const useAppStore = create<AppState & AppActions>((set, get) => ({
+  user: null,
+  theme: 'light',
+  notifications: [],
+
+  setUser: (user) => set({ user }),
+
+  toggleTheme: () => set((state) => ({
+    theme: state.theme === 'light' ? 'dark' : 'light'
+  })),
+
+  addNotification: (notification) => set((state) => ({
+    notifications: [...state.notifications, notification]
+  })),
+}))
+```
+
+## 🧪 Testing Patterns
+
+### **Component Testing:**
+```typescript
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+function renderWithProviders(component: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false }
+    }
+  })
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {component}
+    </QueryClientProvider>
+  )
+}
+
+describe('UserProfile', () => {
+  it('displays user information', async () => {
+    renderWithProviders(<UserProfile userId="123" />)
+
+    await waitFor(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument()
+    })
+  })
+
+  it('handles loading state', () => {
+    renderWithProviders(<UserProfile userId="123" />)
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument()
+  })
+})
+```
+
+### **API Testing:**
+```typescript
+import { createMocks } from 'node-mocks-http'
+
+describe('/api/users', () => {
+  it('returns users list', async () => {
+    const { req, res } = createMocks({
+      method: 'GET',
+      url: '/api/users'
+    })
+
+    await GET(req, res)
+
+    expect(res._getStatusCode()).toBe(200)
+    const data = JSON.parse(res._getData())
+    expect(data.success).toBe(true)
+    expect(Array.isArray(data.data)).toBe(true)
+  })
+
+  it('creates new user', async () => {
+    const { req, res } = createMocks({
+      method: 'POST',
+      url: '/api/users',
+      body: { name: 'John', email: 'john@example.com' }
+    })
+
+    await POST(req, res)
+
+    expect(res._getStatusCode()).toBe(201)
+    const data = JSON.parse(res._getData())
+    expect(data.data.name).toBe('John')
+  })
+})
+```
+
+## 🚀 Performance Patterns
+
+### **Code Splitting:**
+```typescript
+// Dynamic imports
+const AdminPanel = dynamic(() => import('@/components/AdminPanel'), {
+  loading: () => <div>Loading admin panel...</div>
+})
+
+// Route-based splitting
+const Dashboard = dynamic(() => import('@/app/dashboard/page'))
+const Profile = dynamic(() => import('@/app/profile/page'))
+```
+
+### **Image Optimization:**
+```tsx
+import Image from 'next/image'
+
+function OptimizedImage({ src, alt, width, height }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+    />
+  )
+}
+```
+
+### **Memoization:**
+```typescript
+// Component memoization
+const UserCard = memo(function UserCard({ user }: { user: User }) {
+  return (
+    <div>
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+    </div>
+  )
+})
+
+// Hook memoization
+function useUserData(userId: string) {
+  return useMemo(() => {
+    return users.find(user => user.id === userId)
+  }, [userId, users])
+}
+
+// Callback memoization
+const handleClick = useCallback(() => {
+  setCount(c => c + 1)
+}, [])
+```
+
+## 🔧 Development Workflow
+
+### **Git Workflow:**
+```bash
+# Feature development
+git checkout -b feature/new-feature
+# Make changes
+git add .
+git commit -m "feat: add new feature"
+git push origin feature/new-feature
+
+# Code review
+# Merge to main
+
+# Hotfixes
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-bug
+# Fix bug
+git add .
+git commit -m "fix: critical bug fix"
+git push origin hotfix/critical-bug
+```
+
+### **Environment Setup:**
+```bash
+# Development
+cp .env.example .env.local
+# Fill in development values
+
+# Production
+# Environment variables set in Vercel dashboard
+```
+
+### **Build Process:**
+```bash
+# Development
+npm run dev
+
+# Production build
+npm run build
+
+# Type checking
+npm run type-check
+
+# Linting
+npm run lint
+
+# Testing
+npm run test
+```
+
+## 📋 Documentation Patterns
+
+### **Component Documentation:**
+```typescript
+interface ButtonProps {
+  /**
+   * The button's visual style variant
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary' | 'outline'
+
+  /**
+   * Button size
+   * @default 'medium'
+   */
+  size?: 'small' | 'medium' | 'large'
+
+  /**
+   * Click handler function
+   */
+  onClick?: () => void
+
+  /**
+   * Button content
+   */
+  children: React.ReactNode
+}
+
+/**
+ * A customizable button component with multiple variants and sizes
+ *
+ * @example
+ * ```tsx
+ * <Button variant="primary" size="large" onClick={handleClick}>
+ *   Click me!
+ * </Button>
+ * ```
+ */
+export function Button({ variant = 'primary', size = 'medium', onClick, children }: ButtonProps) {
+  // Implementation
+}
+```
+
+### **API Documentation:**
+```typescript
+/**
+ * Get user by ID
+ * @param userId - The user's unique identifier
+ * @returns Promise<User> - User data
+ * @throws {NotFoundError} When user doesn't exist
+ * @throws {DatabaseError} When database query fails
+ *
+ * @example
+ * ```typescript
+ * const user = await getUserById('123')
+ * console.log(user.name) // 'John Doe'
+ * ```
+ */
+export async function getUserById(userId: string): Promise<User> {
+  // Implementation
+}
+```
+
+## 🎯 Best Practices Summary
+
+### **Code Quality:**
+- ✅ Use TypeScript for type safety
+- ✅ Follow consistent naming conventions
+- ✅ Write comprehensive tests
+- ✅ Use ESLint and Prettier
+- ✅ Document complex logic
+
+### **Performance:**
+- ✅ Implement code splitting
+- ✅ Optimize images and assets
+- ✅ Use React.memo and useMemo appropriately
+- ✅ Minimize bundle size
+- ✅ Implement proper caching
+
+### **Security:**
+- ✅ Validate all inputs
+- ✅ Use HTTPS in production
+- ✅ Implement proper authentication
+- ✅ Sanitize user inputs
+- ✅ Use secure headers
+
+### **Maintainability:**
+- ✅ Keep components small and focused
+- ✅ Use composition over inheritance
+- ✅ Implement proper error handling
+- ✅ Write self-documenting code
+- ✅ Use consistent patterns
+
+### **User Experience:**
+- ✅ Implement loading states
+- ✅ Handle errors gracefully
+- ✅ Provide clear feedback
+- ✅ Ensure accessibility
+- ✅ Optimize for mobile devices
+
+This comprehensive guide ensures consistent, maintainable, and high-quality code across the entire Modern Men Hair BarberShop project! 🚀

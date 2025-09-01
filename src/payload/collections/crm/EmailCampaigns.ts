@@ -1,8 +1,9 @@
 // src/payload/collections/EmailCampaigns.ts
 import type { CollectionConfig } from 'payload';
 import { withDefaultHooks } from '../../utils';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const EmailCampaigns: CollectionConfig = withDefaultHooks({
+export const EmailCampaigns: CollectionConfig = withLexicalEditor(withDefaultHooks({
   slug: 'email-campaigns',
   admin: {
     useAsTitle: 'subject',
@@ -304,4 +305,4 @@ export const EmailCampaigns: CollectionConfig = withDefaultHooks({
     ],
   },
   timestamps: true,
-});
+}));

@@ -1,7 +1,8 @@
 // src/payload/collections/Pages.ts
 import type { CollectionConfig, AccessResult, Where } from 'payload'
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor'
 
-export const Pages: CollectionConfig = {
+export const Pages: CollectionConfig = withLexicalEditor({
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
@@ -439,7 +440,7 @@ export const Pages: CollectionConfig = {
     { fields: ['showInNavigation', 'navigationOrder'] },
     { fields: ['tags.tag'] },
   ],
-}
+})
 
 /**
  * Handle page cache clearing and sitemap regeneration

@@ -1,7 +1,8 @@
 import { CollectionConfig } from 'payload';
 import { productAfterChangeHook } from '../../hooks/products/afterChange';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const Products: CollectionConfig = {
+export const Products: CollectionConfig = withLexicalEditor({
   slug: 'products',
   admin: {
     useAsTitle: 'name',
@@ -510,4 +511,4 @@ export const Products: CollectionConfig = {
     },
   ],
   timestamps: true,
-};
+});

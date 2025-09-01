@@ -1,6 +1,7 @@
 import { CollectionConfig } from 'payload';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-const FAQ: CollectionConfig = {
+const FAQ: CollectionConfig = withLexicalEditor({
   slug: 'faqs',
   admin: {
     useAsTitle: 'question',
@@ -68,6 +69,6 @@ const FAQ: CollectionConfig = {
     },
   ],
   timestamps: true,
-};
+});
 
 export { FAQ };

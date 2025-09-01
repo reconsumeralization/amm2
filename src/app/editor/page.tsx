@@ -1,10 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Editor from '@/components/features/editor/Editor';
 
 export default function EditorPage() {
   const [savedContent, setSavedContent] = useState('');
+  const [initialContent, setInitialContent] = useState('');
+
+  useEffect(() => {
+    // Safely access localStorage only on client side
+    try {
+      const storedContent = localStorage.getItem('editor-content');
+      if (storedContent) {
+        setInitialContent(storedContent);
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+    }
+  }, []);
 
   const handleSave = async (content: string) => {
     try {
@@ -32,7 +45,7 @@ export default function EditorPage() {
 
       <div className="bg-white rounded-lg shadow-lg p-6">
         <Editor
-          initialContent={savedContent || localStorage.getItem('editor-content') || ''}
+          initialContent={savedContent || initialContent}
           onSaveAction={handleSave}
         />
       </div>

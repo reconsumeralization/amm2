@@ -5,87 +5,202 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: modernmen-yolo-app:latest
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/modernen_dev
+      - DATABASE_URL=postgresql://postgres:development-db-password@db:5432/modernmen
       - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET=development-secret-key
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-development-secret-key}
       - NEXT_PUBLIC_APP_URL=http://localhost:3000
       - REDIS_URL=redis://redis:6379
-      - PAYLOAD_SECRET=development-payload-secret
+      - PAYLOAD_SECRET=${PAYLOAD_SECRET:-development-payload-secret}
+      - PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_started
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
+      - logs:/app/logs
     networks:
       - modernen-network
-    command: npm run dev
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /app/.next/cache:noexec,nosuid,size=500m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     restart: unless-stopped
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: modernen_dev
-      POSTGRES_USER: postgres
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=modernmen
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=development-db-password
+    networks:
+      - modernen-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d modernen_dev"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d modernmen"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - modernen-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    security_opt:
+      - no-new-privileges:true
 
   redis:
-    image: redis:7-alpine
+    image: redis:7.2-alpine
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+      - ./redis.conf:/etc/redis/redis.conf:ro
     networks:
       - modernen-network
-
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@modernen.dev
-      PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-    networks:
-      - modernen-network
+    command: redis-server /etc/redis/redis.conf
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     restart: unless-stopped
     environment:
       - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=${REDIS_COMMANDER_USER:-admin}
+      - HTTP_PASSWORD=${REDIS_COMMANDER_PASSWORD:-secure-password}
     ports:
       - "8081:8081"
     depends_on:
       - redis
     networks:
       - modernen-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    security_opt:
+      - no-new-privileges:true
+
+  trivy:
+    image: aquasecurity/trivy:latest
+    command: >
+      image
+      --exit-code 1
+      --no-progress
+      --format json
+      --output /tmp/trivy-results.json
+      modernmen-yolo-app:latest
+    volumes:
+      - ./security:/tmp:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - modernen-network
+    profiles:
+      - security
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  monitoring:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - monitoring_data:/prometheus
+    networks:
+      - modernen-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    profiles:
+      - monitoring
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
 
 volumes:
-  postgres_data:
+  db_data:
+    driver: local
   redis_data:
+    driver: local
+  logs:
+    driver: local
+  monitoring_data:
+    driver: local
 
 networks:
   modernen-network:
     driver: bridge
+    internal: false
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

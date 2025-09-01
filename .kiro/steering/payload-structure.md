@@ -1,0 +1,70 @@
+---
+inclusion: always
+---
+
+# PayloadCMS Collection Architecture
+
+This project uses a sophisticated PayloadCMS setup with collections organized by domain:
+
+## 📁 Collection Organization
+
+### **Core Domains:**
+- **Commerce**: Products, Orders, Coupons, Payments, Shipping
+- **CRM**: Customers, Reviews, Loyalty, Email Campaigns
+- **Content**: Pages, BlogPosts, Media, Navigation, SEO
+- **Staff**: Stylists, Appointments, ClockRecords, Schedules
+- **System**: Users, Settings, AuditLogs, Notifications
+- **Builder**: Visual page builder with 19 collections
+
+## 🔍 Navigation Patterns
+
+### **Finding Collections:**
+```
+src/payload/collections/{domain}/{CollectionName}.ts
+```
+
+### **Collection Slugs:**
+- Use kebab-case: `customer-tags`, `builder-pages`
+- Group related: `commerce-products`, `crm-customers`
+
+### **Access Patterns:**
+```typescript
+access: {
+  read: ({ req }) => req.user?.role === 'admin',
+  create: ({ req }) => ['admin', 'manager'].includes(req.user?.role),
+  update: ({ req }) => req.user?.id === data.createdBy?.id,
+  delete: ({ req }) => req.user?.role === 'admin'
+}
+```
+
+### **Relationship References:**
+```typescript
+relationTo: 'users',     // System collections
+relationTo: 'tags',      // Content collections
+relationTo: 'tenants',   // Multi-tenant support
+```
+
+## 🎯 Quick Reference
+
+### **Most Used Collections:**
+- `users` - User management
+- `media` - File uploads
+- `pages` - Content pages
+- `products` - Product catalog
+- `customers` - Customer data
+- `appointments` - Booking system
+
+### **Builder Collections:**
+- `builder-pages` - Visual pages
+- `builder-sections` - Page sections
+- `builder-blocks` - Content blocks
+- `builder-templates` - Page templates
+- `builder-themes` - Visual themes
+
+## 🚀 Best Practices
+
+1. **Always use `withDefaultHooks`** for consistent behavior
+2. **Include tenant relationships** for multi-tenant support
+3. **Add OG image hooks** to collections with titles
+4. **Use proper access controls** based on user roles
+5. **Include SEO fields** on public-facing collections

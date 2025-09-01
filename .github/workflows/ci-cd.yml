@@ -70,7 +70,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info
           fail_ci_if_error: false
 
       - name: Build application
@@ -129,7 +129,7 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_APP_URL: ${{ vars.STAGING_APP_URL || 'http://localhost:3000' }}
-          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_staging' }}
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -165,7 +165,7 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_APP_URL: ${{ vars.PRODUCTION_APP_URL || 'https://your-domain.com' }}
-          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/modernmen_prod' }}
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest

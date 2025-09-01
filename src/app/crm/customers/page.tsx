@@ -15,37 +15,67 @@ import PaginationControls from '@/components/crm/PaginationControls';
 import { getPayloadClient } from '@/payload';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 async function getCustomers({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const resolvedSearchParams = await searchParams;
-  const session = await getServerSession(authOptions);
-  if (!(session as any)?.user || (((session as any).user)?.role !== 'admin' && ((session as any).user)?.role !== 'manager')) {
-    throw new Error('Unauthorized');
+  try {
+    const resolvedSearchParams = await searchParams;
+    const session = await getServerSession(authOptions);
+
+    // Check authentication
+    if (!session?.user) {
+      redirect('/auth/signin?callbackUrl=/crm/customers');
+    }
+
+    const userRole = (session.user as any)?.role;
+    if (userRole !== 'admin' && userRole !== 'manager') {
+      redirect('/auth/signin?error=Unauthorized');
+    }
+
+    const payload = await getPayloadClient();
+
+    const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1;
+    const limit = typeof resolvedSearchParams.limit === 'string' ? parseInt(resolvedSearchParams.limit) : 10;
+    const searchQuery = typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined;
+
+    const where: any = {};
+    if (searchQuery) {
+      where.or = [
+        { fullName: { like: searchQuery } },
+        { email: { like: searchQuery } },
+      ];
+    }
+
+    const customersData = await payload.find({
+      collection: 'customers',
+      where,
+      page,
+      limit,
+      depth: 1,
+    }).catch(() => ({
+      docs: [],
+      totalDocs: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false
+    }));
+
+    return customersData;
+  } catch (error) {
+    console.error('Customers data fetch error:', error);
+    // Return empty data structure
+    return {
+      docs: [],
+      totalDocs: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false
+    };
   }
-
-  const payload = await getPayloadClient();
-
-  const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1;
-  const limit = typeof resolvedSearchParams.limit === 'string' ? parseInt(resolvedSearchParams.limit) : 10;
-  const searchQuery = typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined;
-
-  const where: any = {};
-  if (searchQuery) {
-    where.or = [
-      { fullName: { like: searchQuery } },
-      { email: { like: searchQuery } },
-    ];
-  }
-
-  const customersData = await payload.find({
-    collection: 'customers',
-    where,
-    page,
-    limit,
-    depth: 1,
-  });
-
-  return customersData;
 }
 
 const CustomersContent = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {

@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AdminNavigation } from '@/components/features/admin/AdminNavigation';
-import { NotificationCenter } from '@/components/features/admin/NotificationCenter';
+import NotificationCenter from '@/components/features/admin/NotificationCenter';
 import { motion } from 'framer-motion';
 
 interface AdminLayoutProps {

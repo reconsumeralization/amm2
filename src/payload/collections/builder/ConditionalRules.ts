@@ -1,8 +1,9 @@
 // src/payload/collections/BuilderConditionalRules.ts
 import type { CollectionConfig } from 'payload';
 import { withDefaultHooks } from '../../utils';
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor';
 
-export const ConditionalRules: CollectionConfig = withDefaultHooks({
+export const ConditionalRules: CollectionConfig = withLexicalEditor(withDefaultHooks({
   slug: 'builder-conditional-rules',
   admin: {
     useAsTitle: 'name',
@@ -569,4 +570,4 @@ export const ConditionalRules: CollectionConfig = withDefaultHooks({
     ],
   },
   timestamps: true,
-});
+}));

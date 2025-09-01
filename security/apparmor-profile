@@ -1,0 +1,88 @@
+# AppArmor profile for Modern Men Hair BarberShop
+# This profile provides strict confinement for the application container
+
+#include <tunables/global>
+
+profile modernmen-app flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/ssl_certs>
+
+  # Allow network access
+  network inet tcp,
+  network inet udp,
+  network inet6 tcp,
+  network inet6 udp,
+
+  # Allow DNS resolution
+  /etc/hosts r,
+  /etc/resolv.conf r,
+
+  # Allow access to application files
+  /app/** r,
+  /app/.next/** rw,
+  /tmp/** rw,
+
+  # Node.js specific permissions
+  /usr/bin/node ix,
+  /usr/local/bin/node ix,
+  /usr/lib/node_modules/** r,
+
+  # Allow curl for health checks
+  /usr/bin/curl ix,
+
+  # Deny dangerous operations
+  deny /bin/sh x,
+  deny /bin/bash x,
+  deny /usr/bin/perl x,
+  deny /usr/bin/python* x,
+
+  # Deny file system access to sensitive areas
+  deny /etc/shadow r,
+  deny /etc/passwd rw,
+  deny /proc/*/maps r,
+  deny /sys/** r,
+
+  # Allow limited system information access
+  /proc/meminfo r,
+  /proc/cpuinfo r,
+  /proc/uptime r,
+  /proc/loadavg r,
+
+  # Logging permissions
+  /var/log/app/** rw,
+  /dev/stdout w,
+  /dev/stderr w,
+
+  # Database file access (SQLite)
+  /app/dev.db rw,
+  /app/*.db rw,
+
+  # Temporary file permissions
+  owner /tmp/** rw,
+  owner /var/tmp/** rw,
+
+  # Signal permissions
+  signal (receive) peer=unconfined,
+  signal (send,receive) peer=modernmen-app,
+
+  # Capability restrictions
+  deny capability sys_admin,
+  deny capability sys_ptrace,
+  deny capability sys_module,
+  deny capability dac_override,
+  deny capability dac_read_search,
+  deny capability chown,
+  deny capability fsetid,
+  deny capability kill,
+  deny capability setgid,
+  deny capability setuid,
+  deny capability sys_chroot,
+  deny capability sys_resource,
+  deny capability sys_time,
+
+  # Allow basic capabilities needed for the application
+  capability net_bind_service,
+  capability net_raw,
+}

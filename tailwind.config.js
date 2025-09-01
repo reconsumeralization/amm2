@@ -55,6 +55,18 @@ module.exports = {
         'black': '#000000',
         'white': '#FFFFFF',
         'red-accent': '#FF0000', // A vibrant red for accents
+
+        // Payload CMS admin colors
+        'payload': {
+          'primary': '#2563eb', // Blue-600
+          'secondary': '#6b7280', // Gray-500
+          'warning': '#f59e0b', // Amber-500
+          'error': '#ef4444', // Red-500
+          'success': '#22c55e', // Green-500
+          'base': '#f9fafb', // Gray-50
+          'dark': '#1f2937', // Gray-800
+          'light': '#ffffff', // White
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -1,6 +1,7 @@
 import type { CollectionConfig, AccessResult, Where } from 'payload'
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor'
 
-export const Commissions: CollectionConfig = {
+export const Commissions: CollectionConfig = withLexicalEditor({
   slug: 'commissions',
   labels: {
     singular: 'Commission',
@@ -21,20 +22,25 @@ export const Commissions: CollectionConfig = {
   versions: {
     drafts: false,
     maxPerDoc: 10,
-    
   },
   access: {
     read: ({ req }): AccessResult => {
       if (!req.user) return false
       if ((req.user as any)?.role === 'admin') return true
       if ((req.user as any)?.role === 'manager') {
-        return { tenant: { equals: (req.user as any)?.tenant?.id } } as Where
+        const tenantId = typeof (req.user as any)?.tenant === 'object' 
+          ? (req.user as any)?.tenant?.id 
+          : (req.user as any)?.tenant
+        return { tenant: { equals: tenantId } } as Where
       }
       // Stylists can only see their own commissions
+      const tenantId = typeof (req.user as any)?.tenant === 'object' 
+        ? (req.user as any)?.tenant?.id 
+        : (req.user as any)?.tenant
       return { 
         and: [
           { stylist: { equals: req.user.id } },
-          { tenant: { equals: (req.user as any)?.tenant?.id } }
+          { tenant: { equals: tenantId } }
         ]
       } as Where
     },
@@ -46,9 +52,12 @@ export const Commissions: CollectionConfig = {
       if (!req.user) return false
       if ((req.user as any)?.role === 'admin') return true
       if ((req.user as any)?.role === 'manager') {
+        const tenantId = typeof (req.user as any)?.tenant === 'object' 
+          ? (req.user as any)?.tenant?.id 
+          : (req.user as any)?.tenant
         return { 
           and: [
-            { tenant: { equals: (req.user as any)?.tenant?.id } },
+            { tenant: { equals: tenantId } },
             { 'payment.status': { not_equals: 'paid' } }
           ]
         } as Where
@@ -66,7 +75,10 @@ export const Commissions: CollectionConfig = {
       ({ data, operation, req }) => {
         // Auto-set tenant for non-admin users
         if (operation === 'create' && !data.tenant && req.user && (req.user as any)?.role !== 'admin') {
-          data.tenant = (req.user as any)?.tenant?.id
+          const tenantId = typeof (req.user as any)?.tenant === 'object' 
+            ? (req.user as any)?.tenant?.id 
+            : (req.user as any)?.tenant
+          data.tenant = tenantId
         }
 
         // Generate period name
@@ -152,7 +164,7 @@ export const Commissions: CollectionConfig = {
     {
       name: 'tenant',
       type: 'relationship',
-      relationTo: 'tenants' as any as any,
+      relationTo: 'tenants' as any,
       required: true,
       index: true,
       admin: {
@@ -161,13 +173,14 @@ export const Commissions: CollectionConfig = {
       },
       filterOptions: ({ user }) => {
         if (user?.role === 'admin') return true
-        return { id: { equals: user?.tenant?.id } }
+        const tenantId = typeof user?.tenant === 'object' ? user?.tenant?.id : user?.tenant
+        return { id: { equals: tenantId } } as Where
       },
     },
     {
       name: 'stylist',
       type: 'relationship',
-      relationTo: 'users' as any as any,
+      relationTo: 'users' as any,
       required: true,
       index: true,
       admin: {
@@ -236,7 +249,7 @@ export const Commissions: CollectionConfig = {
         {
           name: 'appointment',
           type: 'relationship',
-          relationTo: 'appointments' as any as any,
+          relationTo: 'appointments' as any,
           required: true,
           filterOptions: ({ data }) => {
             const filters: any = {}
@@ -258,11 +271,11 @@ export const Commissions: CollectionConfig = {
         {
           name: 'service',
           type: 'relationship',
-          relationTo: 'services' as any as any,
+          relationTo: 'services' as any,
           required: true,
           filterOptions: ({ data }) => {
             if (data?.tenant) {
-              return { tenant: { equals: data.tenant } }
+              return { tenant: { equals: data.tenant } } as Where
             }
             return {}
           },
@@ -392,13 +405,13 @@ export const Commissions: CollectionConfig = {
         {
           name: 'approvedBy',
           type: 'relationship',
-          relationTo: 'users' as any as any,
+          relationTo: 'users' as any,
           admin: {
             description: 'Manager who approved this deduction',
           },
           filterOptions: () => ({
             role: { in: ['admin', 'manager'] }
-          }),
+          }) as Where,
         },
       ],
     },
@@ -455,13 +468,13 @@ export const Commissions: CollectionConfig = {
         {
           name: 'approvedBy',
           type: 'relationship',
-          relationTo: 'users' as any as any,
+          relationTo: 'users' as any,
           admin: {
             description: 'Manager who approved this adjustment',
           },
           filterOptions: () => ({
             role: { in: ['admin', 'manager'] }
-          }),
+          }) as Where,
         },
       ],
     },
@@ -633,8 +646,9 @@ export const Commissions: CollectionConfig = {
       },
       filterOptions: () => ({
         role: { in: ['admin', 'manager'] }
-      }),
+      }) as any as Where
     },
   ],
   timestamps: true,
-}
+})
+// End of Selection

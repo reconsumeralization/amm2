@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS "public"."blog_posts" (
+    "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "title" VARCHAR(255) NOT NULL,
+    "slug" VARCHAR(255) UNIQUE NOT NULL,
+    "excerpt" TEXT,
+    "hero_id" UUID REFERENCES media(id),
+    "content" JSONB,
+    "author_id" UUID REFERENCES users(id),
+    "tags" JSONB,
+    "category" VARCHAR(255),
+    "reading_time" INTEGER,
+    "difficulty" VARCHAR(50),
+    "featured" BOOLEAN DEFAULT false,
+    "is_public" BOOLEAN DEFAULT false,
+    "published" BOOLEAN DEFAULT false,
+    "published_at" TIMESTAMPTZ,
+    "scheduled_for" TIMESTAMPTZ,
+    "expires_at" TIMESTAMPTZ,
+    "views" INTEGER DEFAULT 0,
+    "likes" INTEGER DEFAULT 0,
+    "shares" INTEGER DEFAULT 0,
+    "related_posts" JSONB,
+    "priority" VARCHAR(50),
+    "status" VARCHAR(50),
+    "seo" JSONB,
+    "analytics" JSONB,
+    "workflow" JSONB,
+    "tenant_id" UUID REFERENCES tenants(id),
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ... (tables for all other collections in the content directory) ...

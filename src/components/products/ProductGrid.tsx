@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { Product } from '../../payload-types'
 import ProductCard from './ProductCard'

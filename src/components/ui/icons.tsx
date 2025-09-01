@@ -1,4 +1,4 @@
-import { Loader2, Users, Calendar, Scissors, Cog, Database, ExternalLink, RefreshCw, HelpCircle, BarChart3, Phone, Edit, X, Save, ArrowLeft, Download, Clock, Bell, Mail, AlertCircle, Search } from '@/lib/icon-mapping'
+import { Loader2, Users, Calendar, Scissors, Cog, Database, ExternalLink, RefreshCw, HelpCircle, BarChart3, Phone, Edit, X, Save, ArrowLeft, Download, Clock, Bell, Mail, AlertCircle, Search, ImageIcon } from '@/lib/icon-mapping'
 
 export const Icons = {
   spinner: Loader2,
@@ -49,6 +49,6 @@ export const Icons = {
   ),
   alertCircle: AlertCircle,
   search: Search,
-  image: Image,
+  image: ImageIcon,
   eye: Bell, // Using Bell as eye icon fallback
 }

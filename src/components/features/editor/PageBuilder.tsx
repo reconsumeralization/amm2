@@ -7,7 +7,30 @@ import { $createLinkNode } from '@lexical/link';
 import Image from 'next/image';
 import ImageEditor from './ImageEditor';
 import BookingChatbot from '@/components/features/chatbot/BookingChatbot';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+  useDraggable,
+  useDroppable,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import {
+  CSS,
+} from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { toast } from 'sonner';
 
 interface ComponentProps {
@@ -48,17 +71,32 @@ const ComponentTypes = {
   MAP_EMBED: 'mapEmbed'
 };
 
-const DraggableComponent = ({ 
+const SortableComponent = ({ 
   component, 
-  index, 
   onEdit,
-  onDelete 
+  onDelete,
+  isDragging = false
 }: { 
   component: ComponentProps; 
-  index: number; 
-  onEdit: (index: number, component: ComponentProps) => void;
-  onDelete: (index: number) => void;
+  onEdit: (component: ComponentProps) => void;
+  onDelete: (id: string) => void;
+  isDragging?: boolean;
 }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging: isSortableDragging,
+  } = useSortable({ id: component.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isSortableDragging ? 0.5 : 1,
+  };
+
   const renderComponent = () => {
     switch (component.type) {
       case ComponentTypes.TEXT:
@@ -93,12 +131,12 @@ const DraggableComponent = ({
         return (
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-2">{component.content}</h3>
-          <a 
-            href={`/portal/barbers/${component.url}`}
-            className="text-blue-500 hover:text-blue-700 underline"
-          >
+            <a 
+              href={`/portal/barbers/${component.url}`}
+              className="text-blue-500 hover:text-blue-700 underline"
+            >
               View Profile →
-          </a>
+            </a>
           </div>
         );
 
@@ -106,8 +144,8 @@ const DraggableComponent = ({
         return (
           <div className="bg-gray-50 p-6 rounded-lg">
             <blockquote className="text-lg italic text-gray-700 mb-4">
-            "{component.content}"
-          </blockquote>
+              "{component.content}"
+            </blockquote>
             <div className="flex items-center">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                 ★
@@ -120,7 +158,7 @@ const DraggableComponent = ({
       case ComponentTypes.HERO_SECTION:
         return (
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-12 rounded-lg">
-            <h1 className="text-4xl font-bold mb-4">{component.content || 'Welcome to Our barber'}</h1>
+            <h1 className="text-4xl font-bold mb-4">{component.content || 'Welcome to Our Barber'}</h1>
             <p className="text-xl mb-6">Experience premium grooming services with our expert stylists</p>
             <button className="bg-white text-blue-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
               Book Appointment
@@ -320,42 +358,69 @@ const DraggableComponent = ({
   };
 
   return (
-    <Draggable draggableId={component.id} index={index}>{(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className="p-4 border-2 border-dashed border-gray-300 rounded-lg mb-3 bg-white hover:border-blue-400 transition-colors"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-              <span className="text-sm font-medium text-gray-600 capitalize">
-                {component.type.replace(/([A-Z])/g, ' $1').trim()}
-              </span>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => onEdit(index, component)}
-                className="text-blue-500 hover:text-blue-700 text-sm"
-                aria-label="Edit component"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => onDelete(index)}
-                className="text-red-500 hover:text-red-700 text-sm"
-                aria-label="Delete component"
-              >
-                Delete
-              </button>
-            </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`p-4 border-2 border-dashed border-gray-300 rounded-lg mb-3 bg-white hover:border-blue-400 transition-colors ${
+        isDragging ? 'shadow-lg' : ''
+      }`}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center space-x-2">
+          <div 
+            {...attributes}
+            {...listeners}
+            className="w-6 h-6 bg-gray-400 rounded cursor-grab active:cursor-grabbing flex items-center justify-center hover:bg-gray-500 transition-colors"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
+              <circle cx="3" cy="3" r="1" fill="currentColor"/>
+              <circle cx="9" cy="3" r="1" fill="currentColor"/>
+              <circle cx="3" cy="9" r="1" fill="currentColor"/>
+              <circle cx="9" cy="9" r="1" fill="currentColor"/>
+            </svg>
           </div>
-          <div className="cursor-move">
-            {renderComponent()}
-          </div>
+          <span className="text-sm font-medium text-gray-600 capitalize">
+            {component.type.replace(/([A-Z])/g, ' $1').trim()}
+          </span>
         </div>
-      )}</Draggable>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => onEdit(component)}
+            className="text-blue-500 hover:text-blue-700 text-sm px-2 py-1 rounded hover:bg-blue-50 transition-colors"
+            aria-label="Edit component"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => onDelete(component.id)}
+            className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
+            aria-label="Delete component"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      <div className="pointer-events-none">
+        {renderComponent()}
+      </div>
+    </div>
+  );
+};
+
+const DroppableArea = ({ children }: { children: React.ReactNode }) => {
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'droppable-area',
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`min-h-[300px] p-4 bg-white border-2 border-dashed rounded-lg transition-colors ${
+        isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+      }`}
+    >
+      {children}
+    </div>
   );
 };
 
@@ -364,9 +429,21 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
   const [components, setComponents] = useState<ComponentProps[]>([]);
   const [showImageEditor, setShowImageEditor] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [editingComponent, setEditingComponent] = useState<{ index: number; component: ComponentProps } | null>(null);
+  const [editingComponent, setEditingComponent] = useState<ComponentProps | null>(null);
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Handle saving page content to backend
   const savePageContent = async (content: string) => {
@@ -400,32 +477,35 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       console.log('Page content saved:', result);
       
       // Show success message
-      if (typeof window !== 'undefined') {
-        toast.success('Page saved successfully!');
-      }
+      toast.success('Page saved successfully!');
     } catch (err) {
       console.error('Failed to save page content:', err);
       setError('Failed to save page content. Please try again.');
       
       // Show error message
-      if (typeof window !== 'undefined') {
-        toast.error('Failed to save page. Please try again.');
-      }
+      toast.error('Failed to save page. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setComponents((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over?.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
     }
 
-    const newComponents = Array.from(components);
-    const [reorderedItem] = newComponents.splice(result.source.index, 1);
-    newComponents.splice(result.destination.index, 0, reorderedItem);
-
-    setComponents(newComponents);
+    setActiveId(null);
   };
 
   const addComponent = (type: string) => {
@@ -450,7 +530,7 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
         [ComponentTypes.BARBER_PROFILE]: 'View Barber Profile',
         [ComponentTypes.TESTIMONIAL]: 'Great service!',
         [ComponentTypes.BOOKING_CHATBOT]: 'Book your appointment',
-        [ComponentTypes.HERO_SECTION]: 'Welcome to Our barber',
+        [ComponentTypes.HERO_SECTION]: 'Welcome to Our Barber',
         [ComponentTypes.SERVICES_GRID]: 'Our Services',
         [ComponentTypes.GALLERY]: 'Gallery',
         [ComponentTypes.CONTACT_FORM]: 'Contact Us',
@@ -477,12 +557,12 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
     }
   };
 
-  const editComponent = (index: number, component: ComponentProps) => {
-    setEditingComponent({ index, component });
+  const editComponent = (component: ComponentProps) => {
+    setEditingComponent(component);
   };
 
-  const deleteComponent = (index: number) => {
-    setComponents((prev) => prev.filter((_, i) => i !== index));
+  const deleteComponent = (id: string) => {
+    setComponents((prev) => prev.filter((comp) => comp.id !== id));
   };
 
   const handleImageSave = async (editedImage: Blob, alt: string) => {
@@ -569,7 +649,7 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
     });
     
     // Save to backend
-    handleSave(contentString);
+    savePageContent(contentString);
   };
 
   if (!settings.editor?.pageBuilder?.enabled) {
@@ -579,6 +659,8 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       </div>
     );
   }
+
+  const activeComponent = activeId ? components.find(comp => comp.id === activeId) : null;
 
   return (
     <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -601,7 +683,7 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
         {/* Basic Components */}
         <div className="mb-4">
           <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Basic</h4>
-        <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => addComponent(ComponentTypes.TEXT)}
               className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
@@ -743,37 +825,44 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       </div>
 
       {/* Components Area */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="components">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="min-h-[300px] p-4 bg-white border border-gray-200 rounded-lg"
-            >
-              {components.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  <p>No components added yet.</p>
-                  <p className="text-sm">Use the buttons above to add content to your page.</p>
-                </div>
-              ) : (
-                <div>
-                  {components.map((comp, index) => (
-                    <DraggableComponent
-                      key={comp.id}
-                      component={comp}
-                      index={index}
-                      onEdit={editComponent}
-                      onDelete={deleteComponent}
-                    />
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis]}
+      >
+        <DroppableArea>
+          {components.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              <p>No components added yet.</p>
+              <p className="text-sm">Use the buttons above to add content to your page.</p>
             </div>
+          ) : (
+            <SortableContext items={components.map(c => c.id)} strategy={verticalListSortingStrategy}>
+              {components.map((comp) => (
+                <SortableComponent
+                  key={comp.id}
+                  component={comp}
+                  onEdit={editComponent}
+                  onDelete={deleteComponent}
+                />
+              ))}
+            </SortableContext>
           )}
-        </Droppable>
-      </DragDropContext>
+        </DroppableArea>
+
+        <DragOverlay>
+          {activeComponent ? (
+            <SortableComponent
+              component={activeComponent}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              isDragging
+            />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {error && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -795,11 +884,11 @@ export default function PageBuilder({ tenantId, settings }: PageBuilderProps) {
       {/* Component Editor Modal */}
       {editingComponent && (
         <ComponentEditor
-          component={editingComponent.component}
+          component={editingComponent}
           onSave={(updatedComponent) => {
             setComponents((prev) => 
-              prev.map((comp, i) => 
-                i === editingComponent.index ? { ...comp, ...updatedComponent } : comp
+              prev.map((comp) => 
+                comp.id === editingComponent.id ? { ...comp, ...updatedComponent } : comp
               )
             );
             setEditingComponent(null);
@@ -879,7 +968,3 @@ function ComponentEditor({
     </div>
   );
 }
-function handleSave(contentString: string) {
-  throw new Error('Function not implemented.');
-}
-

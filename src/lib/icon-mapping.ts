@@ -284,7 +284,7 @@ export const Printer = Icons.Printer
 export const Tag = Icons.Tag
 export const Eye = Icons.Eye
 export const History = Icons.History
-export const Image = Icons.Image
+export const ImageIcon = Icons.ImageIcon
 
 // Additional icon exports for missing components
 export const GitBranch = FallbackIcon // Git branch icon

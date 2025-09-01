@@ -1,6 +1,7 @@
 import type { CollectionConfig, AccessResult, Where } from 'payload'
+import { withLexicalEditor } from '../../../payload/utils/withLexicalEditor'
 
-export const BlogPosts: CollectionConfig = {
+export const BlogPosts: CollectionConfig = withLexicalEditor({
   slug: 'blog-posts',
   labels: {
     singular: 'Blog Post',
@@ -712,4 +713,4 @@ export const BlogPosts: CollectionConfig = {
     },
     maxPerDoc: 20,
   },
-}
+})
