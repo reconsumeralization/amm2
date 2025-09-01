@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import payload from '@/lib/payload'
 
+interface ClockEntry {
+  id: string
+  employee: string
+  date: string
+  clockInTime?: string
+  clockOutTime?: string
+  totalHours?: number
+  status: 'active' | 'completed'
+  location?: string
+  createdAt: string
+  updatedAt: string
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Get current user from Supabase session
@@ -72,7 +85,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const todaysHours = allTodaysEntries.docs.reduce((total: number, entry: { totalHours?: number }) => {
+    const todaysHours = allTodaysEntries.docs.reduce((total: number, entry: ClockEntry) => {
       return total + (entry.totalHours || 0)
     }, 0)
 

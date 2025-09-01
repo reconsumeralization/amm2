@@ -130,6 +130,11 @@ const nextConfig = {
         '@libsql/hrana-client': path.resolve(__dirname, 'src/lib/stubs/libsql-hrana-client.js'),
         '@libsql/core': false,
         'libsql': path.resolve(__dirname, 'src/lib/stubs/libsql.js'),
+        '@/payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
+        '../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
+        '../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
+        '../../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
+        '../../../../../payload.config': path.resolve(__dirname, 'src/lib/stubs/payload-config.js'),
       };
     }
 
@@ -145,6 +150,20 @@ const nextConfig = {
         loader: 'null-loader'
       }]
     });
+
+    // Exclude payload.config.ts from client-side bundling
+    if (!isServer) {
+      config.module.rules.push({
+        test: /payload\.config\.ts$/,
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'modernmen-yolo/src')
+        ],
+        use: [{
+          loader: 'null-loader'
+        }]
+      });
+    }
 
     // Handle ESM imports from libsql packages - exclude all problematic files
     config.module.rules.push({

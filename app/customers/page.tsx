@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, TrendingUp, Loader2, AlertCircle } from "@/lib/icon-mapping"
+import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, TrendingUp, Loader, AlertCircle } from "@/lib/icon-mapping"
 import { AddCustomerDialog } from "@/components/add-customer-dialog"
 import { CustomerFilters } from "@/components/customer-filters"
 import { CustomerProfile } from "@/components/customer-profile"
@@ -20,7 +20,7 @@ import type { SimpleCustomer } from "@/hooks"
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<SimpleCustomer | null>(null)
 
   // Use the customers API hook
   const {
@@ -35,7 +35,7 @@ export default function CustomersPage() {
     fetchCustomers()
   }, [fetchCustomers])
 
-  const filteredCustomers = customers.filter((customer: Customer) => {
+  const filteredCustomers = customers.filter((customer: SimpleCustomer) => {
     const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
     const matchesSearch =
       customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||

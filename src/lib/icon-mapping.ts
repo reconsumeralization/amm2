@@ -5,6 +5,7 @@ import * as React from 'react'
 import {
   X,
   Calendar,
+  CalendarDays,
   Clock,
   Eye,
   Star,
@@ -40,6 +41,7 @@ import {
   LogOut,
   Camera,
   Package,
+  Gift,
   DollarSign,
   Edit,
   Trash2,
@@ -81,7 +83,6 @@ import {
   Layout,
   Trophy,
   Scissors,
-  Gift,
   Monitor,
   Tablet,
   Smartphone,
@@ -144,10 +145,12 @@ export { CheckCircle }
 export { Star }
 export { Heart }
 export { Calendar }
+export { CalendarDays }
 export { Clock }
 export { History }
 export { MapPin }
 export { Package }
+export { Gift }
 export { DollarSign }
 export { Code }
 export { BookOpen }

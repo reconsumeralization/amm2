@@ -38,7 +38,7 @@ const Users = {
         { label: 'Admin', value: 'admin' },
         { label: 'Manager', value: 'manager' },
         { label: 'Staff', value: 'staff' },
-      ],
+      ] as const,
     },
   ],
   timestamps: true,
