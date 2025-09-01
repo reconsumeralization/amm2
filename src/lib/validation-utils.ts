@@ -1,188 +1,176 @@
-import { z } from 'zod'
-import { NextResponse } from 'next/server'
-
-export interface ValidationResult<T> {
-  success: boolean
-  data?: T
-  errors?: string[]
-  error?: string
-}
+// src/lib/validation-utils.ts
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 /**
- * Validates request body against a Zod schema
+ * Validate request body against a Zod schema
+ * @param request - NextRequest object
+ * @param schema - Zod schema to validate against
+ * @returns Promise with validation result
  */
 export async function validateRequestBody<T>(
-  request: Request,
+  request: NextRequest,
   schema: z.ZodSchema<T>
-): Promise<ValidationResult<T>> {
+): Promise<{
+  success: boolean;
+  data?: T;
+  errors?: string[];
+}> {
   try {
-    const body = await request.json()
-    const validatedData = schema.parse(body)
-    return { success: true, data: validatedData }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errors = error.issues.map((err: any) => {
-        const path = err.path.join('.')
-        return path ? `${path}: ${err.message}` : err.message
-      })
-      return { success: false, errors }
+    const body = await request.json();
+    const result = schema.safeParse(body);
+
+    if (result.success) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      const errors = result.error.errors.map(err => {
+        const field = err.path.join('.');
+        return `${field}: ${err.message}`;
+      });
+
+      return {
+        success: false,
+        errors,
+      };
     }
-    return { success: false, error: 'Invalid JSON in request body' }
+  } catch (error) {
+    return {
+      success: false,
+      errors: ['Invalid JSON in request body'],
+    };
   }
 }
 
 /**
- * Validates URL search parameters
+ * Validate query parameters against a Zod schema
+ * @param searchParams - URLSearchParams object
+ * @param schema - Zod schema to validate against
+ * @returns Validation result
  */
-export function validateSearchParams<T>(
+export function validateQueryParams<T>(
   searchParams: URLSearchParams,
   schema: z.ZodSchema<T>
-): ValidationResult<T> {
+): {
+  success: boolean;
+  data?: T;
+  errors?: string[];
+} {
   try {
-    const params = Object.fromEntries(searchParams.entries())
-    const validatedData = schema.parse(params)
-    return { success: true, data: validatedData }
+    const params = Object.fromEntries(searchParams.entries());
+    const result = schema.safeParse(params);
+
+    if (result.success) {
+      return {
+        success: true,
+        data: result.data,
+      };
+    } else {
+      const errors = result.error.errors.map(err => {
+        const field = err.path.join('.');
+        return `${field}: ${err.message}`;
+      });
+
+      return {
+        success: false,
+        errors,
+      };
+    }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errors = error.issues.map((err: any) => {
-        const path = err.path.join('.')
-        return path ? `${path}: ${err.message}` : err.message
-      })
-      return { success: false, errors }
-    }
-    return { success: false, error: 'Invalid URL parameters' }
-  }
-}
-
-/**
- * Creates a standardized validation error response
- */
-export function createValidationErrorResponse(errors: string[] | string) {
-  const errorMessage = Array.isArray(errors) ? errors.join(', ') : errors
-
-  return NextResponse.json(
-    {
-      error: 'Validation failed',
-      message: errorMessage,
-      details: Array.isArray(errors) ? errors : [errors]
-    },
-    { status: 400 }
-  )
-}
-
-/**
- * Creates a standardized server error response
- */
-export function createServerErrorResponse(error: string = 'Internal server error') {
-  return NextResponse.json(
-    {
-      error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development' ? error : 'Something went wrong'
-    },
-    { status: 500 }
-  )
-}
-
-/**
- * Validates request with authentication context
- */
-export async function validateAuthenticatedRequest<T>(
-  request: Request,
-  schema: z.ZodSchema<T>
-): Promise<ValidationResult<T & { userId: string }>> {
-  try {
-    // This would typically get the user ID from the session/auth context
-    // For now, we'll return a mock validation result
-    const bodyValidation = await validateRequestBody(request, schema)
-
-    if (!bodyValidation.success) {
-      return bodyValidation as ValidationResult<T & { userId: string }>
-    }
-
-    // In a real implementation, you'd get the user ID from the auth context
-    const userId = 'mock-user-id' // This should come from auth middleware
-
     return {
-      success: true,
-      data: { ...bodyValidation.data!, userId }
-    }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errors = error.issues.map((err: any) => {
-        const path = err.path.join('.')
-        return path ? `${path}: ${err.message}` : err.message
-      })
-      return { success: false, errors }
-    }
-    return { success: false, error: 'Invalid request' }
+      success: false,
+      errors: ['Invalid query parameters'],
+    };
   }
 }
 
 /**
- * Sanitizes string input to prevent XSS
+ * Sanitize string input to prevent XSS and other attacks
+ * @param input - String to sanitize
+ * @returns Sanitized string
  */
 export function sanitizeString(input: string): string {
+  if (typeof input !== 'string') return '';
+
   return input
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;')
     .replace(/\//g, '&#x2F;')
-    .trim()
+    .trim();
 }
 
 /**
- * Sanitizes object recursively
+ * Validate email format and domain
+ * @param email - Email to validate
+ * @returns Boolean indicating if email is valid
  */
-export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
-  const sanitized = { ...obj }
-
-  for (const [key, value] of Object.entries(sanitized)) {
-    if (typeof value === 'string') {
-      (sanitized as any)[key] = sanitizeString(value)
-    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      (sanitized as any)[key] = sanitizeObject(value)
-    } else if (Array.isArray(value)) {
-      (sanitized as any)[key] = value.map((item: any) =>
-        typeof item === 'string' ? sanitizeString(item) : item
-      )
-    }
-  }
-
-  return sanitized as T
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
 
 /**
- * Rate limiting validation wrapper
+ * Validate phone number format
+ * @param phone - Phone number to validate
+ * @returns Boolean indicating if phone is valid
  */
-export async function withRateLimit<T>(
-  request: Request,
-  handler: () => Promise<NextResponse>,
-  rateLimitFn: () => Promise<{ success: boolean; remaining: number; reset: Date }>
-): Promise<NextResponse> {
+export function isValidPhone(phone: string): boolean {
+  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+  const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
+  return phoneRegex.test(cleanPhone) && cleanPhone.length >= 10;
+}
+
+/**
+ * Validate date string format
+ * @param dateString - Date string to validate
+ * @param format - Expected format ('ISO' or 'US')
+ * @returns Boolean indicating if date is valid
+ */
+export function isValidDate(dateString: string, format: 'ISO' | 'US' = 'ISO'): boolean {
   try {
-    const rateLimit = await rateLimitFn()
-
-    if (!rateLimit.success) {
-      return NextResponse.json(
-        {
-          error: 'Rate limit exceeded',
-          message: 'Too many requests. Please try again later.',
-          retryAfter: Math.ceil((rateLimit.reset.getTime() - Date.now()) / 1000)
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': Math.ceil((rateLimit.reset.getTime() - Date.now()) / 1000).toString(),
-            'X-RateLimit-Remaining': '0'
-          }
-        }
-      )
-    }
-
-    return await handler()
-  } catch (error) {
-    console.error('Rate limiting error:', error)
-    return await handler() // Allow request on rate limiting failure
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()) && date.toISOString().startsWith(dateString.substring(0, 10));
+  } catch {
+    return false;
   }
+}
+
+/**
+ * Validate business rules for appointments
+ * @param appointmentData - Appointment data to validate
+ * @returns Array of validation errors
+ */
+export function validateAppointmentBusinessRules(appointmentData: any): string[] {
+  const errors: string[] = [];
+
+  // Check if appointment is in the future
+  const appointmentDate = new Date(appointmentData.date);
+  const now = new Date();
+
+  if (appointmentDate <= now) {
+    errors.push('Appointment must be scheduled in the future');
+  }
+
+  // Check if appointment is within business hours (9 AM - 7 PM)
+  const hour = appointmentDate.getHours();
+  if (hour < 9 || hour > 19) {
+    errors.push('Appointment must be within business hours (9 AM - 7 PM)');
+  }
+
+  // Check if appointment is not on weekends (optional business rule)
+  const dayOfWeek = appointmentDate.getDay();
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    errors.push('Appointments are not available on weekends');
+  }
+
+  // Check duration is reasonable
+  if (appointmentData.duration < 15 || appointmentData.duration > 480) {
+    errors.push('Appointment duration must be between 15 minutes and 8 hours');
+  }
+
+  return errors;
 }

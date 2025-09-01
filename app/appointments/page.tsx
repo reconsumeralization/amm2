@@ -1,6 +1,38 @@
 "use client"
 
 import { useState, useEffect } from "react"
+
+// Define proper types for appointments
+interface AppointmentUser {
+  firstName?: string
+  lastName?: string
+  email?: string
+}
+
+interface AppointmentService {
+  name?: string
+  price?: number
+  duration?: number
+}
+
+interface AppointmentStylist {
+  firstName?: string
+  lastName?: string
+}
+
+interface Appointment {
+  id: string
+  date: string
+  time?: string
+  status: string
+  price?: number
+  duration?: number
+  user?: AppointmentUser | string
+  service?: AppointmentService | string
+  stylist?: AppointmentStylist | string
+  customer?: string
+  barber?: string
+}
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,7 +42,9 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Calendar, Search, Clock, User, Scissors, Phone, Loader2, AlertCircle } from "@/lib/icon-mapping"
+import { Calendar, Search, Clock, Users, Phone, Loader2, AlertTriangle, User, Loader, AlertCircle, Scissors } from "@/lib/icon-mapping"
+
+// Icons imported successfully
 import { AppointmentCalendar } from "@/components/appointment-calendar"
 import { BookAppointmentDialog } from "@/components/book-appointment-dialog"
 import { AppointmentFilters } from "@/components/appointment-filters"
@@ -36,7 +70,7 @@ export default function AppointmentsPage() {
   }, [fetchAppointments])
 
   // Filter appointments based on search and status
-  const filteredAppointments = appointments.filter((appointment: any) => {
+  const filteredAppointments = appointments.filter((appointment: Appointment) => {
     const customerName = typeof appointment.user === 'string' ? appointment.user :
       `${appointment.user?.firstName || ''} ${appointment.user?.lastName || ''}`.trim()
     const serviceName = typeof appointment.service === 'string' ? appointment.service :
@@ -56,12 +90,12 @@ export default function AppointmentsPage() {
 
   // Filter for today's appointments
   const today = new Date().toISOString().split('T')[0]
-  const todayAppointments = appointments.filter((apt: any) =>
+  const todayAppointments = appointments.filter((apt: Appointment) =>
     new Date(apt.date).toISOString().split('T')[0] === today
   )
 
   // Filter for upcoming appointments
-  const upcomingAppointments = appointments.filter((apt: any) =>
+  const upcomingAppointments = appointments.filter((apt: Appointment) =>
     new Date(apt.date).toISOString().split('T')[0] > today
   )
 
@@ -90,7 +124,7 @@ export default function AppointmentsPage() {
           <main className="flex-1 overflow-y-auto p-6">
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <Loader className="h-8 w-8 animate-spin mx-auto mb-4" />
                 <p className="text-muted-foreground">Loading appointments...</p>
               </div>
             </div>
@@ -151,7 +185,7 @@ export default function AppointmentsPage() {
                 <CardContent>
                   <div className="text-2xl font-bold">{todayAppointments.length}</div>
                   <p className="text-xs text-green-600">
-                    {todayAppointments.filter((a: any) => a.status === "confirmed").length} confirmed
+                    {todayAppointments.filter((a: Appointment) => a.status === "confirmed").length} confirmed
                   </p>
                 </CardContent>
               </Card>
@@ -174,7 +208,7 @@ export default function AppointmentsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ${todayAppointments.reduce((sum: number, apt: any) => sum + apt.price, 0)}
+                    ${todayAppointments.reduce((sum: number, apt: Appointment) => sum + (apt.price || 0), 0)}
                   </div>
                   <p className="text-xs text-green-600">From {todayAppointments.length} appointments</p>
                 </CardContent>
@@ -183,7 +217,7 @@ export default function AppointmentsPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Avg Duration</CardTitle>
-                  <User className="h-4 w-4 text-muted-foreground" />
+                  <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">42min</div>
@@ -237,7 +271,7 @@ export default function AppointmentsPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredAppointments.map((appointment: any) => {
+                        {filteredAppointments.map((appointment: Appointment) => {
                           const customerName = typeof appointment.user === 'string' ? appointment.user :
                             `${appointment.user?.firstName || ''} ${appointment.user?.lastName || ''}`.trim()
                           const customerEmail = typeof appointment.user === 'string' ? '' :
@@ -267,7 +301,7 @@ export default function AppointmentsPage() {
                                     <AvatarFallback className="text-xs">
                                       {barberName
                                         .split(" ")
-                                        .map((n: string) => n[0])
+                                        .map((name: string) => name[0])
                                         .join("")}
                                     </AvatarFallback>
                                   </Avatar>
@@ -317,7 +351,7 @@ export default function AppointmentsPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {todayAppointments.map((appointment: any) => (
+                        {todayAppointments.map((appointment: Appointment) => (
                           <div
                             key={appointment.id}
                             className="flex items-center justify-between p-4 border border-border rounded-lg"
@@ -357,26 +391,26 @@ export default function AppointmentsPage() {
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Confirmed:</span>
                           <span className="font-medium text-green-600">
-                            {todayAppointments.filter((a: any) => a.status === "confirmed").length}
+                            {todayAppointments.filter((a: Appointment) => a.status === "confirmed").length}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Pending:</span>
                           <span className="font-medium text-yellow-600">
-                            {todayAppointments.filter((a: any) => a.status === "pending").length}
+                            {todayAppointments.filter((a: Appointment) => a.status === "pending").length}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Total Revenue:</span>
                           <span className="font-medium">
-                            ${todayAppointments.reduce((sum: number, apt: any) => sum + apt.price, 0)}
+                            ${todayAppointments.reduce((sum: number, apt: Appointment) => sum + (apt.price || 0), 0)}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Avg Service Time:</span>
                           <span className="font-medium">
                             {Math.round(
-                              todayAppointments.reduce((sum: number, apt: any) => sum + apt.duration, 0) / todayAppointments.length,
+                              todayAppointments.reduce((sum: number, apt: Appointment) => sum + (apt.duration || 0), 0) / todayAppointments.length,
                             )}{" "}
                             min
                           </span>

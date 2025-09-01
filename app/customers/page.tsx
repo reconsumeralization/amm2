@@ -14,25 +14,7 @@ import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, Tren
 import { AddCustomerDialog } from "@/components/add-customer-dialog"
 import { CustomerFilters } from "@/components/customer-filters"
 import { CustomerProfile } from "@/components/customer-profile"
-import { useCustomers } from "@/hooks/useCustomers"
-
-// Types
-interface Customer {
-  id: string
-  firstName?: string
-  lastName?: string
-  name?: string
-  email?: string
-  phone?: string
-  status?: string
-  totalSpent?: number
-  totalVisits?: number
-  loyaltyPoints?: number
-  lastVisit?: string
-  createdAt?: string
-  avatar?: string
-  preferredBarber?: string
-}
+import { useCustomers, type Customer } from "../../../../src/hooks/useCustomers"
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -52,7 +34,7 @@ export default function CustomersPage() {
     fetchCustomers()
   }, [fetchCustomers])
 
-  const filteredCustomers = customers.filter((customer) => {
+  const filteredCustomers = customers.filter((customer: Customer) => {
     const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
     const matchesSearch =
       customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,7 +46,7 @@ export default function CustomersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const getStatusColor = (status?: string): "default" | "secondary" | "outline" => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "vip":
         return "default"
@@ -79,7 +61,7 @@ export default function CustomersPage() {
 
   const totalCustomers = customers.length
   const vipCustomers = customers.filter((c: Customer) => c.status === "vip").length
-  const totalRevenue = customers.reduce((sum: number, c: Customer) => sum + (c.totalSpent || 0), 0)
+  const totalRevenue = customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyProgram?.totalSpent || 0), 0)
   const averageSpent = totalCustomers > 0 ? totalRevenue / totalCustomers : 0
 
   // Show loading state
@@ -181,7 +163,7 @@ export default function CustomersPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">Loyalty Points</CardTitle>
-                  <Gift className="h-4 w-4 text-muted-foreground" />
+                  <Star className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0)}</div>
@@ -279,7 +261,7 @@ export default function CustomersPage() {
                               <TableCell>${customer.totalSpent || 0}</TableCell>
                               <TableCell>
                                 <div className="flex items-center gap-1">
-                                  <Gift className="h-3 w-3 text-yellow-500" />
+                                  <Star className="h-3 w-3 text-yellow-500" />
                                   {customer.loyaltyPoints || 0}
                                 </div>
                               </TableCell>
@@ -292,7 +274,7 @@ export default function CustomersPage() {
                                     View
                                   </Button>
                                   <Button size="sm" variant="outline">
-                                    <MessageCircle className="h-3 w-3" />
+                                    <div className="h-3 w-3 bg-muted rounded-full" />
                                   </Button>
                                 </div>
                               </TableCell>
@@ -309,61 +291,67 @@ export default function CustomersPage() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {customers
                     .filter((c: Customer) => c.status === "vip")
-                    .map((customer: Customer) => (
-                      <Card key={customer.id}>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-12 w-12">
-                                <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer'} />
-                                <AvatarFallback>
-                                  {(customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer')
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <h3 className="font-semibold">{customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer'}</h3>
-                                <p className="text-sm text-muted-foreground">VIP Customer</p>
+                    .map((customer: Customer) => {
+                      const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
+                      const avatarInitials = customerName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+
+                      return (
+                        <Card key={customer.id}>
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-12 w-12">
+                                  <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customerName} />
+                                  <AvatarFallback>
+                                    {avatarInitials}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <h3 className="font-semibold">{customerName}</h3>
+                                  <p className="text-sm text-muted-foreground">VIP Customer</p>
+                                </div>
+                              </div>
+                              <Badge variant="default">VIP</Badge>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span>Total Visits:</span>
+                                <span className="font-medium">{customer.totalVisits || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Total Spent:</span>
+                                <span className="font-medium">${customer.totalSpent || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Loyalty Points:</span>
+                                <span className="font-medium flex items-center gap-1">
+                                  <Star className="h-3 w-3 text-yellow-500" />
+                                  {customer.loyaltyPoints || 0}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span>Preferred Barber:</span>
+                                <span className="font-medium">{customer.preferredBarber || 'N/A'}</span>
                               </div>
                             </div>
-                            <Badge variant="default">VIP</Badge>
-                          </div>
 
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Total Visits:</span>
-                              <span className="font-medium">{customer.totalVisits}</span>
+                            <div className="mt-4 flex gap-2">
+                              <Button size="sm" className="flex-1">
+                                Book Appointment
+                              </Button>
+                              <Button size="sm" variant="outline">
+                                <MessageCircle className="h-3 w-3" />
+                              </Button>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Total Spent:</span>
-                              <span className="font-medium">${customer.totalSpent}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Loyalty Points:</span>
-                              <span className="font-medium flex items-center gap-1">
-                                <Gift className="h-3 w-3 text-yellow-500" />
-                                {customer.loyaltyPoints}
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span>Preferred Barber:</span>
-                              <span className="font-medium">{customer.preferredBarber}</span>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 flex gap-2">
-                            <Button size="sm" className="flex-1">
-                              Book Appointment
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <MessageCircle className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                 </div>
               </TabsContent>
 
@@ -378,10 +366,10 @@ export default function CustomersPage() {
                       <Card>
                         <CardContent className="p-4">
                           <div className="text-center">
-                            <Gift className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
-                            <div className="text-2xl font-bold">
-                              {customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0)}
-                            </div>
+                            <Star className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
+                                                      <div className="text-2xl font-bold">
+                            {customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0)}
+                          </div>
                             <p className="text-sm text-muted-foreground">Total Points Issued</p>
                           </div>
                         </CardContent>
@@ -402,7 +390,7 @@ export default function CustomersPage() {
                           <div className="text-center">
                             <TrendingUp className="h-8 w-8 mx-auto text-green-500 mb-2" />
                             <div className="text-2xl font-bold">
-                              {Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0) / customers.length)}
+                              {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.loyaltyPoints || 0), 0) / totalCustomers) : 0}
                             </div>
                             <p className="text-sm text-muted-foreground">Avg Points per Customer</p>
                           </div>
@@ -429,7 +417,7 @@ export default function CustomersPage() {
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Average Visits per Customer:</span>
                           <span className="font-medium">
-                            {Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.totalVisits || 0), 0) / customers.length)}
+                            {totalCustomers > 0 ? Math.round(customers.reduce((sum: number, c: Customer) => sum + (c.totalVisits || 0), 0) / totalCustomers) : 0}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -454,26 +442,32 @@ export default function CustomersPage() {
                         {customers
                           .sort((a: Customer, b: Customer) => (b.totalSpent || 0) - (a.totalSpent || 0))
                           .slice(0, 5)
-                          .map((customer: Customer, index: number) => (
-                            <div key={customer.id} className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
-                                  {index + 1}
+                          .map((customer: Customer, index: number) => {
+                            const customerName = `${customer.firstName || ''} ${customer.lastName || ''}`.trim()
+                            const avatarInitials = customerName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
+
+                            return (
+                              <div key={customer.id} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium">
+                                    {index + 1}
+                                  </div>
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customerName} />
+                                    <AvatarFallback className="text-xs">
+                                      {avatarInitials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="text-sm font-medium">{customerName}</span>
                                 </div>
-                                <Avatar className="h-6 w-6">
-                                  <AvatarImage src={customer.avatar || "/placeholder.svg"} alt={customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer'} />
-                                  <AvatarFallback className="text-xs">
-                                    {(customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer')
-                                      .split(" ")
-                                      .map((n: string) => n[0])
-                                      .join("")}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <span className="text-sm font-medium">{customer.name || `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Unknown Customer'}</span>
+                                <span className="text-sm font-medium">${customer.totalSpent || 0}</span>
                               </div>
-                              <span className="text-sm font-medium">${customer.totalSpent}</span>
-                            </div>
-                          ))}
+                            )
+                          })}
                       </div>
                     </CardContent>
                   </Card>

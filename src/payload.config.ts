@@ -1,8 +1,27 @@
 import { buildConfig } from 'payload'
-import postgresAdapter from '@payloadcms/db-postgres'
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import path from 'path'
 import { withLexicalEditor } from './payload/utils/withLexicalEditor'
+
+// Conditionally import database adapters to avoid client-side build issues
+let dbAdapter;
+if (typeof window === 'undefined') {
+  try {
+    const { postgresAdapter } = require('@payloadcms/db-postgres');
+    dbAdapter = postgresAdapter({
+      pool: {
+        connectionString: process.env.DATABASE_URL,
+      },
+    });
+  } catch (error) {
+    // Fallback for development
+    const { sqliteAdapter } = require('@payloadcms/db-sqlite');
+    dbAdapter = sqliteAdapter({
+      client: {
+        url: 'file:./dev.db',
+      },
+    });
+  }
+}
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || 'dev-secret',
@@ -213,17 +232,7 @@ export default buildConfig({
     }),
   ],
   endpoints: [],
-  db: process.env.NODE_ENV === 'production'
-    ? postgresAdapter({
-        pool: {
-          connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
-        },
-      })
-    : sqliteAdapter({
-        client: {
-          url: process.env.DATABASE_URL || 'file:./dev.db',
-        },
-      }),
+  db: dbAdapter,
   typescript: {
     outputFile: path.resolve(process.cwd(), 'src/payload-types.ts'),
   },

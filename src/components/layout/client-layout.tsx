@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { initializeModules } from '@/modules/init'
+import { UniversalChatbot } from '@/components/chatbot/UniversalChatbot'
 
 // Dynamic imports to prevent SSR issues
 const Navbar = dynamic(() => import('./navbar').then(mod => ({ default: mod.Navbar })), { 
@@ -24,6 +26,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true)
+
+    // Initialize modules on app startup
+    initializeModules()
   }, [])
 
   return (
@@ -43,8 +48,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {mounted && <Footer />}
       </div>
       
-      {/* Chatbot - only render when mounted */}
-      {mounted && <BookingChatbot />}
+      {/* Universal Chatbot - only render when mounted */}
+      {mounted && <UniversalChatbot />}
     </div>
   )
 }

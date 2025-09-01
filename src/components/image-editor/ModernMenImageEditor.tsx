@@ -29,6 +29,13 @@ interface TextOverlay {
   font: string
   weight: string
   shadow: boolean
+  outline: boolean
+  outlineColor: string
+  outlineWidth: number
+  rotation: number
+  opacity: number
+  backgroundColor?: string
+  padding?: number
 }
 
 interface BatchOperation {
@@ -62,11 +69,19 @@ interface CustomTemplate {
 }
 
 interface ExportSettings {
-  format: "png" | "jpeg" | "webp"
+  format: "png" | "jpeg" | "webp" | "avif" | "tiff"
   quality: number
   width: number
   height: number
   watermark: boolean
+  watermarkText: string
+  watermarkPosition: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "center"
+  watermarkOpacity: number
+  compression: "none" | "fast" | "best"
+  includeMetadata: boolean
+  dpi: number
+  colorProfile: "srgb" | "adobe-rgb" | "prophoto-rgb"
+  progressive: boolean
 }
 
 interface AnalyticsData {
@@ -148,13 +163,193 @@ const advancedFilters = [
   { name: "Golden Hour", brightness: 20, contrast: 15, saturation: 10, warmth: 25, vignette: 10 },
   { name: "Cyberpunk", brightness: 10, contrast: 30, saturation: 20, warmth: -15, vignette: 20 },
   { name: "Vintage Fade", brightness: 5, contrast: -10, saturation: -20, warmth: 15, vignette: 25 },
+  { name: "Modern Bold", brightness: 15, contrast: 35, saturation: 5, warmth: 0, vignette: 15 },
+  { name: "Soft Glow", brightness: 10, contrast: -5, saturation: -10, warmth: 20, vignette: 30 },
+  { name: "High Contrast BW", brightness: 5, contrast: 50, saturation: -100, warmth: 0, vignette: 20 },
+  { name: "Warm Vintage", brightness: 8, contrast: 15, saturation: -15, warmth: 30, vignette: 25 },
+  { name: "Cool Professional", brightness: 5, contrast: 20, saturation: -25, warmth: -20, vignette: 10 },
+  { name: "Dramatic Shadows", brightness: -10, contrast: 40, saturation: 10, warmth: -5, vignette: 40 },
+  { name: "Bright Pop", brightness: 25, contrast: 25, saturation: 30, warmth: 15, vignette: 5 },
+  { name: "Muted Elegance", brightness: 0, contrast: 10, saturation: -40, warmth: 10, vignette: 20 },
 ]
 
 const textPresets = [
-  { name: "Bold Hero", fontSize: 48, color: "#ffffff", font: "Montserrat", weight: "900", shadow: true },
-  { name: "Red Accent", fontSize: 32, color: "#dc2626", font: "Montserrat", weight: "700", shadow: false },
-  { name: "White Text", fontSize: 18, color: "#ffffff", font: "Open Sans", weight: "400", shadow: false },
-  { name: "Dramatic CTA", fontSize: 24, color: "#dc2626", font: "Montserrat", weight: "600", shadow: true },
+  {
+    name: "Bold Hero",
+    fontSize: 48,
+    color: "#ffffff",
+    font: "Montserrat",
+    weight: "900",
+    shadow: true,
+    outline: false,
+    outlineColor: "#000000",
+    outlineWidth: 2,
+    rotation: 0,
+    opacity: 1
+  },
+  {
+    name: "Red Accent",
+    fontSize: 32,
+    color: "#dc2626",
+    font: "Montserrat",
+    weight: "700",
+    shadow: false,
+    outline: true,
+    outlineColor: "#ffffff",
+    outlineWidth: 1,
+    rotation: 0,
+    opacity: 1
+  },
+  {
+    name: "White Text",
+    fontSize: 18,
+    color: "#ffffff",
+    font: "Open Sans",
+    weight: "400",
+    shadow: false,
+    outline: false,
+    outlineColor: "#000000",
+    outlineWidth: 1,
+    rotation: 0,
+    opacity: 1
+  },
+  {
+    name: "Dramatic CTA",
+    fontSize: 24,
+    color: "#dc2626",
+    font: "Montserrat",
+    weight: "600",
+    shadow: true,
+    outline: false,
+    outlineColor: "#000000",
+    outlineWidth: 2,
+    rotation: 0,
+    opacity: 1
+  },
+  {
+    name: "Neon Glow",
+    fontSize: 36,
+    color: "#00ff88",
+    font: "Arial Black",
+    weight: "900",
+    shadow: true,
+    outline: true,
+    outlineColor: "#ffffff",
+    outlineWidth: 3,
+    rotation: 0,
+    opacity: 1
+  },
+  {
+    name: "Elegant Serif",
+    fontSize: 28,
+    color: "#f8f8f2",
+    font: "Times New Roman",
+    weight: "400",
+    shadow: true,
+    outline: false,
+    outlineColor: "#000000",
+    outlineWidth: 1,
+    rotation: -2,
+    opacity: 0.9
+  },
+]
+
+const stickerLibrary = [
+  // Emojis
+  "😀", "😂", "🥰", "😍", "🤗", "🤔", "😎", "🥳", "😊", "😉",
+  "👍", "👎", "👌", "✌️", "🤞", "👏", "🙌", "🤝", "🙏", "💪",
+  "❤️", "💙", "💜", "💛", "💚", "🖤", "🤍", "🤎", "💖", "💕",
+  "🌟", "⭐", "✨", "💫", "🔥", "💯", "🎉", "🎊", "🎈", "🎁",
+  "💎", "💍", "👑", "🎩", "🕶️", "👓", "🥽", "🧢", "🎓", "👒",
+  "📱", "💻", "⌚", "📷", "🎥", "📺", "🔊", "🎵", "🎶", "🎤",
+  "⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏓", "🏸", "🥍", "🏒",
+  "🎨", "🎭", "🎪", "🎪", "🎨", "🖼️", "🎨", "🎭", "🎪", "🎭",
+  "🍕", "🍔", "🍟", "🌭", "🍿", "🍩", "🍪", "🧁", "🍰", "🎂",
+  "☕", "🧃", "🧊", "🥤", "🍵", "🫖", "🍶", "🍺", "🍻", "🥂",
+  "🌺", "🌸", "🌼", "🌻", "🌷", "🌹", "🥀", "🌺", "🌸", "🌼",
+  "🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐",
+  "✈️", "🚀", "🚁", "🚤", "🚢", "🚂", "🚆", "🚊", "🚟", "🚠",
+  "🏠", "🏡", "🏘️", "🏚️", "🏗️", "🏭", "🏢", "🏬", "🏣", "🏤",
+  "⛰️", "🏔️", "🗻", "🌋", "🏜️", "🏖️", "🏝️", "🏞️", "🏕️", "🏔️",
+  "🎪", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼", "🎹", "🥁", "🎷",
+  "⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏓", "🏸", "🥍", "🏒",
+  "🎯", "🎳", "🎮", "🕹️", "🎲", "🧩", "♠️", "♥️", "♦️", "♣️",
+  "🦋", "🐛", "🐜", "🐝", "🐞", "🦗", "🕷️", "🦂", "🐌", "🐙",
+  "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯",
+  "🦁", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒",
+  "🐔", "🐧", "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇",
+  "🐺", "🐗", "🐴", "🦄", "🐝", "🐛", "🦋", "🐌", "🐞", "🐜",
+  "🌱", "🌿", "☘️", "🍀", "🎋", "🎍", "🌾", "🌵", "🌲", "🌳",
+  "🌴", "🌸", "🌺", "🌻", "🌷", "🌹", "🥀", "🌺", "🌸", "🌼",
+  "🍎", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈", "🍒", "🍑",
+  "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒",
+  "🌶️", "🥕", "🧄", "🧅", "🥔", "🍠", "🌽", "🥖", "🥨", "🧀",
+  "🥚", "🍳", "🧈", "🥞", "🧇", "🥓", "🥩", "🍗", "🍖", "🌭",
+  "🍔", "🍟", "🍕", "🌮", "🌯", "🫔", "🥙", "🌮", "🍝", "🍜",
+  "🍲", "🍛", "🍣", "🍱", "🥟", "🦪", "🍤", "🍙", "🍚", "🍘",
+  "🍥", "🥠", "🥮", "🍢", "🍡", "🍧", "🍨", "🍦", "🥧", "🧁",
+  "🍰", "🎂", "🍮", "🍭", "🍬", "🍫", "🍿", "🍩", "🍪", "🥠",
+  "☕", "🫖", "🍵", "🥛", "🧃", "🥤", "🧋", "🍶", "🍺", "🍻",
+  "🥂", "🍷", "🥃", "🍸", "🍹", "🧉", "🍾", "🧊", "🥄", "🍴",
+  "🍽️", "🥣", "🥡", "🥢", "🧷", "🔪", "🫙", "🏺", "🌍", "🌎",
+  "🌏", "🗺️", "🗾", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️",
+  "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖",
+  "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏬", "🏣", "🏤", "🏥", "🏦",
+  "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼",
+  "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁",
+  "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🎡",
+  "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈",
+  "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑",
+  "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🚚", "🚛",
+  "🚜", "🏎️", "🏍️", "🛵", "🚲", "🛴", "🛹", "🚏", "🛣️", "🛤️",
+  "🛢️", "⛽", "🚨", "🚥", "🚦", "🛑", "🚧", "⚓", "⛵", "🛶",
+  "🚤", "🛳️", "⛴️", "🛥️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂",
+  "💺", "🚁", "🚟", "🚠", "🚡", "🛤️", "🛲", "⛽", "🚧", "⛽",
+]
+
+const stickerCategories = [
+  { name: "Faces", start: 0, end: 29 },
+  { name: "Gestures", start: 30, end: 59 },
+  { name: "Hearts", start: 60, end: 89 },
+  { name: "Stars", start: 90, end: 119 },
+  { name: "Fashion", start: 120, end: 149 },
+  { name: "Tech", start: 150, end: 179 },
+  { name: "Sports", start: 180, end: 209 },
+  { name: "Art", start: 210, end: 239 },
+  { name: "Food", start: 240, end: 269 },
+  { name: "Drinks", start: 270, end: 299 },
+  { name: "Flowers", start: 300, end: 329 },
+  { name: "Vehicles", start: 330, end: 359 },
+  { name: "Transport", start: 360, end: 389 },
+  { name: "Buildings", start: 390, end: 419 },
+  { name: "Nature", start: 420, end: 449 },
+  { name: "Music", start: 450, end: 479 },
+  { name: "Games", start: 480, end: 509 },
+  { name: "Insects", start: 510, end: 539 },
+  { name: "Animals", start: 540, end: 569 },
+  { name: "Birds", start: 570, end: 599 },
+  { name: "Wildlife", start: 600, end: 629 },
+  { name: "Plants", start: 630, end: 659 },
+  { name: "Fruits", start: 660, end: 689 },
+  { name: "Veggies", start: 690, end: 719 },
+  { name: "Spices", start: 720, end: 749 },
+  { name: "Bakery", start: 750, end: 779 },
+  { name: "Meals", start: 780, end: 809 },
+  { name: "Sushi", start: 810, end: 839 },
+  { name: "Desserts", start: 840, end: 869 },
+  { name: "Beverages", start: 870, end: 899 },
+  { name: "Cutlery", start: 900, end: 929 },
+  { name: "World", start: 930, end: 959 },
+  { name: "Mountains", start: 960, end: 989 },
+  { name: "Cities", start: 990, end: 1019 },
+  { name: "Landmarks", start: 1020, end: 1049 },
+  { name: "Weather", start: 1050, end: 1079 },
+  { name: "Entertainment", start: 1080, end: 1109 },
+  { name: "Trains", start: 1110, end: 1139 },
+  { name: "Cars", start: 1140, end: 1169 },
+  { name: "Roads", start: 1170, end: 1199 },
+  { name: "Water", start: 1200, end: 1229 },
+  { name: "Air", start: 1230, end: 1259 },
 ]
 
 const modernMenPages = [
@@ -457,6 +652,9 @@ export default function ModernMenImageEditor() {
   const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 0, height: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [cropStart, setCropStart] = useState({ x: 0, y: 0 })
+  const [isResizing, setIsResizing] = useState(false)
+  const [resizeHandle, setResizeHandle] = useState<string | null>(null)
   const [selectedPage, setSelectedPage] = useState("home")
   const [previewDevice, setPreviewDevice] = useState("desktop")
   const [fetchedHtml, setFetchedHtml] = useState<string>("")
@@ -484,6 +682,14 @@ export default function ModernMenImageEditor() {
     width: 1920,
     height: 1080,
     watermark: false,
+    watermarkText: "MODERN MEN",
+    watermarkPosition: "bottom-right",
+    watermarkOpacity: 0.7,
+    compression: "best",
+    includeMetadata: true,
+    dpi: 300,
+    colorProfile: "srgb",
+    progressive: true,
   })
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalEdits: 0,
@@ -505,6 +711,7 @@ export default function ModernMenImageEditor() {
   const [cropAspectRatio, setCropAspectRatio] = useState<string>("free")
   const [filterIntensity, setFilterIntensity] = useState(100)
   const [showAdvancedTools, setShowAdvancedTools] = useState(false)
+  const [selectedStickerCategory, setSelectedStickerCategory] = useState<string>("Faces")
 
   const [isInlineEditing, setIsInlineEditing] = useState(false)
   const [editingImageId, setEditingImageId] = useState<string | null>(null)
@@ -526,6 +733,9 @@ export default function ModernMenImageEditor() {
   const [editingHistory, setEditingHistory] = useState<
     Array<{ imageId: string; originalSrc: string; editedSrc: string }>
   >([])
+  const [batchMode, setBatchMode] = useState(false)
+  const [batchImages, setBatchImages] = useState<Array<{ id: string; file: File; preview: string; processed?: boolean }>>([])
+  const [batchProgress, setBatchProgress] = useState(0)
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -551,6 +761,151 @@ export default function ModernMenImageEditor() {
     }
     setStickers([...stickers, newSticker])
     setShowStickerPanel(false)
+  }
+
+  // Crop functionality
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!cropMode || !canvasRef.current) return
+
+    const rect = canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    // Check if clicking on resize handles
+    const handles = getCropHandles()
+    for (const [handleName, handlePos] of Object.entries(handles)) {
+      if (Math.abs(x - handlePos.x) < 10 && Math.abs(y - handlePos.y) < 10) {
+        setIsResizing(true)
+        setResizeHandle(handleName)
+        setCropStart({ x, y })
+        return
+      }
+    }
+
+    // Check if clicking inside crop area
+    if (x >= cropArea.x && x <= cropArea.x + cropArea.width &&
+        y >= cropArea.y && y <= cropArea.y + cropArea.height) {
+      setIsDragging(true)
+      setDragStart({ x: x - cropArea.x, y: y - cropArea.y })
+    } else {
+      // Start new crop area
+      setCropStart({ x, y })
+      setCropArea({ x, y, width: 0, height: 0 })
+      setIsDragging(true)
+    }
+  }
+
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!cropMode || !canvasRef.current) return
+
+    const rect = canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    if (isResizing && resizeHandle) {
+      const newCropArea = { ...cropArea }
+
+      switch (resizeHandle) {
+        case 'nw':
+          newCropArea.x = x
+          newCropArea.y = y
+          newCropArea.width = cropArea.x + cropArea.width - x
+          newCropArea.height = cropArea.y + cropArea.height - y
+          break
+        case 'ne':
+          newCropArea.y = y
+          newCropArea.width = x - cropArea.x
+          newCropArea.height = cropArea.y + cropArea.height - y
+          break
+        case 'sw':
+          newCropArea.x = x
+          newCropArea.width = cropArea.x + cropArea.width - x
+          newCropArea.height = y - cropArea.y
+          break
+        case 'se':
+          newCropArea.width = x - cropArea.x
+          newCropArea.height = y - cropArea.y
+          break
+      }
+
+      // Ensure minimum size
+      if (newCropArea.width > 10 && newCropArea.height > 10) {
+        setCropArea(newCropArea)
+      }
+    } else if (isDragging) {
+      if (cropArea.width === 0 && cropArea.height === 0) {
+        // Creating new crop area
+        const width = x - cropStart.x
+        const height = y - cropStart.y
+        setCropArea({
+          x: width > 0 ? cropStart.x : x,
+          y: height > 0 ? cropStart.y : y,
+          width: Math.abs(width),
+          height: Math.abs(height)
+        })
+      } else {
+        // Moving existing crop area
+        setCropArea({
+          ...cropArea,
+          x: x - dragStart.x,
+          y: y - dragStart.y
+        })
+      }
+    }
+  }
+
+  const handleCanvasMouseUp = () => {
+    setIsDragging(false)
+    setIsResizing(false)
+    setResizeHandle(null)
+  }
+
+  const getCropHandles = () => {
+    return {
+      nw: { x: cropArea.x, y: cropArea.y },
+      ne: { x: cropArea.x + cropArea.width, y: cropArea.y },
+      sw: { x: cropArea.x, y: cropArea.y + cropArea.height },
+      se: { x: cropArea.x + cropArea.width, y: cropArea.y + cropArea.height },
+    }
+  }
+
+  const applyCrop = () => {
+    if (!canvasRef.current || !uploadedImage) return
+
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    // Create a new canvas for the cropped image
+    const croppedCanvas = document.createElement("canvas")
+    const croppedCtx = croppedCanvas.getContext("2d")
+    if (!croppedCtx) return
+
+    croppedCanvas.width = cropArea.width
+    croppedCanvas.height = cropArea.height
+
+    // Draw the cropped portion
+    croppedCtx.drawImage(
+      canvas,
+      cropArea.x, cropArea.y, cropArea.width, cropArea.height,
+      0, 0, cropArea.width, cropArea.height
+    )
+
+    // Update the main canvas
+    canvas.width = cropArea.width
+    canvas.height = cropArea.height
+    ctx.drawImage(croppedCanvas, 0, 0)
+
+    // Reset crop area
+    setCropArea({ x: 0, y: 0, width: 0, height: 0 })
+    setCropMode(false)
+
+    // Update analytics
+    setAnalytics((prev) => ({
+      ...prev,
+      totalEdits: prev.totalEdits + 1,
+      featuresUsed: [...new Set([...prev.featuresUsed, "crop"])],
+    }))
   }
 
   const applyAdjustmentsRealTime = useCallback(
@@ -691,10 +1046,29 @@ export default function ModernMenImageEditor() {
     }
 
     textOverlays.forEach((overlay, index) => {
+      ctx.save()
+
+      // Set global opacity
+      ctx.globalAlpha = overlay.opacity
+
+      // Apply rotation
+      if (overlay.rotation !== 0) {
+        ctx.translate(overlay.x * adjustments.scale, overlay.y * adjustments.scale)
+        ctx.rotate((overlay.rotation * Math.PI) / 180)
+        ctx.translate(-overlay.x * adjustments.scale, -overlay.y * adjustments.scale)
+      }
+
       ctx.font = `${overlay.weight} ${overlay.fontSize * adjustments.scale}px ${overlay.font}`
-      ctx.fillStyle = overlay.color
       ctx.textAlign = "center"
 
+      // Draw text outline if enabled
+      if (overlay.outline) {
+        ctx.strokeStyle = overlay.outlineColor
+        ctx.lineWidth = overlay.outlineWidth * adjustments.scale
+        ctx.strokeText(overlay.text, overlay.x * adjustments.scale, overlay.y * adjustments.scale)
+      }
+
+      // Draw text shadow if enabled
       if (overlay.shadow) {
         ctx.shadowColor = "rgba(0,0,0,0.5)"
         ctx.shadowBlur = 4 * adjustments.scale
@@ -702,14 +1076,35 @@ export default function ModernMenImageEditor() {
         ctx.shadowOffsetY = 2 * adjustments.scale
       }
 
+      // Draw background if specified
+      if (overlay.backgroundColor) {
+        const metrics = ctx.measureText(overlay.text)
+        const padding = (overlay.padding || 8) * adjustments.scale
+        const bgWidth = metrics.width + (padding * 2)
+        const bgHeight = overlay.fontSize * adjustments.scale + (padding * 2)
+
+        ctx.fillStyle = overlay.backgroundColor
+        ctx.fillRect(
+          overlay.x * adjustments.scale - bgWidth / 2,
+          overlay.y * adjustments.scale - bgHeight + padding,
+          bgWidth,
+          bgHeight
+        )
+      }
+
+      // Draw the text
+      ctx.fillStyle = overlay.color
       ctx.fillText(overlay.text, overlay.x * adjustments.scale, overlay.y * adjustments.scale)
 
+      // Reset shadow
       if (overlay.shadow) {
         ctx.shadowColor = "transparent"
         ctx.shadowBlur = 0
         ctx.shadowOffsetX = 0
         ctx.shadowOffsetY = 0
       }
+
+      ctx.restore()
     })
 
     stickers.forEach((sticker) => {
@@ -861,21 +1256,82 @@ export default function ModernMenImageEditor() {
     exportCanvas.width = exportSettings.width
     exportCanvas.height = exportSettings.height
 
+    // Set canvas properties based on settings
+    if (exportSettings.progressive) {
+      // Enable image smoothing for better quality
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = "high"
+    }
+
     // Draw scaled image
     ctx.drawImage(canvas, 0, 0, exportSettings.width, exportSettings.height)
 
     // Add watermark if enabled
-    if (exportSettings.watermark) {
-      ctx.fillStyle = "rgba(220, 38, 38, 0.7)"
-      ctx.font = "24px Montserrat"
-      ctx.fillText("MODERN MEN", exportSettings.width - 200, exportSettings.height - 30)
+    if (exportSettings.watermark && exportSettings.watermarkText) {
+      ctx.save()
+      ctx.globalAlpha = exportSettings.watermarkOpacity
+      ctx.fillStyle = "rgba(220, 38, 38, 0.8)"
+      ctx.font = "bold 20px Montserrat"
+      ctx.textAlign = "center"
+
+      let x = exportSettings.width / 2
+      let y = exportSettings.height / 2
+
+      switch (exportSettings.watermarkPosition) {
+        case "top-left":
+          ctx.textAlign = "left"
+          x = 30
+          y = 30
+          break
+        case "top-right":
+          ctx.textAlign = "right"
+          x = exportSettings.width - 30
+          y = 30
+          break
+        case "bottom-left":
+          ctx.textAlign = "left"
+          x = 30
+          y = exportSettings.height - 30
+          break
+        case "bottom-right":
+          ctx.textAlign = "right"
+          x = exportSettings.width - 30
+          y = exportSettings.height - 30
+          break
+        case "center":
+          ctx.textAlign = "center"
+          x = exportSettings.width / 2
+          y = exportSettings.height / 2
+          break
+      }
+
+      // Add text shadow for better visibility
+      ctx.shadowColor = "rgba(0,0,0,0.5)"
+      ctx.shadowBlur = 2
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
+
+      ctx.fillText(exportSettings.watermarkText, x, y)
+      ctx.restore()
+    }
+
+    // Determine MIME type and quality
+    let mimeType = `image/${exportSettings.format}`
+    let quality = exportSettings.quality / 100
+
+    // Adjust for different formats
+    if (exportSettings.format === "png") {
+      quality = undefined // PNG doesn't use quality parameter
+    } else if (exportSettings.format === "webp" || exportSettings.format === "avif") {
+      quality = Math.min(quality, 0.95) // WebP and AVIF have different quality ranges
     }
 
     // Export with specified format and quality
-    const dataUrl = exportCanvas.toDataURL(`image/${exportSettings.format}`, exportSettings.quality / 100)
+    const dataUrl = exportCanvas.toDataURL(mimeType, quality)
 
     const link = document.createElement("a")
-    link.download = `modern-men-edit.${exportSettings.format}`
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-")
+    link.download = `modern-men-${timestamp}.${exportSettings.format}`
     link.href = dataUrl
     link.click()
 
@@ -970,6 +1426,11 @@ export default function ModernMenImageEditor() {
       font: preset?.font || "Montserrat",
       weight: preset?.weight || "600",
       shadow: preset?.shadow || false,
+      outline: preset?.outline || false,
+      outlineColor: preset?.outlineColor || "#000000",
+      outlineWidth: preset?.outlineWidth || 2,
+      rotation: preset?.rotation || 0,
+      opacity: preset?.opacity || 1,
     }
     setTextOverlays([...textOverlays, newOverlay])
     setActiveTextIndex(textOverlays.length)
@@ -1168,6 +1629,117 @@ export default function ModernMenImageEditor() {
     })
   }
 
+  // Batch processing functions
+  const handleBatchFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    const imageFiles = files.filter(file => file.type.startsWith("image/"))
+
+    const newBatchImages = imageFiles.map(file => ({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      file,
+      preview: "",
+      processed: false
+    }))
+
+    // Generate previews
+    newBatchImages.forEach((item) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        item.preview = e.target?.result as string
+        setBatchImages(prev => [...prev])
+      }
+      reader.readAsDataURL(item.file)
+    })
+
+    setBatchImages(newBatchImages)
+    setBatchMode(true)
+  }, [])
+
+  const processBatchImages = useCallback(async () => {
+    if (batchImages.length === 0) return
+
+    setBatchProgress(0)
+
+    for (let i = 0; i < batchImages.length; i++) {
+      const batchImage = batchImages[i]
+
+      // Create a temporary canvas for processing
+      const tempCanvas = document.createElement("canvas")
+      const tempCtx = tempCanvas.getContext("2d")
+      if (!tempCtx) continue
+
+      const img = new Image()
+      await new Promise((resolve) => {
+        img.onload = resolve
+        img.src = batchImage.preview
+      })
+
+      tempCanvas.width = img.width
+      tempCanvas.height = img.height
+
+      // Apply current adjustments
+      const filters = [
+        `brightness(${100 + adjustments.brightness}%)`,
+        `contrast(${100 + adjustments.contrast}%)`,
+        `saturate(${100 + adjustments.saturation}%)`,
+        `sepia(${Math.max(0, adjustments.warmth)}%) hue-rotate(${adjustments.warmth > 0 ? 10 : -10}deg)`,
+      ].join(" ")
+
+      tempCtx.filter = filters
+      tempCtx.drawImage(img, 0, 0)
+
+      // Apply text overlays
+      textOverlays.forEach((overlay) => {
+        tempCtx.font = `${overlay.weight} ${overlay.fontSize}px ${overlay.font}`
+        tempCtx.fillStyle = overlay.color
+        tempCtx.textAlign = "center"
+
+        if (overlay.shadow) {
+          tempCtx.shadowColor = "rgba(0,0,0,0.5)"
+          tempCtx.shadowBlur = 4
+          tempCtx.shadowOffsetX = 2
+          tempCtx.shadowOffsetY = 2
+        }
+
+        tempCtx.fillText(overlay.text, overlay.x, overlay.y)
+
+        if (overlay.shadow) {
+          tempCtx.shadowColor = "transparent"
+          tempCtx.shadowBlur = 0
+          tempCtx.shadowOffsetX = 0
+          tempCtx.shadowOffsetY = 0
+        }
+      })
+
+      // Apply stickers
+      stickers.forEach((sticker) => {
+        tempCtx.font = `${sticker.size}px Arial`
+        tempCtx.textAlign = "center"
+        tempCtx.fillText(sticker.emoji, sticker.x, sticker.y)
+      })
+
+      // Save the processed image
+      const processedDataUrl = tempCanvas.toDataURL("image/jpeg", 0.9)
+
+      // Download the processed image
+      const link = document.createElement("a")
+      link.download = `modern-men-batch-${i + 1}.jpg`
+      link.href = processedDataUrl
+      link.click()
+
+      // Mark as processed
+      batchImage.processed = true
+      setBatchProgress(((i + 1) / batchImages.length) * 100)
+    }
+
+    // Reset batch mode
+    setTimeout(() => {
+      setBatchMode(false)
+      setBatchImages([])
+      setBatchProgress(0)
+    }, 1000)
+  }, [batchImages, adjustments, textOverlays, stickers])
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* ... existing header code ... */}
@@ -1195,6 +1767,18 @@ export default function ModernMenImageEditor() {
               >
                 <span className="text-sm mr-2">📤</span>
                 Upload Image
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const batchInput = document.getElementById('batch-file-input') as HTMLInputElement
+                  batchInput?.click()
+                }}
+                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+              >
+                <span className="text-sm mr-2">📦</span>
+                Batch Process
               </Button>
               <Button
                 variant="outline"
@@ -1371,30 +1955,59 @@ export default function ModernMenImageEditor() {
                 </div>
 
                 {selectedTool === "crop" && (
-                  <div className="pt-2 border-t border-gray-600">
-                    <label className="text-sm font-medium text-white mb-2 block">Aspect Ratio</label>
-                    <div className="grid grid-cols-2 gap-1">
-                      {[
-                        { label: "Free", value: "free" },
-                        { label: "1:1", value: "1:1" },
-                        { label: "16:9", value: "16:9" },
-                        { label: "4:3", value: "4:3" },
-                      ].map((ratio) => (
-                        <Button
-                          key={ratio.value}
-                          variant={cropAspectRatio === ratio.value ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setCropAspectRatio(ratio.value)}
-                          className={`text-xs ${
-                            cropAspectRatio === ratio.value
-                              ? "bg-red-600 text-white"
-                              : "border-gray-600 text-white hover:bg-red-600"
-                          }`}
-                        >
-                          {ratio.label}
-                        </Button>
-                      ))}
+                  <div className="pt-2 border-t border-gray-600 space-y-3">
+                    <div>
+                      <label className="text-sm font-medium text-white mb-2 block">Aspect Ratio</label>
+                      <div className="grid grid-cols-2 gap-1">
+                        {[
+                          { label: "Free", value: "free" },
+                          { label: "1:1", value: "1:1" },
+                          { label: "16:9", value: "16:9" },
+                          { label: "4:3", value: "4:3" },
+                        ].map((ratio) => (
+                          <Button
+                            key={ratio.value}
+                            variant={cropAspectRatio === ratio.value ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCropAspectRatio(ratio.value)}
+                            className={`text-xs ${
+                              cropAspectRatio === ratio.value
+                                ? "bg-red-600 text-white"
+                                : "border-gray-600 text-white hover:bg-red-600"
+                            }`}
+                          >
+                            {ratio.label}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
+
+                    {cropArea.width > 0 && cropArea.height > 0 && (
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-300">
+                          Crop Area: {Math.round(cropArea.width)} × {Math.round(cropArea.height)} px
+                        </div>
+                        <Button
+                          onClick={applyCrop}
+                          size="sm"
+                          className="w-full bg-red-600 hover:bg-red-700 text-white"
+                        >
+                          <span className="text-sm mr-2">✂️</span>
+                          Apply Crop
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setCropArea({ x: 0, y: 0, width: 0, height: 0 })
+                            setCropMode(false)
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-gray-600 text-white hover:bg-gray-800"
+                        >
+                          Cancel Crop
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1567,6 +2180,43 @@ export default function ModernMenImageEditor() {
               </CardContent>
             </Card>
 
+            <Card className="bg-gray-900 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg text-white">
+                  <span className="text-red-600">🎨</span>
+                  Advanced Filters
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {advancedFilters.map((filter) => (
+                    <Button
+                      key={filter.name}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs bg-transparent border-gray-600 text-white hover:bg-red-600 hover:border-red-600"
+                      onClick={() => {
+                        setAdjustments({
+                          brightness: filter.brightness,
+                          contrast: filter.contrast,
+                          saturation: filter.saturation,
+                          warmth: filter.warmth,
+                          vignette: filter.vignette,
+                          scale: 1,
+                        })
+                        if (realTimePreview) {
+                          setTimeout(applyAdjustments, 100)
+                        }
+                      }}
+                      disabled={!uploadedImage}
+                    >
+                      {filter.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* ... existing code for other cards ... */}
 
             <Card className="bg-gray-900 border-gray-700">
@@ -1630,6 +2280,242 @@ export default function ModernMenImageEditor() {
                     ))}
                   </div>
                 )}
+
+                {/* Sticker Panel */}
+                {selectedTool === "sticker" && (
+                  <div className="space-y-3 p-3 bg-gray-800 rounded border border-red-600">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-medium text-red-600">😀 Sticker Library</h4>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowStickerPanel(!showStickerPanel)}
+                        className="text-red-600 hover:bg-red-600 hover:text-white"
+                      >
+                        {showStickerPanel ? "Hide" : "Show"}
+                      </Button>
+                    </div>
+
+                    {showStickerPanel && (
+                      <div className="space-y-3">
+                        {/* Category Tabs */}
+                        <div className="flex gap-1 flex-wrap">
+                          {stickerCategories.map((category) => (
+                            <Button
+                              key={category.name}
+                              variant={selectedStickerCategory === category.name ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setSelectedStickerCategory(category.name)}
+                              className={`text-xs ${
+                                selectedStickerCategory === category.name
+                                  ? "bg-red-600 text-white"
+                                  : "border-gray-600 text-white hover:bg-red-600"
+                              }`}
+                            >
+                              {category.name}
+                            </Button>
+                          ))}
+                        </div>
+
+                        {/* Sticker Grid */}
+                        <div className="grid grid-cols-6 gap-2 max-h-64 overflow-y-auto">
+                          {(() => {
+                            const category = stickerCategories.find(cat => cat.name === selectedStickerCategory)
+                            if (!category) return null
+
+                            return stickerLibrary
+                              .slice(category.start, category.end + 1)
+                              .map((emoji, index) => (
+                                <Button
+                                  key={index}
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-10 w-10 p-0 border-gray-600 text-xl hover:bg-red-600 hover:border-red-600"
+                                  onClick={() => addSticker(emoji)}
+                                  disabled={!uploadedImage}
+                                >
+                                  {emoji}
+                                </Button>
+                              ))
+                          })()}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Sticker Layers */}
+                {stickers.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-white">Sticker Layers</h4>
+                    {stickers.map((sticker, index) => (
+                      <div
+                        key={sticker.id}
+                        className="flex items-center justify-between p-2 bg-gray-800 rounded border border-gray-600"
+                      >
+                        <span className="text-lg">{sticker.emoji}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:bg-red-600 hover:text-white"
+                          onClick={() => {
+                            setStickers(stickers.filter((_, i) => i !== index))
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900 border-gray-700">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg text-white">
+                  <span className="text-red-600">📤</span>
+                  Export Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-white mb-2 block">Format</Label>
+                  <Select
+                    value={exportSettings.format}
+                    onValueChange={(value: any) => setExportSettings(prev => ({ ...prev, format: value }))}
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-600">
+                      <SelectItem value="png">PNG (Lossless)</SelectItem>
+                      <SelectItem value="jpeg">JPEG (Smaller)</SelectItem>
+                      <SelectItem value="webp">WebP (Modern)</SelectItem>
+                      <SelectItem value="avif">AVIF (Best Compression)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block">Quality: {exportSettings.quality}%</Label>
+                  <Slider
+                    value={[exportSettings.quality]}
+                    onValueChange={(value: number[]) => setExportSettings(prev => ({ ...prev, quality: value[0] }))}
+                    min={1}
+                    max={100}
+                    step={1}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-white mb-1 block text-sm">Width</Label>
+                    <Input
+                      type="number"
+                      value={exportSettings.width}
+                      onChange={(e) => setExportSettings(prev => ({ ...prev, width: parseInt(e.target.value) || 1920 }))}
+                      className="bg-gray-800 border-gray-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-white mb-1 block text-sm">Height</Label>
+                    <Input
+                      type="number"
+                      value={exportSettings.height}
+                      onChange={(e) => setExportSettings(prev => ({ ...prev, height: parseInt(e.target.value) || 1080 }))}
+                      className="bg-gray-800 border-gray-600 text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="watermark"
+                      checked={exportSettings.watermark}
+                      onChange={(e) => setExportSettings(prev => ({ ...prev, watermark: e.target.checked }))}
+                      className="rounded border-gray-600"
+                    />
+                    <Label htmlFor="watermark" className="text-white">Add Watermark</Label>
+                  </div>
+
+                  {exportSettings.watermark && (
+                    <div className="space-y-2 ml-6">
+                      <Input
+                        placeholder="Watermark text"
+                        value={exportSettings.watermarkText}
+                        onChange={(e) => setExportSettings(prev => ({ ...prev, watermarkText: e.target.value }))}
+                        className="bg-gray-800 border-gray-600 text-white"
+                      />
+                      <Select
+                        value={exportSettings.watermarkPosition}
+                        onValueChange={(value: any) => setExportSettings(prev => ({ ...prev, watermarkPosition: value }))}
+                      >
+                        <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-600">
+                          <SelectItem value="top-left">Top Left</SelectItem>
+                          <SelectItem value="top-right">Top Right</SelectItem>
+                          <SelectItem value="bottom-left">Bottom Left</SelectItem>
+                          <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                          <SelectItem value="center">Center</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div>
+                        <Label className="text-white mb-1 block text-sm">Opacity: {Math.round(exportSettings.watermarkOpacity * 100)}%</Label>
+                        <Slider
+                          value={[exportSettings.watermarkOpacity]}
+                          onValueChange={(value: number[]) => setExportSettings(prev => ({ ...prev, watermarkOpacity: value[0] }))}
+                          min={0.1}
+                          max={1}
+                          step={0.1}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label className="text-white mb-2 block">Color Profile</Label>
+                  <Select
+                    value={exportSettings.colorProfile}
+                    onValueChange={(value: any) => setExportSettings(prev => ({ ...prev, colorProfile: value }))}
+                  >
+                    <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-600">
+                      <SelectItem value="srgb">sRGB (Web Standard)</SelectItem>
+                      <SelectItem value="adobe-rgb">Adobe RGB (Print)</SelectItem>
+                      <SelectItem value="prophoto-rgb">ProPhoto RGB (Photography)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="progressive"
+                    checked={exportSettings.progressive}
+                    onChange={(e) => setExportSettings(prev => ({ ...prev, progressive: e.target.checked }))}
+                    className="rounded border-gray-600"
+                  />
+                  <Label htmlFor="progressive" className="text-white">Progressive rendering</Label>
+                </div>
+
+                <Button
+                  onClick={exportWithSettings}
+                  disabled={!uploadedImage}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                >
+                  <span className="text-sm mr-2">📤</span>
+                  Export Image
+                </Button>
               </CardContent>
             </Card>
 
@@ -1715,13 +2601,19 @@ export default function ModernMenImageEditor() {
                       </div>
                     )}
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center relative">
                       <canvas
                         ref={canvasRef}
-                        className="max-w-full max-h-[600px] border border-red-600 rounded-lg shadow-sm cursor-crosshair"
+                        className={`max-w-full max-h-[600px] border rounded-lg shadow-sm ${
+                          cropMode ? 'cursor-crosshair' : 'cursor-pointer'
+                        }`}
                         style={{ objectFit: "contain" }}
+                        onMouseDown={handleCanvasMouseDown}
+                        onMouseMove={handleCanvasMouseMove}
+                        onMouseUp={handleCanvasMouseUp}
+                        onMouseLeave={handleCanvasMouseUp}
                         onClick={(e) => {
-                          if (selectedTool === "text") {
+                          if (selectedTool === "text" && !cropMode) {
                             const rect = canvasRef.current?.getBoundingClientRect()
                             if (rect) {
                               const x = e.clientX - rect.left
@@ -1731,6 +2623,82 @@ export default function ModernMenImageEditor() {
                           }
                         }}
                       />
+
+                      {/* Crop overlay */}
+                      {cropMode && cropArea.width > 0 && cropArea.height > 0 && (
+                        <>
+                          {/* Dark overlay */}
+                          <div className="absolute inset-0 pointer-events-none">
+                            {/* Top */}
+                            <div
+                              className="absolute bg-black bg-opacity-50"
+                              style={{
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: `${cropArea.y}px`
+                              }}
+                            />
+                            {/* Bottom */}
+                            <div
+                              className="absolute bg-black bg-opacity-50"
+                              style={{
+                                top: `${cropArea.y + cropArea.height}px`,
+                                left: 0,
+                                width: '100%',
+                                height: `${canvasRef.current ? canvasRef.current.height - (cropArea.y + cropArea.height) : 0}px`
+                              }}
+                            />
+                            {/* Left */}
+                            <div
+                              className="absolute bg-black bg-opacity-50"
+                              style={{
+                                top: `${cropArea.y}px`,
+                                left: 0,
+                                width: `${cropArea.x}px`,
+                                height: `${cropArea.height}px`
+                              }}
+                            />
+                            {/* Right */}
+                            <div
+                              className="absolute bg-black bg-opacity-50"
+                              style={{
+                                top: `${cropArea.y}px`,
+                                left: `${cropArea.x + cropArea.width}px`,
+                                width: `${canvasRef.current ? canvasRef.current.width - (cropArea.x + cropArea.width) : 0}px`,
+                                height: `${cropArea.height}px`
+                              }}
+                            />
+                          </div>
+
+                          {/* Crop border */}
+                          <div
+                            className="absolute border-2 border-white pointer-events-none"
+                            style={{
+                              left: `${cropArea.x}px`,
+                              top: `${cropArea.y}px`,
+                              width: `${cropArea.width}px`,
+                              height: `${cropArea.height}px`
+                            }}
+                          >
+                            {/* Resize handles */}
+                            {Object.entries(getCropHandles()).map(([handle, pos]) => (
+                              <div
+                                key={handle}
+                                className="absolute w-3 h-3 bg-white border border-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 pointer-events-none"
+                                style={{
+                                  left: `${pos.x}px`,
+                                  top: `${pos.y}px`,
+                                  cursor: handle.includes('n') || handle.includes('s')
+                                    ? handle.includes('w') || handle.includes('e')
+                                      ? 'nw-resize' : 'ns-resize'
+                                    : 'ew-resize'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     <Image
@@ -1776,6 +2744,14 @@ export default function ModernMenImageEditor() {
                 )}
 
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                <input
+                  id="batch-file-input"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleBatchFileUpload}
+                  className="hidden"
+                />
               </CardContent>
             </Card>
 
@@ -1900,6 +2876,78 @@ export default function ModernMenImageEditor() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {batchMode && batchImages.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-white">Batch Processing</h2>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-gray-400">
+                {batchImages.filter(img => img.processed).length} / {batchImages.length} processed
+              </div>
+              <Button
+                onClick={processBatchImages}
+                disabled={batchProgress > 0}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {batchProgress > 0 ? `Processing... ${Math.round(batchProgress)}%` : "Process All Images"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setBatchMode(false)
+                  setBatchImages([])
+                  setBatchProgress(0)
+                }}
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-800"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+
+          <Card className="bg-gray-800 border-gray-700">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {batchImages.map((batchImage) => (
+                  <div key={batchImage.id} className="relative">
+                    <Image
+                      src={batchImage.preview || "/placeholder.svg"}
+                      alt="Batch image"
+                      width={200}
+                      height={150}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-600"
+                    />
+                    {batchImage.processed && (
+                      <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                        ✓ Processed
+                      </div>
+                    )}
+                    <div className="mt-2 text-xs text-gray-400 truncate">
+                      {batchImage.file.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {batchProgress > 0 && (
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-white">Processing Progress</span>
+                    <span className="text-sm text-gray-400">{Math.round(batchProgress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-red-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${batchProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 

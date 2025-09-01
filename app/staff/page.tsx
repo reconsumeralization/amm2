@@ -1,413 +1,646 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Sidebar } from "@/components/sidebar"
-import { DashboardHeader } from "@/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Users, Search, Clock, DollarSign, Star, Phone, Mail, Edit, Trash2, Loader2, AlertCircle } from "@/lib/icon-mapping"
-import { AddStaffDialog } from "@/components/add-staff-dialog"
-import { StaffSchedule } from "@/components/staff-schedule"
-import { EditStaffDialog } from "@/components/staff-management/edit-staff-dialog"
-import { DeleteStaffDialog } from "@/components/staff-management/delete-staff-dialog"
-import { ClockInOut } from "@/components/time-tracking/clock-in-out"
-import { useUsers } from "@/hooks/useUsers"
-import { useStylists } from "@/hooks/useStylists"
-import { createSupabaseClient } from "@/lib/supabase"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Users,
+  Calendar as CalendarIcon,
+  Clock,
+  Plus,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  User,
+  Phone,
+  Mail,
+  Star,
+  TrendingUp,
+  Search,
+  Filter,
+  Loader2
+} from "@/lib/icon-mapping"
+import { cn } from "@/lib/utils"
+import { format, addDays, isBefore, startOfDay } from "date-fns"
+
+interface Staff {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  role: 'stylist' | 'assistant' | 'manager'
+  status: 'active' | 'inactive' | 'on-leave'
+  hireDate: string
+  rating: number
+  totalBookings: number
+  specializations: string[]
+  workingHours: {
+    monday: { start: string; end: string; isWorking: boolean }
+    tuesday: { start: string; end: string; isWorking: boolean }
+    wednesday: { start: string; end: string; isWorking: boolean }
+    thursday: { start: string; end: string; isWorking: boolean }
+    friday: { start: string; end: string; isWorking: boolean }
+    saturday: { start: string; end: string; isWorking: boolean }
+    sunday: { start: string; end: string; isWorking: boolean }
+  }
+}
+
+interface Shift {
+  id: string
+  staffId: string
+  staffName: string
+  date: string
+  startTime: string
+  endTime: string
+  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
+  notes?: string
+}
+
+interface TimeOffRequest {
+  id: string
+  staffId: string
+  staffName: string
+  type: 'vacation' | 'sick' | 'personal' | 'training'
+  startDate: string
+  endDate: string
+  status: 'pending' | 'approved' | 'rejected'
+  reason: string
+  requestedAt: string
+}
 
 export default function StaffPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStaff, setSelectedStaff] = useState<any>(null)
-  const [editStaff, setEditStaff] = useState<any>(null)
-  const [deleteStaff, setDeleteStaff] = useState<any>(null)
-  const [currentUser, setCurrentUser] = useState<any>(null)
-  const [staffData, setStaffData] = useState<any[]>([])
+  const [staff, setStaff] = useState<Staff[]>([])
+  const [shifts, setShifts] = useState<Shift[]>([])
+  const [timeOffRequests, setTimeOffRequests] = useState<TimeOffRequest[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedRole, setSelectedRole] = useState('all')
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
 
-  // Use the API hooks
-  const {
-    users: staffMembers,
-    loading: usersLoading,
-    error: usersError,
-    fetchUsers
-  } = useUsers()
-
-  const {
-    stylists,
-    loading: stylistsLoading,
-    error: stylistsError,
-    fetchStylists
-  } = useStylists()
-
-  // Filter for staff roles (barber, manager, admin)
-  const staffUsers = staffMembers.filter((user: any) =>
-    ['barber', 'manager', 'admin'].includes(user.role)
-  )
-
-  // Mock payroll data
-  const payrollData = [
-    { name: "John Doe", hoursWorked: 40, hourlyRate: 25, grossPay: 1000, tips: 150, total: 1150 },
-    { name: "Jane Smith", hoursWorked: 38, hourlyRate: 22, grossPay: 836, tips: 120, total: 956 },
-    { name: "Mike Johnson", hoursWorked: 35, hourlyRate: 20, grossPay: 700, tips: 95, total: 795 },
-  ]
-
-  // Fetch data on component mount
+  // Mock data
   useEffect(() => {
-    fetchUsers({ role: ['barber', 'manager', 'admin'] })
-    fetchStylists()
-    fetchCurrentUser()
-    fetchStaffData()
-  }, [fetchUsers, fetchStylists])
+    setStaff([
+      {
+        id: '1',
+        firstName: 'Mike',
+        lastName: 'Johnson',
+        email: 'mike@modernmen.com',
+        phone: '(555) 123-4567',
+        role: 'stylist',
+        status: 'active',
+        hireDate: '2023-01-15',
+        rating: 4.8,
+        totalBookings: 245,
+        specializations: ['Haircut', 'Beard Trim', 'Styling'],
+        workingHours: {
+          monday: { start: '09:00', end: '17:00', isWorking: true },
+          tuesday: { start: '09:00', end: '17:00', isWorking: true },
+          wednesday: { start: '09:00', end: '17:00', isWorking: true },
+          thursday: { start: '09:00', end: '17:00', isWorking: true },
+          friday: { start: '09:00', end: '19:00', isWorking: true },
+          saturday: { start: '08:00', end: '16:00', isWorking: true },
+          sunday: { start: '10:00', end: '14:00', isWorking: false }
+        }
+      },
+      {
+        id: '2',
+        firstName: 'Sarah',
+        lastName: 'Davis',
+        email: 'sarah@modernmen.com',
+        phone: '(555) 987-6543',
+        role: 'stylist',
+        status: 'active',
+        hireDate: '2023-03-20',
+        rating: 4.9,
+        totalBookings: 198,
+        specializations: ['Haircut', 'Coloring', 'Styling'],
+        workingHours: {
+          monday: { start: '10:00', end: '18:00', isWorking: true },
+          tuesday: { start: '10:00', end: '18:00', isWorking: true },
+          wednesday: { start: '10:00', end: '18:00', isWorking: true },
+          thursday: { start: '10:00', end: '18:00', isWorking: true },
+          friday: { start: '10:00', end: '19:00', isWorking: true },
+          saturday: { start: '09:00', end: '17:00', isWorking: true },
+          sunday: { start: '11:00', end: '15:00', isWorking: false }
+        }
+      },
+      {
+        id: '3',
+        firstName: 'Alex',
+        lastName: 'Rodriguez',
+        email: 'alex@modernmen.com',
+        phone: '(555) 456-7890',
+        role: 'assistant',
+        status: 'active',
+        hireDate: '2023-06-10',
+        rating: 4.7,
+        totalBookings: 156,
+        specializations: ['Shampoo', 'Styling Assistance'],
+        workingHours: {
+          monday: { start: '08:00', end: '16:00', isWorking: true },
+          tuesday: { start: '08:00', end: '16:00', isWorking: true },
+          wednesday: { start: '08:00', end: '16:00', isWorking: true },
+          thursday: { start: '08:00', end: '16:00', isWorking: true },
+          friday: { start: '08:00', end: '17:00', isWorking: true },
+          saturday: { start: '08:00', end: '16:00', isWorking: true },
+          sunday: { start: '10:00', end: '14:00', isWorking: false }
+        }
+      }
+    ])
 
-  const fetchCurrentUser = async () => {
-    const supabase = createSupabaseClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (user) {
-      const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
-      setCurrentUser(profile)
+    setShifts([
+      {
+        id: 's1',
+        staffId: '1',
+        staffName: 'Mike Johnson',
+        date: '2024-12-16',
+        startTime: '09:00',
+        endTime: '17:00',
+        status: 'scheduled',
+        notes: 'Regular shift'
+      },
+      {
+        id: 's2',
+        staffId: '2',
+        staffName: 'Sarah Davis',
+        date: '2024-12-16',
+        startTime: '10:00',
+        endTime: '18:00',
+        status: 'confirmed',
+        notes: 'Coloring specialist shift'
+      }
+    ])
+
+    setTimeOffRequests([
+      {
+        id: 'to1',
+        staffId: '1',
+        staffName: 'Mike Johnson',
+        type: 'vacation',
+        startDate: '2024-12-20',
+        endDate: '2024-12-25',
+        status: 'pending',
+        reason: 'Family vacation',
+        requestedAt: '2024-12-01T10:00:00Z'
+      }
+    ])
+  }, [])
+
+  const filteredStaff = staff.filter(person => {
+    const matchesSearch =
+      person.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      person.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      person.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesRole = selectedRole === 'all' || person.role === selectedRole
+
+    return matchesSearch && matchesRole
+  })
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-100 text-green-800">Active</Badge>
+      case 'inactive':
+        return <Badge variant="secondary">Inactive</Badge>
+      case 'on-leave':
+        return <Badge className="bg-yellow-100 text-yellow-800">On Leave</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
     }
   }
 
-  const fetchStaffData = async () => {
-    const supabase = createSupabaseClient()
-    const { data } = await supabase
-      .from("staff")
-      .select(`
-        *,
-        profiles:id (
-          first_name,
-          last_name,
-          email,
-          phone,
-          avatar_url
-        )
-      `)
-      .eq("is_active", true)
-
-    if (data) {
-      const formattedData = data.map((staff: any) => ({
-        id: staff.id,
-        name: `${staff.profiles.first_name} ${staff.profiles.last_name}`,
-        role: staff.employee_id || "Staff Member",
-        email: staff.profiles.email,
-        phone: staff.profiles.phone || "",
-        status: "active",
-        rating: 4.8, // This would come from reviews/ratings table
-        experience: "5 years", // This would be calculated from hire_date
-        specialties: staff.specialties || [],
-        hourlyRate: staff.hourly_rate || 0,
-        hoursThisWeek: 40, // This would come from time_entries
-        avatar: staff.profiles.avatar_url,
-      }))
-      setStaffData(formattedData)
+  const getShiftStatusBadge = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return <Badge variant="outline">Scheduled</Badge>
+      case 'confirmed':
+        return <Badge className="bg-blue-100 text-blue-800">Confirmed</Badge>
+      case 'completed':
+        return <Badge className="bg-green-100 text-green-800">Completed</Badge>
+      case 'cancelled':
+        return <Badge variant="destructive">Cancelled</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
     }
   }
 
-  const filteredStaff = staffData.filter(
-    (staff) =>
-      staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.role.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const getTimeOffStatusBadge = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+      case 'approved':
+        return <Badge className="bg-green-100 text-green-800">Approved</Badge>
+      case 'rejected':
+        return <Badge variant="destructive">Rejected</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
+
+  const handleApproveTimeOff = (requestId: string) => {
+    setTimeOffRequests(prev =>
+      prev.map(req =>
+        req.id === requestId
+          ? { ...req, status: 'approved' }
+          : req
+      )
+    )
+  }
+
+  const handleRejectTimeOff = (requestId: string) => {
+    setTimeOffRequests(prev =>
+      prev.map(req =>
+        req.id === requestId
+          ? { ...req, status: 'rejected' }
+          : req
+      )
+    )
+  }
+
+  const totalStaff = staff.length
+  const activeStaff = staff.filter(s => s.status === 'active').length
+  const stylists = staff.filter(s => s.role === 'stylist').length
+  const averageRating = staff.reduce((sum, s) => sum + s.rating, 0) / staff.length
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Staff Management</h1>
+          <p className="text-gray-600">Manage staff schedules, working hours, and time-off requests</p>
+        </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader />
+        {/* Overview Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Staff</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalStaff}</div>
+              <p className="text-xs text-muted-foreground">
+                {activeStaff} active staff members
+              </p>
+            </CardContent>
+          </Card>
 
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Staff & HR Management</h1>
-                <p className="text-muted-foreground">Manage your team, schedules, and payroll</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Stylists</CardTitle>
+              <User className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stylists}</div>
+              <p className="text-xs text-muted-foreground">
+                Professional hair stylists
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+              <Star className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{averageRating.toFixed(1)}</div>
+              <p className="text-xs text-muted-foreground">
+                Customer satisfaction score
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+              <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {timeOffRequests.filter(r => r.status === 'pending').length}
               </div>
-              <AddStaffDialog />
+              <p className="text-xs text-muted-foreground">
+                Time-off requests awaiting approval
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="staff" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="staff">Staff Directory</TabsTrigger>
+            <TabsTrigger value="schedule">Schedule</TabsTrigger>
+            <TabsTrigger value="time-off">Time Off</TabsTrigger>
+            <TabsTrigger value="shifts">Shift Management</TabsTrigger>
+          </TabsList>
+
+          {/* Staff Directory Tab */}
+          <TabsContent value="staff" className="space-y-6">
+            {/* Search and Filter */}
+            <div className="flex gap-4 items-center justify-between">
+              <div className="flex gap-4 flex-1">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search staff..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="All Roles" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="stylist">Stylist</SelectItem>
+                    <SelectItem value="assistant">Assistant</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Staff
+              </Button>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Staff</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{staffData.length}</div>
-                  <p className="text-xs text-green-600">All active</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Hours This Week</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">153</div>
-                  <p className="text-xs text-green-600">+5 from last week</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Weekly Payroll</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">$5,435</div>
-                  <p className="text-xs text-green-600">Including tips</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Avg Rating</CardTitle>
-                  <Star className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">4.8</div>
-                  <p className="text-xs text-green-600">Excellent performance</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Time Clock section for current user if they're staff */}
-            {currentUser && currentUser.role !== "customer" && (
-              <ClockInOut staffId={currentUser.id} staffName={`${currentUser.first_name} ${currentUser.last_name}`} />
-            )}
-
-            {/* Main Content */}
-            <Tabs defaultValue="staff" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="staff">Staff Directory</TabsTrigger>
-                <TabsTrigger value="schedule">Schedule</TabsTrigger>
-                <TabsTrigger value="payroll">Payroll</TabsTrigger>
-                <TabsTrigger value="performance">Performance</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="staff" className="space-y-4">
-                <Card>
+            {/* Staff Grid */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredStaff.map((person) => (
+                <Card key={person.id}>
                   <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle>Staff Directory</CardTitle>
-                        <CardDescription>Manage your team members and their information</CardDescription>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-blue-600" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                          <Input
-                            placeholder="Search staff..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 w-64"
-                          />
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">
+                          {person.firstName} {person.lastName}
+                        </CardTitle>
+                        <CardDescription className="capitalize">{person.role}</CardDescription>
+                      </div>
+                      {getStatusBadge(person.status)}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="h-4 w-4 text-gray-400" />
+                        <span>{person.email}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="h-4 w-4 text-gray-400" />
+                        <span>{person.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <span>{person.rating} rating</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CalendarIcon className="h-4 w-4 text-gray-400" />
+                        <span>{person.totalBookings} bookings</span>
+                      </div>
+
+                      <div className="pt-3 border-t">
+                        <h4 className="font-medium text-sm mb-2">Specializations</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {person.specializations.map((spec, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {spec}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {filteredStaff.map((staff) => (
-                        <Card key={staff.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-center gap-3">
-                                <Avatar className="h-12 w-12">
-                                  <AvatarImage src={staff.avatar || "/placeholder.svg"} alt={staff.name} />
-                                  <AvatarFallback>
-                                    {staff.name
-                                      .split(" ")
-                                      .map((n: string) => n[0])
-                                      .join("")}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <h3 className="font-semibold">{staff.name}</h3>
-                                  <p className="text-sm text-muted-foreground">{staff.role}</p>
-                                  <div className="flex items-center gap-1 mt-1">
-                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-xs">{staff.rating}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <Badge variant={staff.status === "active" ? "default" : "secondary"}>
-                                {staff.status}
-                              </Badge>
-                            </div>
 
-                            <div className="mt-4 space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Mail className="h-3 w-3" />
-                                {staff.email}
-                              </div>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Phone className="h-3 w-3" />
-                                {staff.phone}
-                              </div>
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Clock className="h-3 w-3" />
-                                {staff.hoursThisWeek}h this week
-                              </div>
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-between">
-                              <div className="text-sm">
-                                <span className="font-medium">${staff.hourlyRate}/hr</span>
-                              </div>
-                              <div className="flex gap-1">
-                                <Button size="sm" variant="outline" onClick={() => setEditStaff(staff)}>
-                                  <Edit className="h-3 w-3" />
-                                </Button>
-                                <Button size="sm" variant="outline" onClick={() => setDeleteStaff(staff)}>
-                                  <Trash2 className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                      <div className="flex gap-2 pt-3">
+                        <Button size="sm" variant="outline" className="flex-1">
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button size="sm" variant="outline" className="flex-1">
+                          <CalendarIcon className="h-4 w-4 mr-1" />
+                          Schedule
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
+              ))}
+            </div>
+          </TabsContent>
 
-              <TabsContent value="schedule" className="space-y-4">
-                <StaffSchedule />
-              </TabsContent>
+          {/* Schedule Tab */}
+          <TabsContent value="schedule" className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Calendar */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Staff Schedule</CardTitle>
+                  <CardDescription>Select a date to view staff availability</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    className="rounded-md border"
+                  />
+                </CardContent>
+              </Card>
 
-              <TabsContent value="payroll" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Weekly Payroll</CardTitle>
-                    <CardDescription>Current week payroll summary</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Employee</TableHead>
-                          <TableHead>Hours</TableHead>
-                          <TableHead>Rate</TableHead>
-                          <TableHead>Gross Pay</TableHead>
-                          <TableHead>Tips</TableHead>
-                          <TableHead>Total</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {payrollData.map((employee) => (
-                          <TableRow key={employee.name}>
-                            <TableCell className="font-medium">{employee.name}</TableCell>
-                            <TableCell>{employee.hoursWorked}</TableCell>
-                            <TableCell>${employee.hourlyRate}</TableCell>
-                            <TableCell>${employee.grossPay}</TableCell>
-                            <TableCell>${employee.tips}</TableCell>
-                            <TableCell className="font-medium">${employee.total}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+              {/* Staff Availability */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Staff Availability</CardTitle>
+                  <CardDescription>
+                    {selectedDate ? format(selectedDate, 'EEEE, MMMM do') : 'Select a date'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {selectedDate && (
+                    <div className="space-y-4">
+                      {staff
+                        .filter(person => person.status === 'active')
+                        .map((person) => {
+                          const dayOfWeek = format(selectedDate, 'EEEE').toLowerCase() as keyof typeof person.workingHours
+                          const schedule = person.workingHours[dayOfWeek]
 
-              <TabsContent value="performance" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Performance Metrics</CardTitle>
-                    <CardDescription>Track staff performance and customer satisfaction</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {staffData
-                        .filter((s) => s.role.includes("Barber"))
-                        .map((staff) => (
-                          <Card key={staff.id}>
-                            <CardContent className="p-4">
-                              <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                  <Avatar>
-                                    <AvatarImage src={staff.avatar || "/placeholder.svg"} alt={staff.name} />
-                                    <AvatarFallback>
-                                      {staff.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
-                                    </AvatarFallback>
-                                  </Avatar>
+                          return (
+                            <div key={person.id} className="flex items-center justify-between p-3 border rounded-lg">
+                              <div>
+                                <h4 className="font-medium">
+                                  {person.firstName} {person.lastName}
+                                </h4>
+                                <p className="text-sm text-gray-600 capitalize">{person.role}</p>
+                              </div>
+                              <div className="text-right">
+                                {schedule.isWorking ? (
                                   <div>
-                                    <h3 className="font-semibold">{staff.name}</h3>
-                                    <p className="text-sm text-muted-foreground">{staff.role}</p>
+                                    <Badge className="bg-green-100 text-green-800">Available</Badge>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                      {schedule.start} - {schedule.end}
+                                    </p>
                                   </div>
-                                </div>
-                                <div className="text-right">
-                                  <div className="flex items-center gap-1">
-                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="font-medium">{staff.rating}</span>
-                                  </div>
-                                </div>
+                                ) : (
+                                  <Badge variant="secondary">Off</Badge>
+                                )}
                               </div>
-
-                              <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                  <span>Experience:</span>
-                                  <span className="font-medium">{staff.experience}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                  <span>Specialties:</span>
-                                  <span className="font-medium">{staff.specialties.join(", ")}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                  <span>This Week:</span>
-                                  <span className="font-medium">{staff.hoursThisWeek} hours</span>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
+                            </div>
+                          )
+                        })}
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </main>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Time Off Tab */}
+          <TabsContent value="time-off" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Time Off Requests</CardTitle>
+                <CardDescription>Manage staff time-off requests and approvals</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Staff Member</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Dates</TableHead>
+                      <TableHead>Reason</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {timeOffRequests.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{request.staffName}</div>
+                            <div className="text-sm text-gray-600">
+                              Requested {new Date(request.requestedAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {request.type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div>{new Date(request.startDate).toLocaleDateString()}</div>
+                            <div className="text-sm text-gray-600">
+                              to {new Date(request.endDate).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{request.reason}</TableCell>
+                        <TableCell>{getTimeOffStatusBadge(request.status)}</TableCell>
+                        <TableCell>
+                          {request.status === 'pending' && (
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleApproveTimeOff(request.id)}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleRejectTimeOff(request.id)}
+                              >
+                                <XCircle className="h-4 w-4 mr-1" />
+                                Reject
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Shifts Tab */}
+          <TabsContent value="shifts" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Shift Management</h2>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Shift
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Current Shifts</CardTitle>
+                <CardDescription>View and manage staff shifts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Staff Member</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Notes</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {shifts.map((shift) => (
+                      <TableRow key={shift.id}>
+                        <TableCell className="font-medium">{shift.staffName}</TableCell>
+                        <TableCell>{new Date(shift.date).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          {shift.startTime} - {shift.endTime}
+                        </TableCell>
+                        <TableCell>{getShiftStatusBadge(shift.status)}</TableCell>
+                        <TableCell>{shift.notes || '-'}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Edit and delete dialogs */}
-      {editStaff && (
-        <EditStaffDialog
-          staff={editStaff}
-          open={!!editStaff}
-          onOpenChange={(open) => !open && setEditStaff(null)}
-          onUpdate={() => {
-            fetchStaffData()
-            setEditStaff(null)
-          }}
-        />
-      )}
-
-      {deleteStaff && (
-        <DeleteStaffDialog
-          staffId={deleteStaff.id}
-          staffName={deleteStaff.name}
-          open={!!deleteStaff}
-          onOpenChange={(open) => !open && setDeleteStaff(null)}
-          onDelete={() => {
-            fetchStaffData()
-            setDeleteStaff(null)
-          }}
-        />
-      )}
     </div>
   )
 }

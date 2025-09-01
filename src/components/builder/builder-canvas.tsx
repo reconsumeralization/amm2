@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Trash2, Edit } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 import type { Page, PageComponent } from "@/app/builder/page"
+import { useState } from "react"
 
 interface BuilderCanvasProps {
   page: Page
@@ -14,6 +15,7 @@ interface BuilderCanvasProps {
   onComponentSelect: (component: PageComponent) => void
   onComponentUpdate: (componentId: string, updates: Partial<PageComponent>) => void
   onComponentDelete: (componentId: string) => void
+  onComponentAdd?: (type: PageComponent["type"]) => void
 }
 
 export function BuilderCanvas({
@@ -24,7 +26,83 @@ export function BuilderCanvas({
   onComponentSelect,
   onComponentUpdate,
   onComponentDelete,
+  onComponentAdd,
 }: BuilderCanvasProps) {
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [draggedComponent, setDraggedComponent] = useState<PageComponent | null>(null)
+
+  const handleCanvasDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(true)
+  }
+
+  const handleCanvasDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // Only set drag leave if we're actually leaving the canvas area
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false)
+      setDragOverIndex(null)
+    }
+  }
+
+  const handleCanvasDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragOver(false)
+    setDragOverIndex(null)
+
+    const componentType = e.dataTransfer.getData('text/plain')
+    if (componentType && onComponentAdd) {
+      onComponentAdd(componentType as PageComponent["type"])
+    }
+  }
+
+  const handleComponentDragStart = (e: React.DragEvent, component: PageComponent) => {
+    setDraggedComponent(component)
+    e.dataTransfer.setData('text/plain', component.id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleComponentDragEnd = () => {
+    setDraggedComponent(null)
+    setDragOverIndex(null)
+  }
+
+  const handleComponentDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (draggedComponent && draggedComponent.id !== page.components[index]?.id) {
+      setDragOverIndex(index)
+    }
+  }
+
+  const handleComponentDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const draggedId = e.dataTransfer.getData('text/plain')
+    if (!draggedId) return
+
+    const draggedIndex = page.components.findIndex(comp => comp.id === draggedId)
+    if (draggedIndex === -1 || draggedIndex === dropIndex) return
+
+    // Reorder components
+    const newComponents = [...page.components]
+    const [removed] = newComponents.splice(draggedIndex, 1)
+    newComponents.splice(dropIndex, 0, removed)
+
+    // Update all components with new order
+    newComponents.forEach((comp, index) => {
+      onComponentUpdate(comp.id, { ...comp, order: index })
+    })
+
+    setDraggedComponent(null)
+    setDragOverIndex(null)
+  }
   const getCanvasWidth = () => {
     switch (viewMode) {
       case "mobile":
@@ -38,8 +116,10 @@ export function BuilderCanvas({
     }
   }
 
-  const renderComponent = (component: PageComponent) => {
+  const renderComponent = (component: PageComponent, index: number) => {
     const isSelected = selectedComponent?.id === component.id
+    const isDragged = draggedComponent?.id === component.id
+    const showDropZone = dragOverIndex === index
 
     const componentElement = (() => {
       switch (component.type) {
@@ -145,63 +225,120 @@ export function BuilderCanvas({
     }
 
     return (
-      <div
-        key={component.id}
-        className={cn("relative group cursor-pointer", isSelected && "ring-2 ring-primary ring-offset-2")}
-        onClick={() => onComponentSelect(component)}
-      >
-        {componentElement}
+      <>
+        {/* Drop zone above component */}
+        {showDropZone && dragOverIndex === index && (
+          <div className="h-2 bg-primary/20 border-2 border-dashed border-primary rounded my-2 flex items-center justify-center">
+            <div className="text-xs text-primary font-medium">Drop here</div>
+          </div>
+        )}
 
-        {/* Component Controls */}
-        {!showPreview && (
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onComponentSelect(component)
-                }}
-              >
-                <Edit className="h-3 w-3" />
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onComponentDelete(component.id)
-                }}
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
+        <div
+          key={component.id}
+          draggable={!showPreview}
+          onDragStart={(e) => handleComponentDragStart(e, component)}
+          onDragEnd={handleComponentDragEnd}
+          onDragOver={(e) => handleComponentDragOver(e, index)}
+          onDrop={(e) => handleComponentDrop(e, index)}
+          className={cn(
+            "relative group cursor-pointer transition-all duration-200",
+            isSelected && "ring-2 ring-primary ring-offset-2",
+            isDragged && "opacity-50 scale-95",
+            !showPreview && "hover:shadow-md"
+          )}
+          onClick={() => onComponentSelect(component)}
+        >
+          {componentElement}
+
+          {/* Component Controls */}
+          {!showPreview && (
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onComponentSelect(component)
+                  }}
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onComponentDelete(component.id)
+                  }}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Selection Indicator */}
-        {isSelected && !showPreview && (
-          <div className="absolute -top-6 left-0 bg-primary text-primary-foreground px-2 py-1 text-xs rounded">
-            {component.type}
-          </div>
-        )}
-      </div>
+          {/* Selection Indicator */}
+          {isSelected && !showPreview && (
+            <div className="absolute -top-6 left-0 bg-primary text-primary-foreground px-2 py-1 text-xs rounded">
+              {component.type}
+            </div>
+          )}
+
+          {/* Drag Handle */}
+          {!showPreview && (
+            <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="bg-background border rounded p-1 cursor-grab active:cursor-grabbing">
+                <div className="w-3 h-3 flex flex-col gap-0.5">
+                  <div className="w-full h-0.5 bg-muted-foreground rounded"></div>
+                  <div className="w-full h-0.5 bg-muted-foreground rounded"></div>
+                  <div className="w-full h-0.5 bg-muted-foreground rounded"></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
     )
   }
 
   return (
     <div className="flex-1 bg-muted/30 p-6">
-      <div className={cn("mx-auto bg-background rounded-lg shadow-lg min-h-full", getCanvasWidth())}>
+      <div
+        className={cn(
+          "mx-auto bg-background rounded-lg shadow-lg min-h-full transition-all duration-200",
+          getCanvasWidth(),
+          isDragOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
+        )}
+        onDragOver={handleCanvasDragOver}
+        onDragLeave={handleCanvasDragLeave}
+        onDrop={handleCanvasDrop}
+      >
         <ScrollArea className="h-full">
           <div className="p-6 space-y-4">
             {page.components.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <div className="text-lg font-medium mb-2">Start building your page</div>
-                <div className="text-sm">Add components from the sidebar to get started</div>
+              <div
+                className={cn(
+                  "text-center py-12 text-muted-foreground transition-all duration-200",
+                  isDragOver && "bg-primary/10 border-2 border-dashed border-primary rounded-lg"
+                )}
+              >
+                <div className="text-lg font-medium mb-2">
+                  {isDragOver ? "Drop component here" : "Start building your page"}
+                </div>
+                <div className="text-sm">
+                  {isDragOver ? "Release to add the component" : "Add components from the sidebar to get started"}
+                </div>
               </div>
             ) : (
-              page.components.map(renderComponent)
+              page.components.map((component, index) => renderComponent(component, index))
+            )}
+
+            {/* Drop zone at the end */}
+            {page.components.length > 0 && dragOverIndex === page.components.length && (
+              <div className="h-2 bg-primary/20 border-2 border-dashed border-primary rounded my-2 flex items-center justify-center">
+                <div className="text-xs text-primary font-medium">Drop here</div>
+              </div>
             )}
           </div>
         </ScrollArea>

@@ -2,34 +2,15 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Note: ESLint and TypeScript error ignoring moved to package.json scripts for better control
+  // This fixes Vercel deployment issues with Next.js 14+
   // Vercel-specific optimizations
-  outputFileTracingRoot: __dirname,
   transpilePackages: ['payload'],
-
-  // Development and production settings
-  eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'production',
-  },
-  typescript: {
-    ignoreBuildErrors: process.env.NODE_ENV === 'production',
-  },
 
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-
-  // External packages for server-side rendering
-  serverExternalPackages: [
-    '@payloadcms/db-postgres',
-    '@payloadcms/db-sqlite',
-    '@libsql/client',
-    'sqlite3',
-    'better-sqlite3',
-    'pg',
-    'bcryptjs',
-    'sharp'
-  ],
 
   // Experimental features for better performance
   experimental: {
@@ -80,6 +61,45 @@ const nextConfig = {
         zlib: false,
       };
     }
+
+    // Exclude problematic files from webpack processing
+    config.module.rules.push({
+      test: /\.(md|txt|readme|license)$/i,
+      type: 'asset/resource',
+      include: /node_modules/,
+      generator: {
+        filename: 'static/[hash][ext]',
+      },
+    });
+
+    // Handle .node files properly
+    config.module.rules.push({
+      test: /\.node$/,
+      type: 'asset/resource',
+      include: /node_modules/,
+      generator: {
+        filename: 'static/[hash][ext]',
+      },
+    });
+
+    // Ignore specific problematic files
+    config.externals = [
+      ...(config.externals || []),
+      // Ignore libsql documentation files
+      /@libsql\/.*\/(README\.md|LICENSE)$/,
+      // Ignore other documentation files
+      /.*\.(md|txt|readme|license)$/i,
+    ];
+
+    // Resolve issues with libsql modules
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      // Prevent libsql from being bundled on client side
+      '@libsql/client': false,
+      '@libsql/hrana-client': false,
+      '@libsql/isomorphic-fetch': false,
+      '@libsql/isomorphic-ws': false,
+    };
 
     // Optimize bundle size in production
     if (!dev && !isServer) {
