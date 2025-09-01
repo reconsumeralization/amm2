@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "modernmen-yolo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,13 @@
     "optimize-build": "node scripts/optimize-build.js",
     "build-performance": "node scripts/build-performance.js",
     "vercel-build": "npm run build:optimized",
+    "vercel:setup": "./scripts/setup-vercel.sh",
+    "vercel:deploy": "vercel --prod",
+    "vercel:deploy:staging": "vercel",
+    "vercel:logs": "vercel logs",
+    "vercel:env": "vercel env ls",
+    "vercel:link": "vercel link",
+    "vercel:unlink": "vercel unlink",
     "mcp:start": "tsx scripts/start-mcp-server.ts",
     "mcp:dev": "tsx watch scripts/start-mcp-server.ts",
     "mcp:test": "jest --config jest.config.mcp.js",
