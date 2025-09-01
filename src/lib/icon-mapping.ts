@@ -29,6 +29,7 @@ import {
   Grid3X3 as Grid,
   MoreHorizontal,
   MoreVertical,
+  Lock,
   Unlock,
   Heart,
   Flag,
@@ -176,7 +177,6 @@ export {
   // Location & Contact
   MapPin,
   Globe,
-  WifiOff,
 
   // Commerce & Finance
   Package,
@@ -188,9 +188,7 @@ export {
 
   // Development & Code
   Code,
-  GitCommit,
   BookOpen,
-  HelpCircle,
 
   // Devices
   Monitor,
@@ -219,13 +217,9 @@ export const BellIcon = Bell
 export const MenuIcon = Menu
 export const ShieldIcon = Shield
 export const DatabaseIcon = Database
-export const WifiOffIcon = WifiOff
 export const AlertCircleIcon = AlertCircle
 export const AlertTriangleIcon = AlertTriangle
 export const CheckCircleIcon = CheckCircle
-export const XIcon = XCircle
-export const HelpIcon = HelpCircle
-export const HelpCircleIcon = HelpCircle
 export const MessageIcon = MessageSquare
 export const MessageSquareIcon = MessageSquare
 export const FileTextIcon = FileText

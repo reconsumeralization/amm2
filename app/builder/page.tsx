@@ -243,7 +243,7 @@ export default function BuilderPage() {
           </div>
 
           <div className="flex-1 flex overflow-hidden">
-            <div className="w-80 border-r border-red-900/20 bg-gradient-to-b from-gray-900 to-black">
+            <div id="tour-step-1-components" className="w-80 border-r border-red-900/20 bg-gradient-to-b from-gray-900 to-black">
               <Tabs defaultValue="components" className="h-full">
                 <TabsList className="grid w-full grid-cols-4 bg-black border-b border-red-900/20">
                   <TabsTrigger value="components" className="data-[state=active]:bg-red-600">
@@ -299,7 +299,7 @@ export default function BuilderPage() {
             </div>
 
             {/* Main Canvas */}
-            <div className="flex-1 flex flex-col">
+            <div id="tour-step-2-canvas" className="flex-1 flex flex-col">
               <SortableContext items={currentPage.components.map((c) => c.id)} strategy={verticalListSortingStrategy}>
                 <BuilderCanvas
                   page={currentPage}
@@ -315,7 +315,7 @@ export default function BuilderPage() {
             </div>
 
             {selectedComponent && (
-              <div className="w-96 border-l border-red-900/20 bg-gradient-to-b from-gray-900 to-black">
+              <div id="tour-step-4-properties-panel" className="w-96 border-l border-red-900/20 bg-gradient-to-b from-gray-900 to-black">
                 <div className="border-b border-red-900/20 p-4">
                   <Tabs defaultValue="content" className="h-full">
                     <TabsList className="grid w-full grid-cols-4 bg-black">
@@ -327,7 +327,7 @@ export default function BuilderPage() {
                       </TabsTrigger>
                       <TabsTrigger value="seo" className="data-[state=active]:bg-red-600">
                         SEO
-                      </TabsTrigger>
+                      </TavsTrigger>
                       <TabsTrigger value="data" className="data-[state=active]:bg-red-600">
                         Data
                       </TabsTrigger>
