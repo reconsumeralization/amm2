@@ -136,3 +136,10 @@ export async function testModuleLoading() {
 
 // Export for use in other test files
 export { results }
+
+// Add a simple CLI runner for testing
+if (typeof process !== 'undefined' && process.argv[1]?.includes('test-module-loading')) {
+  testModuleLoading().then(success => {
+    process.exit(success ? 0 : 1)
+  })
+}

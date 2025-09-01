@@ -5,31 +5,12 @@ import type { ComponentType } from 'react'
 // Placeholder component for missing icons
 const PlaceholderIcon: React.FC<any> = (props) => null
 
-// Import actual icons from lucide-react that exist
+// Import available icons from lucide-react
 import {
-  Settings,
-  Shield,
-  Database,
-  Bell,
-  AlertTriangle,
-  CheckCircle,
-  Code,
-  Search,
-  BookOpen,
-  ArrowLeft,
-  ChevronRight,
-  Menu,
   X,
-  Users,
-  HelpCircle,
   Calendar,
-  FileText,
-  BarChart3,
-  TrendingUp,
   Clock,
-  RefreshCw,
   Eye,
-  MessageSquare,
   Star,
   Filter,
   Loader2,
@@ -43,12 +24,10 @@ import {
   MapPin,
   Award,
   ArrowRight,
-  WifiOff,
   Home,
   EyeOff,
   RotateCcw,
   Volume2,
-  LineChart,
   VolumeX,
   Pause,
   Grid,
@@ -74,34 +53,63 @@ import {
   AlertCircle,
   Plus,
   XCircle,
-  File
+  File,
+  Minimize2,
+  Maximize2,
+  MessageCircle,
+  Send,
+  LineChart,
+  User,
+  Mail,
+  Check,
+  Search as SearchIcon,
+  Settings as SettingsIcon,
+  Bell as BellIcon,
+  AlertTriangle as AlertTriangleIcon,
+  CheckCircle as CheckCircleIcon,
+  Users as UsersIcon,
+  HelpCircle as HelpCircleIcon,
+  FileText as FileTextIcon,
+  BarChart3 as BarChart3Icon,
+  TrendingUp as TrendingUpIcon,
+  RefreshCw as RefreshCwIcon,
+  MessageSquare as MessageSquareIcon,
+  Code as CodeIcon,
+  BookOpen as BookOpenIcon,
+  ArrowLeft as ArrowLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Menu as MenuIcon,
+  Shield as ShieldIcon,
+  Database as DatabaseIcon,
+  WifiOff as WifiOffIcon,
+  Lock
 } from 'lucide-react'
 
 // Core icon exports - unique and clean
 export {
-  Settings,
-  Shield,
-  Database,
-  Bell,
-  AlertTriangle,
-  CheckCircle,
-  Code,
-  Search,
-  BookOpen,
-  ArrowLeft,
-  ChevronRight,
-  Menu,
+  SettingsIcon as Settings,
+  ShieldIcon as Shield,
+  DatabaseIcon as Database,
+  BellIcon as Bell,
+  AlertTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle,
+  CodeIcon as Code,
+  SearchIcon as Search,
+  BookOpenIcon as BookOpen,
+  ArrowLeftIcon as ArrowLeft,
+  ChevronRightIcon as ChevronRight,
+  MenuIcon as Menu,
   X,
-  Users,
-  HelpCircle,
+  UsersIcon as Users,
+  HelpCircleIcon as HelpCircle,
   Calendar,
-  FileText,
-  BarChart3,
-  TrendingUp,
+  FileTextIcon as FileText,
+  BarChart3Icon as BarChart3,
+  TrendingUpIcon as TrendingUp,
   Clock,
-  RefreshCw,
+  RefreshCwIcon as RefreshCw,
   Eye,
-  MessageSquare,
+  MessageSquareIcon as MessageSquare,
   Star,
   Filter,
   Loader2,
@@ -115,7 +123,7 @@ export {
   MapPin,
   Award,
   ArrowRight,
-  WifiOff,
+  WifiOffIcon as WifiOff,
   Home,
   EyeOff,
   RotateCcw,
@@ -145,7 +153,15 @@ export {
   AlertCircle,
   Plus,
   XCircle,
-  File
+  File,
+  Minimize2,
+  Maximize2,
+  MessageCircle,
+  Send,
+  LineChart,
+  User,
+  Mail,
+  Check
 }
 
 // Icon aliases and fallbacks for missing icons
@@ -153,17 +169,15 @@ export const User = Users // Alias for User icon
 export const Loader = Loader2 // Alias for Loader icon
 export const CheckCircleIcon = CheckCircle // Alias for CheckCircleIcon
 export const Mail = Bell // Use Bell as Mail icon
-export const Send = ArrowRight // Alias for Send icon
+export const SendIcon = Send // Alias for SendIcon
 export const ImageIcon = Camera // Use Camera as ImageIcon
 export const Save = Download // Alias for Save icon
 export const Undo = RotateCcw // Alias for Undo
 export const Redo = RotateCcw // Alias for Redo
-export { LineChart } // Export LineChart from lucide-react
 
 // Placeholder icons for icons that don't exist in lucide-react
 export const Scissors = PlaceholderIcon
 export const Gift = PlaceholderIcon
-export const MessageCircle = PlaceholderIcon
 export const PaintBucket = PlaceholderIcon
 export const Monitor = PlaceholderIcon
 export const Tablet = PlaceholderIcon

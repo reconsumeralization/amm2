@@ -18,7 +18,7 @@ import {
   Home,
   Loader2,
   AlertCircle
-} from "lucide-react"
+} from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 

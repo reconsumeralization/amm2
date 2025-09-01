@@ -12,8 +12,11 @@ interface BuilderCanvasProps {
   selectedComponent: PageComponent | null
   viewMode: "desktop" | "tablet" | "mobile"
   showPreview: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onComponentSelect: (component: PageComponent) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onComponentUpdate: (componentId: string, updates: Partial<PageComponent>) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onComponentDelete: (componentId: string) => void
   onComponentAdd?: (type: PageComponent["type"]) => void
 }
@@ -257,7 +260,7 @@ export function BuilderCanvas({
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation()
                     onComponentSelect(component)
                   }}
@@ -267,7 +270,7 @@ export function BuilderCanvas({
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation()
                     onComponentDelete(component.id)
                   }}

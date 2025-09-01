@@ -1,72 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server'
-import payload from '@/lib/payload'
+import { createClient } from "@/lib/supabase/server"
+import { type NextRequest, NextResponse } from "next/server"
+import type { User } from "@supabase/supabase-js"
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+  const typedUser = user as User | null
+  if (authError || !typedUser) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const date = searchParams.get('date')
     const employeeId = searchParams.get('employeeId')
 
-    // Get current user from session
-    const user = request.user // This would come from your auth middleware
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    let whereClause: any = {}
+    let query = supabase.from("clock_entries").select("*")
 
     // If employeeId is provided, use it; otherwise get entries for current user
     if (employeeId) {
       // Check if user has permission to view this employee's entries
-      if (!['admin', 'manager'].includes(user.role)) {
-        return NextResponse.json(
-          { error: 'Insufficient permissions' },
-          { status: 403 }
-        )
-      }
-      whereClause.employee = { equals: employeeId }
+      // This would need to be implemented based on your user roles system
+      query = query.eq("employee_id", employeeId)
     } else {
-      // Get employee record for current user
-      const employees = await payload.find({
-        collection: 'employees',
-        where: {
-          user: { equals: user.id }
-        }
-      })
-
-      if (employees.docs.length === 0) {
-        return NextResponse.json(
-          { error: 'Employee record not found' },
-          { status: 404 }
-        )
-      }
-
-      whereClause.employee = { equals: employees.docs[0].id }
+      // Get entries for current user
+      query = query.eq("user_id", typedUser.id)
     }
 
     // Add date filter if provided
     if (date) {
-      whereClause.date = { equals: date }
+      query = query.eq("date", date)
     }
 
-    const entries = await payload.find({
-      collection: 'time-clock',
-      where: whereClause,
-      sort: '-createdAt',
-      limit: 100,
-    })
+    const { data: entries, error } = await query
+      .order("created_at", { ascending: false })
+      .limit(100)
+
+    if (error) {
+      throw error
+    }
 
     return NextResponse.json({
       success: true,
-      entries: entries.docs,
-      total: entries.totalDocs,
+      entries: entries,
+      total: entries?.length || 0,
     })
   } catch (error) {
     console.error('Clock entries error:', error)

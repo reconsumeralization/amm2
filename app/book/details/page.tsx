@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowLeft, ArrowRight, User, Phone, Mail, MessageSquare, CreditCard, Loader2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, User, Phone, Mail, MessageSquare, CreditCard, Loader2 } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 
 interface Service {

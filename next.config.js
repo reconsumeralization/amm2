@@ -12,12 +12,26 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Experimental features for better performance
+  // Experimental features for better performance and faster builds
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
     webVitalsAttribution: ['CLS', 'LCP'],
+    // Optimize build performance
+    webpackBuildWorker: true,
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
+
+  // Build performance optimizations
+  output: 'standalone',
+  trailingSlash: false,
 
   // Image optimization settings
   images: {
@@ -42,8 +56,21 @@ const nextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
 
-  // Webpack configuration
-  webpack: (config, { isServer, dev }) => {
+  // Webpack configuration - Optimized for Vercel builds
+  webpack: (config, { isServer, dev, buildId }) => {
+    // Performance optimization: Skip expensive operations in Vercel builds
+    if (process.env.VERCEL) {
+      // Disable webpack cache serialization warnings
+      config.cache = false;
+
+      // Optimize for build speed
+      config.optimization = {
+        ...config.optimization,
+        emitOnErrors: false,
+        moduleIds: 'deterministic',
+      };
+    }
+
     // Handle Payload CMS and other server-only packages
     if (!isServer) {
       config.resolve.fallback = {
@@ -62,60 +89,58 @@ const nextConfig = {
       };
     }
 
-    // Exclude problematic files from webpack processing
+    // Exclude problematic files from webpack bundling
     config.module.rules.push({
       test: /\.(md|txt|readme|license)$/i,
-      type: 'asset/resource',
       include: /node_modules/,
-      generator: {
-        filename: 'static/[hash][ext]',
-      },
+      type: 'javascript/auto', // Treat as empty modules
+      use: [{
+        loader: 'null-loader' // Completely exclude these files
+      }]
     });
 
-    // Handle .node files properly
+    // Handle .node files properly for SQLite
     config.module.rules.push({
       test: /\.node$/,
-      type: 'asset/resource',
       include: /node_modules/,
-      generator: {
-        filename: 'static/[hash][ext]',
-      },
+      use: [{
+        loader: 'file-loader',
+        options: {
+          publicPath: '/_next/static/chunks/',
+          outputPath: 'static/chunks/',
+        },
+      }],
     });
 
-    // Ignore specific problematic files
-    config.externals = [
-      ...(config.externals || []),
-      // Ignore libsql documentation files
-      /@libsql\/.*\/(README\.md|LICENSE)$/,
-      // Ignore other documentation files
-      /.*\.(md|txt|readme|license)$/i,
-    ];
+    // Resolve issues with libsql modules for client-side
+    if (!isServer) {
+      config.externals = [
+        ...(config.externals || []),
+        '@libsql/client',
+        '@libsql/hrana-client',
+        '@libsql/isomorphic-fetch',
+        '@libsql/isomorphic-ws',
+        'libsql'
+      ];
+    }
 
-    // Resolve issues with libsql modules
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      // Prevent libsql from being bundled on client side
-      '@libsql/client': false,
-      '@libsql/hrana-client': false,
-      '@libsql/isomorphic-fetch': false,
-      '@libsql/isomorphic-ws': false,
-    };
-
-    // Optimize bundle size in production
+    // Optimize bundle size in production - simplified for faster builds
     if (!dev && !isServer) {
-      config.optimization.splitChunks.cacheGroups = {
-        ...config.optimization.splitChunks.cacheGroups,
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: 10,
-        },
-        payload: {
-          test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
-          name: 'payload',
-          chunks: 'all',
-          priority: 20,
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](?!@payloadcms)/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 10,
+          },
+          payload: {
+            test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
+            name: 'payload',
+            chunks: 'all',
+            priority: 20,
+          },
         },
       };
     }
@@ -125,6 +150,12 @@ const nextConfig = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, 'src'),
       '~': path.resolve(__dirname),
+      // Fix for libsql client-side issues
+      ...(isServer ? {} : {
+        '@libsql/client': path.resolve(__dirname, 'src/lib/stubs/libsql-client.js'),
+        '@libsql/hrana-client': path.resolve(__dirname, 'src/lib/stubs/libsql-hrana-client.js'),
+        'libsql': path.resolve(__dirname, 'src/lib/stubs/libsql.js'),
+      }),
     };
 
     return config;

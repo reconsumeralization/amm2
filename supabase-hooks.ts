@@ -75,7 +75,11 @@ export function useCollection<T extends Record<string, any>>(
       if (reset) setLoading(true)
       setError(null)
 
-      const manager = new (collectionManagers as any)[tableName.replace(/_/g, '').toLowerCase()]?.constructor(supabase)
+      const ManagerClass = (collectionManagers as any)[tableName.replace(/_/g, '').toLowerCase()]
+      if (!ManagerClass) {
+        throw new Error(`No manager found for table: ${tableName}`)
+      }
+      const manager = new ManagerClass(supabase)
       if (!manager) {
         throw new Error(`No manager found for table: ${tableName}`)
       }

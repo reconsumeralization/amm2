@@ -23,9 +23,9 @@ import {
   RefreshCw,
   Eye,
   AlertCircle,
-  CheckCircle,
-  LineChart
+  CheckCircle
 } from "@/lib/icon-mapping"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { cn } from "@/lib/utils"
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns"
 
@@ -267,12 +267,16 @@ export default function AnalyticsPage() {
                   <CardDescription>Daily revenue for the selected period</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                    <div className="text-center">
-                      <LineChart className="h-12 w-12 text-gray-400 mx-auto mb-2" strokeWidth={1.5} />
-                      <p className="text-gray-600">Revenue trend chart would display here</p>
-                      <p className="text-sm text-gray-500">Integration with charting library needed</p>
-                    </div>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={revenueData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="revenue" stroke="#8884d8" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>

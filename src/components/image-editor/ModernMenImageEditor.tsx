@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ImageAdjustments {
@@ -107,6 +108,11 @@ const customTemplates: CustomTemplate[] = [
         font: "Montserrat",
         weight: "700",
         shadow: true,
+        outline: false,
+        outlineColor: "#000000",
+        outlineWidth: 0,
+        rotation: 0,
+        opacity: 1,
       },
     ],
     thumbnail: "/social-media-template.png",
@@ -126,6 +132,11 @@ const customTemplates: CustomTemplate[] = [
         font: "Montserrat",
         weight: "900",
         shadow: false,
+        outline: false,
+        outlineColor: "#000000",
+        outlineWidth: 0,
+        rotation: 0,
+        opacity: 1,
       },
     ],
     thumbnail: "/business-card-template.png",
@@ -145,6 +156,11 @@ const customTemplates: CustomTemplate[] = [
         font: "Montserrat",
         weight: "900",
         shadow: true,
+        outline: false,
+        outlineColor: "#000000",
+        outlineWidth: 0,
+        rotation: 0,
+        opacity: 1,
       },
     ],
     thumbnail: "/hero-banner-template.png",
@@ -1303,6 +1319,12 @@ export default function ModernMenImageEditor() {
           x = exportSettings.width / 2
           y = exportSettings.height / 2
           break
+        default:
+          // Default to center if position is not recognized
+          ctx.textAlign = "center"
+          x = exportSettings.width / 2
+          y = exportSettings.height / 2
+          break
       }
 
       // Add text shadow for better visibility
@@ -2415,7 +2437,7 @@ export default function ModernMenImageEditor() {
                     <Input
                       type="number"
                       value={exportSettings.width}
-                      onChange={(e) => setExportSettings(prev => ({ ...prev, width: parseInt(e.target.value) || 1920 }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExportSettings(prev => ({ ...prev, width: parseInt(e.target.value) || 1920 }))}
                       className="bg-gray-800 border-gray-600 text-white"
                     />
                   </div>
@@ -2424,7 +2446,7 @@ export default function ModernMenImageEditor() {
                     <Input
                       type="number"
                       value={exportSettings.height}
-                      onChange={(e) => setExportSettings(prev => ({ ...prev, height: parseInt(e.target.value) || 1080 }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExportSettings(prev => ({ ...prev, height: parseInt(e.target.value) || 1080 }))}
                       className="bg-gray-800 border-gray-600 text-white"
                     />
                   </div>

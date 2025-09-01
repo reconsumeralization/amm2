@@ -34,7 +34,7 @@ import {
 import { useMCPController } from '@/hooks/useMCPController'
 import { cn } from '@/lib/utils'
 import { getRoleConfig, getSecurityLevel, getRateLimit, getMaxMessageLength, canExecuteCommand } from '@/config/chatbot-config'
-import { UserRole } from '@/mcp/rbac-types'
+import { UserRole } from '../../../src/mcp/rbac-types'
 import { SecurityMonitor } from './SecurityMonitor'
 
 // Security and context management
@@ -178,7 +178,7 @@ export function UniversalChatbot() {
       permissions,
       currentPage: pathname,
       userId: session?.user?.id,
-      tenantId: session?.user?.tenantId
+      tenantId: (session?.user as any)?.tenantId
     }))
   }, [session, pathname])
 
@@ -277,7 +277,7 @@ export function UniversalChatbot() {
 
       // Role-based permission check
       const roleConfig = getRoleConfig(userContext.role)
-      if (roleConfig.restrictedCommands.some(cmd => command.includes(cmd))) {
+      if (roleConfig.restrictedCommands.some((cmd: string) => command.includes(cmd))) {
         throw new Error('Insufficient permissions for this operation.')
       }
 
@@ -525,7 +525,7 @@ Please provide a helpful, secure response appropriate for this user's role and c
               {/* Capabilities */}
               <div className="px-4 py-2 bg-muted/50">
                 <div className="flex flex-wrap gap-1">
-                  {roleConfig.capabilities.slice(0, 3).map((capability, index) => (
+                  {roleConfig.capabilities.slice(0, 3).map((capability: string, index: number) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {capability}
                     </Badge>

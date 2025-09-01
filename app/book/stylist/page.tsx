@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowLeft, ArrowRight, Star, Users, Clock, Calendar, Loader2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Star, Users, Clock, Calendar, Loader2 } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 
 interface Stylist {

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, ArrowRight, Clock, Calendar as CalendarIcon, Loader2, AlertCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, Clock, Calendar as CalendarIcon, Loader2, AlertCircle } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 import { format, addDays, isBefore, isToday, startOfDay } from "date-fns"
 

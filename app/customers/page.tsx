@@ -14,12 +14,13 @@ import { Users, Search, Phone, Mail, DollarSign, Star, MessageCircle, Gift, Tren
 import { AddCustomerDialog } from "@/components/add-customer-dialog"
 import { CustomerFilters } from "@/components/customer-filters"
 import { CustomerProfile } from "@/components/customer-profile"
-import { useCustomers, type Customer } from "../../../../src/hooks/useCustomers"
+import { useCustomers } from "@/hooks/useCustomers"
+import type { Customer } from "@/hooks/useCustomers"
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<git add  | null>(null)
 
   // Use the customers API hook
   const {

@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload/types'
+import type { CollectionConfig } from 'payload/types'
 
 const Forms: CollectionConfig = {
   slug: 'forms',
@@ -8,9 +8,9 @@ const Forms: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => req.user?.role === 'admin' || req.user?.role === 'editor',
-    update: ({ req }) => req.user?.role === 'admin' || req.user?.role === 'editor',
-    delete: ({ req }) => req.user?.role === 'admin'
+    create: ({ req }: { req: any }) => req.user?.role === 'admin' || req.user?.role === 'editor',
+    update: ({ req }: { req: any }) => req.user?.role === 'admin' || req.user?.role === 'editor',
+    delete: ({ req }: { req: any }) => req.user?.role === 'admin'
   },
   fields: [
     {

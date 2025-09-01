@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, CreditCard, Lock, Loader2, CheckCircle, AlertCircle } from "lucide-react"
+import { ArrowLeft, CreditCard, Lock, Loader2, CheckCircle, AlertCircle } from "@/lib/icon-mapping"
 import { cn } from "@/lib/utils"
 
 interface Service {

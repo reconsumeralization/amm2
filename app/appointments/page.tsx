@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Suspense } from "react"
 
 // Define proper types for appointments
 interface AppointmentUser {
@@ -362,8 +363,10 @@ export default function AppointmentsPage() {
                                 <div className="text-xs text-muted-foreground">{appointment.duration}min</div>
                               </div>
                               <div>
-                                <div className="font-medium">{appointment.customer}</div>
-                                <div className="text-sm text-muted-foreground">{appointment.service}</div>
+                                <div className="font-medium">{appointment.customer || 'Customer not specified'}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {typeof appointment.service === 'object' ? appointment.service?.name : appointment.service || 'Service not specified'}
+                                </div>
                                 <div className="text-xs text-muted-foreground">with {appointment.barber}</div>
                               </div>
                             </div>
