@@ -10,7 +10,10 @@ import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Set
 import subprocess
-import psycopg2
+try:
+	import psycopg2  # type: ignore
+except Exception:  # pragma: no cover - optional for fuzzing environments
+	psycopg2 = None  # type: ignore
 from datetime import datetime
 
 class SchemaGenerator:
